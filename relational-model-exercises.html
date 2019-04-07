@@ -2,7 +2,7 @@
 <html>
   <head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8">
-    <title>relational-model-exercises</title>
+    <title>Relational Model Exercises</title>
     <link rel="stylesheet" type="text/css" href="./styles/exercises.css">
 
     <link rel="stylesheet" href="./styles-hjs/default.css">
@@ -400,8 +400,79 @@ HAVING COUNT(*) > 1
           </pre>
         </div>
     </ol>
+</ol>
 
+<h2>Normalization</h2>
 
+<ol type="a">
+<li> Consider the following table <TT>Teacher</TT>.
+<div class="reltables">
+<pre>
+Teacher (teacher_id, subject, teacher_age)
+</pre>
+</div>
+where {<i>teacher_id</i>, <i>subject</i>} is the only candidate key and
+teacher_age is a non-prime attribute (<i>subject</i> is the name of the subject taught by the teacher).
+Which normal form does the table <TT>Teacher</TT> satisfy? How can you obtain
+a database in BCNF?
+[<a href="#" onclick="showHideSolution('teacher-norm', 'teacher-norm-link');return false;"><span id="teacher-norm-link">See solution</span></a>].
+<div id="teacher-norm" class="reltables" style="display:none;">
+The table is in 1NF.
+2NF is violated because of the dependency <i>teacher_id</i> &rarr; <i>teacher_age</i>;
+indeed a non-prime attribute depends partially on a candidate key.
+The solution to having a database in BNCF is to create two tables.
+<pre>
+Teacher        (<u>teacher_id</u>, teacher_age)
+TeacherSubject (<u>teacher_id</u>, <u>subject</u>)
+<pre>
+</div>
+<li> Consider the following table <TT>Employee</TT>.
+<div class="reltables">
+<pre>
+Employee (emp_id, emp_name, emp_salary, emp_dpt, dpt_budget)
+</pre>
+</div>
+where the only candidate key is <i>emp_id</i> and
+<i>emp_dpt</i> and <i>dpt_budget</i>
+are the employee department and
+the budget of the department respectively.
+Which normal form does the table <TT>Employee</TT> satisfy?
+How can you obtain a database in BCNF?
+[<a href="#" onclick="showHideSolution('emp-norm', 'emp-norm-link');return false;"><span id="emp-norm-link">See solution</span></a>].
+<div id="emp-norm" class="reltables" style="display:none;">
+The table is in 2NF.
+3NF is violated because of the dependency <i>emp_dpt</i> &rarr; <i>dpt_budget</i>
+between two non-prime attributes.
+In order to have a database in BCNF, we create the following tables:
+<pre>
+Employee        (<u>emp_id</u>, emp_name, emp_salary, emp_dpt)
+Department      (<u>dpt_id</u>, dpt_budget)
+<pre>
+</div>
+<li> Consider the following table <TT>Student</TT>.
+<div class="reltables">
+<pre>
+Student (stud_id, stud_ssn, course)
+</pre>
+</div>
+A student is either identified by her identifier (<i>stud_id</i>),
+or social security number (<i>stud_ssn</i>) and takes one or more courses.
+The only candidate keys are {<i>stud_id</i>, <i>course</i>} and
+{<i>stud_ssn</i>, <i>course</i>}.
+Which normal form does the table <TT>Student</TT> satisfy?
+How can you obtain a database in BCNF?
+[<a href="#" onclick="showHideSolution('stud-norm', 'stud-norm-link');return false;"><span id="stud-norm-link">See solution</span></a>].
+<div id="stud-norm" class="reltables" style="display:none;">
+The table is in 3NF.
+BCNF is violated because of the dependencies <i>stud_id</i> &rarr; <i>stud_ssn</i>
+and <i>stud_ssn</i> &rarr; <i>stud_id</i>;
+in both dependencies, the premise is composed of an attribute that is not a (super)key.
+In order to get a BCNF database, we can create the following tables:
+<pre>
+Student       (<u>stud_id</u>, stud_ssn)
+StudentCourse (<u>stud_id</u>, <u>course</u>)
+<pre>
+</div>
 </ol>
 
 </body>
