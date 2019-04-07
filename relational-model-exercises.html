@@ -339,21 +339,16 @@ Address  (<u>postal_code</u>, city, country)
 
 <li> Write the following queries in SQL:
     <ol class="queryitem">
-      <li class="queryitem"> Get all the data (including the full address) on the customers that have an account
+      <li class="queryitem"> Get all the data (including the full address) on the customers that have a checking account
         with a negative balance
         [<a href="#" onclick="showHideSolution('banking-system-q1', 'banking-system-q1-link');return false;"><span id="banking-system-q1-link">See solution</span></a>].
         <div id="banking-system-q1" style="display:none;">
           <pre>
           <code>
-SELECT a.nickname, temp.country, temp.nbFollowers
-FROM UserAccount a,
-     (SELECT nickname_dst, country, count(*) as nbFollowers
-      FROM UserAccount, Relationship
-      WHERE nickname = nickname_src AND type='follower'
-      GROUP BY nickname_dst, country
-      ORDER BY nbFollowers DESC) temp
-WHERE temp.nickname_dst=a.nickname
-ORDER BY a.nickname
+SELECT c.*, add.city, add.country
+FROM Customer c, Account acc, Address add
+WHERE c.ssn = acc.ssn AND c.postal_code = add.postal_code
+      AND acc.balance < 0 and acc.acct_type='checking'
           </code>
           </pre>
         </div>
@@ -362,15 +357,13 @@ ORDER BY a.nickname
         <div id="banking-system-q2" style="display:none;">
           <pre>
           <code>
-SELECT first_name, last_name
-FROM UserAccount
-WHERE nickname in
-  (
-    SELECT distinct u.nickname
-    FROM Post p, Tag t, UserAccount u
-    WHERE p.post_id=t.post_id AND p.nickname='john_smith'
-          AND t.nickname=u.nickname
-  )
+SELECT ssn
+FROM Customer
+EXCEPT
+SELECT c.ssn
+FROM Customer c, Loan l, Bank ba, Branch br
+WHERE c.ssn = l.ssn and l.branch_id=br.branch_id
+      and br.code_bank=ba.code_bank and ba.name='Bank of America'
           </code>
           </pre>
         </div>
@@ -379,20 +372,15 @@ WHERE nickname in
         <div id="banking-system-q3" style="display:none;">
           <pre>
           <code>
-SELECT u.nickname, u.first_name, u.last_name
-FROM UserAccount u,
-     (
-        (SELECT nickname_dst as nickname
-         FROM Relationship
-         WHERE nickname_src='john_smith' AND type='friendship')
-
-         INTERSECT
-
-         (SELECT nickname_dst as nickname
-          FROM Relationship
-          WHERE nickname_src='lara_hughes' AND type='friendship')
-      ) temp
-WHERE u.nickname=temp.nickname
+SELECT name
+FROM Bank b,
+     (SELECT ba.code_bank, count(*) as nb_Branches
+      FROM Bank ba, Branch br
+      WHERE ba.code_bank=br.code_bank
+      GROUP BY ba.code_bank
+      ORDER BY nb_Branches DESC
+      LIMIT 1) temp
+WHERE temp.code_bank=b.code_bank
           </code>
           </pre>
         </div>
@@ -401,14 +389,13 @@ WHERE u.nickname=temp.nickname
         <div id="banking-system-q4" style="display:none;">
           <pre>
           <code>
-SELECT u.nickname, u.first_name, u.last_name, temp.nbFollowers
-FROM UserAccount u,
-     (SELECT nickname_dst as nickname, count(*) as nbFollowers
-      FROM Relationship r
-      WHERE r.type='follower'
-      GROUP BY r.nickname_dst) temp
-WHERE u.nickname = temp.nickname
-ORDER BY nbFollowers DESC
+SELECT ssn
+FROM
+    (SELECT  distinct a.ssn as ssn, ba.code_bank as code_bank
+     FROM Account a, Branch br, Bank ba
+     WHERE a.branch_id = br.branch_id and ba.code_bank=br.code_bank) temp
+GROUP BY ssn
+HAVING COUNT(*) > 1
           </code>
           </pre>
         </div>
