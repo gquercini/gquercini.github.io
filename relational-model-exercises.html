@@ -277,5 +277,145 @@ ORDER BY nbFollowers DESC
     </ol>
 </ol>
 
-  </body>
+<h2>Modeling the database of the banking system</h2>
+
+The following figure shows the ER diagram modeling the database of a banking system.
+
+<img src="./figs/banking-system-er.png" alt="banking-system-er" class="body-image" style="width:85%;">
+
+Each bank is identified by a unique code and name, and has one or several branches.
+A branch is responsible of opening accounts and granting loans to customers.
+Each account is identified by a number (<i>acct_nbr</i>) and is either
+a checking or savings account (property <i>acct_type</i>).
+Each customer is identified by its social security number (<i>ssn</i>);
+a customer can be granted several loans and open as many accounts as s/he wishes.
+
+<h3>Questions</h3>
+
+<ol type="a">
+  <li> Which primary key would you choose for the entity <TT>Bank</TT>? Justify the answer
+    [<a href="#" onclick="showHideSolution('banking-system-pk', 'banking-system-pk-link');return false;"><span id="banking-system-pk-link">See solution</span></a>].
+    <div id ="banking-system-pk" style="display:none;" class="reltables">
+    Since no two banks have the same <i>code_bank</i> or <i>name</i>, either property can be chosen
+    as the primary key of the entity <TT>Bank</TT>.
+    Both can be considered as valid <b>candidate keys</b>.
+    </div>
+
+  <li> Would you consider {<i>code_bank</i>, <i>name</i>} as a valid candidate key for the entity
+    <TT>Bank</TT>? Justify your answer
+    [<a href="#" onclick="showHideSolution('banking-system-pkno', 'banking-system-pkno-link');return false;"><span id="banking-system-pkno-link">See solution</span></a>].
+    <div id ="banking-system-pkno" style="display:none;" class="reltables">
+    The answer is <b>no</b>. While there aren't any two banks that have the same value for
+     {<i>code_bank</i>, <i>name</i>}, two subsets ({<i>code_bank</i>} and {<i>name</i>}) are candidate keys.
+    </div>
+
+    <li> Would you consider {<i>code_bank</i>, <i>name</i>} as a valid superkey for the entity
+      <TT>Bank</TT>? Justify your answer
+      [<a href="#" onclick="showHideSolution('banking-system-pkyes', 'banking-system-pkyes-link');return false;"><span id="banking-system-pkyes-link">See solution</span></a>].
+      <div id ="banking-system-pkyes" style="display:none;" class="reltables">
+      The answer is <b>yes</b>. A superkey is a set of properties that identify uniquely an entity, without any
+      additional constraint.
+      </div>
+    <li> Complete the diagram above by adding the cardinalities to the relations.
+      Justify your choices when any ambiguity might arise
+      [<a href="#" onclick="showHideSolution('banking-system-rels', 'banking-system-rels-link');return false;"><span id="banking-system-rels-link">See solution</span></a>].
+        <div id ="banking-system-rels" style="display:none;">
+        <img src="./figs/banking-system-rels.png" alt="banking-system-er" class="body-image" style="width:85%;">
+        </div>
+    <li> Translate the ER diagram into a collection of relational tables. Make sure that the tables are in BCNF
+    [<a href="#" onclick="showHideSolution('banking-system-rtables', 'banking-system-rtables-link');return false;"><span id="banking-system-rtables-link">See solution</span></a>].
+    <div id ="banking-system-rtables" style="display:none;" class="reltables">
+The only thing to pay attention to is the property <i>address</i>, that is multi-valued.
+<pre>
+Bank     (<u>code_bank</u>, name, street_number, street_name, postal_code)
+Branch   (<u>branch_id</u>, street_number, street_name, postal_code, code_bank)
+Account  (<u>acct_nbr</u>, acct_type, balance, branch_id, ssn)
+Loan     (<u>loan_nbr</u>, loan_type, amount, branch_id, ssn)
+Customer (<u>ssn</u>, first_name, last_name, telephone, street_number,
+          street_name, postal_code)
+Address  (<u>postal_code</u>, city, country)
+</pre>
+</div>
+
+<li> Write the following queries in SQL:
+    <ol class="queryitem">
+      <li class="queryitem"> Get all the data (including the full address) on the customers that have an account
+        with a negative balance
+        [<a href="#" onclick="showHideSolution('banking-system-q1', 'banking-system-q1-link');return false;"><span id="banking-system-q1-link">See solution</span></a>].
+        <div id="banking-system-q1" style="display:none;">
+          <pre>
+          <code>
+SELECT a.nickname, temp.country, temp.nbFollowers
+FROM UserAccount a,
+     (SELECT nickname_dst, country, count(*) as nbFollowers
+      FROM UserAccount, Relationship
+      WHERE nickname = nickname_src AND type='follower'
+      GROUP BY nickname_dst, country
+      ORDER BY nbFollowers DESC) temp
+WHERE temp.nickname_dst=a.nickname
+ORDER BY a.nickname
+          </code>
+          </pre>
+        </div>
+      <li class="queryitem"> Get the SSN of all customers that have no loan at the 'Bank of America'
+        [<a href="#" onclick="showHideSolution('banking-system-q2', 'banking-system-q2-link');return false;"><span id="banking-system-q2-link">See solution</span></a>].
+        <div id="banking-system-q2" style="display:none;">
+          <pre>
+          <code>
+SELECT first_name, last_name
+FROM UserAccount
+WHERE nickname in
+  (
+    SELECT distinct u.nickname
+    FROM Post p, Tag t, UserAccount u
+    WHERE p.post_id=t.post_id AND p.nickname='john_smith'
+          AND t.nickname=u.nickname
+  )
+          </code>
+          </pre>
+        </div>
+      <li class="queryitem"> Get the name of the bank that has the most branches
+        [<a href="#" onclick="showHideSolution('banking-system-q3', 'banking-system-q3-link');return false;"><span id="banking-system-q3-link">See solution</span></a>].
+        <div id="banking-system-q3" style="display:none;">
+          <pre>
+          <code>
+SELECT u.nickname, u.first_name, u.last_name
+FROM UserAccount u,
+     (
+        (SELECT nickname_dst as nickname
+         FROM Relationship
+         WHERE nickname_src='john_smith' AND type='friendship')
+
+         INTERSECT
+
+         (SELECT nickname_dst as nickname
+          FROM Relationship
+          WHERE nickname_src='lara_hughes' AND type='friendship')
+      ) temp
+WHERE u.nickname=temp.nickname
+          </code>
+          </pre>
+        </div>
+      <li class="queryitem"> Get the SSN of all customers having an account in more than one bank
+        [<a href="#" onclick="showHideSolution('banking-system-q4', 'banking-system-q4-link');return false;"><span id="banking-system-q4-link">See solution</span></a>].
+        <div id="banking-system-q4" style="display:none;">
+          <pre>
+          <code>
+SELECT u.nickname, u.first_name, u.last_name, temp.nbFollowers
+FROM UserAccount u,
+     (SELECT nickname_dst as nickname, count(*) as nbFollowers
+      FROM Relationship r
+      WHERE r.type='follower'
+      GROUP BY r.nickname_dst) temp
+WHERE u.nickname = temp.nickname
+ORDER BY nbFollowers DESC
+          </code>
+          </pre>
+        </div>
+    </ol>
+
+
+</ol>
+
+</body>
 </html>
