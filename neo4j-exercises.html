@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <title>Graph Model Exercises</title>
+    <link rel="stylesheet" type="text/css" href="./styles/exercises.css">
+
+    <link rel="stylesheet" href="./styles-hjs/default.css">
+    <script src="./scripts/highlight.pack.js"></script>
+
+    <script>hljs.initHighlightingOnLoad();</script>
+    <script>
+      function showHideSolution(elem, elemLink) {
+        state = document.getElementById(elem).style.display;
+        if (state == "none") {
+        	document.getElementById(elem).style.display='block';
+          document.getElementById(elemLink).innerHTML='Hide solution'
+        }
+        else {
+          document.getElementById(elem).style.display='none';
+          document.getElementById(elemLink).innerHTML='See solution'
+        }
+
+      }
+    </script>
+  </head>
+  <body>
+
+    <img src="./figs/cs-logo.png" alt="cs-logo" class="logo">
+
+    <h1>Exercises on the Graph Data Model</h1>
+
+    <h2>Modeling the database of a driving school</h2>
+
+    We want to design the database of a driving school in Île-de-France that has several branches across the region.
+    The school needs to store personal data about each customer, as well as the branch where the customer is enrolled.
+
+    <br>In order to get a driver's license, a customer must take an exam at any branch of the school.
+    If s/he fails the exam, s/he can take the exam again any time after a week.
+    If s/he passes the exam, s/he is given a driver license with a unique license number; the license is defined by a category (that
+    limits the types of vehicles that the owner can drive) and has an expiry date.
+
+    <h3> Questions </h3>
+    <ol type="a">
+      <li> Model the database for the driving school in Neo4j
+        [<a href="#" onclick="showHideSolution('driving-school-neo4j', 'driving-school-neo4j-link');return false;"><span id="driving-school-neo4j-link">See solution</span></a>].
+
+      <div id="driving-school-neo4j" style="display:none;" class="reltables">
+      <img src="./figs/driving-school-graph.png" alt="driving-school-graph" class="body-image" style="width:40%;">
+      <ul>
+      <li> The nodes with label <TT>Customer</TT> have the following properties:
+        <ul>
+          <li> <i>first_name</i>, <i>last_name</i>, <i>phone_number</i>, <i>birth_date</i>.
+        </ul>
+      <li> The nodes with label <TT>Address</TT> have the following properties:
+        <ul>
+          <li> <i>street_number</i>, <i>street_name</i>, <i>department</i>, <i>city</i> and <i>postal_code</i>.
+        </ul>
+      <li> The nodes with label <TT>License</TT> have the following properties:
+        <ul>
+          <li> <i>license_number</i>, <i>category</i>, <i>expiry_date</i>.
+        </ul>
+        <li> The nodes with label <TT>Branch</TT> have the following properties:
+          <ul>
+            <li> <i>branch_name</i>.
+          </ul>
+          <li> The nodes with label <TT>Exam</TT> have the following properties:
+            <ul>
+              <li> <i>outcome</i>, <i>date_exam</i>.
+            </ul>
+      </ul>
+    </div>
+
+    <li>Write a query in Cypher to get the first and the last name of all customers with a category B driver license
+      [<a href="#" onclick="showHideSolution('driving-school-q1', 'driving-school-q1-link');return false;"><span id="driving-school-q1-link">See solution</span></a>].
+      <div id="driving-school-q1" style="display:none;">
+        <pre>
+        <code>
+MATCH (c:Customer)-[:owns]->(License {category:"B"})
+RETURN c.first_name, c.last_name;
+        </code>
+        </pre>
+      </div>
+
+      <li>Write a query in Cypher to get the name of the branch that has the highest number of exam failures
+        [<a href="#" onclick="showHideSolution('driving-school-q2', 'driving-school-q2-link');return false;"><span id="driving-school-q2-link">See solution</span></a>].
+        <div id="driving-school-q2" style="display:none;">
+          <pre>
+          <code>
+MATCH (b:Branch)<-[:held_at]-(e:Exam {outcome:"failure"})
+RETURN b.branch_name, COUNT(e) as nbFailures
+ORDER BY nbFailures DESC
+LIMIT 1
+          </code>
+          </pre>
+        </div>
+
+        <li>Write a query in Cypher to rank the cities in descending order by the number of exam successes of their residents
+          [<a href="#" onclick="showHideSolution('driving-school-q3', 'driving-school-q3-link');return false;"><span id="driving-school-q3-link">See solution</span></a>].
+          <div id="driving-school-q3" style="display:none;">
+            <pre>
+            <code>
+MATCH (a:Address)<-[:lives]-(c:Customer)-[:takes]->(e:Exam {outcome:"success"})
+RETURN a.city, a.postal_code, count(c) as nbSuccesses
+ORDER BY nbSuccesses DESC
+            </code>
+            </pre>
+
+          </div>
+
+          <li>Write a query in Cypher to get the first name and surname of the customers who failed an exam more than once
+            [<a href="#" onclick="showHideSolution('driving-school-q4', 'driving-school-q4-link');return false;"><span id="driving-school-q4-link">See solution</span></a>].
+            <div id="driving-school-q4" style="display:none;">
+              <pre>
+              <code>
+  MATCH (c:Customer)-[:takes]->(e:Exam {outcome:"failure"})
+  WITH c, count(e) as nbFailures
+  WHERE nbFailures > 1
+  RETURN c.first_name, c.last_name;
+              </code>
+              </pre>
+            </div>
+        </ol>
+
+        <h2>Modeling the database of a social network platform</h2>
+
+        A social network platform wants to design a graph database
+        to store information on its users.
+        For each user, the platform keeps its nickname, that uniquely identifies
+        the user in the platform, first and family name,
+        geographic location (city and country) and email address;
+        the user can register as many email addresses as s/he wishes.
+        Any user can share content on the platform; each post is characterized by its content,
+        date, time and, when available, the geolocation (latitude, longitude).
+        Optionally, users can tag one or more friends in their posts.
+        <p>
+        Two users are linked by a friendship relationship if both agree on befriending
+        each other; a user can also follow another user without necessarily befriending her.
+        For any type of relationship (friendship or follower), the platform registers
+        the date when the relationship is established.
+        </p>
+
+        <h3> Questions </h3>
+
+        <ol type="a">
+          <li> Model the database for the social network platform in Neo4j.
+            [<a href="#" onclick="showHideSolution('social-network-solution', 'social-network-solution-link');return false;"><span id="social-network-solution-link">See solution</span></a>].
+
+          <div id="social-network-solution" style="display:none;" class="reltables">
+          <img src="./figs/social-network-platform-graph.png" alt="social-network-platform-graph" class="body-image" style="width:40%;">
+          <ul>
+            <li> The nodes with label <TT>User</TT> have the following properties:
+              <ul>
+                <li> <i>nickname</i>, <i>first_name</i>, <i>last_name</i>.
+              </ul>
+              <li> The nodes with label <TT>Post</TT> have the following properties:
+                <ul>
+                  <li> <i>content</i>, <i>date</i>, <i>time</i>, <i>lat</i>, <i>long</i>.
+                </ul>
+                <li> The nodes with label <TT>Email</TT> have the following properties:
+                  <ul>
+                    <li> <i>address</i>.
+                  </ul>
+                  <li> The nodes with label <TT>Address</TT> have the following properties:
+                    <ul>
+                      <li> <i>city</i>, <i>country</i>.
+                    </ul>
+          </ul>
+          The relationships of type <i>friend_of</i> and <i>follower</i> have both a property <i>date</i>.
+          </div>
+          <li> Write a query in Neo4j that for each user, gets the number of followers by country. Rank the countries by the number of followers in descending order
+            [<a href="#" onclick="showHideSolution('social-network-q1', 'social-network-q1-link');return false;"><span id="social-network-q1-link">See solution</span></a>].
+            <div id="social-network-q1" style="display:none;">
+              <pre>
+              <code>
+    MATCH (a:Address)<-[:lives]-(u:User)-[:follows]->(v:User)
+    RETURN v.nickname, a.country, count(u) as nbFollowers
+    ORDER BY v.nickname ASC, nbFollowers DESC;
+                </code>
+              </pre>
+            </div>
+          <li> Write a query in Neo4j that gets the first and family name of the users tagged by 'john_smith'
+            [<a href="#" onclick="showHideSolution('social-network-q2', 'social-network-q2-link');return false;"><span id="social-network-q2-link">See solution</span></a>].
+            <div id="social-network-q2" style="display:none;">
+              <pre>
+              <code>
+MATCH (u:User {nickname:"john_smith"})-[:publishes]->(p:Post)<-[:tagged_in]-(u:User)
+WITH DISTINCT u
+RETURN u.first_name, u.last_name
+              </code>
+              </pre>
+            </div>
+            <li> Write a  query in Neo4j to get the nickname, first and last name of the common friends of 'john_smith' and 'lara_hughes'
+              [<a href="#" onclick="showHideSolution('social-network-q3', 'social-network-q3-link');return false;"><span id="social-network-q3-link">See solution</span></a>].
+              <div id="social-network-q3" style="display:none;">
+                <pre>
+                <code>
+MATCH (j:User {nickname:"john_smith"})-[:friend_of]->(u:User)<-[:friend_of]-(l:User {nickname:"lara_hughes"})
+RETURN u.nickname, u.first_name, u.last_name
+                </code>
+                </pre>
+            <li> Write a query in Neo4j to rank the users by the number of their followers. The user with the most followers must appear at the top of the list
+              [<a href="#" onclick="showHideSolution('social-network-q4', 'social-network-q4-link');return false;"><span id="social-network-q4-link">See solution</span></a>].
+                  <div id="social-network-q4" style="display:none;">
+                    <pre>
+                    <code>
+MATCH (f:User)-[:follows]->(u:User)
+RETURN u.nickname, count(f) as nbFollowers
+ORDER BY nbFollowers DESC
+                    </code>
+                    </pre>
+                  </div>
+        </ol>
+
+        <h2>Modeling the database of the banking system</h2>
+
+        The following figure shows the ER diagram modeling the database of a banking system.
+
+        <img src="./figs/banking-system-er.png" alt="banking-system-er" class="body-image" style="width:70%;">
+
+        Each bank is identified by a unique code and name, and has one or several branches.
+        A branch is responsible of opening accounts and granting loans to customers.
+        Each account is identified by a number (<i>acct_nbr</i>) and is either
+        a checking or savings account (property <i>acct_type</i>).
+        Each customer is identified by its social security number (<i>ssn</i>);
+        a customer can be granted several loans and open as many accounts as s/he wishes.
+
+        <h3>Questions</h3>
+        <ol type="a">
+        <li> Model this database in Neo4j
+          [<a href="#" onclick="showHideSolution('banking-system-model', 'banking-system-model-link');return false;"><span id="banking-system-model-link">See solution</span></a>].
+          <div id ="banking-system-model" style="display:none;" class="reltables">
+          <img src="./figs/banking-system.png" alt="banking-system" class="body-image" style="width:40%;"/>
+          <ul display="inline">
+            <li> The nodes with label <TT>Customer</TT> have the following properties:
+              <ul>
+                <li> <i>ssn</i>, <i>first_name</i>, <i>last_name</i>, <i>telephone</i>.
+              </ul>
+              <li> The nodes with label <TT>Bank</TT> have the following properties:
+                <ul>
+                  <li> <i>code_bank</i>, <i>name</i>.
+                </ul>
+              <li> The nodes with label <TT>Account</TT> have the following properties:
+                <ul>
+                  <li> <i>acct_number</i>, <i>acct_type</i>, <i>balance</i>.
+                </ul>
+                <li> The nodes with label <TT>Loan</TT> have the following properties:
+                  <ul>
+                    <li> <i>loan_nbr</i>, <i>loan_type</i>, <i>amount</i>.
+                  </ul>
+                  <li> The nodes with label <TT>Address</TT> have the following properties:
+                    <ul>
+                      <li> <i>street_number</i>, <i>street_name</i>, <i>department</i>, <i>city</i> and <i>postal_code</i>.
+                    </ul>
+              The nodes with label <TT>Branch</TT> have a property <i>branch_id</i>.
+          </ul>
+          </div>
+
+          <li> Write a Cypher query to get all the data (including the full address) on the customers that have a checking account
+              with a negative balance
+              [<a href="#" onclick="showHideSolution('banking-system-q1', 'banking-system-q1-link');return false;"><span id="banking-system-q1-link">See solution</span></a>].
+              <div id="banking-system-q1" style="display:none;">
+                <pre>
+                <code>
+    MATCH (c:Customer)-[:owns]->(acc:Account {acct_type:"checking"})
+    WHERE acc.balance < 0
+    RETURN c
+                </code>
+                </pre>
+              </div>
+
+          <li> Write a Cypher query to get the SSN of all customers that have no loan at the 'Bank of America'
+              [<a href="#" onclick="showHideSolution('banking-system-q2', 'banking-system-q2-link');return false;"><span id="banking-system-q2-link">See solution</span></a>].
+              <div id="banking-system-q2" style="display:none;">
+              <pre>
+              <code>
+MATCH (c:Customer)-[:is_granted]->(l:Loan)<-[:grants]-(br:Branch)<-[:has]-(ba:Bank {name:"Bank of America"})
+WITH collect(distinct c.ssn) as ba_customers
+MATCH (c:Customer)
+WHERE none (x in ba_customers where x=c.ssn)
+RETURN c.ssn
+              </code>
+              </pre>
+          </div>
+          <li> Write a Cypher query to get the name of the bank that has the most branches
+            [<a href="#" onclick="showHideSolution('banking-system-q3', 'banking-system-q3-link');return false;"><span id="banking-system-q3-link">See solution</span></a>].
+            <div id="banking-system-q3" style="display:none;">
+              <pre>
+              <code>
+MATCH (ba:Bank)-[:has]->(br:Branch)
+RETURN ba.name, count(br) as nbBranches
+ORDER BY nbBranches DESC
+LIMIT 1
+              </code>
+              </pre>
+            </div>
+          <li> Write a Cypher query to get the SSN of all customers having an account in more than one bank
+            [<a href="#" onclick="showHideSolution('banking-system-q4', 'banking-system-q4-link');return false;"><span id="banking-system-q4-link">See solution</span></a>].
+            <div id="banking-system-q4" style="display:none;">
+              <pre>
+              <code>
+MATCH (c:Customer)-[:owns]->(acc:Account)<-[:manages]-(br:Branch)<-[:has]-(ba:Bank)
+WITH distinct c.ssn as ssn, ba.name as name
+WITH ssn, count(name) AS nbBanks
+WHERE nbBanks > 1
+RETURN ssn
+              </code>
+              </pre>
+            </div>
+    </ol>
+
+
+</body>
+</html>
