@@ -78,6 +78,7 @@ Exam          (<u>code_customer</u>, <u>branch_name</u>, <u>date_exam</u>, outco
            in this functional dependency are non-prime.
           </p>
           <p> The solution consists in creating a new table <TT>Address</TT>.
+            For simplicity, gere we assume that the postal code identifies a city (which is not always true).
           </p>
 <pre>
 Customer      (<u>code_customer</u>, first_name, last_name, street_number,
@@ -109,10 +110,10 @@ WHERE c.code_customer = d.code_customer AND d.category='B'
               <div id="driving-school-q2" style="display:none;">
                 <pre>
                 <code>
-SELECT b.branch_name, count(*) as nbFailures
-FROM Branch b, Exam e
-WHERE b.branch_name = e.branch_name AND e.outcome='failure'
-GROUP BY b.branch_name
+SELECT e.branch_name, count(*) as nbFailures
+FROM Exam e
+WHERE e.outcome='failure'
+GROUP BY e.branch_name
 ORDER BY nbFailures DESC
 LIMIT 1
                 </code>
@@ -325,7 +326,8 @@ a customer can be granted several loans and open as many accounts as s/he wishes
     <li> Translate the ER diagram into a collection of relational tables. Make sure that the tables are in BCNF
     [<a href="#" onclick="showHideSolution('banking-system-rtables', 'banking-system-rtables-link');return false;"><span id="banking-system-rtables-link">See solution</span></a>].
     <div id ="banking-system-rtables" style="display:none;" class="reltables">
-The only thing to pay attention to is the property <i>address</i>, that is multi-valued.
+We have to pay attention to the property <i>address</i>, that is multi-valued.
+Again, we assume that the postal code uniquely identifies a city (not always true).
 <pre>
 Bank     (<u>code_bank</u>, name, street_number, street_name, postal_code)
 Branch   (<u>branch_id</u>, street_number, street_name, postal_code, code_bank)
@@ -476,4 +478,7 @@ StudentCourse (<u>stud_id</u>, <u>course</u>)
 </ol>
 
 </body>
+
+<h2>Acknowledgements</h2>
+Thanks to Abderrahim Mehdaoui for suggesting improvements and corrections.
 </html>
