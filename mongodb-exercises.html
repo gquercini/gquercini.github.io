@@ -231,6 +231,15 @@ db.users.aggregate({$match:{nickname:{$in:['lara_hughes', 'john_smith']}}},
                    {$project: {"_id.nickname":1, "_id.first_name":1, "_id.last_name":1}});
             </code>
             </pre>
+Another possible solution is as follows:
+
+<pre>
+<code>
+db.users.aggregate({$match : {"related_to.type" : {$eq: "friend"}, "related_to.nickname":{$all:['lara_hughes', 'john_smith']}}},
+                   {$project:{nickname:1}});
+</code>
+</pre>
+
         <li> Write a MongoDB query to rank the users by the number of their followers. The user with the most followers must appear at the top of the list
           [<a href="#" onclick="showHideSolution('social-network-q4', 'social-network-q4-link');return false;"><span id="social-network-q4-link">See solution</span></a>].
               <div id="social-network-q4" style="display:none;">
