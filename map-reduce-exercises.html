@@ -95,9 +95,6 @@ def reducer(self, year, temps):
             <li> Transform \(temps\) into a RDD where each element is a tuple \((year, [temp])\).
             <li> Transform \(temps\) into a RDD where each element is a tuple \((year, temperatures)\), where \(temperatures\) is the list
               of temperatures in the given \(year\).
-            <li> Transform \(temps\) into a RDD where each element is a tuple \((year, sum(temperatures), len(temperatures))\), where \(temperatures\) is the list
-                of temperatures in the given \(year\), \(sum(temperatures)\) and \(len(temperatures)\) return the sum of the elements in the list and the length of the list
-                respectively.
             <li> Transform \(temps\) into a RDD where each element is a tuple \((year, sum(temperatures)/len(temperatures))\).
           </ul>
           <br>
@@ -109,8 +106,7 @@ def avg_temperature(filename):
                     .map(lambda line: line.split(","))\
                     .map(lambda triple: (triple[0], [float(triple[2])]))\
                     .reduceByKey(lambda x, y: x+y)\
-                    .map(lambda t: (t[0], sum(t[1]), len(t[1])))\
-                    .map(lambda t: (t[0], t[1]/t[2]))
+                    .map(lambda t: (t[0], sum(t[1])/len(t[1])))
     return temperatures
           </pre>
         </code>
