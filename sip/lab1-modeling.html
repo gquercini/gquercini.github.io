@@ -1,0 +1,315 @@
+<!--
+SOFTWARE: MANAGE TWO ROLES: ORGANIZER AND PARTICIPANT (with different login and passwords)
+AUTHENTICATION ALSO !
+
+https://github.com/jkordas/client-server-authentication-demo/blob/master/src/database.py
+
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>SIP &ndash; Lab Assignment 1</title>
+  <link rel="stylesheet" type="text/css" href="./styles/exercises.css">
+
+  <link rel="stylesheet" href="./styles/prism.css">
+  <script src="./scripts/prism.js"></script>
+
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+  <script>hljs.initHighlightingOnLoad();</script>
+  <script> function
+      showHideSolution(elem, elemLink, show, hide) {
+      state =
+        document.getElementById(elem).style.display; if (state == "none") {
+          document.getElementById(elem).style.display = 'block';
+          document.getElementById(elemLink).innerHTML = hide
+        } else {
+        document.getElementById(elem).style.display = 'none';
+        document.getElementById(elemLink).innerHTML = show
+      }
+
+    } </script>
+</head>
+
+<body>
+
+  <h1>Information Systems and Programming</h1>
+
+  <img src="./figs/cs-logo.png" alt="cs-logo" class="logo">
+
+  <h1>Lab Assignment 1 - Data Modeling</h1>
+
+
+  <h2>Modeling the database of a social network platform</h2>
+
+A social network platform wants to design a relational database
+to store information on its users.
+For each user, the platform keeps its nickname, that uniquely identifies
+the user in the platform, first and family name,
+geographic location (city and country) and email address;
+the user can register as many email addresses as s/he wishes.
+Any user can share content on the platform; each post is characterized by its content,
+date, time and, when available, the geolocation (latitude, longitude).
+Optionally, users can tag one or more friends in their posts.
+<p>
+Two users are linked by a friendship relationship if both agree on befriending
+each other; a user can also follow another user without necessarily befriending her.
+For any type of relationship (friendship or follower), the platform registers
+the date when the relationship is established.
+</p>
+
+<h3> Questions </h3>
+
+<ol type="a">
+  <li> Draw the ER diagram modeling this scenario
+    [<a href="#" onclick="showHideSolution('social-network-solution', 'social-network-solution-link', 'See solution', 'Hide solution');return false;"><span id="social-network-solution-link">See solution</span></a>].
+
+  <div id="social-network-solution" style="display:none;">
+    The attributes in yellow are the <b>primary keys</b>.
+    <img src="./figs/social-network-solution.png" alt="social-network-er" class="body-image" style="width:70%;">
+  </div>
+
+  <li> Translate the ER diagram into a collection of relational tables. In each table underline the primary key and 
+    specify the foreign keys.
+    [<a href="#" onclick="showHideSolution('social-network-pd', 'social-network-pd-link', 'See solution', 'Hide solution');return false;"><span id="social-network-pd-link">See solution</span></a>].
+
+  <div id="social-network-pd"  style="display:none;" class="reltables">
+<pre>
+UserAccount  (<u>nickname</u>, first_name, last_name, city, country)
+Post         (<u>post_id</u>, content, date, time, lat, long, nickname)
+EmailAddress (<u>email_address</u>, nickname)
+Relationship (<u>nickname_src</u>, <u>nickname_dst</u>, type, date)
+Tag          (<u>post_id</u>, <u>nickname</u>)
+</pre>
+Foreign keys:
+<ul>
+  <li> <TT>Post(nickname)</TT> foreign key to <TT>UserAccount(nickname)</TT>.
+  <li> <TT>EmailAddress(nickname)</TT> foreign key to <TT>EmailAddress(nickname)</TT>.
+  <li> <TT>Relationship(nickname_src)</TT> foreign key to <TT>UserAccount(nickname)</TT>.
+  <li> <TT>Relationship(nickname_dst)</TT> foreign key to <TT>UserAccount(nickname)</TT>.
+  <li> <TT>Tag(post_id)</TT> foreign key to <TT>Post(post_id)</TT>.  
+  <li> <TT>Tag(nickname)</TT> foreign key to <TT>UserAccount(nickname)</TT>.    
+</ul>
+</div>
+
+  <li> Normalize the tables up to the 3rd Normal Form
+    [<a href="#" onclick="showHideSolution('social-network-pdnorm', 'social-network-pdnorm-link', 'See solution', 'Hide solution');return false;"><span id="social-network-pdnorm-link">See solution</span></a>].
+    <div id="social-network-pdnorm"  style="display:none;" class="reltables">
+    The tables are already in 3rd normal form.
+    </div>
+
+    </ol>
+</ol>
+
+<h2>Modeling the database of the banking system</h2>
+
+The following figure shows the ER diagram modeling the database of a banking system.
+
+<img src="./figs/banking-system-er.png" alt="banking-system-er" class="body-image" style="width:70%;">
+
+Each bank is identified by a unique code and name, and has one or several branches.
+A branch is responsible of opening accounts and granting loans to customers.
+Each account is identified by a number (<i>acct_nbr</i>) and is either
+a checking or savings account (property <i>acct_type</i>).
+Each customer is identified by its social security number (<i>ssn</i>);
+a customer can be granted several loans and open as many accounts as s/he wishes.
+
+<h3>Questions</h3>
+
+<ol type="a">
+  <li> Which primary key would you choose for the entity <TT>Bank</TT>? Justify the answer
+    [<a href="#" onclick="showHideSolution('banking-system-pk', 'banking-system-pk-link', 'See solution', 'Hide solution');return false;"><span id="banking-system-pk-link">See solution</span></a>].
+    <div id ="banking-system-pk" style="display:none;" class="reltables">
+    Since no two banks have the same <i>code_bank</i> or <i>name</i>, either property can be chosen
+    as the primary key of the entity <TT>Bank</TT>.
+    Both can be considered as valid <b>candidate keys</b>.
+    </div>
+
+  <li> Would you consider {<i>code_bank</i>, <i>name</i>} as a valid candidate key for the entity
+    <TT>Bank</TT>? Justify your answer
+    [<a href="#" onclick="showHideSolution('banking-system-pkno', 'banking-system-pkno-link', 'See solution', 'Hide solution');return false;"><span id="banking-system-pkno-link">See solution</span></a>].
+    <div id ="banking-system-pkno" style="display:none;" class="reltables">
+    The answer is <b>no</b>. While there aren't any two banks that have the same value for
+     {<i>code_bank</i>, <i>name</i>}, two subsets ({<i>code_bank</i>} and {<i>name</i>}) are candidate keys.
+    </div>
+
+    <li> Complete the diagram above by adding the cardinalities to the relations.
+      Justify your choices when any ambiguity might arise
+      [<a href="#" onclick="showHideSolution('banking-system-rels', 'banking-system-rels-link', 'See solution', 'Hide solution');return false;"><span id="banking-system-rels-link">See solution</span></a>].
+        <div id ="banking-system-rels" style="display:none;">
+        <img src="./figs/banking-system-rels.png" alt="banking-system-er" class="body-image" style="width:85%;">
+        </div>
+    <li> Translate the ER diagram into a collection of relational tables. Make sure that the tables are in 3rd normal form
+    [<a href="#" onclick="showHideSolution('banking-system-rtables', 'banking-system-rtables-link', 'See solution', 'Hide solution');return false;"><span id="banking-system-rtables-link">See solution</span></a>].
+    <div id ="banking-system-rtables" style="display:none;" class="reltables">
+We have to pay attention to the property <i>address</i>, that is multi-valued.
+Here for simplicity, we assume that the postal code uniquely identifies a city (not always true).
+<pre>
+Bank     (<u>code_bank</u>, name, street_number, street_name, postal_code)
+Branch   (<u>branch_id</u>, street_number, street_name, postal_code, code_bank)
+Account  (<u>acct_nbr</u>, acct_type, balance, branch_id, ssn)
+Loan     (<u>loan_nbr</u>, loan_type, amount, branch_id, ssn)
+Customer (<u>ssn</u>, first_name, last_name, telephone, street_number,
+          street_name, postal_code)
+Address  (<u>postal_code</u>, city, country)
+</pre>
+</div>
+
+
+    </ol>
+</ol>
+
+
+
+<h2>Normalization</h2>
+
+<ol type="a">
+<li> Consider the following table <TT>Teacher</TT>.
+<div class="reltables">
+<pre>
+Teacher (teacher_id, subject, teacher_age)
+</pre>
+</div>
+where {<i>teacher_id</i>, <i>subject</i>} is the only candidate key and
+teacher_age is a non-prime attribute (<i>subject</i> is the name of the subject taught by the teacher).
+Which normal form does the table <TT>Teacher</TT> satisfy? How can you obtain
+a database in 3rd normal form?
+[<a href="#" onclick="showHideSolution('teacher-norm', 'teacher-norm-link', 'See solution', 'Hide solution');return false;"><span id="teacher-norm-link">See solution</span></a>].
+<div id="teacher-norm" class="reltables" style="display:none;">
+The table is in 1NF.
+2NF is violated because of the dependency <i>teacher_id</i> &rarr; <i>teacher_age</i>;
+indeed a non-prime attribute depends partially on a candidate key.
+The solution to having a database in BNCF is to create two tables.
+<pre>
+Teacher        (<u>teacher_id</u>, teacher_age)
+TeacherSubject (<u>teacher_id</u>, <u>subject</u>)
+<pre>
+</div>
+<li> Consider the following table <TT>Employee</TT>.
+<div class="reltables">
+<pre>
+Employee (emp_id, emp_name, emp_salary, emp_dpt, dpt_budget)
+</pre>
+</div>
+where the only candidate key is {<i>emp_id</i>} and
+<i>emp_dpt</i> and <i>dpt_budget</i>
+are the employee department and
+the budget of the department respectively.
+Which normal form does the table <TT>Employee</TT> satisfy?
+How can you obtain a database in 3rd normal form?
+[<a href="#" onclick="showHideSolution('emp-norm', 'emp-norm-link', 'See solution', 'Hide solution');return false;"><span id="emp-norm-link">See solution</span></a>].
+<div id="emp-norm" class="reltables" style="display:none;">
+The table is in 2NF.
+3NF is violated because of the dependency <i>emp_dpt</i> &rarr; <i>dpt_budget</i>
+between two non-prime attributes.
+In order to have a database in 3rd normal form, we create the following tables:
+<pre>
+Employee        (<u>emp_id</u>, emp_name, emp_salary, emp_dpt)
+Department      (<u>dpt_id</u>, dpt_budget)
+<pre>
+</div>
+<li> Consider the following table <TT>Student</TT>.
+<div class="reltables">
+<pre>
+Student (stud_id, stud_ssn, course)
+</pre>
+</div>
+A student is either identified by her identifier (<i>stud_id</i>),
+or social security number (<i>stud_ssn</i>) and takes one or more courses.
+The only candidate keys are {<i>stud_id</i>, <i>course</i>} and
+{<i>stud_ssn</i>, <i>course</i>}.
+Which normal form does the table <TT>Student</TT> satisfy?
+How can you obtain a database in 3rd normal form?
+[<a href="#" onclick="showHideSolution('stud-norm', 'stud-norm-link', 'See solution', 'Hide solution');return false;"><span id="stud-norm-link">See solution</span></a>].
+<div id="stud-norm" class="reltables" style="display:none;">
+The table is already in 3NF.
+</div>
+</ol>
+
+<h2>Modeling the database of car dealership</h2>
+We want to design the database of a car dealership. 
+The dealership sells both new and used cars, 
+and it operates a service facility.
+The database should keep data about the cars (serial number, make, model, colour, whether it is new or used), 
+the salespeople (first and family name) and the 
+customers (first and family name, phone number, address). Also, the following business rules hold:
+<ul>
+  <li> A salesperson may sell many cars, but each car is sold by only one salesperson.
+    
+  <li> A customer may buy many cars, but each car is bought by only one customer.
+  <li> A salesperson writes a single invoice for each car s/he sells. 
+    The invoice is identified by a number and indicates the sale date and the price.
+  <li> A customer gets an invoice for each car s/he buys.
+</ul>
+When a customer takes one or more cars in for repair, one service ticket is written for each car. 
+The ticket is identified by a number and indicates the date on which the car is received from the customer, 
+as well as the date on which the car should be returned to the customer. 
+A car brought in for service can be worked on by many mechanics, and each mechanic may work on many cars.
+
+<h3> Questions </h3>
+
+<ol type="a">
+  <li> Draw the ER diagram modeling this scenario [<a href="#" onclick="showHideSolution('car-delearship-er', 'car-delearship-er-link', 'See solution', 'Hide solution');return false;"><span id="car-delearship-er-link">See solution</span></a>].
+    <div id ="car-delearship-er" style="display:none;" class="reltables">
+        <img src="./figs/car-dealership.png" alt="car-dealership" class="body-image" style="width:100%;">
+    </div>
+  <li> Translate the ER diagram into a collection of relational tables. In each table underline the primary key and specify 
+    the foreign keys
+    [<a href="#" onclick="showHideSolution('car-dealership-rel', 'car-dealership-rel-link', 'See solution', 'Hide solution');return false;"><span id="car-dealership-rel-link">See solution</span></a>].
+
+    <div id="car-dealership-rel"  style="display:none;" class="reltables">
+  <pre>
+  Car          (<u>serial_number</u>, make, model, colour, is_new, owner_id)
+  Customer     (<u>cust_id</u>, cust_first_name, cust_last_name, cust_phone)
+  Invoice      (<u>invoice_number</u>, date, price, car_serial_number, sp_id)
+  Salesperson  (<u>sp_id</u>, sp_first_name, sp_last_name)
+  Mechanic     (<u>mec_id</u>, mec_first_name, mec_last_name)
+  Ticket       (<u>ticket_number</u>, date_open, date_return, car_serial_number)
+  Repair       (<u>ticket_number</u>, <u>mec_id</u>)</pre>
+  <ul>
+    <li> Car(owner_id) foreign key to Customer(cust_id).
+    <li> Invoice(car_serial_number) foreign key to Car(serial_number).
+    <li> Invoice(sp_id) foreign key to Salesperson(sp_id).
+    <li> Ticket(car_serial_number) foreign key to Car(serial_number).
+    <li> Repair(ticket_number) foreign key to Ticket(ticket_number).
+    <li> Repair(mec_id) foreign key to Repair(mec_id).    
+  </ul>
+  </div>
+  <li> Let <TT>Car</TT> be the following table:
+
+    <div class="reltables">
+        <pre>
+Car(serial_number, make, model, colour, customer_id, 
+       customer_first_name, customer_last_name)</pre>
+    </div>
+    
+   where the only candidate key is {<TT>serial_number</TT>}. 
+   Knowing that a customer can own several cars, which normal form is this table 
+   and why?
+   [<a href="#" onclick="showHideSolution('car-dealership-nf', 'car-dealership-nf-link', 'See solution', 'Hide solution');return false;"><span id="car-dealership-nf-link">See solution</span></a>].
+    <div id="car-dealership-nf"  style="display:none;" class="reltables">
+      The table is in second normal form. 
+      All functional dependencies are relative to each candidate key.
+      Here there is only one candidate key, which is composed of one attributes, therefore all the prime attributes 
+      have a total dependency to the candidate key.
+      The table is not in 3rd normal form, because there are two functional dependencies 
+      <i>customer_id</i> &rarr; <i>customer_first_name</i> 
+      and <i>customer_id</i> &rarr; <i>customer_last_name</i> 
+      between prime attributes.
+  </div>
+  <li> How would you modify table <TT>Car</TT> to have it in 3rd normal form (if it is not already the case)?
+    [<a href="#" onclick="showHideSolution('car-dealership-nf3', 'car-dealership-nf3-link', 'See solution', 'Hide solution');return false;"><span id="car-dealership-nf3-link">See solution</span></a>].
+    <div id="car-dealership-nf3"  style="display:none;" class="reltables">
+      By simply splitting the table into two; One that only contains the attributes referring to cars, the other only containing
+      attributes referring to customers.
+  </div>
+
+
+</ol>
+
+</body>
+
+</html>
