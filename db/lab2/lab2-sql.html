@@ -1,0 +1,597 @@
+<!--
+SOFTWARE: MANAGE TWO ROLES: ORGANIZER AND PARTICIPANT (with different login and passwords)
+AUTHENTICATION ALSO !
+
+https://github.com/jkordas/client-server-authentication-demo/blob/master/src/database.py
+
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>Introduction to Databases &ndash; Lab Assignment 2</title>
+  <link rel="stylesheet" type="text/css" href="../../styles/exercises.css">
+
+  <link rel="stylesheet" href="../../styles/prism.css">
+  <script src="../../scripts/prism.js"></script>
+
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+  <script>hljs.initHighlightingOnLoad();</script>
+  <script> function
+      showHideSolution(elem, elemLink, show, hide) {
+      state =
+        document.getElementById(elem).style.display; if (state == "none") {
+          document.getElementById(elem).style.display = 'block';
+          document.getElementById(elemLink).innerHTML = hide
+        } else {
+        document.getElementById(elem).style.display = 'none';
+        document.getElementById(elemLink).innerHTML = show
+      }
+
+    } </script>
+</head>
+
+<body>
+
+  <h1>Introduction to Databases</h1>
+
+  <img src="./figs/cs-logo.png" alt="cs-logo" class="logo">
+
+  <h1>Lab Assignment 2 <br><br> Interacting with a MySQL Server</h1>
+
+  <h2>Introduction</h2>
+
+  <p>
+  <b>MySQL</b> is one of the most used relational database management systems to date.
+  Your goal in this lab assignment will be to learn how to interact with a MySQL server.
+  In particular, you will learn how to:
+  <ul>
+    <li> Create a user in MySQL and assign privileges to the user.
+    <li> Create a database and connect to it.
+    <li> Create tables in a database.
+    <li> Import data into a database.
+    <li> Query data with SQL.
+  </ul>
+  
+  <h3>Installing and Configuring MySQL</h3>
+
+  <p>MySQL comes with different editions and versions. 
+  The installation depends on the operating system on which your computer runs.</p>
+
+  <p><b>Instructions for Windows users </b> 
+    [<a href="#" onclick="showHideSolution('installation-windows', 'installation-windows-link', 'Click here', 'Hide');return false;"><span id="installation-windows-link">Click here</span></a>].
+
+    <div id="installation-windows" style="display:none;" class="reltables">
+        First check if you have the <i>Visual C++ Redistributable for Visual Studio 2015</i> package installed
+        in your computer. 
+        In case this package is <b>not</b> installed on your computer, click on
+        <a href="https://www.microsoft.com/en-US/download/details.aspx?id=48145" target="_blank">this link</a>, 
+        click on <i>Download</i> and select the file <i>vc_redist.x64.exe</i>, if you have a 64bit operating system,
+        or <i>vc_redist.x86.exe</i>, if you have a 32 bit operating system.
+        Download the selected file, run it and follow the instructions to install the package.
+      
+        <p>
+          Now you're ready to install the MySQL Community Server, that you can find 
+          by clicking on <a href="https://dev.mysql.com/downloads/mysql/" target="_blank">this link</a>.
+          Select the MySQL Installer for Windows (MSI) by clicking on the button <i>Go to Download Page</i>.
+          You will land on a page that gives you two possible files to download.
+          If you have a 32 bit operating system, download the first one (whose size is 18.5M); otherwise,
+          download the second one (whose size is 393.4M).
+        </p>
+      
+        <p>
+          When the download is complete, double click on the downloaded file.
+          Select the custom installation and install the following components:
+          <ul>
+            <li> <b>MySQL server 8.0.</b> Click on the + sign at the right of the label 
+              <i>MySQL servers</i> and at the right of the children labels until
+              you reach the leaf. The leaf contains a file. Move that file 
+              over to the right panel (<i>products/features to be 
+              installed</i>) by using the arrow between the two panels. 
+            <li> <b>MySQL Workbench.</b>
+              <li> <b>MySQL shell.</b>
+          </ul>
+          <p>Once the installation is over, you need to keep following the instructions 
+  to configure the MySQL server. 
+  <ul>
+    <li> In the window titled <i>High Availability</i>, select <b>Standalone MySQL Server</b>.
+    <li> In the window titled <i>Type and Networking</i>, do not change anything.
+    <li> In the window titled <i>Authentication method</i>, select <b>Legacy authentication</b>.
+    <li> In the window titled <i>Accounts and roles</i>, type in the password for the user <i>root</i>. 
+      The user <i>root</i> is the administrator of the MySQL server, please <b>do not forget your password</b>.
+    <li> In the window titled <i>Windows Service</i>, do not change anything.  
+    <li> In the window titled <i>Apply Configuration</i>, click on the button <i>Execute</i>.
+    <li> In the subsequent windows, just click on <i>Next</i>, until you reach the end of the configuration.
+    <li> MySQL Server is now installed and will be executed on your machine.
+  </ul>
+  </p>
+    </div> 
+  </p>
+
+  <p><b>Instructions for MacOS users </b> 
+    [<a href="#" onclick="showHideSolution('installation-macos', 'installation-macos-link', 'Click here', 'Hide');return false;"><span id="installation-macos-link">Click here</span></a>].
+
+    <div id="installation-macos" style="display:none;" class="reltables">
+        <p>
+          You can find the MySQL Community Server by clicking 
+          on <a href="https://dev.mysql.com/downloads/mysql/" target="_blank">this link</a>.
+          <ul class="warning">
+            <li class="warning"> If you use a version of MacOS <b>earlier than Mojave (10.14)</b>, you must 
+              download and install <b>MySQL server version 5.7.27</b> (Click on the link <i>Looking for previous GA versions?</i>).
+            </ul>
+          Select the DMG archive and download it.
+        </p>
+      
+        <p>
+          When the download is complete, double click on the downloaded file.
+          and follow the instructions.
+        </p>
+          <p>Once the installation is over, you need to keep following the instructions 
+  to configure the MySQL server. 
+  <ul>
+    <li> In the window titled <i>High Availability</i>, select <b>Standalone MySQL Server</b>.
+    <li> In the window titled <i>Type and Networking</i>, do not change anything.
+    <li> In the window titled <i>Authentication method</i>, select <b>Legacy authentication</b>.
+    <li> In the window titled <i>Accounts and roles</i>, type in the password for the user <i>root</i>. 
+      The user <i>root</i> is the administrator of the MySQL server, please <b>do not forget your password</b>.
+    <li> Click on <i>Next</i> without changing anything till you reach the conclusion of the installation.
+    <li> MySQL Server is now installed and will be executed on your machine.
+  </ul>
+  </p>
+  <p>
+    Now you need to install the <b>MySQL Workbench</b> that you can find by clicking on 
+    <a href="https://dev.mysql.com/downloads/workbench/">this link</a>.
+    <ul class="warning">
+        <li class="warning"> If you use a version of MacOS <b>earlier than Mojave (10.14)</b>, you must 
+          download and install <b>MySQL Workbench 6.3.10</b> (Click on the link <i>Looking for previous GA versions?</i>).
+    </ul>
+    Download the DMG archive, execute it and follow the instructions.
+  </p>
+  </div> 
+  </p>
+
+  <p><b>Instructions for Linux users </b> 
+    [<a href="#" onclick="showHideSolution('installation-linux', 'installation-linux-link', 'Click here', 'Hide');return false;"><span id="installation-linux-link">Click here</span></a>].
+
+    <div id="installation-linux" style="display:none;" class="reltables">
+      <p>In order to install the MySQL server, please read the guide that you can find at
+      <a href="https://dev.mysql.com/doc/refman/8.0/en/linux-installation.html" target="_blank">this link</a>.</p>
+
+      <p>In order to install the MySQL Workbench, 
+        click on <a href="https://dev.mysql.com/downloads/workbench/" target="_blank">this link</a>.</p>
+    </div>
+  </p>
+
+  <h3>Create a User</h3>
+
+  <p>
+    When you installed MySQL, you also created a user called <i>root</i>, that is the administrator of the 
+    database. Among her privileges, the administrator can create new users and assign them a certain set of 
+    privileges, or permissions, on the server.
+  </p>
+  <p>
+    Execute the MySQL Workbench. 
+    A window should open where a label with a text <i>Local instance 3306</i> should appear.
+    <ul class="raise">
+      <li class="raise"> If you do not see that label, ask help from your lab supervisor.
+    </ul>
+    Click twice on the label; type in the password of the user <i>root</i> and click <i>OK</i>.
+  </p>
+  <p>
+    In order to create a user:
+    <ul>
+      <li> Click on the label <i>Users and Privileges</i> on the left-side menu. 
+      <li> Click on the button <i>Add Account</i>.
+      <li> In the <i>Login</i> tab, type in the <i>login name</i> and the <i>password</i>.
+      <ul class="warning">
+        <li class="warning"> The field <i>Limit to Host Matching</i> lists all the computers from where 
+          the user can connect to the MySQL server instance. The <b>wildcard</b> % means "any computer".
+        </ul>
+      <li> Do not select any administrative roles for the new user.
+          <ul class="warning">
+              <li class="warning"> In information systems, the <b>principle of the least privilege</b> is applied.
+                A user is given <b>only</b> the privileges that are <b>strictly necessary</b>. Here, we want our new user
+                to be able to create a database and use it, which does not require any administrative privilege on the 
+                server.
+              </ul>
+      <li> In the tab <i>Schema Privileges</i>, select <i>Add Entry</i>.
+        <ul>
+          <li> Select <i>All Schema (%)</i> and click on <i>OK</i>.
+            <ul class="warning">
+                <li class="warning"> This means that we do not constrain the new user to only work on a specific database.
+            </ul>
+          <li> In the <b>Object Rights</b> panel, select SELECT, INSERT, UPDATE, DELETE.
+            <ul class="warning">
+                <li class="warning"> This allows the new user to execute CRUD operations on the tables of a database.
+            </ul>
+          <li> In the <b>DDL Rights</b> panel, select CREATE, ALTER, REFERENCES, INDEX, DROP.
+            <ul class="warning">
+                <li class="warning"> This allows the new user to apply selected DDL (Data Definition Language) 
+                  SQL commands that are used to define the database schema. 
+                  In other words, the user can create tables (CREATE), modify their definition (ALTER), 
+                  define foreign key constraints (REFERENCES), create indexes (INDEX) and delete tables (DROP).
+            </ul>
+        </ul>
+        <li> Click on the button <b>Apply</b> to finalize the creation of the user.
+    </ul>
+
+    Now, connect to the MySQL Server with the credentials of the new user.
+    <ul>
+      <li> Select <b>Database</b> &rarr; <b>Connect to Database</b>.
+      <li> In the field <b>Stored Connection</b> select <b>Local instance 3306</b>.
+      <li> In the field <b>Username</b>, specify the new user.   
+      <li> Click on the button <b>OK</b> and type in the password of the new user when prompted to.
+      </ul>
+      A window opens that you will use to type SQL queries to create databases and tables and insert and 
+      query data in the next exercises.
+      <ul class="warning">
+        <li class="warning"> In order to execute a query, simply write it and then click on the lightning 
+          bolt symbol (&#9889;).
+      </ul>
+      
+  </p>
+
+
+  <h2>Social Network Platform</h2>
+
+  <p>
+  We intend to create in MySQL a database for the social network platform for which we 
+  designed the logical model in the first lab assignment.
+  In order to see the definition of the tables in the database, click on 
+  <a href="../lab1/lab1-modeling.html#social-network-pd-item" target="_blank">this link</a> and 
+  click on <b>See solution</b>.
+  </p>
+
+<h3> Questions </h3>
+
+<ol type="a">
+  <li> Create a database named <i>sn_platform</i>
+    [<a href="#" onclick="showHideSolution('social-network-create-db', 'social-network-create-db-link', 'See solution', 'Hide solution');return false;"><span id="social-network-create-db-link">See solution</span></a>].
+
+  <div id="social-network-create-db" style="display:none;" class="reltables">
+<pre>
+<code>CREATE DATABASE sn_platform</code>
+</pre>
+</div> 
+<ul class="warning">
+  <li class="warning"> After executing the query, you should see the new database in the 
+    section SCHEMAS on the left side panel. If this is not the case, click on the refresh button right next
+    to the word SCHEMAS. 
+    <li class="warning"> Do not forget to execute the query USE sn_platform in order to connect to the newly 
+      created database.
+</ul>
+
+<li> Create all tables in the new database. For each table, specify the primary and foreign 
+  keys [<a href="#" onclick="showHideSolution('social-network-create-table', 'social-network-create-table-link', 'See solution', 'Hide solution');return false;"><span id="social-network-create-table-link">See solution</span></a>].
+<div id="social-network-create-table" style="display:none;" class="reltables">
+<pre>
+<code>CREATE TABLE UserAccount(nickname VARCHAR(100) PRIMARY KEY, 
+             first_name VARCHAR(100), last_name VARCHAR(100), 
+             city VARCHAR(100), country VARCHAR(100))
+
+CREATE TABLE Post(post_id INT PRIMARY KEY, 
+        content TEXT, date DATE, time TIME, 
+        latitude FLOAT, longitude FLOAT, nickname VARCHAR(100),
+        FOREIGN KEY(nickname) REFERENCES UserAccount(nickname))
+
+CREATE TABLE EmailAddress(email_address VARCHAR(100) PRIMARY KEY, 
+        nickname VARCHAR(100),
+        FOREIGN KEY(nickname) REFERENCES UserAccount(nickname))
+
+CREATE TABLE Relationship(nickname_src VARCHAR(100), nickname_dst VARCHAR(100), 
+        type VARCHAR(50), date DATE,
+        PRIMARY KEY(nickname_src, nickname_dst),
+        FOREIGN KEY(nickname_src) REFERENCES UserAccount(nickname),
+        FOREIGN KEY(nickname_dst) REFERENCES UserAccount(nickname))
+
+CREATE TABLE Tag(post_id INT, nickname VARCHAR(100),
+        PRIMARY KEY(post_id, nickname),
+        FOREIGN KEY(post_id) REFERENCES Post(post_id),
+        FOREIGN KEY(nickname) REFERENCES UserAccount(nickname))
+</code>
+</pre>
+</div> 
+
+    <ul class="warning">
+        <li class="warning"> For each column, you will have to specify its type. For a list of types 
+          allowed in MySQL, click on <a href="http://www.mysqltutorial.org/mysql-data-types.aspx" target="_blank">this link</a>.
+      </ul>
+      <li> Write the following queries in SQL:
+          <ol class="queryitem">
+            <li class="queryitem"> For each user, get the number of followers by country. Rank the countries by the number of
+              followers in descending order [<a href="#" onclick="showHideSolution('social-network-q1', 'social-network-q1-link', 'See solution', 'Hide solution');return false;"><span id="social-network-q1-link">See solution</span></a>].
+              <div id="social-network-q1" style="display:none;" class="reltables">
+                <pre>
+<code>SELECT a.nickname, temp.country, temp.nbFollowers
+FROM UserAccount a,
+      (SELECT nickname_dst, country, count(*) as nbFollowers
+      FROM UserAccount, Relationship
+      WHERE nickname = nickname_src AND type='follower'
+      GROUP BY nickname_dst, country
+      ORDER BY nbFollowers DESC) temp
+WHERE temp.nickname_dst=a.nickname
+ORDER BY a.nickname</code></pre>
+              </div>
+          <ul class="warning">
+            <li class="warning"> Click <a href="./data/social-network/results/query1.csv" target="_blank">here</a> to see the expected result.
+          </ul>
+            <li class="queryitem"> Get the first and family name of the users tagged by the user with nickname 'nick_CAMERON'
+              [<a href="#" onclick="showHideSolution('social-network-q2', 'social-network-q2-link', 'See solution', 'Hide solution');return false;"><span id="social-network-q2-link">See solution</span></a>].
+              <div id="social-network-q2" style="display:none;" class="reltables">
+                <pre>
+<code>SELECT first_name, last_name
+FROM UserAccount
+WHERE nickname in
+  (
+    SELECT distinct u.nickname
+    FROM Post p, Tag t, UserAccount u
+    WHERE p.post_id=t.post_id AND p.nickname='nick_CAMERON'
+          AND t.nickname=u.nickname
+  )</code></pre></div>
+
+  <ul class="warning">
+      <li class="warning"> Click <a href="./data/social-network/results/query2.csv" target="_blank">here</a> to see the expected result.
+    </ul>
+            <li class="queryitem"> Get the nickname, first and last name of the common friends of the users 
+              with nickname 'nick_CAMERON' and 'nick_ANIS'
+              [<a href="#" onclick="showHideSolution('social-network-q3', 'social-network-q3-link', 'See solution', 'Hide solution');return false;"><span id="social-network-q3-link">See solution</span></a>].
+              <div id="social-network-q3" style="display:none;" class="reltables">
+                <pre>
+<code>SELECT u.nickname, u.first_name, u.last_name
+FROM UserAccount u,
+  ( SELECT nickname_dst as nickname
+    FROM Relationship
+    WHERE nickname_src='nick_CAMERON' AND type='friendship' 
+          AND nickname_dst IN
+            ( SELECT nickname_dst as nickname
+              FROM Relationship
+              WHERE nickname_src='nick_ANIS' 
+                    AND type='friendship') 
+  ) temp
+WHERE u.nickname=temp.nickname
+</code></pre></div>
+
+<ul class="warning">
+    <li class="warning"> Click <a href="./data/social-network/results/query3.csv" target="_blank">here</a> to see the expected result.
+  </ul>
+            <li class="queryitem"> Rank the users by the number of their followers. The user with the most followers must appear at the top
+              of the list
+              [<a href="#" onclick="showHideSolution('social-network-q4', 'social-network-q4-link', 'See solution', 'Hide solution');return false;"><span id="social-network-q4-link">See solution</span></a>].
+              <div id="social-network-q4" style="display:none;" class="reltables">
+                <pre>
+<code>SELECT u.nickname, u.first_name, u.last_name, temp.nbFollowers
+FROM UserAccount u,
+      (SELECT nickname_dst as nickname, count(*) as nbFollowers
+      FROM Relationship r
+      WHERE r.type='follower'
+      GROUP BY r.nickname_dst) temp
+WHERE u.nickname = temp.nickname
+ORDER BY nbFollowers DESC</code></pre>
+              </div>
+              <ul class="warning">
+                  <li class="warning"> Click <a href="./data/social-network/results/query4.csv" target="_blank">here</a> to see the expected result.
+                </ul>
+          </ol>
+
+</ol>
+
+<h2>Modeling the database of the banking system</h2>
+
+The following figure shows the ER diagram modeling the database of a banking system.
+
+<img src="./figs/banking-system-er.png" alt="banking-system-er" class="body-image" style="width:80%;">
+
+Each bank is identified by a unique code and name, and has one or several branches.
+A branch is responsible of opening accounts and granting loans to customers.
+Each account is identified by a number (<i>acct_nbr</i>) and is either
+a checking or savings account (property <i>acct_type</i>).
+Each customer is identified by its social security number (<i>ssn</i>);
+a customer can be granted several loans and open as many accounts as s/he wishes.
+
+<h3>Questions</h3>
+
+<ol type="a">
+  <li> Which primary key would you choose for the entity <TT>Bank</TT>? Justify the answer
+    <!--[<a href="#" onclick="showHideSolution('banking-system-pk', 'banking-system-pk-link', 'See solution', 'Hide solution');return false;"><span id="banking-system-pk-link">See solution</span></a>].
+    <div id ="banking-system-pk" style="display:none;" class="reltables">
+    Since no two banks have the same <i>code_bank</i> or <i>name</i>, either property can be chosen
+    as the primary key of the entity <TT>Bank</TT>.
+    Both can be considered as valid <b>candidate keys</b>.
+    </div>-->
+
+  <li> Would you consider {<i>code_bank</i>, <i>name</i>} as a valid candidate key for the entity
+    <TT>Bank</TT>? Justify your answer
+   <!--- [<a href="#" onclick="showHideSolution('banking-system-pkno', 'banking-system-pkno-link', 'See solution', 'Hide solution');return false;"><span id="banking-system-pkno-link">See solution</span></a>].
+    <div id ="banking-system-pkno" style="display:none;" class="reltables">
+    The answer is <b>no</b>. While there aren't any two banks that have the same value for
+     {<i>code_bank</i>, <i>name</i>}, two subsets ({<i>code_bank</i>} and {<i>name</i>}) are candidate keys.
+    </div>-->
+
+    <li> Complete the diagram above by adding the cardinalities to the relations.
+      Justify your choices when any ambiguity might arise
+     <!--- [<a href="#" onclick="showHideSolution('banking-system-rels', 'banking-system-rels-link', 'See solution', 'Hide solution');return false;"><span id="banking-system-rels-link">See solution</span></a>].
+        <div id ="banking-system-rels" style="display:none;">
+        <img src="./figs/banking-system-rels.png" alt="banking-system-er" class="body-image" style="width:85%;">
+        </div> -->
+    <li> Translate the ER diagram into a collection of relational tables. Make sure that the tables are in Boyce-Codd normal form
+    <!--[<a href="#" onclick="showHideSolution('banking-system-rtables', 'banking-system-rtables-link', 'See solution', 'Hide solution');return false;"><span id="banking-system-rtables-link">See solution</span></a>].
+    <div id ="banking-system-rtables" style="display:none;" class="reltables">
+We have to pay attention to the property <i>address</i>, that is multi-valued.
+Here for simplicity, we assume that the postal code uniquely identifies a city (not always true).
+<pre>
+Bank     (<u>code_bank</u>, name, street_number, street_name, postal_code)
+Branch   (<u>branch_id</u>, street_number, street_name, postal_code, code_bank)
+Account  (<u>acct_nbr</u>, acct_type, balance, branch_id, ssn)
+Loan     (<u>loan_nbr</u>, loan_type, amount, branch_id, ssn)
+Customer (<u>ssn</u>, first_name, last_name, telephone, street_number,
+          street_name, postal_code)
+Address  (<u>postal_code</u>, city, country)
+</pre>
+</div>-->
+
+
+    </ol>
+</ol>
+
+
+
+<h2>Normalization</h2>
+
+<ol type="a">
+<li> Consider the following table <TT>Teacher</TT>.
+<div class="reltables">
+<pre>
+Teacher (teacher_id, subject, teacher_age)
+</pre>
+</div>
+where {<i>teacher_id</i>, <i>subject</i>} is the only candidate key and
+<i>teacher_age</i> is a non-prime attribute (<i>subject</i> is the name of the subject taught by the teacher).
+Which normal form does the table <TT>Teacher</TT> satisfy? How can you obtain
+a database in Boyce-Codd normal form?
+<!--[<a href="#" onclick="showHideSolution('teacher-norm', 'teacher-norm-link', 'See solution', 'Hide solution');return false;"><span id="teacher-norm-link">See solution</span></a>].
+<div id="teacher-norm" class="reltables" style="display:none;">
+The table is in 1NF.
+2NF is violated because of the dependency <i>teacher_id</i> &rarr; <i>teacher_age</i>;
+indeed a non-prime attribute depends partially on a candidate key.
+The solution to having a database in BNCF is to create two tables.
+<pre>
+Teacher        (<u>teacher_id</u>, teacher_age)
+TeacherSubject (<u>teacher_id</u>, <u>subject</u>)
+<pre>
+</div>-->
+<li> Consider the following table <TT>Employee</TT>.
+<div class="reltables">
+<pre>
+Employee (emp_id, emp_name, emp_salary, emp_dpt, dpt_budget)
+</pre>
+</div>
+where the only candidate key is {<i>emp_id</i>} and
+<i>emp_dpt</i> and <i>dpt_budget</i>
+are the employee department and
+the budget of the department respectively.
+Which normal form does the table <TT>Employee</TT> satisfy?
+How can you obtain a database in Boyce-Codd normal form?
+<!--[<a href="#" onclick="showHideSolution('emp-norm', 'emp-norm-link', 'See solution', 'Hide solution');return false;"><span id="emp-norm-link">See solution</span></a>].
+<div id="emp-norm" class="reltables" style="display:none;">
+The table is in 2NF.
+3NF is violated because of the dependency <i>emp_dpt</i> &rarr; <i>dpt_budget</i>
+between two non-prime attributes.
+In order to have a database in BCNF, we create the following tables:
+<pre>
+Employee        (<u>emp_id</u>, emp_name, emp_salary, emp_dpt)
+Department      (<u>dpt_id</u>, dpt_budget)
+<pre>
+</div>-->
+<li> Consider the following table <TT>Student</TT>.
+<div class="reltables">
+<pre>
+Student (stud_id, stud_ssn, course)
+</pre>
+</div>
+A student is either identified by her identifier (<i>stud_id</i>),
+or social security number (<i>stud_ssn</i>) and takes one or more courses.
+The only candidate keys are {<i>stud_id</i>, <i>course</i>} and
+{<i>stud_ssn</i>, <i>course</i>}.
+Which normal form does the table <TT>Student</TT> satisfy?
+How can you obtain a database in Boyce-Codd normal form?
+<!--[<a href="#" onclick="showHideSolution('stud-norm', 'stud-norm-link', 'See solution', 'Hide solution');return false;"><span id="stud-norm-link">See solution</span></a>].
+<div id="stud-norm" class="reltables" style="display:none;">
+  The table is in 3NF.
+  BCNF is violated because of the dependencies <i>stud_id</i> &rarr; <i>stud_ssn</i>
+  and <i>stud_ssn</i> &rarr; <i>stud_id</i>;
+  in both dependencies, the premise is composed of an attribute that is not a (super)key.
+  In order to get a BCNF database, we can create the following tables:
+  <pre>
+  Student       (<u>stud_id</u>, stud_ssn)
+  StudentCourse (<u>stud_id</u>, <u>course</u>)
+  <pre>
+</div>-->
+</ol>
+
+<h2>Modeling the database of car dealership</h2>
+We want to design the database of a car dealership. 
+The dealership sells both new and used cars, 
+and it operates a service facility.
+The database should keep data about the cars (serial number, make, model, colour, whether it is new or used), 
+the salespeople (first and family name) and the 
+customers (first and family name, phone number, address). Also, the following business rules hold:
+<ul>
+  <li> A salesperson may sell many cars, but each car is sold by only one salesperson.
+    
+  <li> A customer may buy many cars, but each car is bought by only one customer.
+  <li> A salesperson writes a single invoice for each car s/he sells. 
+    The invoice is identified by a number and indicates the sale date and the price.
+  <li> A customer gets an invoice for each car s/he buys.
+</ul>
+When a customer takes one or more cars in for repair, one service ticket is written for each car. 
+The ticket is identified by a number and indicates the date on which the car is received from the customer, 
+as well as the date on which the car should be returned to the customer. 
+A car brought in for service can be worked on by many mechanics, and each mechanic may work on many cars.
+
+<h3> Questions </h3>
+
+<ol type="a">
+  <li> Draw the ER diagram modeling this scenario <!-- [<a href="#" onclick="showHideSolution('car-delearship-er', 'car-delearship-er-link', 'See solution', 'Hide solution');return false;"><span id="car-delearship-er-link">See solution</span></a>].
+    <div id ="car-delearship-er" style="display:none;" class="reltables">
+        <img src="./figs/car-dealership.png" alt="car-dealership" class="body-image" style="width:100%;">
+    </div> -->
+  <li> Translate the ER diagram into a collection of relational tables. In each table underline the primary key and specify 
+    the foreign keys
+   <!-- [<a href="#" onclick="showHideSolution('car-dealership-rel', 'car-dealership-rel-link', 'See solution', 'Hide solution');return false;"><span id="car-dealership-rel-link">See solution</span></a>].
+
+    <div id="car-dealership-rel"  style="display:none;" class="reltables">
+  <pre>
+  Car          (<u>serial_number</u>, make, model, colour, is_new, owner_id)
+  Customer     (<u>cust_id</u>, cust_first_name, cust_last_name, cust_phone)
+  Invoice      (<u>invoice_number</u>, date, price, car_serial_number, sp_id)
+  Salesperson  (<u>sp_id</u>, sp_first_name, sp_last_name)
+  Mechanic     (<u>mec_id</u>, mec_first_name, mec_last_name)
+  Ticket       (<u>ticket_number</u>, date_open, date_return, car_serial_number)
+  Repair       (<u>ticket_number</u>, <u>mec_id</u>)</pre>
+  <ul>
+    <li> Car(owner_id) foreign key to Customer(cust_id).
+    <li> Invoice(car_serial_number) foreign key to Car(serial_number).
+    <li> Invoice(sp_id) foreign key to Salesperson(sp_id).
+    <li> Ticket(car_serial_number) foreign key to Car(serial_number).
+    <li> Repair(ticket_number) foreign key to Ticket(ticket_number).
+    <li> Repair(mec_id) foreign key to Repair(mec_id).    
+  </ul>
+  </div>-->
+  <li> Let <TT>Car</TT> be the following table:
+
+    <div class="reltables">
+        <pre>
+Car(serial_number, make, model, colour, customer_id, 
+       customer_first_name, customer_last_name)</pre>
+    </div>
+    
+   where the only candidate key is {<TT>serial_number</TT>}. 
+   Knowing that a customer can own several cars, which normal form is this table 
+   and why?
+  <!-- [<a href="#" onclick="showHideSolution('car-dealership-nf', 'car-dealership-nf-link', 'See solution', 'Hide solution');return false;"><span id="car-dealership-nf-link">See solution</span></a>].
+    <div id="car-dealership-nf"  style="display:none;" class="reltables">
+      The table is in second normal form. 
+      All functional dependencies are relative to each candidate key.
+      Here there is only one candidate key, which is composed of one attribute, therefore all the non-prime attributes 
+      have a total dependency to the candidate key.
+      The table is not in 3rd normal form, because there are two functional dependencies 
+      <i>customer_id</i> &rarr; <i>customer_first_name</i> 
+      and <i>customer_id</i> &rarr; <i>customer_last_name</i> 
+      between non-prime attributes.
+  </div> -->
+  <li> How would you modify table <TT>Car</TT> to have it in 3rd normal form (if it is not already the case)?
+    <!--[<a href="#" onclick="showHideSolution('car-dealership-nf3', 'car-dealership-nf3-link', 'See solution', 'Hide solution');return false;"><span id="car-dealership-nf3-link">See solution</span></a>].
+    <div id="car-dealership-nf3"  style="display:none;" class="reltables">
+      By simply splitting the table into two; One that only contains the attributes referring to cars, the other only containing
+      attributes referring to customers.
+  </div> -->
+
+
+</ol>
+
+</body>
+
+</html>
