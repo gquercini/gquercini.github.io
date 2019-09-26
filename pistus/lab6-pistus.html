@@ -1,0 +1,1278 @@
+<!--
+SOFTWARE: MANAGE TWO ROLES: ORGANIZER AND PARTICIPANT (with different login and passwords)
+AUTHENTICATION ALSO !
+
+https://github.com/jkordas/client-server-authentication-demo/blob/master/src/database.py
+
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>SIP &ndash; Lab Assignment 6</title>
+  <link rel="stylesheet" type="text/css" href="./styles/exercises.css">
+
+  <link rel="stylesheet" href="./styles/prism.css">
+  <script src="./scripts/prism.js"></script>
+
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+  <script>hljs.initHighlightingOnLoad();</script>
+  <script> function
+      showHideSolution(elem, elemLink, show, hide) {
+      state =
+        document.getElementById(elem).style.display; if (state == "none") {
+          document.getElementById(elem).style.display = 'block';
+          document.getElementById(elemLink).innerHTML = hide
+        } else {
+        document.getElementById(elem).style.display = 'none';
+        document.getElementById(elemLink).innerHTML = show
+      }
+
+    } </script>
+</head>
+
+<body>
+
+  <h1>Information Systems and Programming</h1>
+
+  <img src="./figs/cs-logo.png" alt="cs-logo" class="logo">
+
+  <h1>Lab Assignment 6</h1>
+
+  <h1>Implementing a Reservation System for Pistus</h1>
+
+  <h2>Context and Objective</h2>
+
+  <p>"Pistus" (short for "Piston Ski") is an event organised by <a href="http://wacs.fr" target="_blank">WACS (Winter
+      Association CentraleSupélec)</a> during
+    the winter holidays every year. It's an awesome week-long mountain trip involving many
+    activities (including skiing, snowboarding, raclette binges and parties, just
+    to name a few).
+  </p>
+
+  <p>Since the event cannot accommodate all CentraleSupélec students, the organizers
+    must cap the number of participants to the first 300 registered students.
+    When a student wants to register for the Pistus, the organizers will write
+    the student personal data in a Excel file, as well as the registration date and the amount
+    that is due by the student.
+    Upon registration, students have the option to pay
+    immediately or later; in any case, the student must pay within 5 days of the registration,
+    otherwise the registration is cancelled. The organizers will send a reminder by email 2 days before the deadline.
+    Once the student pays, the organizers will write to the Excel file the payment date.
+  </p>
+
+  <p>The organizers keep two Excel files. One contains
+    all the data of each registration, i.e., 
+    the student number, first and last name, gender and email addresses 
+    of the registered student, as well as the registration and payment dates, the 
+    registration fee and the year of the event. [<a href="#"
+      onclick="showHideSolution('students-excel','students-excel-link', 'Show the Excel file', 'Hide the Excel file');return false;"><span
+        id="students-excel-link">Show the Excel file</span></a>]. <div id="students-excel" style="display:none;"
+      class="reltables"><iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQQBZLw7uDt6AzfkqxSbYgR_XBcerpVaCeKaB2_ZBiZ5g81xykIHzPxxNk8dQ-eYSq-42MI96KVWpUJ/pubhtml?gid=0&amp;single=true&amp;widget=true&amp;headers=false" width='100%'
+      height='565px'></iframe></div>
+    The other Excel file contains the association membership information
+    on the students [<a href="#"
+      onclick="showHideSolution('asso-excel','asso-excel-link', 'Show the Excel file', 'Hide the Excel file');return false;"><span
+        id="asso-excel-link">Show the Excel file</span></a>]. <div id="asso-excel" style="display:none;"
+      class="reltables"><iframe src="https://docs.google.com/spreadsheets/d/e/2PACX-1vQBDBCj51Fp7OCGsvAjnVXM19dMUmy9IB5FSDfyyGjosTUEn_pF2vJK-bC1uQ7Bbbs7fZc1acS4SjZk/pubhtml?gid=0&amp;single=true&amp;widget=true&amp;headers=false" width='100%'
+        height='565px'></iframe></div>
+  </p>
+
+  <ul class="warning">
+    <li class="warning"> In these files, only the associations exist in the real world. 
+      The names of the students have been randomly generated from 
+      a list of french first and last names. These files do not contain any reference to actual students in the school.
+  </ul>  
+
+  <p> This organization presents a lot of issues:
+    <ol>
+      <li> If students participate to several editions of Pistus in different years, their data is replicated
+        for each registration. This might lead to <i>redundancies</i>, as well as <i>inconsistent</i> data.
+      <li> The organizers must manually check whether a student meets the payment deadline.
+      <li> The organizers must manually send email reminders to the students.
+    </ol>
+    For this reason, we want to develop a software, called
+    <TT>PistusResa</TT>, that the organizers can use to manage the registrations in an efficient way.
+  </p>
+
+  <div id="container">
+    <figure> <img src="./figs/pistus-architecture.png" alt="Pistus architecture" class="body-image" style="width:100%;">
+      <figcaption>The architecture of <TT>PistusResa</TT>.</figcaption>
+    </figure>
+  </div>
+
+  <p> The architecture of <TT>PistusResa</TT> is shown in Figure 1. The software consists of a <b>graphical user interface</b> (GUI)
+    that allows an organizer to access all the functionalities. 
+    The backend consists of <b>five modules</b>, each dedicated to a specific functionality:
+    <ul>
+      <li> The <b>Authentication</b> module allows an organizer to get access to the functionalities of <TT>PistusResa</TT>.
+      <li> The <b>Registration</b> module allows an organizer to sign up a student for a specific Pistus edition.
+      <li> The <b>Payment</b> module allows an organizer to register the payment of a student.
+      <li> The <b>Reservation Management</b> module allows an organizer to manage the reservations.
+      <li> The <b>Deadline Management</b> module is a background process that checks the payment deadlines, 
+        sends email reminders and removes the registrations that do not comply with the 
+        payment deadline.
+    </ul>
+    <TT>PistusResa</TT> uses a relational database to store all the necessary
+    data regarding the registrations. 
+    An additional module, named <b>ETL</b> (meaning <i>Extract, Transform, Load</i>), is used to import into the database the data on the past Pistus editions that are kept in the two 
+    spreadsheets mentioned above.
+  </p>
+
+  <h3>Conventions Used in This Lab Assignment</h3>
+
+  The following typographical conventions are used in this lab assignment:
+  <ul class="warning">
+    <li class="warning"> This icon denotes tips or general notes, something to pay attention to.
+    <li class="exercise"> This icon denotes an action that you need to take before going further.
+    <li class="raise"> This icon denotes a point that you might want to discuss with your lab 
+      supervisor.
+    <li class="test"> This icon denotes tests that you have to make on your code.
+    <li class="rtfm"> This icon denotes a link to documentation that you should read to 
+      understand how to code the subsequent exercises.
+  </ul>
+  
+  <h3>Project Initialization</h3>
+
+  <p>
+    Open <b>Visual Studio Code (VSC)</b> and select <b>File</b> &rarr; <b>Open</b>; in the pop-up window that appears,
+    click on the button labelled <b>New Folder</b> and create a new folder called <i>pistus</i>.
+    Click on the button <b>Open</b>; a new window should appear that has on the left side a menu called
+    <b>Explorer</b> that lets you see the files in your projects.
+    You should see a project named PISTUS with no files.
+  </p>
+
+  <ul class="warning">
+      <li class="warning"> Change the file encoding of your text editor to UTF-8 [<a href="#"
+        onclick="showHideSolution('encoding-instructions','encoding-instructions-link','Tell me how', 'Close');return false;"><span
+          id="encoding-instructions-link">Tell me how</span></a>].
+      <div id="encoding-instructions" style="display:none;" class="reltables">
+        <b>If you use Windows or Linux</b>, select <b>File &rarr; Preferences &rarr; Settings</b>;
+        <b>If you use MacOS</b>, select <b>Code &rarr; Preferences &rarr; Settings</b>.
+        In the panel that appears, select the tab <b>Folder</b> and the newly folder <i>pistus</i>, 
+        click on <b>Text Editor</b> in 
+        the left-side menu and then select <b>Files</b>; on the right side of the panel scroll down to
+        the option <b>Encoding</b> and select the value <b>utf8</b>.  
+      </div> 
+    </ul>
+
+  <p>
+    Since <TT>PistusResa</TT> is a fairly complex software with several components,
+    putting all code into a single file would be a bad idea.
+    Instead, we will organize the code into several <b>packages</b>,
+    which will ease its development and maintenance [<a href="#"
+      onclick="showHideSolution('python-package-explanation','python-package-explanation-link','What is a package?', 'Close');return false;"><span
+        id="python-package-explanation-link">What is a package?</span></a>].
+    <div id="python-package-explanation" style="display:none;" class="reltables">
+      A <b>package</b> in Python is a collection of <b>modules</b>, a module is defined
+      as a file with extension .py containing Python code.
+      In order to create a package, you have to create a folder under your project containing
+      a special file named <TT>__init__.py</TT>.
+      The purpose of this file is to include optional initialization code.
+      For the moment, we will leave that file empty.
+    </div>
+  </p>
+
+  <p>
+    Our first lines of code will create the tables of the
+    <TT>PistusResa</TT> database.
+    We'll put that code in a module contained in a package named <TT>db</TT>.
+  </p>
+
+  <ul class="exercise">
+    <li class="exercise"> Create a package named <TT>db</TT> in your project [<a href="#"
+      onclick="showHideSolution('create-folder-vsc','create-folder-vsc-link','How do I create a folder in VSC?', 'Close');return false;"><span
+        id="create-folder-vsc-link">How do I create a folder in VSC</span></a>].
+    <div id="create-folder-vsc" style="display:none;" class="reltables">
+      Go to the <b>Explorer</b>, right-click on the name of your project and select 
+      <b>New Folder</b>.
+    </div>
+  </ul>
+
+  <p><b>How to Run a Python script.</b>
+    The easiest way to run a Python script in VCS is to use the <b>terminal</b>.
+    You can open one by selecting <b>Terminal</b> &rarr; <b>New Terminal</b>.
+    When the terminal is open you can type commands in it.
+    <ul>
+      <li> If you type the command <TT>pwd</TT>, you'll get the current working directory.
+      <li> If you need to change directory, you can do so by typing the command <TT>cd</TT> followed
+        by the name of the directory to which you want to go.
+      <li> When you want to execute a Python script, you have to move to the directory that contains the 
+        script and type the following command:
+        <pre align="center">python script.py</pre>
+    </ul>
+  </p>
+  
+  <h2>The Database</h2>
+
+  <p> The database of <TT>PistusResa</TT> is intended to keep data on the students that register
+    for the Pistus.
+    Students are identified by a student number and have a first and family name, gender
+    and email addresses (a student can have more than one). </p>
+
+  <p> A student can belong to one or more associations; each association is
+    described by a name (unique) and a textual description of its activities.
+    Any student has a specific role in an association (e.g., president, secretary, member).
+  </p>
+
+  <p> When a student registers for the Pistus, the year of the event,
+    the registration and the payment date are stored, as well as the amount paid.
+    The registration date and the payment date might be different.
+    Importantly, a student can participate to different Pistus editions in different years, but cannot
+    register twice for the same edition.</p>
+
+  <h3>Database Design</h3>
+
+  The ER model of the database of Pistus is shown in Figure 2.
+
+  <figure> <img src="./figs/logical-data-model.png" alt="Pistus db logical data model" class="body-image" style="width:100%;">
+    <figcaption>The logical data model of the database of <TT>PistusResa</TT>.</figcaption>
+  </figure>
+  
+
+  We need to derive the corresponding
+  <b>physical data model</b>, that consists of the collection of relational tables
+  that are part of the database [<a href="#"
+    onclick="showHideSolution('phys-model-explanation','phys-model-explanation-link','How to derive a physical model', 'Close');return false;"><span
+      id="phys-model-explanation-link">How to derive a physical model</span></a>].
+  <div id="phys-model-explanation" style="display:none;" class="reltables">
+    Rules to translate a logical data model into a physical data model:
+    <ul>
+      <li> For each one-to-many relationship between two entities \(A\) and \(B\).
+        Take the set \(K_B\) of attributes composing the primary key of \(B\)
+        and add it to the attributes of \(A\).
+        The new attributes of \(A\) will be a <b>foreign key</b> referencing the primary
+        key of \(B\).
+
+      <li> For each many-to-many relationship R between two entities \(A\) and \(B\).
+        Create a new entity whose attributes are: all the attributes of \(R\),
+        the set \(K_A\) of attributes composing
+        the primary key of \(A\) and the set \(K_B\) of attributes composing the
+        primary key of \(B\).
+        The primary key of the new entity is composed of all attributes in \(K_A \cup K_B\).
+        The attributes in \(K_A\) (respectively, \(K_B\)) will be a foreign key referencing the corresponding
+        attributes in \(A\) (respectively, \(B\)).
+
+      <li> For each entity in the ER diagram: create a relational table.
+        The attributes of the entity become the columns of the table.
+    </ul>
+  </div>
+
+  <p>
+    <div class="exercisebox"> Translate the ER diagram into a collection of
+      relational tables. 
+      <ul class="warning">
+        <li class="warning"> For each table, specify the primary and foreign keys.
+        <li class="warning"> For each column, specify its type.
+      </ul>
+      </div>
+  </p>
+
+  <p>Once the database design is in place, we need to create the actual database
+    in a <b>Relational Database Management System</b> (RDBMS).
+  </p>
+
+  <h3>Database Creation</h3>
+
+  <p>
+    <b>If you could successfully install MySQL</b> on your computer, you can use it as  
+    the RDBMS of <TT>PistusResa</TT> [<a href="#" onclick="showHideSolution('mysql-lab-part', 'mysql-lab-part-link',
+    'Click here to continue', 'Close');return false;"><span id="mysql-lab-part-link">Click here to continue</span></a>].
+    <div id="mysql-lab-part" style="display:none;" >
+        <ul class="warning">
+            <li class="warning"> In order to make a Python program communicate with a MySQL server, you need to install the
+                Python package <TT>mysql-connector</TT> [<a href="#" onclick="showHideSolution('mysql-connector', 'mysql-connector-link',
+                'Show me how', 'Close');return false;"><span id="mysql-connector-link">Show me how</span></a>].
+                <div id="mysql-connector" style="display:none;" class="reltables">
+                  Open a terminal in Visual Studio Code by selecting <b>Terminal</b> &rarr; <b>New Terminal</b>;
+                  then type the following command:
+                  <pre align="center">pip install mysql-connector</pre>
+                </div>
+          </ul>  
+          <p>
+              By using the MySQL connector, we can write Python code to connect to a MySQL server, create a new database,
+              create the tables and insert the data into the tables. 
+              <ul class="warning">
+                <li class="warning">Make sure that an instance of MySQL server is running on your computer.
+              </ul>
+            
+              <ul class="exercise">
+                  <li class="exercise">Create a new file <TT>create_database.py</TT> under the package <TT>db</TT>.  
+              </ul>
+              <ul class="rtfm">
+                <li class="rtfm">Click <a href="./docs/database.html" target="_blank">here</a> to open the documentation 
+                  of MySQL Connector/Python. You will need it to do the exercises of this section.
+              </ul>
+              </p>
+            
+              <p><b>Connecting to the MySQL server.</b>  The first step consists in connecting your Python program to the 
+              instance of the MySQL server running 
+              on your computer.
+              </p>
+              <p>
+                <div class="exercisebox">In the file <TT>create_database.py</TT>, write the code to connect to the 
+                  instance of the MySQL server running on your computer. 
+                </div>
+              </p>
+            
+              <p><b>Creating a new database.</b> Once the connection is established, we need to create the new 
+                database for <TT>PistusResa</TT>.
+                <div class="exercisebox">In the file <TT>create_database.py</TT>, add the code to create a database
+                  named <TT>pistus</TT>. Execute the code.
+                  <ul class="test">
+                    <li class="test"> Open the MySQL Workbench and verify that the new database 
+                      has actually been created.
+                </div>
+              </p>
+            
+              <p><b>Creating the tables.</b> After the creation of the database, 
+                we need to create the tables composing the database itself.
+                
+                <div class="exercisebox">In the file <TT>create_database.py</TT>, add the code to create all the tables in the database
+                  <TT>pistus</TT>. For each table, specify the primary and foreign keys. Execute the code.
+                  <ul class="test">
+                    <li class="test"> Open the MySQL Workbench and verify that the tables have actually been created.
+                </div>
+              </p>
+    </div>  
+  </p>
+ <p>
+    <b>If you couldn't successfully install MySQL</b>, you can use <b>SQLite</b> [<a href="#" onclick="showHideSolution('sqlite-exp', 'sqlite-exp-link',
+   'Click here to continue', 'Close');return false;"><span id="sqlite-exp-link">Click here to continue</span></a>].
+   <div id="sqlite-exp" style="display:none;" >
+     <b>SQLite</b> is a software library written in C that implements a RDBMS. 
+     SQLite does not need you to install a server. You just need to import the library into your application
+     and call its functions to create tables and insert and query data.  
+     The database will be a simple binary file stored in 
+     your computer.
+
+     <ul class="warning">
+        <li class="warning"> In order to make a Python program communicate with a SQLite database, you need to install the
+            Python package <TT>sqlite3</TT> [<a href="#" onclick="showHideSolution('sqlite3-inst', 'sqlite3-inst-link',
+            'Show me how', 'Close');return false;"><span id="sqlite3-inst-link">Show me how</span></a>].
+            <div id="sqlite3-inst" style="display:none;" class="reltables">
+              Open a terminal in Visual Studio Code by selecting <b>Terminal</b> &rarr; <b>New Terminal</b>;
+              then type the following command:
+              <pre align="center">pip install sqlite3</pre>
+            </div>
+      </ul>  
+
+      <ul class="exercise">
+          <li class="exercise">Create a new file <TT>create_database.py</TT> under the package <TT>db</TT>.  
+      </ul>
+      <ul class="rtfm">
+        <li class="rtfm">Click <a href="./docs/database-sqlite.html" target="_blank">here</a> to open the documentation 
+          of sqlite3. You will need it to do the exercises of this section.
+      </ul>
+     
+      <p><b>Creating a new database.</b> Since SQLite is not a server, you do not need to create any connection. 
+        You can directly create a new database.
+  
+        <div class="exercisebox">In the file <TT>create_database.py</TT>, add the code to create a database
+          named <TT>pistus</TT>. Execute the code.
+          <ul class="warning">
+            <li class="warning"> The code should create a file named <TT>pistus.db</TT> in the same directory as 
+              the file <TT>create_database.py</TT>.
+        </div>
+      </p>
+    
+      <p><b>Creating the tables.</b> After the creation of the database, 
+        we need to create the tables composing the database itself.
+        
+        <div class="exercisebox">In the file <TT>create_database.py</TT>, add the code to create all the tables in the database
+          <TT>pistus</TT>. For each table, specify the primary and foreign keys. Execute the code.
+          <ul class="warning">
+            <li class="warning"> If you want to verify that your tables have been successfully created, you can 
+              download and install the <a href="https://sqlitebrowser.org/dl/" target="_blank">DB Browser for SQLite</a>. 
+              This will provide you a graphical interface to any SQLite database. After the installation, 
+              just open the program, click on <b>Open Database</b> and select the file <TT>pistus.db</TT>.
+              If everything is OK, you should see the tables that you've just created.
+        </div>
+      </p>
+     
+   </div>
+ </p> 
+  
+  <h2>The ETL Module</h2>
+
+  <p>As explained in the introduction, for the past editions of Pistus
+    the organizers had kept all the registration data in two spreadsheets;
+    we now want to load all these data into the Pistus database.
+    The <b>ETL module</b> is responsible for
+    <b>extracting</b> the data from the spreadsheets, 
+    <b>transforming</b> and <b>loading</b> them into
+    the database.</p>
+
+    <p>In order to ease the automatic process of the spreadsheets by a Python program, we 
+      converted them into CSV files [<a href="#"
+      onclick="showHideSolution('csv-explanation', 'csv-explanation-link', 'What are CSV files?', 'Close');return false;"><span
+        id="csv-explanation-link">What are
+        CSV files?</span></a>]. <div id="csv-explanation" style="display:none;" class="reltables"> 
+            Unlike a spreadsheet, which is a <b>binary file</b> and needs a specific application (Microsoft Excel or equivalent)
+            to be read, a <b>CSV file</b> (short for <i>comma-separated values</i>) 
+            is simply a <b>plain-text file</b> that can be opened with any text editor.
+            <p>Any application that can read a spreadsheet provides a way to save it as a CSV file.
+            A CSV file has as many <b>rows</b> as the original spreadsheet; each row is a sequence of <b>values</b>, 
+            separated by a special character, called the <b>separator</b>, or <b>delimiter</b> 
+            (typically, a <i>comma</i> or 
+            a <i>semi-colon</i>), that acts as a column delimiter. 
+            </p>
+            <p>Since a CSV file is plain-text, reading a CSV file from a Python application 
+              is way easier than reading directly a spreadsheet.</p></div>
+          <ul class="exercise">
+            <li class="exercise"> In your project PISTUS, create a new folder named <b>data</b>.
+            <li class="exercise"> Download the file <a href="./data/student_registrations.csv" download><b>student_registrations.csv</b></a>
+              and <a href="./data/student_membership.csv" download><b>student_membership.csv</b></a> and move 
+              them to the newly created 
+              folder <b>data</b> [<a href="#"
+              onclick="showHideSolution('download-help', 'download-help-link', 'Need help?', 'Close');return false;"><span
+                id="download-help-link">Need help?</span></a>]. <div id="download-help" style="display:none;" class="reltables"> 
+                  When you click on the above links, the CSV files will be downloaded to the <b>Downloads</b> folder of 
+                  your computer. Simply drag them into the <b>data</b> folder in the <b>Explorer</b> panel of VSC.
+                  </div> You can see the content of these files by simply clicking once on them in the 
+                  Explorer panel. 
+          </ul>
+          <ul class="warning">
+            <li class="warning"> In both files, the <b>separator</b> is the <b>semi-colon (;)</b>.
+            <li class="warning"> The file <b>student_registrations.csv</b> contains the data 
+              on the registration to the Pistus in the years 2016, 2017, 2018. 
+              The file <b>student_membership.csv</b> contains the data on the affiliation of the students to 
+              the different associations.
+          </ul>
+    </p>
+    <p>
+      If you fiddle with the files, you will immediately notice that many data are replicated; 
+      first and last names and the email addresses of a student, for instance, occur in both files.
+      Moreover, these data present some variability that is undesired when we intend to 
+      process them through a software application:
+
+      <ul>
+          <li> The <b>gender</b> is expressed in different ways (e.g., female are alternatively identified by <i>F</i>, 
+            <i>W</i> and <i>fille</i>).
+          <li> Different formats are adopted for <b>dates</b> (e.g., DD/MM/YYYY, YYYY/MM/DD).
+          <li> Different formats are adopted for expressing <b>registration fees</b> (e.g., 20,5e, 20,5 euros).
+            In some cases, the registration fee is a numeric value, in some other cases it might contain some 
+            characters from the alphabet. If we try to import these values into a Pyhton program and convert them into 
+            a <b>float</b>, we would get errors.
+          <li> Some students appear multiple times in both files (e.g., Ericka GUYOMARD in the file <b>student_registrations.csv</b>), 
+            because they participate to several Pistus editions or belong to more than one association. 
+        </ul>
+        All these anomalies in the data are referred to as <b>noise</b>; virtually all 
+        datasets present a certain amount of noise, that must be addressed before using the data.
+        In other words, we need to <b>clean</b> the data before loading them into the database.
+    </p>
+    
+    <p>We're now going to develop the ETL module step by step.
+      <ul class="exercise">
+        <li class="exercise"> Create a package named <TT>etl</TT> in your project. Don't forget to 
+          create the file <TT>__init__.py</TT> in the package!
+      </ul>
+    </p>
+
+    The ETL module consists of three submodules:
+    <ul>
+      <li> The <b>Extraction (E)</b> submodule. It extracts the content of the CSV files and organizes it into 
+        several in-memory data structures.
+      <li> The <b>Transformation (T)</b> submodule. It makes the data comply with certain requirements, in particular it cleans the 
+        data from the noise.
+      <li> The <b>Load (L)</b> submodule. It loads the transformed data into the database.
+    </ul>
+
+  <h3>The Extraction Submodule</h3>
+
+  <p> If you correctly designed your database, each table should contain data on entities 
+    of a specific type (e.g., a student, an association). 
+    In the two input files, however, the data on the different entities are all mixed up 
+    in the same table.
+    For example, in  <b>student_registrations.csv</b>
+    the personal data of the students (e.g., their gender) occur in the same table 
+    as the data on the Pistus editions (e.g., the registration fee).
+  </p>
+  <p>The <b>Extraction</b> submodule extracts the content of the input CSV files and 
+    organizes the data on the different entities into separate <b>data structures</b>.
+    For <b>each table</b> in the database (e.g., the table <TT>Student</TT>), 
+    the submodule creates a <b>list</b> where each item is a <b>row</b> of that table, 
+    describing one of the entities (e.g., a student) of the table. 
+  </p>
+  <p>  
+    The first choice that we need to make is how to represent a row in the list. 
+    In fact, representing a row as a mere string, like in the CSV file, would not allow for an easy access
+    to the values of the columns.
+
+    <ul class="exercise">
+        <li class="exercise"> Which data structure would you choose to represent a row? [<a href="#"
+          onclick="showHideSolution('data-structure-choice', 'data-structure-choice-link', 'Show the answer', 'Close');return false;"><span
+            id="data-structure-choice-link">Show the answer</span></a>]. <div id="data-structure-choice" style="display:none;" class="reltables"> 
+              Different solutions are possible:
+              <ul>
+                <li> An <b>object.</b> We can represent the entity described by a row as an <b>instance</b> of a <b>class</b>.
+                <li> A <b>list.</b> Each item of the list is a column value in the row.
+                <li> A <b>tuple.</b> Same as a list.
+                <li> A <b>dictionary.</b> Each item of the dictionary is a key-value pair, where the key is the name of the 
+                  column associated to its value.
+              </ul>
+              Any of these solutions is a viable option. We're going to opt for the first one, which means that 
+              we will have to define a <b>class</b> for each type of entity stored in the database (e.g, student, association).
+              The reason why we choose the first option is twofold:
+              <ul>
+                <li> The functions transforming the values in the Transformation submodule will be coded directly in the 
+                  classes where the values are.
+                <li> You need to practice the object-oriented notions <font color="#0063A6">&#x263B;</font>.
+              </ul>
+            </div>
+      </ul>
+  </p>
+
+  <p><b>Definition of the data structures.</b>
+    We are now going to define the data structures to represent the data to be transformed and loaded into the 
+    database.
+
+    <ul class="exercise">
+      <li class="exercise"> Create a file <TT>extraction.py</TT> in the <TT>etl</TT> package.
+    </ul>
+  
+    <ul class="rtfm">
+      <li class="rtfm"> Click <a href="./docs/object_oriented.html" target="_blank">here</a> to open 
+        the guide to object-oriented programming in Python.
+    </ul>
+
+    <p>
+        <div class="exercisebox">For each table in your database, create, in file <TT>extraction.py</TT>, 
+          a <b>class</b> with the same name as the table. Each class defines the properties of an entity 
+          contained in the corresponding table. [<a href="#"
+          onclick="showHideSolution('classes-entities', 'classes-entities-link', 'Example', 'Close');return false;"><span
+            id="classes-entities-link">Example</span></a>]. 
+            <div id="classes-entities" style="display:none;" class="reltables"> 
+              If your database defines a table called <TT>Student</TT>, 
+              you should create a class named <TT>Student</TT>, whose fields are the columns of the namesake table.
+              Each instance of the class <TT>Student</TT> will correspond to a row in the table.
+            </div>
+         </div>   
+      </p>
+
+  <p> <b>Data Extraction.</b>  We are now going to extract the data from the input CSV files 
+    and, for each table in the database, create a list that holds the content of the table. 
+    An item in any of these lists will be an instance of the class describing a row stored in the 
+    corresponding table [<a href="#"
+    onclick="showHideSolution('data-extraction', 'data-extraction-link', 'Example', 'Close');return false;"><span
+      id="data-extraction-link">Example</span></a>]. 
+      <div id="data-extraction" style="display:none;" class="reltables"> 
+        If your database defines a table called <TT>Student</TT>, the Extraction submodule needs to create a 
+        list, where each item is an instance of the class <TT>Student</TT> describing a row in the namesake table. 
+      </div>
+    <ul class="rtfm">
+      <li class="rtfm"> Click <a href="./docs/csv_files.html" target="_blank">here</a> to open the documentation on CSV files. 
+    </ul>
+  </p>
+
+  <p>
+      <div class="exercisebox">In file <TT>extraction.py</TT>, write a function named <TT>extract</TT> defined by the following
+      signature:
+      $$
+      extract(student\_registrations, student\_membership): (list_1, list_2, \ldots, list_n)
+      $$
+      Input of the function:
+      <ul>
+        <li> \(student\_registrations\). The file <TT>student_registrations.csv</TT>.
+        <li> \(student\_membership\). The file <TT>student_membership.csv</TT>. 
+      </ul>
+      Output of the function:
+      <ul>
+        <li> A tuple \((list_1, list_2, \ldots, list_n)\), where \(n\) is the number of tables in 
+          your database, and \(list_i\) is the list containing the rows of the \(i\)-th table.
+          The order of the tables is purely alphabetical, that is: <TT>Association</TT>,
+          <TT>EmailAddress</TT>, <TT>Membership</TT>, <TT>PistusEdition</TT>, 
+          <TT>Registration</TT>, <TT>Student</TT>.
+      </ul>
+      <ul class="warning">
+        <li class="warning"> All values extracted from the CSV files will be treated as <b>strings</b>.
+        <li class="warning"> In file <TT>student_registrations.csv</TT>, the registration of a student 
+          to a specific Pistus edition <b>never</b> occurs more than once. In other words, there will never be two
+          rows for the registration of student 8298259 to the Pistus edition 2016.
+        <li class="warning"> In file <TT>student_membership.csv</TT>, the membership of a student 
+          to a specific association <b>never</b> occurs more than once. 
+        <li class="warning"> Data on a specific student, association and Pistus edition are replicated 
+          many times in the two CSV files. 
+          You should make sure that you don't have duplicates in the lists that hold these data.
+          <ul class="raise">
+            <li class="raise">Check with your lab supervisor the best strategy to avoid duplicates in 
+              a list. 
+          </ul>
+      </ul>
+  </div>
+  <ul class="test">
+    <li class="test"> You're now going to check whether your function returns the 
+      expected result by using a <b>unit test</b>.
+      To this extent, create a file named <TT>extraction_test.py</TT> in the package <TT>etl</TT>
+      and paste the code below:
+<pre><code class="language-python">import unittest
+from extraction import extract
+
+class TestExtract(unittest.TestCase):
+    def test_Extract(self):
+        (associations, email_addresses, memberships, \
+            pistus_editions, registrations, students) = extract("../data/student_registrations.csv", "../data/student_membership.csv")
+        
+        self.assertEqual(len(associations), 11, "The number of associations should be 11")
+        self.assertEqual(len(email_addresses), 910, "The number of email addresses should be 910")
+        self.assertEqual(len(memberships), 895, "The number of memberships should be 895")
+        self.assertEqual(len(pistus_editions), 3, "The number of Pistus editions should be 3")
+        self.assertEqual(len(registrations), 900, "The number of registrations should be 900")
+        self.assertEqual(len(students), 602, "The number of students should be 602")
+
+if __name__ == '__main__':
+    unittest.main()
+</code></pre>
+In the terminal, run the following command (make sure you're in directory <TT>etl</TT> to run 
+the command):
+<pre align="center">python extraction_test.py
+
+</pre>
+<ul class="exercise">
+  <li class="exercise"> <b>Check the result of the test and correct your function <TT>extract</TT> if needed.</b>
+</ul>
+  </ul>
+  </p>
+
+  <ul class="rtfm">
+    <li class="rtfm"> Click <a href="docs/testing.html" target="_blank">here</a> to read how to 
+      create a <b>unit test</b>.
+  </ul>
+
+  <h3>The Transformation Submodule</h3>
+
+  The goal of the transformation submodule is to <i>clean</i> the extracted data
+  from the noise.
+  Four attributes need to be cleaned: the gender, the registration fee, and the 
+  registration and payment dates.
+  
+  <p><b>Cleaning the values of <TT>gender</TT>.</b><br>
+  The attribute <TT>gender</TT> in the input file <TT>student_registrations.csv</TT>
+  takes the following values:
+  <ul>
+    <li> For males: <i>M</i>, <i>H</i> and <i>garçon</i>.
+    <li> For females: <i>F</i>, <i>W</i> and <i>fille</i>.
+  </ul>
+  </p>
+   
+  <p>
+    <div class="exercisebox">Write a function <TT>clean_gender</TT> that changes the value to 
+    <i>M</i> or <i>F</i> depending on whether the gender refers to a male or a female.
+    <ul class="raise">
+        <li class="raise"> Where would you define this function? 
+          Think of where you defined the attribute <TT>gender</TT>.
+      </ul>
+  </div>
+  <ul class="test">
+      <li class="test"> Create a file <TT>cleaning_test.py</TT> and define a unit test for 
+        the function <TT>clean_gender</TT>.
+    </ul>  
+  </p>
+
+  <p><b>Cleaning the values of <TT>registration_fee</TT>.</b><br>
+  In the file <TT>student_registrations.csv</TT>, a registration fee can be expressed as:
+    <ul>
+      <li> A <b>numeric</b> value. Only a number is specified. Two cases are possible:
+        <ul>
+          <li> The decimal separator is a <b>comma</b> (e.g., <b>20,5</b>).
+          <li> The decimal separator is a <b>point</b> (e.g., <b>20.5</b>).
+        </ul>
+      <li> An <b>alphanumeric</b> value, typically a number followed by 
+        a <b>textual suffix</b>. Between the number and the suffix 
+        there might be a <b>space</b>. The suffix can be one of the following:
+        <ul>
+          <li> <b>e</b>, such as in  <b>20.5e</b> and <b>20.5 e</b>.
+          <li> <b>E</b>, such as in  <b>20.5E</b> and <b>20.5 E</b>.
+          <li> <b>euro</b>, such as in  <b>20.5euro</b> and <b>20.5 euro</b>.
+          <li> <b>euros</b>, such as in  <b>20.5euros</b> and <b>20.5 euros</b>.  
+        </ul>
+    </ul>
+  </p>
+  <p>
+    <div class="exercisebox">Write a function <TT>clean_registration_fee</TT> 
+      that converts the value of the registration fee to a Python floating number.
+      <ul class="raise">
+          <li class="raise"> Where would you define this function? 
+              Think of where you defined the attribute <TT>registration_fee</TT>.
+        </ul>
+    </div>
+  </p>
+
+  <ul class="test">
+      <li class="test"> In the file <TT>cleaning_test.py</TT> define a unit test for 
+        the function <TT>clean_registration_fee</TT>.
+  </ul>
+  
+  <p><b>Cleaning the dates.</b><br>
+    In the file <TT>student_registrations.csv</TT>, 
+    a (registration or payment) date might be expressed in the following formats:
+    <ul>
+      <li> month (in english) DD, YYYY (e.g., <b>December 20, 2015</b>).
+      <li> DD month (in french) YYYY (e.g., <b>20 décembre 2015</b>).
+      <li> YYYY/MM/DD (e.g., <b>2015/12/20</b>).
+      <li> DD/MM/YYYY (e.g., <b>20/12/2015</b>).
+         
+    </ul>
+  </p>
+
+  <ul class="rtfm">
+    <li class="rtfm"> Click <a href="./docs/dates.html" target="_blank">here</a> to read how to handle dates in 
+      Python.
+  </ul>
+
+  <p>
+    <div class="exercisebox">Write a function <TT>clean_date</TT> defined by the following 
+      signature:
+      $$
+      clean\_date(old\_date): new\_date 
+      $$
+      The input of the function is a date in one of the formats specified above;
+      the output of the function is a date in the format YYYY/MM/DD. 
+      <ul class="warning">
+        <li class="warning"> The input <TT>old_date</TT> is a string value.
+        <li class="warning"> The output <TT>new_date</TT> is an instance 
+          of the class <TT>datetime.date</TT>.
+        <li class="warning"> If the string representing the value of the <TT>old_date</TT> has 
+          length 0, then <b>the function must return <TT>None</TT></b>.
+      </ul>
+      <ul class="raise">
+          <li class="raise"> Where would you define the function <TT>clean_date</TT>?
+            Think of where the attributes  <TT>registration_date</TT> and <TT>payment_date</TT>
+            are defined.
+            You should consider using a class method.
+        </ul>
+    </div>
+  </p>
+
+  <ul class="test">
+      <li class="test"> In the  file <TT>cleaning_test.py</TT> define a unit test for 
+        the function <TT>clean_date</TT>.
+  </ul>
+  
+  <p>
+    <div class="exercisebox">Write two functions <TT>clean_registration_date</TT> 
+    and <TT>clean_payment_date</TT> that clean the registration and payment dates 
+  by using the function <TT>clean_date</TT> defined previously. 
+  <ul class="raise">
+      <li class="raise"> Where would you define these functions? 
+          Think of where you defined the attributes <TT>registration_date</TT> and <TT>payment_date</TT>.
+    </ul>
+</div>
+  </p>
+
+  <h3>Loading Data into the Database</h3>
+
+  It's now time to import the data from the CSV files into the database.
+  <ul class="exercise">
+    <li class="exercise"> Create a new file named <TT>data_loading.py</TT> in the package 
+      <TT>etl</TT>. You'll define the functions demanded by Exercises 8 through 14 in this file.
+  </ul>
+
+  <ul class="rtfm">
+    <li class="rtfm"> In order to load data into the database, click <a href="./docs/database.html" target="_blank">here</a> to open the documentation 
+      of MySQL Connector/Python (if you use MySQL) or <a href="./docs/database-sqlite.html" target="_blank">here</a>
+      to open the documentation of how to use SQLite.
+   </ul>
+
+
+  <p>
+    <div class="exercisebox"> Write a function
+      <TT>import_associations()</TT> defined by the following signature:
+      $$
+      import\_associations(cursor, list\_associations) 
+      $$
+      The input of the function is the <TT>cursor</TT> object 
+      that you use to connect to the database and 
+      the list of associations returned by the function 
+      <TT>extract</TT> defined in Exercise 3.
+      </div>
+  </p>
+
+  <p>
+  <div class="exercisebox"> Write a function
+      <TT>import_students()</TT> defined by the following signature:
+      $$
+      import\_students(cursor, list\_students) 
+      $$
+      The input of the function is the <TT>cursor</TT> object 
+      that you use to connect to the database and  the list of students returned by the function 
+      <TT>extract</TT> defined in Exercise 3.
+      </div>
+  </p>
+
+  <p>
+  <div class="exercisebox"> Write a function
+      <TT>import_email_addresses()</TT> defined by the following signature:
+      $$
+      import\_email\_addresses(cursor, list\_email\_addresses) 
+      $$
+      The input of the function is the <TT>cursor</TT> object 
+      that you use to connect to the database and  the list of email addresses returned by the function 
+      <TT>extract</TT> defined in Exercise 3.
+      </div>
+  </p>
+
+  <p>
+  <div class="exercisebox"> Write a function
+      <TT>import_pistus_editions()</TT> defined by the following signature:
+      $$
+      import\_pistus\_editions(cursor, list\_pistus\_editions) 
+      $$
+      The input of the function is the <TT>cursor</TT> object 
+      that you use to connect to the database and  the list of Pistus editions returned by the function 
+      <TT>extract</TT> defined in Exercise 3.
+      </div>
+  </p>
+
+  <p>
+    <div class="exercisebox"> Write a function
+        <TT>import_memberships()</TT> defined by the following signature:
+        $$
+        import\_memberships(cursor, list\_memberships) 
+        $$
+        The input of the function is the <TT>cursor</TT> object 
+      that you use to connect to the database and  the list of memberships returned by the function 
+        <TT>extract</TT> defined in Exercise 3.
+        </div>
+  </p>
+
+  <p>
+  <div class="exercisebox"> Write a function
+      <TT>import_registrations()</TT> defined by the following signature:
+      $$
+      import\_registrations(cursor, list\_registrations) 
+      $$
+      The input of the function is the <TT>cursor</TT> object 
+      that you use to connect to the database and  the list of registrations returned by the function 
+      <TT>extract</TT> defined in Exercise 3.
+      </div>
+  </p>
+
+  We now wrap everything up and we write the code to call the functions defined in the Exercises 
+  9 through 14 and import the data.
+  
+  <ul class="exercise">
+    <li class="exercise"> At the end of the file <TT>data_loading.py</TT>, write the following code:
+<pre><code class="language-python">if __name__ == '__main__':</code></pre>
+The Python interpreter will run the code that follows this instruction 
+when you execute the script <TT>data_loading.py</TT>.
+You'll write the code demanded in Exercise 14 <b>after</b> this instruction.
+</ul>
+
+<p>
+<div class="exercisebox"> Write the Python code to:
+<ul>
+  <li> Connect to the Pistus database.
+  <li> Call the function <TT>extract</TT> defined in Exercise 3 to extract the data from the 
+    input CSV files.
+  <li> Clean the data by using the functions defined in Exercises 4, 5 and 7.
+  <li> Load the data into the database by using the functions defined in Exercises 8 through 13.
+</ul>
+</div>
+<ul class="test">
+    <li class="test"> Verify that the data is correctly loaded into the Pistus database.
+  </ul>
+  
+</p>
+
+
+  <h2>The Registration Module</h2>
+
+  <p>The <b>registration module</b> contains the functions necessary to register 
+  a student to a specific Pistus edition.
+  If the student didn't participate in any previous Pistus edition, <TT>PistusResa</TT> 
+  will ask her to insert all her personal data, including the names of the associations to which she belongs 
+  and her roles in them. 
+  If the student already participated in a previous Pistus edition, her data will already be in the database;
+  the student might want to modify them.
+  In any case, <TT>PistusResa</TT> registers the participation of the student to the current edition.
+  </p>
+
+  <p>
+  We need to implement the following functions. In all functions, the parameter <TT>db</TT> is the object used to communicate
+  with the MySQL server.
+  <ol>
+    <li> <TT>add_student(stud, db)</TT>. Adds a student to the database. 
+    <li> <TT>get_student(stud_number, db)</TT>. Returns all the data on the specified student from the database.
+    <li> <TT>update_student(stud_number, cols, new_values, db)</TT>. Updates the values of the specified  columns in 
+      the table <TT>Student</TT>.
+    <li> <TT>add_student_to_asso(stud_number, asso_name, db, stud_role="member")</TT>. Adds a student to an association with the 
+      specified role.
+    <li> <TT>remove_student_from_asso(stud_number, asso_name, db)</TT>. Removes a student from an association.
+    <li> <TT>update_student_role(stud_number, asso_name, db, new_stud_role="member")</TT>. Updates the role of a student in the specified 
+      association. 
+    <li> <TT>register_student_to_pistus_edition(stud_number, edition_year, db)</TT>. Registers a student to the specified 
+      Pistus edition.
+  </ol>
+  </p>
+
+  The function <TT>add_student(stud)</TT> takes in a variable <TT>stud</TT> that contains all the data on a student.
+  Similarly, the function <TT>get_student(stud_number)</TT> returns such a variable. 
+
+  <ul class="warning">
+    <li class="warning"> How would you represent that variable? [<a href="#"
+      onclick="showHideSolution('stud-variable-question', 'stud-variable-question-link', 'Show the answer', 'Close');return false;"><span
+        id="stud-variable-question-link">Show the answer</span></a>]. 
+        <div id="stud-variable-question" style="display:none;" class="reltables"> 
+          The variable <TT>stud</TT> can be represented as an <b>object</b>. 
+          Other options:
+          <ul>
+          <li> A <i>list</i> would not be a good choice, given that the values of the attributes of a student
+          (e.g., stud_number, first_name, last_name) are not associated to a name, 
+          and therefore one has to remember the position of each value in the list.
+          <li> A <i>dictionary</i> would be a good choice, because its keys would be the names 
+            of the attributes.
+          </ul>
+    </div>
+  </ul>
+
+  <ul class="warning">
+    <li class="warning"> In your project, create a package named <TT>registration</TT>. 
+      We'll write all the functions of the registration module in that package.
+  </ul>
+
+  <p>
+  <b>The class <TT>Student</TT>.</b> In order to represent the data on a student, we'll define a class 
+  <TT>student</TT>. The attributes of this class are all the columns of the table <TT>Student</TT> in 
+  the Pistus database (keep the same names for simplicity). Additionally, the following attributes are needed:
+  <ul>
+    <li> <TT>email_addresses</TT>. The value of this attribute will be the list of email addresses of a student.
+    <li> <TT>associations</TT>. The value of this attribute will be the list of the names of the associations to which a 
+      student belongs, as well as the student roles in those associations.
+      <ul class="warning">
+        <li class="warning"> Each element of the list must contain the name of an association and the role of the student 
+          in that association. Which data structure are you going to use? 
+      </ul>
+  </ul>
+  <p>
+  <p>
+      <div class="exercisebox"> Create a file named <TT>student.py</TT> in the package <TT>registration</TT>
+        and write the code for the class  <TT>Student</TT>.
+      </div>
+  </p>
+
+  <ul class="warning">
+    <li class="warning"> Create a file named <TT>registration_module.py</TT> in the package <TT>registration</TT>.
+      This file will contain the definition of all the functions of the registration module.
+    <li class="warning">  In the definition of the following functions, remember to capture the exceptions that might 
+      be raised by your code.
+  </ul>
+
+  <p> <b>The function <TT>add_student()</TT>.</b> The function <TT>add_student(stud, db)</TT> takes in an object of the class
+    <TT>Student</TT> and inserts the new student into the Pistus database. 
+    <ul class="warning">
+      <li class="warning"> Notion of transaction
+      <li class="warning"> parameterized query
+    </ul>
+  </p>
+  <p>
+      <div class="exercisebox"> Write the code for the function <TT>add_student()</TT> in the file named 
+        <TT>registration_module.py</TT>.
+      </div>
+  </p>
+
+
+  <p> <b>The function <TT>get_student()</TT>.</b> The function <TT>get_student(stud_number, db)</TT> takes in a student 
+    number and returns an object of the class <TT>Student</TT> with all the information on the corresponding student retrieved
+    from the Pistus database.
+    <ul class="warning">
+      <li class="warning"> If no student is found in the database with the specified <TT>stud_number</TT>, the 
+        function returns <TT>None</TT>.
+      <li class="warning"> Importing the class Student into the current file.
+    </ul>
+  </p>
+  <p>
+      <div class="exercisebox"> Write the code for the function <TT>get_student()</TT> in the file named 
+        <TT>registration_module.py</TT>.
+      </div>
+  </p>
+
+  <p> <b>The function <TT>update_student()</TT>.</b> The function <TT>update_student(stud_number, cols, new_values, db)</TT> 
+    updates the specified columns with new values for a specified student. 
+    The parameter <TT>cols</TT> is a list of column names, and the parameter <TT>new_values</TT> is the list
+    of the new values for the specified columns. 
+    The values are given in the same order as the columns, that is <TT>new_values[i]</TT> is the new value for the 
+    column <TT>cols[i]</TT>.
+    <ul class="warning">
+      <li class="warning"> How to handle arbitrary arguments in a function
+    </ul>
+  </p>
+
+  <p>
+      <div class="exercisebox"> Write the code for the function <TT>update_student()</TT> in the file named 
+        <TT>registration_module.py</TT>.
+      </div>
+  </p>
+
+  <p> <b>The function <TT>add_student_to_asso()</TT>.</b> 
+    The function <TT>add_student_to_asso(stud_number, asso_name, db, stud_role="member")</TT> adds a student to the specified
+    association and with the specified role.
+  </p>
+  <p>
+      <div class="exercisebox"> Write the code for the function <TT>add_student_to_asso()</TT> in the file named 
+        <TT>registration_module.py</TT>.
+      </div>
+  </p>
+
+  <p> <b>The function <TT>remove_student_from_asso()</TT>.</b> 
+    The function <TT>remove_student_from_asso(stud_number, asso_name, db)</TT> removes a student from the specified
+    association.
+  </p>
+  <p>
+      <div class="exercisebox"> Write the code for the function <TT>remove_student_from_asso()</TT> in the file named 
+        <TT>registration_module.py</TT>.
+      </div>
+  </p>
+
+  <p> <b>The function <TT>update_student_role()</TT>.</b> 
+    The function <TT>update_student_role(stud_number, asso_name, db, new_stud_role="member")</TT> adds a student to the specified
+    association and with the specified role.
+  </p>
+  <p>
+      <div class="exercisebox"> Write the code for the function <TT>update_student_role()</TT> in the file named 
+        <TT>registration_module.py</TT>.
+      </div>
+  </p>
+
+  <p> <b>The function <TT>register_student_to_pistus_edition()</TT>.</b> 
+    The function <TT>register_student_to_pistus_edition(stud_number, edition_year, db)</TT> registers a student to the specified
+    Pistus edition.
+  </p>
+  <p>
+      <div class="exercisebox"> Write the code for the function <TT>register_student_to_pistus_edition()</TT> in the file named 
+        <TT>registration_module.py</TT>.
+      </div>
+  </p>
+
+  
+  <h2>The Deadline Management Module</h2>
+
+  The Deadline Management module is responsible for automatically checking
+  every day the payment deadline of each student.
+  More specifically, this module has the following three tasks:
+  <ol>
+    <li> <b>Data Loading.</b>. Load into two separate lists the registrations of the students who have exceeded the
+      deadline payment
+      and those who still have two days left to the deadline.
+    <li> <b>Registration removal.</b> Remove the registration of the students that have exceeded the deadline payment.
+    <li> <b>Email reminder.</b> Send an email reminder to the students who haven't paid their dues two days before the
+      deadline.
+  </ol>
+  This module executes these three tasks every day at midnight.
+  We're now going to develop the three tasks separately.
+
+  <h3>Data Loading</h3>
+
+  <p>
+    <div class="exercisebox"> Write a function
+      <TT>load_data()</TT> that loads into a list L1 the registrations of
+      the students who have exceeded the deadline payment and a list
+      L2 those who still have two days left to the deadline.
+      The function returns a tuple (L1, L2).
+    </div>
+  </p>
+
+  (test)
+
+  <h3>Registration Removal</h3>
+
+  <p>
+    <div class="exercisebox"> Write a function
+      <TT>delete_registration()</TT> that deletes from the database a registration,
+      given its number. Importantly, the function must not delete the data about the student.
+      (maybe an exception to deal with the case where there is no registration with that number)
+    </div>
+  </p>
+
+  (test --> we should generate some data and delete those who exceeded the deadline)
+
+  <h3>Email reminder</h3>
+
+  <p>
+    <div class="exercisebox"> Write a function
+      <TT>email_reminder()</TT> that, given an email address, sends a email reminder.
+    </div>
+  </p>
+
+  (test )
+
+  <h3>Putting All Together</h3>
+
+  <p>
+    <div class="exercisebox"> Write a function
+      <TT>deadline_management()</TT> that triggers itself every day and executes the three tasks.
+    </div>
+  </p>
+
+  <h2>The Authentification Module</h2>
+
+  This is inspired to https://github.com/jkordas/client-server-authentication-demo/blob/master/src/client.py
+
+  
+
+
+  <h2>The Payment Module</h2>
+
+  <h2>The Reservation Management Module</h2>
+
+
+  <h2>The GUI</h2>
+
+  When a student wants to register, he has first to type her student number.
+  The system will check whether the data on that student are already there.
+
+  1) function in the registration module: get_student(stud_number) to get the data about the student.
+
+  if the data on the student are already in the database, the other fields will be filled automatically;
+  the student has just to confirm, or it might modify some data.
+
+  2) function in the registration module: modify_student(columns, values) -- 
+  stud number cannot be changed (disable textfield in the GUI)
+  also, edit_associations, delete_association for a student or add association for the student.
+
+  if the the data on the student are not in the database (new student), the student has to fill in 
+  all the information (including the info on the associations --- give an association name that already exists).
+
+  3) function insert_student() 
+
+
+  <h3>Database Operations</h3>
+  <p> We'll now code some functions to implement
+    read/write operations on the Pistus database. All these functions will run SQL
+    queries against the Pistus database.
+
+    <p>
+      <div class="exercisebox"> In file <TT>database.py</TT>, write a function
+        <TT>add_student</TT> that adds a new student to the database. <p>Input
+          parameters: <ul>
+            <li> <TT>db</TT>: The connection object returned by the
+              function <TT>connect_to_pistus</TT>.
+            <li> <TT>student_number</TT>: The
+              student number.
+            <li> <TT>nickname</TT>: The student nickname.
+            <li>
+              <TT>fname</TT>: The student first name.
+            <li> <TT>lname</TT>: The student
+              last name.
+            <li> <TT>nationality</TT>: The student nationality.
+            <li>
+              <TT>gender</TT>: The student gender.
+            <li> <TT>emails</TT>: The list of the
+              student email addresses.
+            <li> <TT>associations</TT>: The list of the names
+              of the associations to which the student belongs.
+          </ul>
+        </p>
+        <p>Output
+          parameters: none.</p>
+      </div>
+    </p>
+
+    <p>
+      <div class="exercisebox"> In file <TT>database.py</TT>, write a function
+        <TT>add_registration</TT> that adds the registration of a student to the
+        Pistus. Importantly, if the student is already registered, the function will
+        trow an exception (HERE SPECIFY).
+
+        <p>Input parameters: <ul>
+            <li> <TT>db</TT>: The connection object returned
+              by the function <TT>connect_to_pistus</TT>.
+            <li> <TT>student_number</TT>:
+              The student number.
+            <li> <TT>registration_date</TT>: The registration
+              date.
+            <li> <TT>payment_date</TT>: The payment date (optional parameter).
+          </ul>
+        </p>
+        <p>Output parameters: none.</p>
+      </div>
+    </p>
+
+    <p>
+      <div class="exercisebox"> In file <TT>database.py</TT>, write a function
+        <TT>validate_payment</TT> that writes the payment date relative to the
+        registration of a student. <p>Input parameters: <ul>
+            <li> <TT>db</TT>: The
+              connection object returned by the function <TT>connect_to_pistus</TT>.
+            <li>
+              <TT>student_number</TT>: The student number.
+            <li> <TT>payment_date</TT>: The
+              payment date.
+          </ul>
+        </p>
+        <p>Output parameters: none.</p>
+      </div>
+    </p>
+
+    <p>
+      <div class="exercisebox"> In file <TT>database.py</TT>, write a function
+        <TT>paid_registrations</TT> that returns the students that have paid the
+        fee. <p>Input parameters: <ul>
+            <li> <TT>db</TT>: The connection object
+              returned by the function <TT>connect_to_pistus</TT>.
+          </ul>
+        </p>
+        <p>Output
+          parameters: a list of tuples. Each tuple contains, in the following order:
+          student number, student nickname, student first name, student last name,
+          registration date, payment date. </p>
+      </div>
+    </p>
+
+    <p>
+      <div class="exercisebox"> In file <TT>database.py</TT>, write a function
+        <TT>unpaid_registrations</TT> that returns the students that haven't paid
+        the fee. <p>Input parameters: <ul>
+            <li> <TT>db</TT>: The connection object
+              returned by the function <TT>connect_to_pistus</TT>.
+          </ul>
+        </p>
+        <p>Output
+          parameters: a list of tuples. Each tuple contains, in the following order:
+          student number, student nickname, student first name, student last name,
+          registration date. </p>
+      </div>
+    </p>
+
+    <p>
+      <div class="exercisebox"> In file <TT>database.py</TT>, write a function
+        <TT>delete_registration</TT> that deletes the registration of a student.
+        <p>Input parameters: <ul>
+            <li> <TT>db</TT>: The connection object returned
+              by the function <TT>connect_to_pistus</TT>.
+            <li> <TT>student_number</TT>:
+              The student number.
+          </ul>
+        </p>
+        <p>Output parameters: none. </p>
+      </div>
+    </p>
+
+    <p>
+      <div class="exercisebox"> In file <TT>database.py</TT>, write a function
+        <TT>delete_student</TT> that deletes a student from the database.
+
+        <p>Input parameters: <ul>
+            <li> <TT>db</TT>: The connection object returned
+              by the function <TT>connect_to_pistus</TT>.
+            <li> <TT>student_number</TT>:
+              The student number.
+          </ul>
+        </p>
+        <p>Output parameters: none. </p>
+      </div>
+    </p>
+  </p>
+
+
+
+
+
+
+
+</body>
+
+</html>

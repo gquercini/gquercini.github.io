@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>SIP &ndash; SQLite</title>
+  <link rel="stylesheet" type="text/css" href="../styles/exercises.css">
+
+  <link rel="stylesheet" href="../styles/prism.css">
+  <script src="../scripts/prism.js"></script>
+
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+  <script>hljs.initHighlightingOnLoad();</script>
+  <script> function
+      showHideSolution(elem, elemLink, show, hide) {
+      state =
+        document.getElementById(elem).style.display; if (state == "none") {
+          document.getElementById(elem).style.display = 'block';
+          document.getElementById(elemLink).innerHTML = hide
+        } else {
+        document.getElementById(elem).style.display = 'none';
+        document.getElementById(elemLink).innerHTML = show
+      }
+
+    } </script>
+</head>
+
+<body>
+    <h1>Information Systems and Programming</h1>
+
+    <img src="../figs/cs-logo.png" alt="cs-logo" class="logo">
+      
+    <h1>SQLite and Python</h1>
+
+    The SQLite is a simple library that allows you to create and manage databases from 
+    within your Python application.
+    Since SQLite is not a client-server RDBMS, there is no need to establish a connection to any 
+    server.
+
+    <h2>Creating a New Database</h2>
+    Here is the code to create a new database.
+    This will create a file named <TT>test.db</TT> in the same directory as the 
+    Python script.
+    <pre class="line-numbers"><code class="language-python">import sqlite3
+conn = sqlite3.connect('test.db')</code></pre>
+
+    <h2>Creating a New Table</h2>
+
+    Once a new database is in place, we need to create the tables. 
+    Here is a sample code to create a new table <TT>Employee</TT>.
+
+    <pre class="line-numbers"><code class="language-python">import sqlite3
+
+conn = sqlite3.connect('test.db')
+
+cursor = conn.cursor()
+
+# Create the tables
+try:
+    print("Creating table Employee...")
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS Employee(
+        first_name VARCHAR(50),
+        last_name VARCHAR(50),
+        PRIMARY KEY(first_name, last_name)
+        ) 
+    ''')
+
+except sqlite3.Error as error:
+    print("An error occurred while creating the tables: {}".format(error))
+finally:
+    cursor.close()
+    conn.close()
+    print("The connection to the database is now closed")</code></pre>
+Here is the explanation of the code:
+<ul>
+    <li> <b>Lines 8 to 17.</b> We execute the query to create the table <TT>Employee</TT>. 
+    The function <TT>cursor.execute()</TT> takes a SQL query as its parameter.
+    <li> <b>Lines 18-19.</b> This code is executed if the exception <TT>sqlite3.Error</TT> 
+        is raised by the code in Lines 8-17.
+    <li> <b>Lines 20-23.</b> This code is executed in any case, 
+        whether the exception <TT>sqlite3.Error</TT> is raised or not.
+</ul>
+Note that in the <TT>try</TT> block you can write the code to create many tables, not just one as shown in the example.
+<ul class="rtfm">
+    <li class="rtfm"> Click <a href="./exceptions.html" target="_blank">here</a> to open the documentation on exceptions.
+</ul>
+
+<h2>Execute Queries</h2>
+
+In order to execute a query, you can use the function <TT>execute</TT> of the 
+object <TT>cursor</TT>.
+
+<pre class="line-numbers"><code class="language-python">import sqlite3
+
+conn = sqlite3.connect('test.db')
+
+cursor = conn.cursor()
+
+try:
+    cursor.execute("SELECT * FROM Employee")
+    result = cursor.fetchall()
+    for row in result:
+        first_name = row[0]
+        last_name = row[1]
+        print(first_name, last_name)
+
+except sqlite3.Error as error:
+    print("An error occurred while creating the tables: {}".format(error))
+finally:
+    cursor.close()
+    conn.close()
+    print("The connection to the database is now closed")</code></pre>
+
+Explanation of the code:
+<ul>
+    <li> <b>Line 8.</b> Execute the query.
+    <li> <b>Line 9.</b> Get the result of the query.
+    <li> <b>Line 10-13.</b> For each row in the result, get the values in each column.
+        Each row is a list of values (one value for each column).
+</ul>
+
+<h2>Execute Queries with Parameters</h2>
+
+Sometimes, the values that you specify in a query are available
+in variables of your Python code, and you might want to be able to
+pass those variables to the query.
+The following code retrieves from the database all employees whose last name
+is <i>doe</i>.
+
+<pre class="line-numbers"><code class="language-python">import sqlite3
+
+conn = sqlite3.connect('test.db')
+
+cursor = conn.cursor()
+last_name = "doe"
+try:
+    cursor.execute("SELECT * FROM Employee WHERE \
+        last_name=?", (last_name,))
+    result = cursor.fetchall()
+    for row in result:
+        first_name = row[0]
+        last_name = row[1]
+        print(first_name, last_name)
+except sqlite3.Error as error:
+    print("An error occurred while creating the tables: {}".format(error))
+finally:
+    cursor.close()
+    conn.close()
+    print("The connection to the database is now closed")</code></pre>
+Here is the explanation of the code:
+<ul>
+<li> <b>Line 6.</b> The last name we search for is stored in a variable called <TT>last_name</TT>.
+<li> <b>Lines 8-9.</b> The query is specified with one parameter indicated with <TT>?</TT>. The parameter is 
+    a tuple that contains the list of the parameters to pass to the query. In this case, we only have 
+    one parameter. <b>Don't forget the comma</b> after <TT>last_name</TT> otherwise the Python interpreter
+    throws an error.
+</ul>
+
+In the following example, we look for exactly one employee 
+with first name Michael and last name Doe:
+
+<pre class="line-numbers"><code class="language-python">import sqlite3
+
+conn = sqlite3.connect('test.db')
+
+cursor = conn.cursor()
+first_name="michael"
+last_name = "doe"
+try:
+    cursor.execute("SELECT * FROM Employee WHERE \
+        first_name=? and last_name=?", (first_name, last_name))
+    row = cursor.fetchone()
+    first_name = row[0]
+    last_name = row[1]
+    print(first_name, last_name)
+except sqlite3.Error as error:
+    print("An error occurred while creating the tables: {}".format(error))
+finally:
+    cursor.close()
+    conn.close()
+    print("The connection to the database is now closed")</code></pre>
+Here is the explanation of the code:
+<ul>
+    <li> <b>Line 9-10.</b> As before, but now the query takes two parameters.
+    <li> <b>Line 11.</b> Instead of the function <TT>fetchall()</TT>, we use the function
+    <TT>fetchone()</TT> to get exactly one row from the result.
+</ul>
+
+<h2>Execute INSERT, UPDATE and DELETE</h2>
+This is achieved exactly in the same way as the SELECT queries.
+The only difference is that at the end of the operation, you need to 
+commit the modification to the database.
+The following example inserts a new employee:
+<pre class="line-numbers"><code class="language-python">import sqlite3
+
+conn = sqlite3.connect('test.db')
+
+cursor = conn.cursor()
+first_name="New"
+last_name = "Employee"
+try:
+    cursor.execute("INSERT INTO Employee VALUES (?, ?)", (first_name, last_name))
+except sqlite3.Error as error:
+    print("An error occurred while creating the tables: {}".format(error))
+finally:
+    conn.commit()
+    cursor.close()
+    conn.close()
+    print("The connection to the database is now closed")</code></pre>
+
+Here is the explanation of the code:
+<ul>
+   <li> <b>Line 13.</b> Remember to commit the modifications.
+</ul>
+
+</body>
+
+</html>

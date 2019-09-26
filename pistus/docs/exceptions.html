@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>SIP &ndash; Exceptions</title>
+  <link rel="stylesheet" type="text/css" href="../styles/exercises.css">
+
+  <link rel="stylesheet" href="../styles/prism.css">
+  <script src="../scripts/prism.js"></script>
+
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+  <script>hljs.initHighlightingOnLoad();</script>
+  <script> function
+      showHideSolution(elem, elemLink, show, hide) {
+      state =
+        document.getElementById(elem).style.display; if (state == "none") {
+          document.getElementById(elem).style.display = 'block';
+          document.getElementById(elemLink).innerHTML = hide
+        } else {
+        document.getElementById(elem).style.display = 'none';
+        document.getElementById(elemLink).innerHTML = show
+      }
+
+    } </script>
+</head>
+
+<body>
+    <h1>Information Systems and Programming</h1>
+
+    <img src="../figs/cs-logo.png" alt="cs-logo" class="logo">
+      
+    <h1>Exceptions in Python</h1>
+    
+    <b>Exceptions</b> are error conditions that can be raised by a Python code in certain situations. 
+    For instance, if you try to divide a number by zero, the exception <TT>ZeroDivisionError</TT> is raised.
+    Any exception is a (direct or indirect) subclass of <TT>Exception</TT>. 
+
+    <h2>Handling Exceptions</h2>
+    
+    The syntax <TT>try...except</TT> is used to capture and handle the <b>exceptions</b>
+    The following code explains how this code works.
+        <pre class="line-numbers"><code class="language-python">try:
+    offending_code
+except exception_name as alternate_name:
+    code_managing_exception</code></pre>
+        It works as follows:
+        <ul>
+          <li> The <i>offending code</i>, the one that might <b>raise</b> and exception (i.e., cause an error) appears in the 
+            <TT>try</TT> block.
+          <li> The <TT>except</TT> statement specifies the name of the exception that the offending code might raise.
+            One can also give it a (usually, shorter) alternate name.
+          <li> The <TT>except</TT> block contains the code that manages the exception (e.g., prints an error message).
+        </ul>
+
+You can try to run the following code:
+<pre class="line-numbers"><code class="language-python">try:
+    x = 34/0
+except ZeroDivisionError as e:
+    print("Ooops, something's wrong: {}".format(e))</code></pre>
+
+An offending code might raise more than one exception. In order to catch them all, one can either specify the name of each 
+exception in the <TT>except</TT> statements, as follows:
+<pre class="line-numbers"><code class="language-python">try:
+    offending_code
+except (exception1, exception2, ...) :
+    code_managing_exception</code></pre>
+or, alternatively, one can specify the generic type <TT>Exception</TT>, as follows:
+      <pre class="line-numbers"><code class="language-python">try:
+    offending_code
+except Exception:
+    code_managing_exception</code></pre>
+      
+The last option is a trick often used by programmers to catch all the exceptions when they don't remember the names
+      of the exceptions that their offending code might raise. 
+      However, if you use this method, make sure to print the actual reason of the exception in the code managing the exception,
+      or you might get confused when the error actually occurs.
+      Consider the following code:
+      <pre class="line-numbers"><code class="language-python">s = "this is a string"
+try:
+    this_should_be_an_int = int(s)
+except Exception:
+    print("Couldn't create the integer")</code></pre>
+      Since the code is trying to convert a <TT>string</TT> into an <TT>int</TT>, an exception is raised and 
+      the program outputs the message "Couldn't create the integer". 
+      However, the <i>reason</i> of the error is not specified.
+      Instead, you should write the following code:
+      <pre class="line-numbers"><code class="language-python">s = "this is a string"
+try:
+    this_should_be_an_int = int(s)
+except Exception as e:
+    print("Couldn't create the integer")
+    print("The reason is ", e)</code></pre>
+
+Besides <TT>finally</TT>, there is also an optional clause <TT>else</TT> that allows to specify the code 
+to be executed <b>only if</b> the exception is not raised.
+
+<p><b>Optional statements.</b></p> The syntax <TT>try...except</TT> also provides two additional <i>optional</i> statements, 
+namely <TT>else</TT> and <TT>finally</TT>. The first is used to write code that must be executed when the exception is not raised,
+the second is used to write code that is executer whether the exception is raised or not.
+In the following example, the code in line 4 won't be executed (no division by zero), the code in line 6 will.
+<pre class="line-numbers"><code class="language-python">try:
+    x = 34/2
+except ZeroDivisionError as e:
+    print("I won't print this phrase")
+else:
+    print("I'll print this phrase.")
+</code></pre>
+In the following example, the code in line 4 will be executed (division by zero), the code in line 6 won't.
+<pre class="line-numbers"><code class="language-python">try:
+    x = 34/0
+except ZeroDivisionError as e:
+    print("I'll print this phrase.")
+else:
+    print("I won't print this phrase.")
+</code></pre>
+In the following example, both the codes in line 4 and 6 will be executed.
+Indeed, there is division by zero, which raises the exception, and the code in the 
+<TT>finally</TT> clause is executed in any case.
+<pre class="line-numbers"><code class="language-python">try:
+    x = 34/0
+except ZeroDivisionError as e:
+    print("I'll print this phrase")
+finally:
+    print("I'll print this phrase.")</code></pre>
+
+    <h2>Defining Exceptions</h2>
+
+    You can define your own exceptions. 
+    You just have to declare a class that derives from <TT>Exception</TT> or one of 
+    its subclasses.
+    In the following code, we define an exception called <TT>MyError</TT> that adds no 
+    behavior compared to the base class <TT>Exception</TT>.
+    <pre class="line-numbers"><code class="language-python">class MyError(Exception):
+    pass</code></pre>
+    The following code defines a new exception <TT>ValueError</TT> that is a direct subclass of 
+    <TT>MyError</TT> and, therefore, indirect subclass of <TT>Exception</TT>.
+    The new class has two fields, <TT>value</TT> and <TT>message</TT>
+    <pre class="line-numbers"><code class="language-python">class ValueError(MyError):
+    def __init__(self, value, message):
+        self.value = value
+        self.message = message</code></pre>
+    
+    <h2>Raising Exceptions</h2>
+    You can raise an exception in any point of your code to signal an error condition.
+    In the following code, the exception <TT>ValueError</TT> previously defined is raised by the function <TT>my_function</TT> 
+    if any of the values in the list 
+    is negative. 
+    When invoking the function on the given list, the code will print "An error occurred: Negative values are not allowed; -1".
+    <pre class="line-numbers"><code class="language-python">def my_function(l):
+    for value in l:
+        if value < 0:
+            raise ValueError(value, "Negative values are not allowed")
+
+try:
+    my_function([1, 4, 3, 5, -1, 4, 6])
+except ValueError as e:
+    print("An error occurred: {}; {}".format(e.message, e.value))</code></pre>
+
+</body>
+</html>
