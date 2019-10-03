@@ -129,7 +129,7 @@ https://github.com/jkordas/client-server-authentication-demo/blob/master/src/dat
   <ul>
     <li> Deployment of the database (Section 2).
     <li> The ETL module (Section 3).
-    <li> The reservation management module (Section 4, not included in this text (yet)).
+    <li> The registration module (Section 4, not included in this text (yet)).
     <li> A graphical interface (Section 5, not included in this text (yet)) that allows the 
       visualization of the registrations.
   </ul>
@@ -942,178 +942,188 @@ You'll write the code demanded in Exercise 14 <b>after</b> this instruction.
   
 </p>
 
-<!--
 
-  <h2>The Registration Module</h2>
+<h2>The Registration Module</h2>
 
   <p>The <b>registration module</b> contains the functions necessary to register 
   a student to a specific Pistus edition.
-  If the student didn't participate in any previous Pistus edition, <TT>PistusResa</TT> 
+  If the student hasn't participated in any previous Pistus edition, <TT>PistusResa</TT> 
   will ask her to insert all her personal data, including the names of the associations to which she belongs 
   and her roles in them. 
-  If the student already participated in a previous Pistus edition, her data will already be in the database;
-  the student might want to modify them.
-  In any case, <TT>PistusResa</TT> registers the participation of the student to the current edition.
+  If the student has already participated in a previous Pistus edition, her data will already be in the database.
   </p>
 
-  <p>
-  We need to implement the following functions. In all functions, the parameter <TT>db</TT> is the object used to communicate
-  with the MySQL server.
-  <ol>
-    <li> <TT>add_student(stud, db)</TT>. Adds a student to the database. 
-    <li> <TT>get_student(stud_number, db)</TT>. Returns all the data on the specified student from the database.
-    <li> <TT>update_student(stud_number, cols, new_values, db)</TT>. Updates the values of the specified  columns in 
-      the table <TT>Student</TT>.
-    <li> <TT>add_student_to_asso(stud_number, asso_name, db, stud_role="member")</TT>. Adds a student to an association with the 
-      specified role.
-    <li> <TT>remove_student_from_asso(stud_number, asso_name, db)</TT>. Removes a student from an association.
-    <li> <TT>update_student_role(stud_number, asso_name, db, new_stud_role="member")</TT>. Updates the role of a student in the specified 
-      association. 
-    <li> <TT>register_student_to_pistus_edition(stud_number, edition_year, db)</TT>. Registers a student to the specified 
-      Pistus edition.
-  </ol>
-  </p>
 
-  The function <TT>add_student(stud)</TT> takes in a variable <TT>stud</TT> that contains all the data on a student.
-  Similarly, the function <TT>get_student(stud_number)</TT> returns such a variable. 
-
-  <ul class="warning">
-    <li class="warning"> How would you represent that variable? [<a href="#"
-      onclick="showHideSolution('stud-variable-question', 'stud-variable-question-link', 'Show the answer', 'Close');return false;"><span
-        id="stud-variable-question-link">Show the answer</span></a>]. 
-        <div id="stud-variable-question" style="display:none;" class="reltables"> 
-          The variable <TT>stud</TT> can be represented as an <b>object</b>. 
-          Other options:
-          <ul>
-          <li> A <i>list</i> would not be a good choice, given that the values of the attributes of a student
-          (e.g., stud_number, first_name, last_name) are not associated to a name, 
-          and therefore one has to remember the position of each value in the list.
-          <li> A <i>dictionary</i> would be a good choice, because its keys would be the names 
-            of the attributes.
-          </ul>
-    </div>
+  <ul class="exercise">
+    <li class="exercise"> In your project, create a package named <TT>registration</TT>. 
+    <li class="exercise"> Create a file named <TT>registration_module.py</TT> in the package <TT>registration</TT>.
+      This file will contain the definition of all the functions of the registration module. 
   </ul>
 
-  <ul class="warning">
-    <li class="warning"> In your project, create a package named <TT>registration</TT>. 
-      We'll write all the functions of the registration module in that package.
-  </ul>
-
-  <p>
-  <b>The class <TT>Student</TT>.</b> In order to represent the data on a student, we'll define a class 
-  <TT>student</TT>. The attributes of this class are all the columns of the table <TT>Student</TT> in 
-  the Pistus database (keep the same names for simplicity). Additionally, the following attributes are needed:
-  <ul>
-    <li> <TT>email_addresses</TT>. The value of this attribute will be the list of email addresses of a student.
-    <li> <TT>associations</TT>. The value of this attribute will be the list of the names of the associations to which a 
-      student belongs, as well as the student roles in those associations.
-      <ul class="warning">
-        <li class="warning"> Each element of the list must contain the name of an association and the role of the student 
-          in that association. Which data structure are you going to use? 
-      </ul>
-  </ul>
-  <p>
-  <p>
-      <div class="exercisebox"> Create a file named <TT>student.py</TT> in the package <TT>registration</TT>
-        and write the code for the class  <TT>Student</TT>.
-      </div>
-  </p>
-
-  <ul class="warning">
-    <li class="warning"> Create a file named <TT>registration_module.py</TT> in the package <TT>registration</TT>.
-      This file will contain the definition of all the functions of the registration module.
-    <li class="warning">  In the definition of the following functions, remember to capture the exceptions that might 
-      be raised by your code.
-  </ul>
-
-  <p> <b>The function <TT>add_student()</TT>.</b> The function <TT>add_student(stud, db)</TT> takes in an object of the class
-    <TT>Student</TT> and inserts the new student into the Pistus database. 
-    <ul class="warning">
-      <li class="warning"> Notion of transaction
-      <li class="warning"> parameterized query
+  <ul class="rtfm">
+      <li class="rtfm"> In the following exercises, you'll need to use <b>parameterized queries </b>. 
+        If you use MySQL, check the documentation by following <a href="./docs/database.html#parameterized_queries" target="_blank">this link</a>.
+        If you use SQLite, check the documentation by following <a href="./docs/database-sqlite.html#parameterized_queries" target="_blank">this link</a>.
     </ul>
-  </p>
+    
+
+  <h3>Adding a Student to the Database</h3>
+  We define a function:
+<pre><code class="language-python">add_student(stud_number, first_name, last_name, gender, email_addresses, cursor): success</code></pre>
+      
+  The input is: 
+  <ul>
+    <li> The student number.
+    <li> The student first name.
+    <li> The student last name. 
+    <li> The student gender.
+    <li> The student email addresses (a list).
+    <li> The object <TT>cursor</TT> used to connect to the database.
+  </ul>
+  
+  The output is a boolean value (<TT>success</TT>):
+  <ul>
+    <li> <TT>True</TT>, if the student can be added to the database.
+    <li> <TT>False</TT>, if the student cannot be added to the database. 
+  </ul>
+
   <p>
       <div class="exercisebox"> Write the code for the function <TT>add_student()</TT> in the file named 
         <TT>registration_module.py</TT>.
+        <ul class="warning">
+          <li class="warning"> Remember to catch the exceptions raised in case the SQL query encounters an error.
+            If an error occurs, then the function must return <TT>False</TT>.
+        </ul>
       </div>
+
   </p>
 
+  <h3>Getting a Student from the Database</h3>
 
-  <p> <b>The function <TT>get_student()</TT>.</b> The function <TT>get_student(stud_number, db)</TT> takes in a student 
-    number and returns an object of the class <TT>Student</TT> with all the information on the corresponding student retrieved
-    from the Pistus database.
-    <ul class="warning">
-      <li class="warning"> If no student is found in the database with the specified <TT>stud_number</TT>, the 
-        function returns <TT>None</TT>.
-      <li class="warning"> Importing the class Student into the current file.
-    </ul>
-  </p>
+  We define a function:
+  <pre><code class="language-python">get_student(stud_number, cursor): (stud_number, first_name, last_name, gender, email_addresses)</code></pre>
+  
+  The input is: 
+  <ul>
+    <li> The student number.
+    <li> The object <TT>cursor</TT> used to connect to the database.
+  </ul>
+  
+  <b>If a student with the given number exists</b>, the output is a tuple containing:
+
+  <ul>
+    <li> The student number.
+    <li> The student first name.
+    <li> The student last name. 
+    <li> The student gender.
+    <li> The student email addresses (a list).
+  </ul>
+
+  <b>If a student with the given number does not exist</b>, the output is <TT>None</TT>.
   <p>
       <div class="exercisebox"> Write the code for the function <TT>get_student()</TT> in the file named 
         <TT>registration_module.py</TT>.
       </div>
   </p>
 
-  <p> <b>The function <TT>update_student()</TT>.</b> The function <TT>update_student(stud_number, cols, new_values, db)</TT> 
-    updates the specified columns with new values for a specified student. 
-    The parameter <TT>cols</TT> is a list of column names, and the parameter <TT>new_values</TT> is the list
-    of the new values for the specified columns. 
-    The values are given in the same order as the columns, that is <TT>new_values[i]</TT> is the new value for the 
-    column <TT>cols[i]</TT>.
-    <ul class="warning">
-      <li class="warning"> How to handle arbitrary arguments in a function
-    </ul>
-  </p>
+ <h3>Adding a Student to an Association</h3>
+
+ We define a function:
+ <pre><code class="language-python">add_student_to_asso(stud_number, asso_name, cursor, stud_role="member"): success</code></pre>
+  
+ The input is: 
+  <ul>
+    <li> The student number.
+    <li> The association name.
+    <li> The object <TT>cursor</TT> used to connect to the database.
+    <li> The student role in the association (the default value is "member").
+  </ul>
+  
+  The output is a boolean value (<TT>success</TT>):
+  <ul>
+    <li> <TT>True</TT>, if the student can be added to the association.
+    <li> <TT>False</TT>, if the student cannot be added to the association. 
+  </ul>
 
   <p>
-      <div class="exercisebox"> Write the code for the function <TT>update_student()</TT> in the file named 
+  <div class="exercisebox"> Write the code for the function <TT>add_student_to_asso()</TT> in the file named 
         <TT>registration_module.py</TT>.
       </div>
   </p>
 
-  <p> <b>The function <TT>add_student_to_asso()</TT>.</b> 
-    The function <TT>add_student_to_asso(stud_number, asso_name, db, stud_role="member")</TT> adds a student to the specified
-    association and with the specified role.
-  </p>
-  <p>
-      <div class="exercisebox"> Write the code for the function <TT>add_student_to_asso()</TT> in the file named 
-        <TT>registration_module.py</TT>.
-      </div>
-  </p>
+  <h3>Removing a Student from an Association</h3>
 
-  <p> <b>The function <TT>remove_student_from_asso()</TT>.</b> 
-    The function <TT>remove_student_from_asso(stud_number, asso_name, db)</TT> removes a student from the specified
-    association.
-  </p>
+  We define a function:
+  <pre><code class="language-python">remove_student_from_asso(stud_number, asso_name, cursor): success</code></pre>
+   
+  The input is: 
+   <ul>
+     <li> The student number.
+     <li> The association name.
+     <li> The object <TT>cursor</TT> used to connect to the database.
+   </ul>
+   
+   The output is a boolean value (<TT>success</TT>):
+   <ul>
+     <li> <TT>True</TT>, if the student can be removed from the association.
+     <li> <TT>False</TT>, if the student cannot be removed from the association. 
+   </ul> 
+  
+
   <p>
       <div class="exercisebox"> Write the code for the function <TT>remove_student_from_asso()</TT> in the file named 
         <TT>registration_module.py</TT>.
       </div>
   </p>
 
-  <p> <b>The function <TT>update_student_role()</TT>.</b> 
-    The function <TT>update_student_role(stud_number, asso_name, db, new_stud_role="member")</TT> adds a student to the specified
-    association and with the specified role.
-  </p>
+  <h3>Getting the Associations of a Student</h3>
+
+  We define a function:
+  <pre><code class="language-python">get_student_associations(stud_number, cursor): associations</code></pre>
+   
+  The input is: 
+   <ul>
+     <li> The student number.
+     <li> The object <TT>cursor</TT> used to connect to the database.
+   </ul>
+   
+   The output is a list containing the names of the associations of the student.
+   If no association can be found the output is <TT>None</TT>.
+  
   <p>
-      <div class="exercisebox"> Write the code for the function <TT>update_student_role()</TT> in the file named 
+      <div class="exercisebox"> Write the code for the function <TT>get_student_associations()</TT> in the file named 
         <TT>registration_module.py</TT>.
       </div>
   </p>
 
-  <p> <b>The function <TT>register_student_to_pistus_edition()</TT>.</b> 
-    The function <TT>register_student_to_pistus_edition(stud_number, edition_year, db)</TT> registers a student to the specified
-    Pistus edition.
-  </p>
+  <h3>Registering a Student to a Pistus Edition</h3>
+  We define a function:
+  <pre><code class="language-python">register_student_to_pistus_edition(stud_number, edition_year, registration_date, cursor, payment_date=None): success</code></pre>
+The input is:
+<ul>
+  <li> The student number.
+  <li> The Pistus edition year.
+  <li> The registration date.
+  <li> The object <TT>cursor</TT> used to connect to the database.
+  <li> The payment date (the default value is <TT>None</TT>).
+</ul>
+
+The output is a boolean value (<TT>success</TT>):
+   <ul>
+     <li> <TT>True</TT>, if the student can be registered.
+     <li> <TT>False</TT>, if the student cannot be registered. 
+   </ul>
+  
   <p>
       <div class="exercisebox"> Write the code for the function <TT>register_student_to_pistus_edition()</TT> in the file named 
         <TT>registration_module.py</TT>.
       </div>
   </p>
 
+
+
   
-  <h2>The Deadline Management Module</h2>
+  <!--<h2>The Deadline Management Module</h2>
 
   The Deadline Management module is responsible for automatically checking
   every day the payment deadline of each student.

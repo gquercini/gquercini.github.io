@@ -248,7 +248,7 @@ https://github.com/jkordas/client-server-authentication-demo/blob/master/src/dat
 <h3> Questions </h3>
 
 <ol type="a">
-  <!--<li> Create a database named <i>sn_platform</i>
+  <li> Create a database named <i>sn_platform</i>
   [<a href="#" onclick="showHideSolution('social-network-create-db', 'social-network-create-db-link', 'See solution', 'Hide solution');return false;"><span id="social-network-create-db-link">See solution</span></a>].
 
   <div id="social-network-create-db" style="display:none;" class="reltables">
@@ -265,7 +265,7 @@ https://github.com/jkordas/client-server-authentication-demo/blob/master/src/dat
 </ul>
 
 <li> Create all tables in the new database. For each table, specify the primary and foreign
-  keys <!--[<a href="#" onclick="showHideSolution('social-network-create-table', 'social-network-create-table-link', 'See solution', 'Hide solution');return false;"><span id="social-network-create-table-link">See solution</span></a>].
+  keys [<a href="#" onclick="showHideSolution('social-network-create-table', 'social-network-create-table-link', 'See solution', 'Hide solution');return false;"><span id="social-network-create-table-link">See solution</span></a>].
 <div id="social-network-create-table" style="display:none;" class="reltables">
 <pre>
 <code>CREATE TABLE UserAccount(nickname VARCHAR(100) PRIMARY KEY,
@@ -313,7 +313,7 @@ CHARACTER SET 'utf8'
 FIELDS TERMINATED BY ';'
 IGNORE 1 ROWS</code></pre>
 At the place of <i>fullpath</i>, you have to replace the full path of directories where the file <i>user-account.csv</i> is.
-    </div>-->
+    </div>
   <li> Download the SQL dump of the database at the <a href="./data/social-network/dump_sn_platform.sql">following URL</a>.
   <li> Import the database into MySQL [<a href="#" onclick="showHideSolution('import-db-instructions', 'import-db-instructions-link', 'Tell me how', 'Hide');return false;"><span id="import-db-instructions-link">Tell me how</span></a>].
     <div id="import-db-instructions" style="display:none;" class="reltables">
@@ -329,24 +329,287 @@ At the place of <i>fullpath</i>, you have to replace the full path of directorie
     <li> Write the following queries in SQL:
           <ol class="queryitem">
             <li class="queryitem"> For each user, get the number of followers by country. Rank the countries by the number of
-              followers in descending order <!--[<a href="#" onclick="showHideSolution('social-network-q1', 'social-network-q1-link', 'See solution', 'Hide solution');return false;"><span id="social-network-q1-link">See solution</span></a>].
+              followers in descending order [<a href="#" onclick="showHideSolution('social-network-q1', 'social-network-q1-link', 'See solution', 'Hide solution');return false;"><span id="social-network-q1-link">See solution</span></a>].
               <div id="social-network-q1" style="display:none;" class="reltables">
                 <pre>
-<code>SELECT a.nickname, temp.country, temp.nbFollowers
-FROM UserAccount a,
-      (SELECT nickname_dst, country, count(*) as nbFollowers
-      FROM UserAccount, Relationship
-      WHERE nickname = nickname_src AND type='follower'
-      GROUP BY nickname_dst, country
-      ORDER BY nbFollowers DESC) temp
-WHERE temp.nickname_dst=a.nickname
-ORDER BY a.nickname</code></pre>
-              </div>-->
+<code>SELECT nickname_dst, country, count(*) as nbFollowers
+FROM UserAccount, Relationship
+WHERE nickname = nickname_src AND type='follower'
+GROUP BY nickname_dst, country
+ORDER BY nickname_dst, country, nbFollowers DESC</code></pre>
+              </div>
           <ul class="warning">
-            <li class="warning"> Click <a href="./data/social-network/results/query1.csv" target="_blank">here</a> to see the expected result.
+            <li class="warning"> <a href="#" onclick="showHideSolution('q1-expected-result', 'q1-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="q1-expected-result-link">Show the expected result</span></a>.
+        </ul>
+
+<div id="q1-expected-result" align="center" style="display:none;">
+  
+      <table class="tg">
+        <tr>
+          <th class="tg-0lax">nick_ANIS</th>
+          <th class="tg-0lax">Germany</th>
+          <th class="tg-0lax">1</th>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_ANIS</td>
+          <td class="tg-0lax">Portugal</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_BIANCHI</td>
+          <td class="tg-0lax">France</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_BIANCHI</td>
+          <td class="tg-0lax">Germany</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_BIANCHI</td>
+          <td class="tg-0lax">UK</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_BLANCO</td>
+          <td class="tg-0lax">Italy</td>
+          <td class="tg-0lax">2</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_BLANCO</td>
+          <td class="tg-0lax">UK</td>
+          <td class="tg-0lax">2</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_CAMERON</td>
+          <td class="tg-0lax">France</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_CAMERON</td>
+          <td class="tg-0lax">Portugal</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_CAMERON</td>
+          <td class="tg-0lax">Spain</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_CAMERON</td>
+          <td class="tg-0lax">UK</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_CHOISNE</td>
+          <td class="tg-0lax">France</td>
+          <td class="tg-0lax">2</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_COEFFARD</td>
+          <td class="tg-0lax">Germany</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_COEFFARD</td>
+          <td class="tg-0lax">UK</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_COEFFARD</td>
+          <td class="tg-0lax">USA</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_COUILLAUD</td>
+          <td class="tg-0lax">France</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_FERRON</td>
+          <td class="tg-0lax">UK</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_GUEFFIER</td>
+          <td class="tg-0lax">France</td>
+          <td class="tg-0lax">2</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_GUEFFIER</td>
+          <td class="tg-0lax">Germany</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_HUGHES</td>
+          <td class="tg-0lax">France</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_HUGHES</td>
+          <td class="tg-0lax">Germany</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_RELION</td>
+          <td class="tg-0lax">Germany</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_RELION</td>
+          <td class="tg-0lax">Italy</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_RELION</td>
+          <td class="tg-0lax">Portugal</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_RELION</td>
+          <td class="tg-0lax">Spain</td>
+          <td class="tg-0lax">2</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_RELION</td>
+          <td class="tg-0lax">UK</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_RELION</td>
+          <td class="tg-0lax">USA</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_REVERDY</td>
+          <td class="tg-0lax">Italy</td>
+          <td class="tg-0lax">2</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_REVERDY</td>
+          <td class="tg-0lax">Spain</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_REVERDY</td>
+          <td class="tg-0lax">UK</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_REVERDY</td>
+          <td class="tg-0lax">USA</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_ROSSI</td>
+          <td class="tg-0lax">Germany</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_ROSSI</td>
+          <td class="tg-0lax">Portugal</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_ROSSI</td>
+          <td class="tg-0lax">USA</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_ROUSSIERE</td>
+          <td class="tg-0lax">France</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_ROUSSIERE</td>
+          <td class="tg-0lax">Germany</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_SCHEIDER</td>
+          <td class="tg-0lax">France</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_SCHEIDER</td>
+          <td class="tg-0lax">Germany</td>
+          <td class="tg-0lax">2</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_SCHEIDER</td>
+          <td class="tg-0lax">Italy</td>
+          <td class="tg-0lax">2</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_SCHMIDT</td>
+          <td class="tg-0lax">France</td>
+          <td class="tg-0lax">2</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_SCHMIDT</td>
+          <td class="tg-0lax">Germany</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_SCHMIDT</td>
+          <td class="tg-0lax">Italy</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_SCHMIDT</td>
+          <td class="tg-0lax">Portugal</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_SCHMIDT</td>
+          <td class="tg-0lax">Spain</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_SCHMIDT</td>
+          <td class="tg-0lax">UK</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_SCHMIDT</td>
+          <td class="tg-0lax">USA</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_SMITH</td>
+          <td class="tg-0lax">Spain</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_SMITH</td>
+          <td class="tg-0lax">UK</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_WEBER</td>
+          <td class="tg-0lax">Italy</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_WEBER</td>
+          <td class="tg-0lax">Spain</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_WEBER</td>
+          <td class="tg-0lax">UK</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_WEBER</td>
+          <td class="tg-0lax">USA</td>
+          <td class="tg-0lax">1</td>
+        </tr>
+      </table>  
+</div>
           </ul>
             <li class="queryitem"> Get the first and family name of the users tagged by the user with nickname 'nick_CAMERON'
-              <!--[<a href="#" onclick="showHideSolution('social-network-q2', 'social-network-q2-link', 'See solution', 'Hide solution');return false;"><span id="social-network-q2-link">See solution</span></a>].
+              [<a href="#" onclick="showHideSolution('social-network-q2', 'social-network-q2-link', 'See solution', 'Hide solution');return false;"><span id="social-network-q2-link">See solution</span></a>].
               <div id="social-network-q2" style="display:none;" class="reltables">
                 <pre>
 <code>SELECT first_name, last_name
@@ -357,14 +620,28 @@ WHERE nickname in
     FROM Post p, Tag t, UserAccount u
     WHERE p.post_id=t.post_id AND p.nickname='nick_CAMERON'
           AND t.nickname=u.nickname
-  )</code></pre></div> -->
+  )</code></pre></div>
 
   <ul class="warning">
-      <li class="warning"> Click <a href="./data/social-network/results/query2.csv" target="_blank">here</a> to see the expected result.
-    </ul>
+      <li class="warning"> <a href="#" onclick="showHideSolution('q2-expected-result', 'q2-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="q2-expected-result-link">Show the expected result</span></a>.
+  </ul>
+  <div id="q2-expected-result" align="center" style="display:none;">
+  <table class="tg">
+      <tr>
+        <th class="tg-0lax">Matteo</th>
+        <th class="tg-0lax">BIANCHI</th>
+      </tr>
+      <tr>
+        <td class="tg-0lax">Florian</td>
+        <td class="tg-0lax">COEFFARD</td>
+      </tr>
+    </table>
+  </div>
+
+
             <li class="queryitem"> Get the nickname, first and last name of the common friends of the users
               with nickname 'nick_CAMERON' and 'nick_ANIS'
-              <!--[<a href="#" onclick="showHideSolution('social-network-q3', 'social-network-q3-link', 'See solution', 'Hide solution');return false;"><span id="social-network-q3-link">See solution</span></a>].
+              [<a href="#" onclick="showHideSolution('social-network-q3', 'social-network-q3-link', 'See solution', 'Hide solution');return false;"><span id="social-network-q3-link">See solution</span></a>].
               <div id="social-network-q3" style="display:none;" class="reltables">
                 <pre>
 <code>SELECT u.nickname, u.first_name, u.last_name
@@ -378,15 +655,33 @@ FROM UserAccount u,
               WHERE nickname_src='nick_ANIS'
                     AND type='friendship')
   ) temp
-WHERE u.nickname=temp.nickname
-</code></pre></div> -->
+WHERE u.nickname=temp.nickname</code></pre></div>
 
 <ul class="warning">
-    <li class="warning"> Click <a href="./data/social-network/results/query3.csv" target="_blank">here</a> to see the expected result.
-  </ul>
+    <li class="warning"> <a href="#" onclick="showHideSolution('q3-expected-result', 'q3-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="q3-expected-result-link">Show the expected result</span></a>.
+</ul>
+<div id="q3-expected-result" align="center" style="display:none;">
+    <table class="tg">
+        <tr>
+          <th class="tg-0lax">nick_COEFFARD</th>
+          <th class="tg-0lax">Florian</th>
+          <th class="tg-0lax">COEFFARD</th>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_MORENO</td>
+          <td class="tg-0lax">Franco</td>
+          <td class="tg-0lax">MORENO</td>
+        </tr>
+        <tr>
+          <td class="tg-0lax">nick_ROUSSIERE</td>
+          <td class="tg-0lax">Jacob</td>
+          <td class="tg-0lax">ROUSSIERE</td>
+        </tr>
+      </table>
+</div>
             <li class="queryitem"> Rank the users by the number of their followers. The user with the most followers must appear at the top
               of the list
-              <!-- [<a href="#" onclick="showHideSolution('social-network-q4', 'social-network-q4-link', 'See solution', 'Hide solution');return false;"><span id="social-network-q4-link">See solution</span></a>].
+             [<a href="#" onclick="showHideSolution('social-network-q4', 'social-network-q4-link', 'See solution', 'Hide solution');return false;"><span id="social-network-q4-link">See solution</span></a>].
               <div id="social-network-q4" style="display:none;" class="reltables">
                 <pre>
 <code>SELECT u.nickname, u.first_name, u.last_name, temp.nbFollowers
@@ -397,10 +692,124 @@ FROM UserAccount u,
       GROUP BY r.nickname_dst) temp
 WHERE u.nickname = temp.nickname
 ORDER BY nbFollowers DESC</code></pre>
-              </div> -->
+              </div>
               <ul class="warning">
-                  <li class="warning"> Click <a href="./data/social-network/results/query4.csv" target="_blank">here</a> to see the expected result.
-                </ul>
+                  <li class="warning"> <a href="#" onclick="showHideSolution('q4-expected-result', 'q4-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="q4-expected-result-link">Show the expected result</span></a>.
+              </ul>
+              <div id="q4-expected-result" align="center" style="display:none;">
+              
+                    <table class="tg">
+                      <tr>
+                        <th class="tg-0lax">nick_SCHMIDT</th>
+                        <th class="tg-0lax">Gerda</th>
+                        <th class="tg-0lax">SCHMIDT</th>
+                        <th class="tg-0lax">8</th>
+                      </tr>
+                      <tr>
+                        <td class="tg-0lax">nick_RELION</td>
+                        <td class="tg-0lax">Léonie</td>
+                        <td class="tg-0lax">RELION</td>
+                        <td class="tg-0lax">7</td>
+                      </tr>
+                      <tr>
+                        <td class="tg-0lax">nick_SCHEIDER</td>
+                        <td class="tg-0lax">Paul</td>
+                        <td class="tg-0lax">SCHEIDER</td>
+                        <td class="tg-0lax">5</td>
+                      </tr>
+                      <tr>
+                        <td class="tg-0lax">nick_REVERDY</td>
+                        <td class="tg-0lax">Frantz</td>
+                        <td class="tg-0lax">REVERDY</td>
+                        <td class="tg-0lax">5</td>
+                      </tr>
+                      <tr>
+                        <td class="tg-0lax">nick_BLANCO</td>
+                        <td class="tg-0lax">Francisco</td>
+                        <td class="tg-0lax">BLANCO</td>
+                        <td class="tg-0lax">4</td>
+                      </tr>
+                      <tr>
+                        <td class="tg-0lax">nick_CAMERON</td>
+                        <td class="tg-0lax">Andrew</td>
+                        <td class="tg-0lax">CAMERON</td>
+                        <td class="tg-0lax">4</td>
+                      </tr>
+                      <tr>
+                        <td class="tg-0lax">nick_WEBER</td>
+                        <td class="tg-0lax">Bertha</td>
+                        <td class="tg-0lax">WEBER</td>
+                        <td class="tg-0lax">4</td>
+                      </tr>
+                      <tr>
+                        <td class="tg-0lax">nick_COEFFARD</td>
+                        <td class="tg-0lax">Florian</td>
+                        <td class="tg-0lax">COEFFARD</td>
+                        <td class="tg-0lax">3</td>
+                      </tr>
+                      <tr>
+                        <td class="tg-0lax">nick_ROSSI</td>
+                        <td class="tg-0lax">Gina</td>
+                        <td class="tg-0lax">ROSSI</td>
+                        <td class="tg-0lax">3</td>
+                      </tr>
+                      <tr>
+                        <td class="tg-0lax">nick_BIANCHI</td>
+                        <td class="tg-0lax">Matteo</td>
+                        <td class="tg-0lax">BIANCHI</td>
+                        <td class="tg-0lax">3</td>
+                      </tr>
+                      <tr>
+                        <td class="tg-0lax">nick_GUEFFIER</td>
+                        <td class="tg-0lax">Hortense</td>
+                        <td class="tg-0lax">GUEFFIER</td>
+                        <td class="tg-0lax">3</td>
+                      </tr>
+                      <tr>
+                        <td class="tg-0lax">nick_HUGHES</td>
+                        <td class="tg-0lax">Lara</td>
+                        <td class="tg-0lax">HUGHES</td>
+                        <td class="tg-0lax">2</td>
+                      </tr>
+                      <tr>
+                        <td class="tg-0lax">nick_ANIS</td>
+                        <td class="tg-0lax">Karl</td>
+                        <td class="tg-0lax">ANIS</td>
+                        <td class="tg-0lax">2</td>
+                      </tr>
+                      <tr>
+                        <td class="tg-0lax">nick_SMITH</td>
+                        <td class="tg-0lax">John</td>
+                        <td class="tg-0lax">SMITH</td>
+                        <td class="tg-0lax">2</td>
+                      </tr>
+                      <tr>
+                        <td class="tg-0lax">nick_ROUSSIERE</td>
+                        <td class="tg-0lax">Jacob</td>
+                        <td class="tg-0lax">ROUSSIERE</td>
+                        <td class="tg-0lax">2</td>
+                      </tr>
+                      <tr>
+                        <td class="tg-0lax">nick_CHOISNE</td>
+                        <td class="tg-0lax">Eliane</td>
+                        <td class="tg-0lax">CHOISNE</td>
+                        <td class="tg-0lax">2</td>
+                      </tr>
+                      <tr>
+                        <td class="tg-0lax">nick_FERRON</td>
+                        <td class="tg-0lax">Prosper</td>
+                        <td class="tg-0lax">FERRON</td>
+                        <td class="tg-0lax">1</td>
+                      </tr>
+                      <tr>
+                        <td class="tg-0lax">nick_COUILLAUD</td>
+                        <td class="tg-0lax">Timothée</td>
+                        <td class="tg-0lax">COUILLAUD</td>
+                        <td class="tg-0lax">1</td>
+                      </tr>
+                    </table>
+              </div>
+              
           </ol>
 
 </ol>
@@ -417,7 +826,7 @@ ORDER BY nbFollowers DESC</code></pre>
 
   <h3> Questions </h3>
 
-  <!--<ol type="a">
+  <ol type="a">
     <li> Create a database named <i>banking</i>
        [<a href="#" onclick="showHideSolution('banking-create-db', 'banking-create-db-link', 'See solution', 'Hide solution');return false;"><span id="banking-create-db-link">See solution</span></a>].
 
@@ -461,7 +870,7 @@ CREATE TABLE Account(acct_nbr INT PRIMARY KEY, acct_type VARCHAR(50),
 CREATE TABLE Loan (loan_nbr INT PRIMARY KEY, loan_type VARCHAR(50), amount FLOAT, branch_id INT, ssn VARCHAR(50),
   FOREIGN KEY(branch_id) REFERENCES Branch(branch_id),
   FOREIGN KEY(ssn) REFERENCES Customer(ssn))</code></pre>
-  </div> -->
+  </div>
 
   <li> Download the SQL dump of the database at the <a href="./data/banking/dump_banking.sql">following URL</a>.
     <li> Import the database into MySQL.
@@ -471,7 +880,7 @@ CREATE TABLE Loan (loan_nbr INT PRIMARY KEY, loan_type VARCHAR(50), amount FLOAT
       <ol class="queryitem">
         <li class="queryitem"> Get all the data (including the full address) on the customers that have a checking account
           with a negative balance
-         <!-- [<a href="#" onclick="showHideSolution('banking-system-q1', 'banking-system-q1-link', 'See solution', 'Hide solution');return false;"><span id="banking-system-q1-link">See solution</span></a>].
+          [<a href="#" onclick="showHideSolution('banking-system-q1', 'banking-system-q1-link', 'See solution', 'Hide solution');return false;"><span id="banking-system-q1-link">See solution</span></a>].
           <div id="banking-system-q1" style="display:none;">
             <pre>
             <code>
@@ -481,12 +890,38 @@ WHERE c.ssn = acc.ssn AND c.postal_code = addr.postal_code
     AND acc.balance < 0 and acc.acct_type='checking'
             </code>
             </pre>
-          </div> -->
+          </div>
           <ul class="warning">
-              <li class="warning"> Click <a href="./data/banking/result/query1.csv" target="_blank">here</a> to see the expected result.
-            </ul>
+              <li class="warning"> <a href="#" onclick="showHideSolution('q1bank-expected-result', 'q1bank-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="q1bank-expected-result-link">Show the expected result</span></a>.
+          </ul>
+          <div id="q1bank-expected-result" align="center" style="display:none;">
+            <table class="tg">
+                  <tr>
+                    <th class="tg-0lax">172863542</th>
+                    <th class="tg-0lax">Fourth</th>
+                    <th class="tg-0lax">Member</th>
+                    <th class="tg-0lax">109876352</th>
+                    <th class="tg-0lax">12</th>
+                    <th class="tg-0lax">FC Street</th>
+                    <th class="tg-0lax">90871</th>
+                    <th class="tg-0lax">fourth_city</th>
+                    <th class="tg-0lax">country_5</th>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax">128765434</td>
+                    <td class="tg-0lax">John</td>
+                    <td class="tg-0lax">Smith</td>
+                    <td class="tg-0lax">98763252</td>
+                    <td class="tg-0lax">12</td>
+                    <td class="tg-0lax">SEC Street</td>
+                    <td class="tg-0lax">1234</td>
+                    <td class="tg-0lax">first_city</td>
+                    <td class="tg-0lax">country_1</td>
+                  </tr>
+                </table>
+          </div>
         <li class="queryitem"> Get the SSN of all customers that have no loan at the 'First Bank'
-         <!-- [<a href="#" onclick="showHideSolution('banking-system-q2', 'banking-system-q2-link', 'See solution', 'Hide solution');return false;"><span id="banking-system-q2-link">See solution</span></a>].
+          [<a href="#" onclick="showHideSolution('banking-system-q2', 'banking-system-q2-link', 'See solution', 'Hide solution');return false;"><span id="banking-system-q2-link">See solution</span></a>].
           <div id="banking-system-q2" style="display:none;">
             <pre>
             <code>
@@ -496,43 +931,63 @@ WHERE ssn NOT IN (
 SELECT c.ssn
 FROM Customer c, Loan l, Bank ba, Branch br
 WHERE c.ssn = l.ssn and l.branch_id=br.branch_id
-      and br.code_bank=ba.code_bank and ba.name_bank='First Bank')
-            </code>
-            </pre>
-          </div> -->
+      and br.code_bank=ba.code_bank and ba.name_bank='First Bank')</code></pre>
+          </div>
           <ul class="warning">
-              <li class="warning"> Click <a href="./data/banking/result/query2.csv" target="_blank">here</a> to see the expected result.
-            </ul>
+              <li class="warning"> <a href="#" onclick="showHideSolution('q2bank-expected-result', 'q2bank-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="q2bank-expected-result-link">Show the expected result</span></a>.
+          </ul>
+          <div id="q2bank-expected-result" align="center" style="display:none;">
+          <table class="tg">
+                  <tr>
+                    <th class="tg-0lax">'128787673'</th>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax">'128765434'</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax">'219086468'</td>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax">'129876532'</td>
+                  </tr>
+                </table>
+          </div>
+
         <li class="queryitem"> Get the name of the bank that has the most branches
-         <!-- [<a href="#" onclick="showHideSolution('banking-system-q3', 'banking-system-q3-link', 'See solution', 'Hide solution');return false;"><span id="banking-system-q3-link">See solution</span></a>].
+         [<a href="#" onclick="showHideSolution('banking-system-q3', 'banking-system-q3-link', 'See solution', 'Hide solution');return false;"><span id="banking-system-q3-link">See solution</span></a>].
           <div id="banking-system-q3" style="display:none;">
-            <pre>
-            <code>
-            SELECT name_bank
-            FROM Bank
-            WHERE code_bank IN
-            (
-            SELECT code_bank
-            FROM Branch
-            GROUP BY code_bank
-            HAVING COUNT(*) =
-            (SELECT MAX(nb_Branches)
-            FROM (SELECT count(*) as nb_Branches
-            		FROM Branch
-            		GROUP BY code_bank) temp
-            )
-            )
+            <pre><code class="language-sql">SELECT name_bank
+FROM Bank
+WHERE code_bank IN
+(
+SELECT code_bank
+FROM Branch
+GROUP BY code_bank
+HAVING COUNT(*) =
+(SELECT MAX(nb_Branches)
+FROM (SELECT count(*) as nb_Branches
+    FROM Branch
+    GROUP BY code_bank) temp
+)
+)</code></pre></div>
+
+<ul class="warning">
+    <li class="warning"> <a href="#" onclick="showHideSolution('q3bank-expected-result', 'q3bank-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="q3bank-expected-result-link">Show the expected result</span></a>.
+</ul>
+<div id="q3bank-expected-result" align="center" style="display:none;">    
+      <table class="tg">
+        <tr>
+          <th class="tg-0lax">First Bank</th>
+        </tr>
+        <tr>
+          <td class="tg-0lax">Third Bank</td>
+        </tr>
+      </table>
+</div>      
 
 
-            </code>
-            </pre>
-          </div> -->
-
-          <ul class="warning">
-              <li class="warning"> Click <a href="./data/banking/result/query3.csv" target="_blank">here</a> to see the expected result.
-            </ul>
         <li class="queryitem"> Get the SSN of all customers having an account in more than one bank
-          <!-- [<a href="#" onclick="showHideSolution('banking-system-q4', 'banking-system-q4-link', 'See solution', 'Hide solution');return false;"><span id="banking-system-q4-link">See solution</span></a>].
+           [<a href="#" onclick="showHideSolution('banking-system-q4', 'banking-system-q4-link', 'See solution', 'Hide solution');return false;"><span id="banking-system-q4-link">See solution</span></a>].
           <div id="banking-system-q4" style="display:none;">
             <pre>
             <code>
@@ -545,13 +1000,25 @@ WHERE c.ssn = l.ssn and l.branch_id=br.branch_id
   HAVING COUNT(*) > 1
             </code>
             </pre>
-          </div> -->
+          </div> 
           <ul class="warning">
-              <li class="warning"> Click <a href="./data/banking/result/query4.csv" target="_blank">here</a> to see the expected result.
-            </ul>
+              <li class="warning"> <a href="#" onclick="showHideSolution('q4bank-expected-result', 'q4bank-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="q4bank-expected-result-link">Show the expected result</span></a>.
+
+          </ul>
+          <div id="q4bank-expected-result" align="center" style="display:none;"> 
+              <table class="tg">
+                  <tr>
+                    <th class="tg-0lax">'128765434'</th>
+                  </tr>
+                  <tr>
+                    <td class="tg-0lax">'172863542'</td>
+                  </tr>
+                </table>
+          </div>
       </ol>
 
-</ol>
+
+
 
 
 
