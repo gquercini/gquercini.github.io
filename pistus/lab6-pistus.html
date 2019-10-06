@@ -969,7 +969,7 @@ You'll write the code demanded in Exercise 14 <b>after</b> this instruction.
 
   <h3>Adding a Student to the Database</h3>
   We define a function:
-<pre><code class="language-python">add_student(stud_number, first_name, last_name, gender, email_addresses, cursor): success</code></pre>
+<pre><code class="language-python">add_student(stud_number, first_name, last_name, gender, email_addresses, cursor, conn): success</code></pre>
       
   The input is: 
   <ul>
@@ -978,7 +978,8 @@ You'll write the code demanded in Exercise 14 <b>after</b> this instruction.
     <li> The student last name. 
     <li> The student gender.
     <li> The student email addresses (a list).
-    <li> The object <TT>cursor</TT> used to connect to the database.
+    <li> The object <TT>cursor</TT> used to execute queries in the database.
+    <li> The object <TT>conn</TT> used to connect to the database.
   </ul>
   
   The output is a boolean value (<TT>success</TT>):
@@ -993,6 +994,7 @@ You'll write the code demanded in Exercise 14 <b>after</b> this instruction.
         <ul class="warning">
           <li class="warning"> Remember to catch the exceptions raised in case the SQL query encounters an error.
             If an error occurs, then the function must return <TT>False</TT>.
+            <li class="warning"> Remember to commit the modifications to the database.
         </ul>
       </div>
 
@@ -1001,12 +1003,13 @@ You'll write the code demanded in Exercise 14 <b>after</b> this instruction.
   <h3>Getting a Student from the Database</h3>
 
   We define a function:
-  <pre><code class="language-python">get_student(stud_number, cursor): (stud_number, first_name, last_name, gender, email_addresses)</code></pre>
+  <pre><code class="language-python">get_student(stud_number, cursor, conn): (stud_number, first_name, last_name, gender, email_addresses)</code></pre>
   
   The input is: 
   <ul>
     <li> The student number.
-    <li> The object <TT>cursor</TT> used to connect to the database.
+    <li> The object <TT>cursor</TT> used to execute queries in the database.
+    <li> The object <TT>conn</TT> used to connect to the database.
   </ul>
   
   <b>If a student with the given number exists</b>, the output is a tuple containing:
@@ -1026,69 +1029,24 @@ You'll write the code demanded in Exercise 14 <b>after</b> this instruction.
       </div>
   </p>
 
- <h3>Adding a Student to an Association</h3>
-
- We define a function:
- <pre><code class="language-python">add_student_to_asso(stud_number, asso_name, cursor, stud_role="member"): success</code></pre>
-  
- The input is: 
-  <ul>
-    <li> The student number.
-    <li> The association name.
-    <li> The object <TT>cursor</TT> used to connect to the database.
-    <li> The student role in the association (the default value is "member").
-  </ul>
-  
-  The output is a boolean value (<TT>success</TT>):
-  <ul>
-    <li> <TT>True</TT>, if the student can be added to the association.
-    <li> <TT>False</TT>, if the student cannot be added to the association. 
-  </ul>
-
-  <p>
-  <div class="exercisebox"> Write the code for the function <TT>add_student_to_asso()</TT> in the file named 
-        <TT>registration_module.py</TT>.
-      </div>
-  </p>
-
-  <h3>Removing a Student from an Association</h3>
-
-  We define a function:
-  <pre><code class="language-python">remove_student_from_asso(stud_number, asso_name, cursor): success</code></pre>
-   
-  The input is: 
-   <ul>
-     <li> The student number.
-     <li> The association name.
-     <li> The object <TT>cursor</TT> used to connect to the database.
-   </ul>
-   
-   The output is a boolean value (<TT>success</TT>):
-   <ul>
-     <li> <TT>True</TT>, if the student can be removed from the association.
-     <li> <TT>False</TT>, if the student cannot be removed from the association. 
-   </ul> 
-  
-
-  <p>
-      <div class="exercisebox"> Write the code for the function <TT>remove_student_from_asso()</TT> in the file named 
-        <TT>registration_module.py</TT>.
-      </div>
-  </p>
-
+ 
   <h3>Getting the Associations of a Student</h3>
 
   We define a function:
-  <pre><code class="language-python">get_student_associations(stud_number, cursor): associations</code></pre>
+  <pre><code class="language-python">get_student_associations(stud_number, cursor, conn): associations</code></pre>
    
   The input is: 
    <ul>
      <li> The student number.
-     <li> The object <TT>cursor</TT> used to connect to the database.
+    <li> The object <TT>cursor</TT> used to execute queries in the database.
+    <li> The object <TT>conn</TT> used to connect to the database.
    </ul>
    
-   The output is a list containing the names of the associations of the student.
-   If no association can be found the output is <TT>None</TT>.
+   The output is a list containing the associations of the student. 
+   Each element of this list is a tuple (<TT>asso_name</TT>, <TT>stud_role</TT>), 
+   where <TT>asso_name</TT> is the name of an association and 
+   <TT>stud_role</TT> is the role of the student in that association.
+    If no association can be found the output is <TT>None</TT>.
   
   <p>
       <div class="exercisebox"> Write the code for the function <TT>get_student_associations()</TT> in the file named 
@@ -1096,15 +1054,40 @@ You'll write the code demanded in Exercise 14 <b>after</b> this instruction.
       </div>
   </p>
 
+  <h3>Adding a Pistus Edition</h3>
+  We define a function:
+  <pre><code class="language-python">add_pistus_edition(edition_year, registration_fee, cursor, conn): success</code></pre>
+The input is:
+<ul>
+  <li> The edition year.
+  <li> The registration fee.
+  <li> The object <TT>cursor</TT> used to execute queries in the database.
+  <li> The object <TT>conn</TT> used to connect to the database.
+</ul>
+
+The output is a boolean value (<TT>success</TT>):
+<ul>
+    <li> <TT>True</TT>, if the Pistus edition can be added.
+    <li> <TT>False</TT>, if the Pistus edition cannot be added.
+</ul>
+
+<p>
+    <div class="exercisebox"> Write the code for the function 
+      <TT>add_pistus_edition()</TT> in the file named 
+      <TT>registration_module.py</TT>.
+    </div>
+</p>
+
   <h3>Registering a Student to a Pistus Edition</h3>
   We define a function:
-  <pre><code class="language-python">register_student_to_pistus_edition(stud_number, edition_year, registration_date, cursor, payment_date=None): success</code></pre>
+  <pre><code class="language-python">register_student_to_pistus_edition(stud_number, edition_year, registration_date, cursor, conn, payment_date=None): success</code></pre>
 The input is:
 <ul>
   <li> The student number.
   <li> The Pistus edition year.
   <li> The registration date.
-  <li> The object <TT>cursor</TT> used to connect to the database.
+  <li> The object <TT>cursor</TT> used to execute queries in the database.
+  <li> The object <TT>conn</TT> used to connect to the database.
   <li> The payment date (the default value is <TT>None</TT>).
 </ul>
 
@@ -1120,8 +1103,359 @@ The output is a boolean value (<TT>success</TT>):
       </div>
   </p>
 
+ <!--<h2>The Graphical User Interface</h2>
+
+ <p>We're going to develop the Graphical User Interface (GUI) of  <TT>PistusResa</TT>  shown in Figure 3 by using
+ the library <TT>tkinter</TT> included in the Anaconda distribution.
+The GUI consists of a main window with a <b>tabbed panel</b>, which <TT>tkinter</TT>
+refers to as <b>notebook</b>, containing two tabs:
+<ul>
+  <li> The tab <TT>Student</TT> (shown in Figure 3), 
+    that allows a Pistus organizer to add a new student or get 
+    the information of an existing student.
+  <li> The tab <TT>Registration</TT> (shown in Figure 4), that allows a Pistus organizer to 
+    register a student to a Pistus edition.
+</ul>
+
+fill in 
+the information after the organizer types the student number.
+
+Otherwise, the organizer has to type all the requested information and then
+click 
+</p>
+<p>
+    When a Pistus organizer wants to register a student to a Pistus edition, 
+    she first types the student number.
+    If the student already exists in the database, the GUI will 
+    get from the database all information about the student and fill in all the fields.
+    The organizer will then click on the tab "Registration" to register the student 
+    to the Pistus edition.
+    
+</p>
+<p>
+  If the student does not exist in the database, the organizer has to type all the student 
+  information and click on the button "Add student" before clicking on the tab "Registration".
+</p>
+
+<figure> <img src="./figs/pistus_gui.png" alt="Pistus GUI overview" class="body-image" style="width:80%;">
+  <figcaption>The GUI of <TT>PistusResa</TT>.</figcaption>
+</figure>
+
+Here we give you the code of the skeleton of the GUI, which is explained right 
+after the code.
+
+<ul class="warning">
+  <li class="warning"> Read the code and the explanation carefully in order 
+    to understand its structure.
+</ul>
+<pre class="line-numbers"><code class="language-python">import tkinter as tk
+from tkinter import messagebox
+from tkinter import ttk
+import sqlite3
+  
+'''
+Defines the GUI of the application PistusResa
+'''
+class PistusResaGUI(tk.Frame):
+    def __init__(self, conn, cursor, parent=None):
+        super().__init__(parent)
+        self.parent = parent
+        self.conn = conn
+        self.cursor = cursor
+        self.rb_gender = tk.StringVar(value="")
+        self.stud_number = tk.StringVar(value="")
+        self.create_widgets()
+        self.pack()
+
+    '''
+    Create all the graphical elements (widgets) in the window.
+    '''
+    def create_widgets(self):
+        # Add a title to the main window.
+        self.parent.title("PistusResa")
+        
+        # Create the notebook (tabbed panel) inside the main window.
+        self.create_notebook()
+              
+    '''
+    Create the notebook (tabbed pane) inside the main window
+    '''
+    def create_notebook(self):
+        # Create in the main window a notebook (panel with different tabs)
+        nb = ttk.Notebook(self.parent)
+    
+        # Create the student tab.
+        self.create_student_tab(nb)
+
+        # The registration tab.
+        self.create_registration_tab(nb)    
+
+        nb.pack(expand=1, fill="both")
+
+    '''
+    Create the student tab
+    '''
+    def create_student_tab(self, nb):
+        pass
+
+    # Create the registration tab
+    def create_registration_tab(self, nb):
+        pass
+
+main_window = tk.Tk()
+conn = sqlite3.connect('../db/pistus.db')
+cursor = conn.cursor()
+app = PistusResaGUI(conn, cursor, parent=main_window)
+app.mainloop()
+cursor.close()
+conn.close()</code></pre>
+
+  Here is the explanation of the code:
+  <ul>
+    <li> <b>Lines 1-4.</b> We import the necessary modules from <TT>tkinter</TT>
+      and <TT>sqlite3</TT> because we'll need to plug the GUI to the database.
+    <li> <b>Line 55.</b> Entry point of the program, where we create the main window
+      of the application.
+    <li> <b>Lines 56-57.</b> We open a connection to the database.
+    <li> <b>Line 58.</b> We create an instance of the class <TT>PistusResaGUI</TT> (see below).
+    <li> <b>Line 59.</b> We execute the GUI. The main window will be displayed. The code will loop on
+      this instruction until the main window is closed by the user.
+    <li> <b>Lines 60-61.</b> We close the connection to the database. These two lines will be 
+      executed only when the main window will be closed by the user.
+    <li> <b>Lines 9 to 53.</b> We define the class <TT>PistusResaGUI</TT> that contains the 
+      definition of the GUI. The class is defined as the subclass of <TT>tk.Frame</TT>, which essentially
+      means that it implements a window that will be rendered on screen.
+    <li> <b>Lines 10 to 18</b>. Constructor of the class. It initializes the variables of the class.
+    <li> <b>Line 11</b>. We call the constructor of the parent class (<TT>tk.Frame</TT>). 
+      As a result, our class <TT>PistusResaGUI</TT> inherits all the methods and properties 
+      from the class <TT>tk.Frame</TT>.
+    <li> <b>Lines 12-16</b>. Initialization of properties in the class <TT>PistusResaGUI</TT>. 
+      All these properties will be accessible by all methods defined in the class.
+
+      <ul>
+        <li> <TT>self.parent</TT> refers to the main window of the GUI.
+        <li> <TT>self.conn</TT> refers to the connection to the database. 
+        <li> <TT>self.cursor</TT> refers to the object used to execute queries on the database.
+        <li> <TT>self.rb_gender</TT> refers to a variable that will store the current value of the 
+          radio buttons <i>gender</i>.
+        <li> <TT>stud_number</TT> refers to a variable that will store the current value of the 
+          text field <i>Student number</i>.
+      </ul>
+      <li> <b>Line 17.</b> We call a function defined at line 23 to create the elements 
+        (a.k.a., <b>widgets</b>) of the GUI.
+      <li> <b>Line 18.</b> We call the function <TT>pack</TT> (defined in the class <TT>tk.Frame</TT>)
+        to arrange the widgets inside the frame.
+  </ul>
+  The function <TT>create_widgets</TT> (Lines 23 to 28) gives a title to the main window
+  and then invokes the function to create the notebook.
+  The function <TT>create_notebook</TT> (Lines 33 to 43):
+  <ul>
+    <li> <b>Line 35.</b> Creates a notebook. The constructor of the 
+      class <TT>ttk.Notebook</TT> is called with the parameter <TT>self.parent</TT>. 
+      This means that the notebook is added to the main window. 
+    <li> <b>Line 38-41</b> We invoke the two functions to create the Student and Registration tabs.
+    <li> <b>Line 43.</b> We dispose the notebook inside the main window by specifying that 
+      this notebook should cover the whole window, both horizontally and vertically.
+  </ul>
+
+  <ul class="warning">
+    <li class="warning"> The two functions <TT>create_student_tab</TT> and 
+      <TT>create_registration_tab</TT> are not implemented. You'll have to do it. 
+  </ul>
+
+  <ul class="exercise">
+    <li class="exercise"> Create a package <TT>gui</TT> in your project.
+    <li class="exercise"> Create a file <TT>main_window.py</TT> in the package <TT>gui</TT>.
+      Copy the code of the skeleton of the GUI into this file.
+  </ul>
 
 
+  <h3>The Tab Student</h3>
+
+  We'll now complete the function <TT>create_student_tab</TT>.
+  <ul class="warning">
+    <li class="warning"> The statement <TT>pass</TT> that you see in the definition of 
+      both <TT>create_student_tab</TT> and <TT>create_registration_tab</TT> means 
+      that the methods are not implemented. 
+    <li class="warning"> Remember to remove this statement when you implement the functions.
+  </ul>
+
+  The function <TT>create_student_tab</TT> takes in the variable <TT>nb</TT> that is the notebook 
+  where the student tab must be added.
+
+  <p>
+      <div class="exercisebox"> In the function <TT>create_student_tab</TT>, write the code 
+        that creates a tab "Student" inside the notebook <TT>nb</TT>.
+        <ul class='rtfm'>
+          <li class='rtfm'> Check the <a href="./docs/tkinter#notebook" target="_blank">documentation</a>.
+        </ul>
+        <ul class="raise">
+          <li class="raise"> Execute the code to see the result and, in case of doubts, ask your lab
+            supervisor.
+        </ul>
+      </div>
+  </p>
+
+  As we can see in Figure 3, the tab "Student" contains a <b>form</b> that consists of 
+  a <b>grid</b> with 10 rows and 3 columns. 
+  Each row corresponds to a property;
+  in the first column, we find the <b>labels</b> ("Student number *", "First name *",...) 
+  that indicate the name of the property. 
+  The asterisk at the end of the label text indicates a 
+  required field.
+
+  <p>
+      <div class="exercisebox"> In the function <TT>create_student_tab</TT>, write the code 
+        that creates all the labels inside the tab "Student".
+        The labels are disposed in a grid and occupy the first column.
+        <ul class='rtfm'>
+          <li class='rtfm'> Check the <a href="./docs/tkinter#labels" target="_blank">documentation</a>.
+        </ul>
+        <ul class="raise">
+          <li class="raise"> Execute the code to see the result and, in case of doubts, ask your lab
+            supervisor.
+        </ul>
+      </div>
+  </p>
+
+  The fields of the form in the tab "Student" are as follows:
+  <ul>
+    <li> <b>Text fields</b>, in the case of the properties student number, first and last name, email address
+      and alternate email address.
+    <li> <b>Radio buttons</b>, in the case of the property gender.
+    <li> <b>Combo boxes</b>, in the case of the properties first, second and third association.
+    <li> <b>Buttons</b>, in the case of the button "Add student".
+  </ul>
+
+  <p>
+      <div class="exercisebox"> In the function <TT>create_student_tab</TT>, write the code 
+        that creates the text fields corresponding to the properties 
+        student number, first and last name, email address and alternate email address.
+        The text fields are disposed in a grid and occupy the second column.
+        
+        <ul class='rtfm'>
+          <li class='rtfm'> Check the <a href="./docs/tkinter#textfields" target="_blank">documentation</a>.
+        </ul>
+        <ul class="warning">
+            <li class="warning"> The text field corresponding to the label "Student number" 
+              must be bound to the variable <TT>self.stud_number</TT>. This way, 
+              the value in that text field can be shared with the tab "Registration", as we'll see 
+              later.
+          </ul>
+        <ul class="raise">
+          <li class="raise"> Execute the code to see the result and, in case of doubts, ask your lab
+            supervisor.
+        </ul>
+      </div>
+  </p>
+
+  <p>
+      <div class="exercisebox"> In the function <TT>create_student_tab</TT>, write the code 
+        that creates the radio buttons M and F corresponding to the property 
+        gender.
+        Both radio buttons should occupy the second column in the grid.
+        <ul class='rtfm'>
+          <li class='rtfm'> Check the <a href="./docs/tkinter#radiobuttons" target="_blank">documentation</a>.
+        </ul>
+        <ul class="warning">
+            <li class="warning"> Both radio buttons must be bound to the variable 
+              <TT>self.rb_gender</TT>. That variable will contain the value of the currently
+              selected button. 
+          </ul>
+        <ul class="raise">
+          <li class="raise"> Execute the code to see the result and, in case of doubts, ask your lab
+            supervisor.
+        </ul>
+      </div>
+  </p>
+
+  From Figure 3, you can see that there are two combo boxes associated to the label 
+  "First association" (the same goes for the labels "Second association" and "Third association").
+  The combo box in the second column contains the names of the associations, while the one in the 
+  third column contains the possible roles of a student in an association. 
+  The names of the association are available in the database in the table <TT>Association</TT>;
+  The names of the student roles are available in the database in the table 
+  <TT>Membership</TT>. 
+  Therefore, the values of these two combo boxes can be loaded from the database.
+
+  <p>
+      <div class="exercisebox"> In the function <TT>create_student_tab</TT>, write the code 
+        that creates two lists, one called <TT>associations</TT> and the other called 
+        <TT>stud_roles</TT> that contain respectively the names of the associations and 
+        the student roles obtained from the database.
+        <ul class="warning">
+            <li class="warning"> In order to query the database, remember that you can use the 
+              variable <TT>self.cursor</TT>.
+        </ul>
+        <ul class="warning">
+          <li class="warning"> In the code, print the content of the two lists. Execute the 
+            code in order to check whether the names of the associations and the student roles 
+            are loaded correctly from the database.
+        </ul>
+      </div>
+  </p>
+
+  <p>
+      <div class="exercisebox"> In the function <TT>create_student_tab</TT>, write the code 
+        that creates the combo boxes containing the names of the associations and 
+        the student roles associated to the labels "First association", "Second association" and
+        "Third association".
+        <ul class='rtfm'>
+            <li class='rtfm'> Check the <a href="./docs/tkinter#comboboxes" target="_blank">documentation</a>.
+        </ul>
+        <ul class="warning">
+          <li class="warning"> The combobox containing the association names should appear in the 
+            second column, while the one containing the student roles should appear in the third column.
+        </ul>
+        <ul class="raise">
+          <li class="raise"> Execute the code to see the result and, in case of doubts, ask your lab
+              supervisor.
+        </ul>
+      </div>
+  </p>
+
+  The last widget that we need to add is the button "Add student". 
+
+  <p>
+      <div class="exercisebox"> In the function <TT>create_student_tab</TT>, write the code 
+        that creates button "Add student".
+        <ul class='rtfm'>
+            <li class='rtfm'> Check the <a href="./docs/tkinter#button" target="_blank">documentation</a>.
+        </ul>
+        <ul class="warning">
+          <li class="warning"> The button should be placed in the second column in the last row.
+        </ul>
+        <ul class="raise">
+          <li class="raise"> Execute the code to see the result and, in case of doubts, ask your lab
+              supervisor.
+        </ul>
+      </div>
+  </p>
+
+  <p><b>Handling events in the GUI.</b> Up to now, the GUI is just a static interface that 
+  does not react to the user's actions. 
+  We need to code the functions that handle the input <b>events</b>.
+  In the tab "Student", there are two types of events that need to be handled:
+  <ol>
+    <li> The user types a student number and moves the cursor out of the corresponding text field.
+    The response of the GUI is to search in the database a student with the specified 
+    number; it the student exists, all information about her are loaded and inserted in the form.
+    <li> The user clicks on the button "Add student". The response of the GUI is to 
+      execute an INSERT INTO query to add the new student to the database.
+  </ol>
+</p>
+
+<p> We start from the first event. 
+
+
+<ul class="exercise">
+  <li class="exercise"> Create a function <TT>get_student(event)</TT> inside the function 
+
+</ul>
+
+</p>-->
+
+  
   
   <!--<h2>The Deadline Management Module</h2>
 
