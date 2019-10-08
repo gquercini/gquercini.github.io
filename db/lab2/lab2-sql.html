@@ -328,19 +328,269 @@ At the place of <i>fullpath</i>, you have to replace the full path of directorie
     </div>
     <li> Write the following queries in SQL:
           <ol class="queryitem">
-            <li class="queryitem"> For each user, get the number of followers by country. Rank the countries by the number of
-              followers in descending order [<a href="#" onclick="showHideSolution('social-network-q1', 'social-network-q1-link', 'See solution', 'Hide solution');return false;"><span id="social-network-q1-link">See solution</span></a>].
-              <div id="social-network-q1" style="display:none;" class="reltables">
-                <pre>
-<code>SELECT nickname_dst, country, count(*) as nbFollowers
+  <li class="queryitem"> Count the number of posts by nickname. Sort by number of posts in descending order 
+    [<a href="#" onclick="showHideSolution('social-network-nbposts', 'social-network-nbposts-link', 'See solution', 'Hide solution');return false;"><span id="social-network-nbposts-link">See solution</span></a>].
+      <div id="social-network-nbposts" style="display:none;" class="reltables">
+        <pre><code class="language-sql">SELECT nickname, count(*) as nbPosts
+FROM Post
+GROUP BY nickname 
+ORDER BY nbPosts DESC;</code></pre>
+      </div>
+  <ul class="warning">
+    <li class="warning"> <a href="#" onclick="showHideSolution('nbposts-expected-result', 'nbposts-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="nbposts-expected-result-link">Show the expected result</span></a>.
+      <div id="nbposts-expected-result" align="center" style="display:none;">
+        <table class="tg">
+              <tr>
+                <th class="tg-0lax">nick_BLANCO</th>
+                <th class="tg-0lax">1</th>
+              </tr>
+              <tr>
+                <td class="tg-0lax">nick_CAMERON</td>
+                <td class="tg-0lax">1</td>
+              </tr>
+            </table>
+      </div>
+</ul>
+<li class="queryitem"> Get the identifier and the content of all the posts of the user 
+  with nickname nick_BLANCO [<a href="#" onclick="showHideSolution('social-network-xyz', 'social-network-xyz-link', 'See solution', 'Hide solution');return false;"><span id="social-network-xyz-link">See solution</span></a>].
+<div id="social-network-xyz" style="display:none;" class="reltables">
+<pre><code class="language-sql">SELECT post_id,content
+FROM Post 
+WHERE nickname = 'nick_BLANCO';</code></pre>
+</div>
+<ul class="warning">
+    <li class="warning"> <a href="#" onclick="showHideSolution('xyz-expected-result', 'xyz-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="xyz-expected-result-link">Show the expected result</span></a>.
+      <div id="xyz-expected-result" align="center" style="display:none;">
+        <table class="tg">
+              <tr>
+                <th class="tg-0lax">2</th>
+                <th class="tg-0lax">second post</th>
+              </tr>
+            </table>
+      </div>
+</ul>
+
+<li class="queryitem"> Get the number of user accounts by country. Order by number of countries in 
+  descending order [<a href="#" onclick="showHideSolution('social-network-nbcountries', 'social-network-nbcountries-link', 'See solution', 'Hide solution');return false;"><span id="social-network-nbcountries-link">See solution</span></a>].
+    <div id="social-network-nbcountries" style="display:none;" class="reltables">
+<pre><code class="language-sql">SELECT country, COUNT(*) c
+FROM UserAccount
+GROUP BY country
+ORDER BY c DESC;</code></pre>
+    </div>
+    <ul class="warning">
+        <li class="warning"> <a href="#" onclick="showHideSolution('nbcountries-expected-result', 'nbcountries-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="nbcountries-expected-result-link">Show the expected result</span></a>.
+    </ul>
+    
+    <div id="nbcountries-expected-result" align="center" style="display:none;">
+        <table class="tg">
+            <tr>
+              <th class="tg-0lax">France</th>
+              <th class="tg-0lax">6</th>
+            </tr>
+            <tr>
+              <td class="tg-0lax">Germany</td>
+              <td class="tg-0lax">4</td>
+            </tr>
+            <tr>
+              <td class="tg-0lax">Spain</td>
+              <td class="tg-0lax">2</td>
+            </tr>
+            <tr>
+              <td class="tg-0lax">UK</td>
+              <td class="tg-0lax">2</td>
+            </tr>
+            <tr>
+              <td class="tg-0lax">Italy</td>
+              <td class="tg-0lax">2</td>
+            </tr>
+            <tr>
+              <td class="tg-0lax">USA</td>
+              <td class="tg-0lax">2</td>
+            </tr>
+            <tr>
+              <td class="tg-0lax">Portugal</td>
+              <td class="tg-0lax">1</td>
+            </tr>
+          </table>
+    </div>
+
+<li class="queryitem"> Get the identifier of the posts where the user with nickname nick_ANIS is tagged 
+  [<a href="#" onclick="showHideSolution('social-network-anis', 'social-network-anis-link', 'See solution', 'Hide solution');return false;"><span id="social-network-anis-link">See solution</span></a>].
+    <div id="social-network-anis" style="display:none;" class="reltables">
+<pre><code class="language-sql">SELECT post_id
+FROM Tag t
+WHERE t.nickname='nick_ANIS';</code></pre>
+</div>
+
+<ul class="warning">
+    <li class="warning"> <a href="#" onclick="showHideSolution('anis-expected-result', 'anis-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="anis-expected-result-link">Show the expected result</span></a>.
+</ul>
+
+<div id="anis-expected-result" align="center" style="display:none;">
+    <table class="tg">
+        <tr>
+          <th class="tg-0lax">2</th>
+        </tr>
+    </table>
+</div>
+
+<li class="queryitem"> Get the content of all the posts where the user with nickname nick_ANIS 
+  is tagged [<a href="#" onclick="showHideSolution('social-network-anistagged', 'social-network-anistagged-link', 'See solution', 'Hide solution');return false;"><span id="social-network-anistagged-link">See solution</span></a>].
+<div id="social-network-anistagged" style="display:none;" class="reltables">
+<pre><code class="language-sql">SELECT content
+FROM Tag t JOIN Post p ON t.post_id=p.post_id 
+WHERE t.nickname='nick_ANIS';</code></pre>
+</div>
+
+<ul class="warning">
+    <li class="warning"> <a href="#" onclick="showHideSolution('anistagged-expected-result', 'anistagged-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="anistagged-expected-result-link">Show the expected result</span></a>.
+</ul>
+
+<div id="anistagged-expected-result" align="center" style="display:none;">
+    <table class="tg">
+        <tr>
+          <th class="tg-0lax">second post</th>
+        </tr>
+    </table>
+</div>
+
+<li class="queryitem"> Get the email addresses of the user with nickname nick_BLANCO [<a href="#" onclick="showHideSolution('social-network-blancoemail', 'social-network-blancoemail-link', 'See solution', 'Hide solution');return false;"><span id="social-network-blancoemail-link">See solution</span></a>].
+  <div id="social-network-blancoemail" style="display:none;" class="reltables">
+  <pre><code class="language-sql">SELECT e.email_address
+FROM UserAccount u JOIN EmailAddress e ON u.nickname = e.nickname
+WHERE u.nickname = 'nick_BLANCO';</code></pre>
+  </div>
+  
+  <ul class="warning">
+      <li class="warning"> <a href="#" onclick="showHideSolution('blancoemail-expected-result', 'blancoemail-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="blancoemail-expected-result-link">Show the expected result</span></a>.
+  </ul>
+  
+  <div id="blancoemail-expected-result" align="center" style="display:none;">
+      <table class="tg">
+          <tr>
+            <th class="tg-0lax">nick_BLANCO@email.me</th>
+          </tr>
+      </table>
+  </div>
+
+  <li class="queryitem"> Get the nicknames of the friends of the user with nickname nick_BLANCO 
+    [<a href="#" onclick="showHideSolution('social-network-friendsblanco', 'social-network-friendsblanco-link', 'See solution', 'Hide solution');return false;"><span id="social-network-friendsblanco-link">See solution</span></a>].
+    <div id="social-network-friendsblanco" style="display:none;" class="reltables">
+    <pre><code class="language-sql">SELECT t.nickname_dst  
+FROM UserAccount u JOIN Relationship t ON u.nickname = t.nickname_src
+WHERE u.nickname = 'nick_BLANCO' and t.type = "friendship";</code></pre>
+    </div>
+    
+    <ul class="warning">
+        <li class="warning"> <a href="#" onclick="showHideSolution('friendsblanco-expected-result', 'friendsblanco-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="friendsblanco-expected-result-link">Show the expected result</span></a>.
+    </ul>
+    
+    <div id="friendsblanco-expected-result" align="center" style="display:none;">
+        <table class="tg">
+            <tr>
+              <th class="tg-0lax">'nick_ANIS'</th>
+            </tr>
+            <tr>
+              <td class="tg-0lax">'nick_CHOISNE'</td>
+            </tr>
+            <tr>
+              <td class="tg-0lax">'nick_COEFFARD'</td>
+            </tr>
+            <tr>
+              <td class="tg-0lax">'nick_COUILLAUD'</td>
+            </tr>
+            <tr>
+              <td class="tg-0lax">'nick_FERRON'</td>
+            </tr>
+            <tr>
+              <td class="tg-0lax">'nick_GUEFFIER'</td>
+            </tr>
+            <tr>
+              <td class="tg-0lax">'nick_MORENO'</td>
+            </tr>
+            <tr>
+              <td class="tg-0lax">'nick_ROUSSIERE'</td>
+            </tr>
+            <tr>
+              <td class="tg-0lax">'nick_SCHEIDER'</td>
+            </tr>
+            <tr>
+              <td class="tg-0lax">'nick_SCHMIDT'</td>
+            </tr>
+          </table>
+    </div>
+
+    <li class="queryitem"> Get the the first and last names of the friends of the user with nickname 
+      nick_BLANCO [<a href="#" onclick="showHideSolution('social-network-nickblancofriendsplus', 'social-network-nickblancofriendsplus-link', 'See solution', 'Hide solution');return false;"><span id="social-network-nickblancofriendsplus-link">See solution</span></a>].
+      <div id="social-network-nickblancofriendsplus" style="display:none;" class="reltables">
+<pre><code class="language-sql">SELECT u.first_name, u.last_name  
+FROM UserAccount u JOIN Relationship t ON u.nickname = t.nickname_dst
+  JOIN UserAccount u1 ON u1.nickname = t.nickname_src
+WHERE u1.nickname = 'nick_BLANCO' and t.type = "friendship";</code></pre>
+      </div>
+      
+      <ul class="warning">
+          <li class="warning"> <a href="#" onclick="showHideSolution('nickblancofriendsplus-expected-result', 'nickblancofriendsplus-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="nickblancofriendsplus-expected-result-link">Show the expected result</span></a>.
+      </ul>
+      
+      <div id="nickblancofriendsplus-expected-result" align="center" style="display:none;">
+          <table class="tg">
+              <tr>
+                <th class="tg-0lax">Karl</th>
+                <th class="tg-0lax">ANIS</th>
+              </tr>
+              <tr>
+                <td class="tg-0lax">Eliane</td>
+                <td class="tg-0lax">CHOISNE</td>
+              </tr>
+              <tr>
+                <td class="tg-0lax">Florian</td>
+                <td class="tg-0lax">COEFFARD</td>
+              </tr>
+              <tr>
+                <td class="tg-0lax">Timothée</td>
+                <td class="tg-0lax">COUILLAUD</td>
+              </tr>
+              <tr>
+                <td class="tg-0lax">Prosper</td>
+                <td class="tg-0lax">FERRON</td>
+              </tr>
+              <tr>
+                <td class="tg-0lax">Hortense</td>
+                <td class="tg-0lax">GUEFFIER</td>
+              </tr>
+              <tr>
+                <td class="tg-0lax">Franco</td>
+                <td class="tg-0lax">MORENO</td>
+              </tr>
+              <tr>
+                <td class="tg-0lax">Jacob</td>
+                <td class="tg-0lax">ROUSSIERE</td>
+              </tr>
+              <tr>
+                <td class="tg-0lax">Paul</td>
+                <td class="tg-0lax">SCHEIDER</td>
+              </tr>
+              <tr>
+                <td class="tg-0lax">Gerda</td>
+                <td class="tg-0lax">SCHMIDT</td>
+              </tr>
+            </table>
+      </div>
+
+  <li class="queryitem"> For each user, get the number of followers by country. Rank the countries by the number of
+    followers in descending order [<a href="#" onclick="showHideSolution('social-network-q1', 'social-network-q1-link', 'See solution', 'Hide solution');return false;"><span id="social-network-q1-link">See solution</span></a>].
+    <div id="social-network-q1" style="display:none;" class="reltables">
+<pre><code class="language-sql">SELECT nickname_dst, country, count(*) as nbFollowers
 FROM UserAccount, Relationship
 WHERE nickname = nickname_src AND type='follower'
 GROUP BY nickname_dst, country
 ORDER BY nickname_dst, country, nbFollowers DESC</code></pre>
-              </div>
-          <ul class="warning">
-            <li class="warning"> <a href="#" onclick="showHideSolution('q1-expected-result', 'q1-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="q1-expected-result-link">Show the expected result</span></a>.
-        </ul>
+  </div>
+  <ul class="warning">
+    <li class="warning"> <a href="#" onclick="showHideSolution('q1-expected-result', 'q1-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="q1-expected-result-link">Show the expected result</span></a>.
+</ul>
 
 <div id="q1-expected-result" align="center" style="display:none;">
   
@@ -611,8 +861,7 @@ ORDER BY nickname_dst, country, nbFollowers DESC</code></pre>
             <li class="queryitem"> Get the first and family name of the users tagged by the user with nickname 'nick_CAMERON'
               [<a href="#" onclick="showHideSolution('social-network-q2', 'social-network-q2-link', 'See solution', 'Hide solution');return false;"><span id="social-network-q2-link">See solution</span></a>].
               <div id="social-network-q2" style="display:none;" class="reltables">
-                <pre>
-<code>SELECT first_name, last_name
+<pre><code class="language-sql">SELECT first_name, last_name
 FROM UserAccount
 WHERE nickname in
   (
@@ -639,12 +888,11 @@ WHERE nickname in
   </div>
 
 
-            <li class="queryitem"> Get the nickname, first and last name of the common friends of the users
-              with nickname 'nick_CAMERON' and 'nick_ANIS'
-              [<a href="#" onclick="showHideSolution('social-network-q3', 'social-network-q3-link', 'See solution', 'Hide solution');return false;"><span id="social-network-q3-link">See solution</span></a>].
-              <div id="social-network-q3" style="display:none;" class="reltables">
-                <pre>
-<code>SELECT u.nickname, u.first_name, u.last_name
+  <li class="queryitem"> Get the nickname, first and last name of the common friends of the users
+    with nickname 'nick_CAMERON' and 'nick_ANIS'
+    [<a href="#" onclick="showHideSolution('social-network-q3', 'social-network-q3-link', 'See solution', 'Hide solution');return false;"><span id="social-network-q3-link">See solution</span></a>].
+    <div id="social-network-q3" style="display:none;" class="reltables">
+<pre><code class="language-sql">SELECT u.nickname, u.first_name, u.last_name
 FROM UserAccount u,
   ( SELECT nickname_dst as nickname
     FROM Relationship
@@ -679,12 +927,11 @@ WHERE u.nickname=temp.nickname</code></pre></div>
         </tr>
       </table>
 </div>
-            <li class="queryitem"> Rank the users by the number of their followers. The user with the most followers must appear at the top
-              of the list
-             [<a href="#" onclick="showHideSolution('social-network-q4', 'social-network-q4-link', 'See solution', 'Hide solution');return false;"><span id="social-network-q4-link">See solution</span></a>].
-              <div id="social-network-q4" style="display:none;" class="reltables">
-                <pre>
-<code>SELECT u.nickname, u.first_name, u.last_name, temp.nbFollowers
+  <li class="queryitem"> Rank the users by the number of their followers. The user with the most followers must appear at the top
+    of the list
+    [<a href="#" onclick="showHideSolution('social-network-q4', 'social-network-q4-link', 'See solution', 'Hide solution');return false;"><span id="social-network-q4-link">See solution</span></a>].
+    <div id="social-network-q4" style="display:none;" class="reltables">
+<pre><code class="language-sql">SELECT u.nickname, u.first_name, u.last_name, temp.nbFollowers
 FROM UserAccount u,
       (SELECT nickname_dst as nickname, count(*) as nbFollowers
       FROM Relationship r
@@ -892,14 +1139,10 @@ CREATE TABLE Loan (loan_nbr INT PRIMARY KEY, loan_type VARCHAR(50), amount FLOAT
           with a negative balance
           [<a href="#" onclick="showHideSolution('banking-system-q1', 'banking-system-q1-link', 'See solution', 'Hide solution');return false;"><span id="banking-system-q1-link">See solution</span></a>].
           <div id="banking-system-q1" style="display:none;">
-            <pre>
-            <code>
-SELECT c.*, addr.city, addr.country
+<pre><code class="language-sql">SELECT c.*, addr.city, addr.country
 FROM Customer c, Account acc, Address addr
 WHERE c.ssn = acc.ssn AND c.postal_code = addr.postal_code
-    AND acc.balance < 0 and acc.acct_type='checking'
-            </code>
-            </pre>
+    AND acc.balance < 0 and acc.acct_type='checking'</code></pre>
           </div>
           <ul class="warning">
               <li class="warning"> <a href="#" onclick="showHideSolution('q1bank-expected-result', 'q1bank-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="q1bank-expected-result-link">Show the expected result</span></a>.
@@ -933,9 +1176,7 @@ WHERE c.ssn = acc.ssn AND c.postal_code = addr.postal_code
         <li class="queryitem"> Get the SSN of all customers that have no loan at the 'First Bank'
           [<a href="#" onclick="showHideSolution('banking-system-q2', 'banking-system-q2-link', 'See solution', 'Hide solution');return false;"><span id="banking-system-q2-link">See solution</span></a>].
           <div id="banking-system-q2" style="display:none;">
-            <pre>
-            <code>
-SELECT ssn
+<pre><code class="language-sql">SELECT ssn
 FROM Customer
 WHERE ssn NOT IN (
 SELECT c.ssn
@@ -999,17 +1240,13 @@ FROM (SELECT count(*) as nb_Branches
         <li class="queryitem"> Get the SSN of all customers having an account in more than one bank
            [<a href="#" onclick="showHideSolution('banking-system-q4', 'banking-system-q4-link', 'See solution', 'Hide solution');return false;"><span id="banking-system-q4-link">See solution</span></a>].
           <div id="banking-system-q4" style="display:none;">
-            <pre>
-            <code>
-  SELECT ssn
+            <pre><code class="language-sql">SELECT ssn
   FROM
       (SELECT  distinct a.ssn as ssn, br.code_bank as code_bank
        FROM Account a, Branch br
        WHERE a.branch_id = br.branch_id) temp
   GROUP BY ssn
-  HAVING COUNT(*) > 1
-            </code>
-            </pre>
+  HAVING COUNT(*) > 1</code></pre>
           </div> 
           <ul class="warning">
               <li class="warning"> <a href="#" onclick="showHideSolution('q4bank-expected-result', 'q4bank-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="q4bank-expected-result-link">Show the expected result</span></a>.
