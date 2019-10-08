@@ -47,6 +47,13 @@ https://github.com/jkordas/client-server-authentication-demo/blob/master/src/dat
   <div align="center"><b>Gianluca Quercini</b></div>
   <div align="center"><b>gianluca.quercini[at]centralesupelec.fr</b></div>
 
+  <h2>Acknowledgements</h2>
+  <p>We thank Rémi Garde and Edmond de Roffignac for suggesting the idea of 
+      a lab assignment centered around the Pistus event.</p>
+
+ <p>  We thank Geneviève Leclerc for her suggestions and for  collecting all the information about the 
+CentraleSupélec associations. </p>
+
   <h2>Context and Objective</h2>
 
   <p>"Pistus" (short for "Piston Ski") is an event organised by <a href="http://wacs.fr" target="_blank">WACS (Winter
@@ -1007,16 +1014,47 @@ You'll write the code demanded in Exercise 14 <b>after</b> this instruction.
 
   </p>
 
+  <h3>Adding a Student to Associations</h3>
+  We define a function:
+<pre><code class="language-python">add_student_to_associations(stud_number, associations, cursor, conn):success</code></pre>
+The input is:
+<ul>
+  <li>  The student number.
+  <li>  The list of associations to which the student must be added. Each item of this list is a tuple 
+    (<TT>asso_name</TT>, <TT>stud_role</TT>).
+  <li> The object <TT>cursor</TT> used to execute queries in the database.
+  <li> The object <TT>conn</TT> used to connect to the database.
+
+    The output is a boolean value (<TT>success</TT>):
+    <ul>
+      <li> <TT>True</TT>, if the student can be added to the associations.
+      <li> <TT>False</TT>, if the student cannot be added to the associations. 
+    </ul>
+  
+    <p>
+        <div class="exercisebox"> Write the code for the function <TT>add_student_to_associations()</TT> in the file named 
+          <TT>registration_module.py</TT>.
+          <ul class="warning">
+            <li class="warning"> Remember to catch the exceptions raised in case the SQL query encounters an error.
+              If an error occurs, then the function must return <TT>False</TT>.
+              <li class="warning"> Remember to commit the modifications to the database.
+          </ul>
+        </div>
+  
+    </p>
+  
+  
+</ul>
+
   <h3>Getting a Student from the Database</h3>
 
   We define a function:
-  <pre><code class="language-python">get_student(stud_number, cursor, conn): (stud_number, first_name, last_name, gender, email_addresses)</code></pre>
+  <pre><code class="language-python">get_student(stud_number, cursor): (stud_number, first_name, last_name, gender, email_addresses)</code></pre>
   
   The input is: 
   <ul>
     <li> The student number.
     <li> The object <TT>cursor</TT> used to execute queries in the database.
-    <li> The object <TT>conn</TT> used to connect to the database.
   </ul>
   
   <b>If a student with the given number exists</b>, the output is a tuple containing:
@@ -1040,13 +1078,12 @@ You'll write the code demanded in Exercise 14 <b>after</b> this instruction.
   <h3>Getting the Associations of a Student</h3>
 
   We define a function:
-  <pre><code class="language-python">get_student_associations(stud_number, cursor, conn): associations</code></pre>
+  <pre><code class="language-python">get_student_associations(stud_number, cursor): associations</code></pre>
    
   The input is: 
    <ul>
      <li> The student number.
     <li> The object <TT>cursor</TT> used to execute queries in the database.
-    <li> The object <TT>conn</TT> used to connect to the database.
    </ul>
    
    The output is a list containing the associations of the student. 
@@ -1110,7 +1147,7 @@ The output is a boolean value (<TT>success</TT>):
       </div>
   </p>
 
- <!--<h2>The Graphical User Interface</h2>
+ <h2>The Graphical User Interface</h2>
 
  <p>We're going to develop the Graphical User Interface (GUI) of  <TT>PistusResa</TT>  shown in Figure 3 by using
  the library <TT>tkinter</TT> included in the Anaconda distribution.
@@ -1210,7 +1247,7 @@ class PistusResaGUI(tk.Frame):
         pass
 
 main_window = tk.Tk()
-conn = sqlite3.connect('../db/pistus.db')
+conn = sqlite3.connect('./db/pistus.db')
 cursor = conn.cursor()
 app = PistusResaGUI(conn, cursor, parent=main_window)
 app.mainloop()
@@ -1336,9 +1373,20 @@ conn.close()</code></pre>
 
   <p>
       <div class="exercisebox"> In the function <TT>create_student_tab</TT>, write the code 
-        that creates the text fields corresponding to the properties 
-        student number, first and last name, email address and alternate email address.
-        The text fields are disposed in a grid and occupy the second column.
+        that creates the following <b>text fields</b>:
+        <ul>
+          <li> <TT>stud_number_entry</TT>. Text field allowing to enter the student number. 
+            This appears on the same row as the label "Student number *".
+            <li> <TT>first_name_entry</TT>. Text field allowing to enter the student first name. 
+              This appears on the same row as the label "First name *".
+            <li> <TT>last_name_entry</TT>. Text field allowing to enter the student last name. 
+              This appears on the same line as the label "Last name *".
+            <li> <TT>email_entry</TT>. Text field allowing to enter the student email address. 
+              This appears on the same line as the label "Email address *".
+            <li> <TT>alternate_email_entry</TT>. Text field allowing to enter the student alternate email address. 
+              This appears on the same line as the label "Alternate email address".
+        </ul> 
+        All these text fields are in the second column of the grid.
         
         <ul class='rtfm'>
           <li class='rtfm'> Check the <a href="./docs/tkinter#textfields" target="_blank">documentation</a>.
@@ -1439,30 +1487,257 @@ conn.close()</code></pre>
       </div>
   </p>
 
-  <p><b>Handling events in the GUI.</b> Up to now, the GUI is just a static interface that 
+  <h4>Handling events in the GUI</h4> 
+  Up to now, the GUI is just a static interface that 
   does not react to the user's actions. 
-  We need to code the functions that handle the input <b>events</b>.
+  We need to <b>code the functions</b> that handle the input <b>events</b>.
   In the tab "Student", there are two types of events that need to be handled:
   <ol>
-    <li> The user types a student number and moves the cursor out of the corresponding text field.
+    <li> <b>First event.</b> The user types a student number and moves the mouse cursor out of the text field <TT>student_number_entry</TT>.
     The response of the GUI is to search in the database a student with the specified 
-    number; it the student exists, all information about her are loaded and inserted in the form.
-    <li> The user clicks on the button "Add student". The response of the GUI is to 
+    number; it the student exists, all information about her are loaded and inserted into the form.
+    
+    <li> <b>Second event.</b> The user clicks on the button "Add student". The response of the GUI is to 
       execute an INSERT INTO query to add the new student to the database.
   </ol>
-</p>
 
-<p> We start from the first event. 
-
+<p> <b>The first event.</b> 
+We define a function <TT>find_student</TT> that is invoked by the GUI when the mouse cursor moves out 
+of the text field <TT>student_number_entry</TT>.
+We can define <TT>find_student</TT> <b>directly inside</b> the function <TT>create_student_tab()</TT> 
+(Python does allow that).
 
 <ul class="exercise">
-  <li class="exercise"> Create a function <TT>get_student(event)</TT> inside the function 
+  <li class="exercise"> Copy the following code right after the definition of the text field <TT>student_number_entry</TT>.
+<pre class="line-numbers"><code class="language-python">def find_student(event):
+    print("Here you'll write the code to find the student in the database", event.type)
+stud_number_entry.bind('<FocusOut>', find_student)</code></pre>
+</ul>
+Lines 1-2 define the function <TT>find_student</TT>. 
+Line 3 tells the GUI to invoke the function <TT>find_student</TT> when the mouse cursor leaves ("focus out") the text field 
+<TT>student_number_entry</TT>.
 
+<ul class="warning">
+  <li class="warning"> The function <TT>find_student</TT> accepts a parameter <TT>event</TT> that carries information 
+    about the event that triggered the call of the function (e.g., its type).
 </ul>
 
-</p>-->
+</p>
 
+<p>
+    <div class="exercisebox"> Execute <TT>main_window.py</TT>, try to enter something in the text field 
+      <TT>student_number_entry</TT> and to move the cursor of the mouse out of the textfield.
+      <ul class="warning">
+        <li class="warning"> In the terminal you should see the message: 
+          "Here you'll write the code to find the student in the database FocusOut"
+      </ul>
+    </div>
+</p>
+
+<p>Now, we're going to write the code in the function <TT>find_student</TT> to retrieve a student from the 
+  database and fill in the form fields automatically.</p>
+
+<p>The first thing to do is to reset the form fields, meaning that we want to erase any value previously contained
+  in those fields.
+</p>
+
+<p>
+    <div class="exercisebox"> Write the code to erase the content in all the fields of the form.
+        <ul class='rtfm'>
+            <li class='rtfm'> Check the <a href="./docs/tkinter#erase" target="_blank">documentation</a>.
+        </ul>
+      <ul class="warning">
+        <li class="warning"> Execute the file <TT>main_window.py</TT>, write some random values in the 
+          fields of the form and then try to trigger the function <TT>find_student</TT> to verify that 
+          all values are reset.
+      </ul>
+    </div>
+</p>
+
+<p>Now we intend to write the code to load from the database the student with the student number specified in the 
+  text field <TT>student_number_entry</TT>. For now, we just load the first and last name, gender and email addresses 
+  (we ignore the associations).
+</p>
+
+<p>
+    <div class="exercisebox"> Write the code to load the first name, last name, gender and email addresses of the student 
+      having the student number specified in the text field <TT>student_number_entry</TT>.
+        <ul class='rtfm'>
+            <li class='rtfm'> Check the <a href="./docs/tkinter#getset" target="_blank">documentation</a>.
+        </ul>
+      <ul class="warning">
+        <li class="warning"> Remember to use the function <TT>get_student</TT> that you defined in the registration module.
+          To import it into your Python file <TT>main_window.py</TT>, add the following line on top 
+          of the file:
+<pre align="center">
+<code>from registration.registration_module import get_student</code></pre>
+  <li class="warning"> Remember that the function <TT>get_student</TT> in the registration module returns <TT>None</TT> if no student 
+    is found with the given student number.
+      <li class="warning"> Execute the code, type the student number 3528 and verify that 
+        the fields corresponding to the first name, last name, gender and email addresses are filled in.
+      </ul>
+    </div>
+</p>
+
+<p> Now we need to get the data on the associations too.</p>
   
+<p>
+    <div class="exercisebox"> Write the code to load the associations from the database and fill in the corresponding 
+      fields.
+        <ul class='rtfm'>
+            <li class='rtfm'> Check the <a href="./docs/tkinter#getset" target="_blank">documentation</a>.
+        </ul>
+      <ul class="warning">
+        <li class="warning"> Remember to use the function <TT>get_student_associations</TT> 
+          that you defined in the registration module.
+          To import it into your Python file <TT>main_window.py</TT>, add the following line on top 
+          of the file:
+<pre align="center">
+<code>from registration.registration_module import get_student_associations</code></pre>
+  <li class="warning"> Remember that the function <TT>get_student</TT> in the registration module 
+    returns <TT>None</TT> if no association is found for the student.
+      <li class="warning"> Execute the code, type the student number 3528 and verify that 
+        the fields corresponding to the associations are filled in.
+      </ul>
+    </div>
+</p>
+
+<p> <b>The second event.</b> We now define the function <TT>add_student_db</TT> that will be invoked when the 
+  button "Add Student" is clicked. 
+<ul class="exercise">
+  <li class="exercise"> Since we'll need to display messages to the user, we need to import the 
+    widget <TT>messagebox</TT> from the library <TT>tkinter</TT>. At the top of the file 
+    <TT>main_window.py</TT>, write the following line:
+<pre class="line-numbers"><code class="language-python">from tkinter import messagebox</code></pre>
+  <li class="exercise"> Copy the following code right before the definition of the button 
+    "Add student":
+<pre class="line-numbers"><code class="language-python">def add_student_db():
+    if len(stud_number_entry.get()) == 0 or \
+        len(first_name_entry.get()) == 0 or \
+            len(last_name_entry.get()) == 0 or \
+                self.rb_gender.get() == '' or \
+                    len(email_entry.get()) == 0: 
+        messagebox.showerror('Registration error', 'Fill in all the mandatory fields (*)')
+        return False</code></pre>
+  and in the definition of the button "Add student" add the following option: <TT>command=add_student_db</TT>, so the 
+  definition of the button will look like as follows:
+<pre class="line-numbers"><code class="language-python">add_button = ttk.Button(stud_tab, text="Add student", command=add_student_db)</code></pre>
+</ul>
+
+In the code of the function <TT>add_student_db</TT>, line 2,3,4,5,6 check that the mandatory fields have been filled in.
+If this is not the case, the GUI shows a dialog window with the message "Fill in all the mandatory fields (*)" and returns 
+<TT>False</TT>.
+
+<p>
+    <div class="exercisebox"> Execute the file <TT>main_window.py</TT> and try to click the button 
+      "Add student" without entering any information. You should get the error message defined in the function 
+      <TT>add_student_db</TT>.
+    </div>
+</p>
+
+<p>We now write the code to add a student to the database.
+    For now, we just add the student number, first and last name, gender and email addresses 
+    and we ignore the associations.</p>
+
+<p>
+    <div class="exercisebox"> Write the code to add the student number, first and last name, gender and email addresses.
+      <ul class="warning">
+        <li class="warning"> Remember to use the function <TT>add_student</TT> that you defined in the 
+          registration module.
+        <li class="warning"> If the function <TT>add_student</TT> returns <TT>False</TT> (which happens when the student cannot be 
+          added to the database), display an error message using the function <TT>messagebox.showerror()</TT> and return <TT>False</TT>.
+        <li class="warning"> If the function <TT>add_student</TT> returns <TT>True</TT>, display a message
+          through the following instruction <TT>messagebox.showinfo('Registration', 'Student added successfully!')</TT>
+        <li class="warning"> Try to add a student with student number 4321 and see if you can add it to the database. 
+          You might want to verify that the new student is actually in the database by running a query in 
+          DB Browser for SQLite.
+      </ul>
+    </div>
+</p>
+
+<p>We finally write the code to add a student to the associations.</p>
+
+<p>
+    <div class="exercisebox"> Write the code to add a student to the associations.
+      <ul class="warning">
+        <li class="warning"> Remember to use the function <TT>add_student_to_associations</TT> that you defined in the 
+          registration module.
+        <li class="warning"> If the function <TT>add_student_to_associations</TT> 
+          returns <TT>False</TT> (which happens when the student cannot be 
+          added to the database), display an error message using the function <TT>messagebox.showerror()</TT> and return <TT>False</TT>.
+        <li class="warning"> If the function <TT>add_student_to_associations</TT> returns <TT>True</TT>, display a message
+          through the following instruction <TT>messagebox.showinfo('Registration', 'Student added successfully to the associations!')</TT>
+        <li class="warning"> Try to add yourself to the database.  
+          You might want to verify that the new student is actually in the database by running a query in 
+          DB Browser for SQLite.
+      </ul>
+    </div>
+</p>
+
+<h2>The Tab Registration</h2>
+
+The code of the tab "Registration" is provided to you.
+Just copy and paste the following code into the definition 
+of the function <TT>create_registration_tab</TT>.
+<pre><code class="language-python">reg_tab = ttk.Frame(nb)
+nb.add(reg_tab, text='Registration')
+ttk.Label(reg_tab, text="Pistus Edition *").grid(row=0, padx=10, pady=10, sticky='W')
+pistus_edition_entry = ttk.Entry(reg_tab)
+# Get the Pistus edition from the db corresponding to the specified year.
+def get_edition(event):
+    reg_fee_entry.configure(state='normal')
+    reg_fee_entry.delete(0, tk.END)
+    self.cursor.execute("SELECT registration_fee FROM PistusEdition WHERE year=?", (pistus_edition_entry.get(),))
+    row = self.cursor.fetchone()
+    if row is not None:
+        reg_fee_entry.insert(0, row[0])
+        reg_fee_entry.configure(state = 'disabled')
+pistus_edition_entry.bind('<FocusOut>', get_edition)
+pistus_edition_entry.grid(row=0, column=1, padx=10, pady=10, sticky='W')
+
+ttk.Label(reg_tab, text="Registration fee *").grid(row=1, padx=10, pady=10, sticky='W')
+reg_fee_entry = ttk.Entry(reg_tab)
+reg_fee_entry.grid(row=1, column=1, padx=10, pady=10, sticky='W')
+
+ttk.Label(reg_tab, text="Student number *").grid(row=2, padx=10, pady=10, sticky='W')
+stud_number_entry = ttk.Entry(reg_tab, textvariable=self.stud_number, state='disabled')
+stud_number_entry.grid(row=2, column=1, padx=10, pady=10, sticky='W')
+
+ttk.Label(reg_tab, text="Registration date *").grid(row=3, padx=10, pady=10, sticky='W')
+reg_date_entry = ttk.Entry(reg_tab)
+reg_date_entry.grid(row=3, column=1, padx=10, pady=10, sticky='W')
+
+ttk.Label(reg_tab, text="Payment date").grid(row=4, padx=10, pady=10, sticky='W')
+payment_date_entry = ttk.Entry(reg_tab)
+payment_date_entry.grid(row=4, column=1, padx=10, pady=10, sticky='W')
+# Adds a new registration
+def add_registration():
+    if len(pistus_edition_entry.get()) == 0 or \
+        len(reg_fee_entry.get()) == 0 or \
+            len(stud_number_entry.get()) == 0 or \
+                len(reg_date_entry.get()) == 0:
+        messagebox.showerror("Registration error", 'Fill in all the mandatory fields (*)')
+        return False
+    try:
+        # Check if the pistus edition already exists.
+        self.cursor.execute("SELECT * FROM PistusEdition WHERE year=?", (pistus_edition_entry.get(),))
+        row = self.cursor.fetchone()
+        # if not, we add it.
+        if row is None:
+            add_pistus_edition(pistus_edition_entry.get(), reg_fee_entry.get(), self.cursor, self.conn)
+        
+        register_student_to_pistus_edition(stud_number_entry.get(), pistus_edition_entry.get(), \
+                reg_date_entry.get(), self.cursor, self.conn, payment_date_entry.get())
+        
+    except sqlite3.Error as error:
+        messagebox.showerror('Registration error', error)
+        return False
+    messagebox.showinfo('Registration', 'Registration added successfully!')
+    return True
+
+ttk.Button(reg_tab, text="Register", command=add_registration).grid(row=5, column=1, padx=10, pady=10)</code></pre>
+
+
   
   <!--<h2>The Deadline Management Module</h2>
 
@@ -1683,12 +1958,6 @@ conn.close()</code></pre>
     </p>
   </p>
 -->
-
-<h2>Acknowledgements</h2>
-Many thanks to Geneviève Leclerc for collecting all the information about the 
-CentraleSupélec associations.
-
-
 
 </body>
 
