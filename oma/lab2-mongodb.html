@@ -1,0 +1,278 @@
+<!--
+SOFTWARE: MANAGE TWO ROLES: ORGANIZER AND PARTICIPANT (with different login and passwords)
+AUTHENTICATION ALSO !
+
+https://github.com/jkordas/client-server-authentication-demo/blob/master/src/database.py
+
+-->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>PLP &ndash; Lab Assignment 2</title>
+  <link rel="stylesheet" type="text/css" href="../../styles/exercises.css">
+
+  <link rel="stylesheet" href="../../styles/prism.css">
+  <script src="../../scripts/prism.js"></script>
+
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+  <script>hljs.initHighlightingOnLoad();</script>
+  <script> function
+      showHideSolution(elem, elemLink, show, hide) {
+      state =
+        document.getElementById(elem).style.display; if (state == "none") {
+          document.getElementById(elem).style.display = 'block';
+          document.getElementById(elemLink).innerHTML = hide
+        } else {
+        document.getElementById(elem).style.display = 'none';
+        document.getElementById(elemLink).innerHTML = show
+      }
+
+    } </script>
+</head>
+
+<body>
+
+  <h1>PLP</h1>
+
+  <img src="./figs/cs-logo.png" alt="cs-logo" class="logo">
+
+  <h1>Lab Assignment 2 <br><br> MongoDB</h1>
+
+  The purpose of this lab assignment is to practice the query language of 
+  MongoDB. 
+
+  <h2>Installation</h2>
+  
+  <p>You need to install MongoDB on your machine, if you haven't done so yet.
+  To this extent, 
+  download the <a href="https://www.mongodb.com/download-center/community" target="_blank">MongoDB community server 4.2</a>
+  and install it. At the installation, just accept all default settings.</p>
+
+  <ul class="warning">
+    <li class="warning"> If the operating system running on  your machine is Windows, 
+      you need to add MongoDB to the environment variable <i>Path</i> [<a href="#"
+      onclick="showHideSolution('path-instructions','path-instructions-link','Tell me how', 'Close');return false;"><span
+        id="path-instructions-link">Tell me how</span></a>].
+    <div id="path-instructions" style="display:none;" class="reltables">
+      <p>First of all, you should locate the installation folder of MongoDB.
+      If you didn't change the default settings when you installed MongoDB, 
+      the installation folder should be
+      "C:\Program Files\MongoDB".</p>
+      <p>Then follow these instructions (if you have a version older than Windows 10, search on Google how to 
+        change the environment variable <i>Path</i>):
+        <ul>
+          <li> Open the control panel.
+          <li> Select <i>System and Security</i>.
+          <li> Select <i>System</i>.
+          <li> Select <i>Advanced System Settings</i> (on the left menu).
+          <li> Click on the button <i>Environment Variables</i>.
+          <li> In the <i>System variables</i> window, double-click on <i>Path</i>.
+          <li> Select <i>New</i>, specify the value C:\Program Files\MongoDB\Server\4.2\bin and press Enter.
+          <li> Close all the windows of the control panel by clicking on OK.
+        </ul>
+      </p>
+    </div>
+  </ul>
+
+  Normally, after the installation a MongoDB server should 
+
+  <h2>Import the Data</h2>
+  We now create a database named <TT>cinema</TT> and a collection named <TT>movies</TT>
+  and we'll import data into it.
+  <ol>
+    <li> Download the file <a href="./data/movies.json">movies.json</a>.
+    <li> Open a terminal by typing <i>cmd</i> into the search field at the bottom left corner 
+      of the screen.
+    <li> In the terminal, type the following command:
+<pre><code class=language-javascript>mongoimport --db cinema --collection movies --jsonArray --file [file]</code></pre>
+where at the place of [file] you should specify the full path to the file <i>movies.json</i>
+that you've just downloaded. 
+For example, if you downloaded the file into your folder Downloads, 
+the file should be located at C:\Users\your_username\Downloads\movies.json
+<ul class="warning">
+  <li class="warning"> If everything goes well, you should read a message: 
+    "88 document(s) imported successfully".
+</ul>
+<ul class="raise">
+  <li class="raise"> If you get any error message, ask your lab supervisor.
+</ul>
+  </ol>
+
+<h2>Querying the Data</h2>
+
+<p>In order to query the data, type the following command in the terminal:
+<pre><code class="language-javascript">mongo</code></pre>
+This will launch a <b>client shell</b> that allows you to interact with the 
+MongoDB server.</p>
+
+<p>You need to tell the MongoDB server that you want to use the database 
+  <TT>cinema</TT>. Type the following command:
+  <pre><code class="language-javascript">use cinema;</code></pre>
+  You are now ready to execute queries on your database.
+  All the documents are in the collection <TT>movies</TT>;
+  therefore, all queries will be executed by calling 
+  <TT>db.movies.find()</TT> or <TT>db.movies.aggregate()</TT>.
+</p>
+<p>For instance, if you want to get one document from the database, you will type 
+  the following query:
+  <pre><code class="language-javascript">db.movies.find().limit(1)</code></pre>
+  The output of this query is a document describing a movie, with all its properties.
+  It is useful to look at the properties of a movie, you'll need them 
+  in the subsequent queries.
+</p>
+
+<h4>Write the following queries in MongoDB</h4>
+
+<ol class="queryitem">
+  <li class="queryitem"> Get the director of all the movies whose title is "Gladiator" 
+    [<a href="#" onclick="showHideSolution('q1-solutions', 'q1-solutions-link', 'See solution', 'Hide solution');return false;"><span id="q1-solutions-link">See solution</span></a>].
+    <div id="q1-solutions" style="display:none;" class="reltables">
+      <pre><code class="language-javascript">db.movies.find({title:"Gladiator"}, {director:1})</code></pre>
+    </div>
+      <ul class="warning">
+          <li class="warning"> <a href="#" onclick="showHideSolution('q1-expected-result', 'q1-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="q1-expected-result-link">Show the expected result</span></a>.
+            <div id="q1-expected-result" align="center" style="display:none;">
+<pre><code class="language-json">{ "_id" : "movie:9", "director" : { "_id" : "artist:4", "last_name" : "Scott", "first_name" : "Ridley", "birth_date" : "1937" } }</code></pre>
+            </div>
+      </ul>
+
+
+  <li class="queryitem"> Get all the genres of the movies in the collection
+      [<a href="#" onclick="showHideSolution('q2-solutions', 'q2-solutions-link', 'See solution', 'Hide solution');return false;"><span id="q2-solutions-link">See solution</span></a>].
+      <div id="q2-solutions" style="display:none;" class="reltables">
+<pre><code class="language-javascript">db.movies.distinct("genre")</code></pre>
+      </div>
+        <ul class="warning">
+            <li class="warning"> <a href="#" onclick="showHideSolution('q2-expected-result', 'q2-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="q2-expected-result-link">Show the expected result</span></a>.
+              <div id="q2-expected-result" align="center" style="display:none;">
+  <pre><code class="language-json">[
+"Science-fiction",
+"drama",
+"Action",
+"Fantastique",
+"Comédie",
+"Western",
+"crime",
+"Horreur",
+"Guerre",
+"Thriller",
+"Suspense",
+"romance"
+]</code></pre></div>
+  </ul> 
+    
+  <li class="queryitem"> Get the title of all the movies whose genre is "crime" or "drama".
+      [<a href="#" onclick="showHideSolution('q3-solutions', 'q3-solutions-link', 'See solution', 'Hide solution');return false;"><span id="q3-solutions-link">See solution</span></a>].
+      <div id="q3-solutions" style="display:none;" class="reltables">
+        <pre><code class="language-javascript">db.movies.find( { $or : [ {genre:"crime" }, {genre:"drama"} ] }, {title:1} );</code></pre>
+      </div>
+        <ul class="warning">
+            <li class="warning"> <a href="#" onclick="showHideSolution('q3-expected-result', 'q3-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="q3-expected-result-link">Show the expected result</span></a>.
+              <div id="q3-expected-result" align="center" style="display:none;">
+  <pre><code class="language-json">{ "_id" : "movie:1", "title" : "Vertigo" }
+{ "_id" : "movie:4", "title" : "Sacrifice" }
+{ "_id" : "movie:9", "title" : "Gladiator" }
+{ "_id" : "movie:3", "title" : "Titanic" }
+{ "_id" : "movie:14", "title" : "Seven" }
+{ "_id" : "movie:13", "title" : "Van Gogh" }
+{ "_id" : "movie:16", "title" : "Le last_name de la rose" }
+{ "_id" : "movie:26", "title" : "Les pleins pouvoirs" }
+{ "_id" : "movie:29", "title" : "Rain Man" }
+......
+</code></pre>
+              </div>
+  </ul>
+
+  <li class="queryitem"> Get the list of movies directed by "Hitchcock", display only the title and 
+    year and sort them by year [<a href="#" onclick="showHideSolution('q4-solutions', 'q4-solutions-link', 'See solution', 'Hide solution');return false;"><span id="q4-solutions-link">See solution</span></a>].
+    <div id="q4-solutions" style="display:none;" class="reltables">
+      <pre><code class="language-javascript">db.movies.find( {"director.last_name":"Hitchcock"}, {title:1, year:1, _id:0} ).sort({year:1})</code></pre>
+    </div>
+      <ul class="warning">
+          <li class="warning"> <a href="#" onclick="showHideSolution('q4-expected-result', 'q4-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="q4-expected-result-link">Show the expected result</span></a>.
+            <div id="q4-expected-result" align="center" style="display:none;">
+<pre><code class="language-json">{ "title" : "Fenêtre sur cour", "year" : 1954 }
+{ "title" : "Vertigo", "year" : 1958 }
+{ "title" : "La mort aux trousses", "year" : 1959 }
+{ "title" : "Psychose", "year" : 1960 }
+{ "title" : "Les oiseaux", "year" : 1963 }
+{ "title" : "Pas de printemps pour Marnie", "year" : 1964 }</code></pre>
+            </div>
+</ul>
+
+  <li class="queryitem"> Get the titles of the movies where "Cotillard" was one of the actors. Sort by title in ascending order.
+      [<a href="#" onclick="showHideSolution('q5-solutions', 'q5-solutions-link', 'See solution', 'Hide solution');return false;"><span id="q5-solutions-link">See solution</span></a>].
+      <div id="q5-solutions" style="display:none;" class="reltables">
+        <pre><code class="language-javascript">db.movies.find( {"actors.last_name":"Cotillard"}, {title:1} ).sort({title:1});</code></pre>
+      </div>
+        <ul class="warning">
+            <li class="warning"> <a href="#" onclick="showHideSolution('q5-expected-result', 'q5-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="q5-expected-result-link">Show the expected result</span></a>.
+              <div id="q5-expected-result" align="center" style="display:none;">
+  <pre><code class="language-json">{ "_id" : "movie:86", "title" : "Inception" }
+{ "_id" : "movie:90", "title" : "The Dark Knight Rises" }</code></pre>
+        </div>
+  </ul>
+
+  <li class="queryitem"> Get the title of the movies released between 1967 and 1995. Sort by title in ascending order.
+      [<a href="#" onclick="showHideSolution('q6-solutions', 'q6-solutions-link', 'See solution', 'Hide solution');return false;"><span id="q6-solutions-link">See solution</span></a>].
+      <div id="q6-solutions" style="display:none;" class="reltables">
+        <pre><code class="language-javascript">db.movies.find( { year:{$gte:1967, $lte:1995} }, {title:1} ).sort({title:1})</code></pre>
+      </div>
+        <ul class="warning">
+            <li class="warning"> <a href="#" onclick="showHideSolution('q6-expected-result', 'q6-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="q6-expected-result-link">Show the expected result</span></a>.
+              <div id="q6-expected-result" align="center" style="display:none;">
+  <pre><code class="language-json">{ "_id" : "movie:12", "title" : "58 minutes pour vivre" }
+{ "_id" : "movie:2", "title" : "Alien" }
+{ "_id" : "movie:53", "title" : "Bad Lieutenant" }
+{ "_id" : "movie:10", "title" : "Blade Runner" }
+{ "_id" : "movie:72", "title" : "Casino" }
+{ "_id" : "movie:51", "title" : "De bruit et de fureur" }
+{ "_id" : "movie:69", "title" : "Heat" }
+{ "_id" : "movie:8", "title" : "Impitoyable" }
+........</code></pre></div>
+  </ul>
+
+
+  <li class="queryitem"> Get the list of the movies released between 1967 and 1995. Only return the 
+    title, the year and the director's last name. Sort the movies by year
+    [<a href="#" onclick="showHideSolution('q7-solutions', 'q7-solutions-link', 'See solution', 'Hide solution');return false;"><span id="q7-solutions-link">See solution</span></a>].
+    <div id="q7-solutions" style="display:none;" class="reltables">
+      <pre><code class="language-javascript">db.movies.find({year:{$gte:1967, $lte:1995}},{title:1, year:1, _id:0, "director.last_name":1}).sort({year:1})</code></pre>
+    </div>
+      <ul class="warning">
+          <li class="warning"> <a href="#" onclick="showHideSolution('q7-expected-result', 'q7-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="q7-expected-result-link">Show the expected result</span></a>.
+            <div id="q7-expected-result" align="center" style="display:none;">
+<pre><code class="language-json">{ "title" : "Le parrain", "year" : 1972, "director" : { "last_name" : "Coppola" } }
+{ "title" : "Soleil vert", "year" : 1973, "director" : { "last_name" : "Fleischer" } }
+{ "title" : "Le parrain II", "year" : 1974, "director" : { "last_name" : "Coppola" } }
+{ "title" : "Les dents de la mer", "year" : 1975, "director" : { "last_name" : "Spielberg" } }
+{ "title" : "Taxi driver", "year" : 1976, "director" : { "last_name" : "Scorcese" } }
+{ "title" : "Le gendarme et les extra-terrestres", "year" : 1978, "director" : { "last_name" : "Girault" } }
+{ "title" : "Alien", "year" : 1979, "director" : { "last_name" : "Scott" } }
+{ "title" : "Les bronzés font du ski", "year" : 1979, "director" : { "last_name" : "Leconte" } }
+{ "title" : "Kagemusha", "year" : 1980, "director" : { "last_name" : "Kurozawa" } }</code></pre></div>
+</ul>
+
+<li class="queryitem"> Get the number of movies by country. Sort by count in decreasing order.
+    [<a href="#" onclick="showHideSolution('q8-solutions', 'q8-solutions-link', 'See solution', 'Hide solution');return false;"><span id="q8-solutions-link">See solution</span></a>].
+    <div id="q8-solutions" style="display:none;" class="reltables">
+      <pre><code class="language-javascript">db.movies.aggregate({$group:{_id:"$country", count:{$sum:1}}}, {$sort:{count:-1}});</code></pre>
+    </div>
+      <ul class="warning">
+          <li class="warning"> <a href="#" onclick="showHideSolution('q8-expected-result', 'q8-expected-result-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="q8-expected-result-link">Show the expected result</span></a>.
+            <div id="q8-expected-result" align="center" style="display:none;">
+<pre><code class="language-json">{ "_id" : "USA", "count" : 67 }
+{ "_id" : "FR", "count" : 17 }
+{ "_id" : "IT", "count" : 2 }
+{ "_id" : "JP", "count" : 1 }
+{ "_id" : "DE", "count" : 1 }</code></pre></div>
+</ul>
+
+</ol>
+</body>
+
+</html>

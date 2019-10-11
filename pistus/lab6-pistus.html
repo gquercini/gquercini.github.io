@@ -139,8 +139,8 @@ CentraleSupélec associations. </p>
   <ul>
     <li> Deployment of the database (Section 2).
     <li> The ETL module (Section 3).
-    <li> The registration module (Section 4, not included in this text (yet)).
-    <li> A graphical interface (Section 5, not included in this text (yet)) that allows the 
+    <li> The registration module (Section 4).
+    <li> A graphical interface (Section 5) that allows the 
       visualization of the registrations.
   </ul>
 
@@ -1685,285 +1685,654 @@ If this is not the case, the GUI shows a dialog window with the message "Fill in
 The code of the tab "Registration" is provided to you.
 Just copy and paste the following code into the definition 
 of the function <TT>create_registration_tab</TT>.
-<pre><code class="language-python">reg_tab = ttk.Frame(nb)
-nb.add(reg_tab, text='Registration')
-ttk.Label(reg_tab, text="Pistus Edition *").grid(row=0, padx=10, pady=10, sticky='W')
-pistus_edition_entry = ttk.Entry(reg_tab)
-# Get the Pistus edition from the db corresponding to the specified year.
-def get_edition(event):
-    reg_fee_entry.configure(state='normal')
-    reg_fee_entry.delete(0, tk.END)
-    self.cursor.execute("SELECT registration_fee FROM PistusEdition WHERE year=?", (pistus_edition_entry.get(),))
-    row = self.cursor.fetchone()
-    if row is not None:
-        reg_fee_entry.insert(0, row[0])
-        reg_fee_entry.configure(state = 'disabled')
-pistus_edition_entry.bind('&#60;FocusOut&#62;', get_edition)
-pistus_edition_entry.grid(row=0, column=1, padx=10, pady=10, sticky='W')
-
-ttk.Label(reg_tab, text="Registration fee *").grid(row=1, padx=10, pady=10, sticky='W')
-reg_fee_entry = ttk.Entry(reg_tab)
-reg_fee_entry.grid(row=1, column=1, padx=10, pady=10, sticky='W')
-
-ttk.Label(reg_tab, text="Student number *").grid(row=2, padx=10, pady=10, sticky='W')
-stud_number_entry = ttk.Entry(reg_tab, textvariable=self.stud_number, state='disabled')
-stud_number_entry.grid(row=2, column=1, padx=10, pady=10, sticky='W')
-
-ttk.Label(reg_tab, text="Registration date *").grid(row=3, padx=10, pady=10, sticky='W')
-reg_date_entry = ttk.Entry(reg_tab)
-reg_date_entry.grid(row=3, column=1, padx=10, pady=10, sticky='W')
-
-ttk.Label(reg_tab, text="Payment date").grid(row=4, padx=10, pady=10, sticky='W')
-payment_date_entry = ttk.Entry(reg_tab)
-payment_date_entry.grid(row=4, column=1, padx=10, pady=10, sticky='W')
-# Adds a new registration
-def add_registration():
-    if len(pistus_edition_entry.get()) == 0 or \
-        len(reg_fee_entry.get()) == 0 or \
-            len(stud_number_entry.get()) == 0 or \
-                len(reg_date_entry.get()) == 0:
-        messagebox.showerror("Registration error", 'Fill in all the mandatory fields (*)')
-        return False
-    try:
-        # Check if the pistus edition already exists.
-        self.cursor.execute("SELECT * FROM PistusEdition WHERE year=?", (pistus_edition_entry.get(),))
+<pre><code class="language-python">def create_registration_tab(self, nb):
+    reg_tab = ttk.Frame(nb)
+    nb.add(reg_tab, text='Registration')
+    ttk.Label(reg_tab, text="Pistus Edition *").grid(row=0, padx=10, pady=10, sticky='W')
+    pistus_edition_entry = ttk.Entry(reg_tab)
+    # Get the Pistus edition from the db corresponding to the specified year.
+    def get_edition(event):
+        reg_fee_entry.configure(state='normal')
+        reg_fee_entry.delete(0, tk.END)
+        self.cursor.execute("SELECT registration_fee FROM PistusEdition WHERE year=?", (pistus_edition_entry.get(),))
         row = self.cursor.fetchone()
-        # if not, we add it.
-        if row is None:
-            add_pistus_edition(pistus_edition_entry.get(), reg_fee_entry.get(), self.cursor, self.conn)
+        if row is not None:
+            reg_fee_entry.insert(0, row[0])
+            reg_fee_entry.configure(state = 'disabled')
+    pistus_edition_entry.bind('<FocusOut>', get_edition)
+    pistus_edition_entry.grid(row=0, column=1, padx=10, pady=10, sticky='W')
+    
+    ttk.Label(reg_tab, text="Registration fee *").grid(row=1, padx=10, pady=10, sticky='W')
+    reg_fee_entry = ttk.Entry(reg_tab)
+    reg_fee_entry.grid(row=1, column=1, padx=10, pady=10, sticky='W')
+    
+    ttk.Label(reg_tab, text="Student number *").grid(row=2, padx=10, pady=10, sticky='W')
+    stud_number_entry = ttk.Entry(reg_tab, textvariable=self.stud_number, state='disabled')
+    stud_number_entry.grid(row=2, column=1, padx=10, pady=10, sticky='W')
+    
+    ttk.Label(reg_tab, text="Registration date *").grid(row=3, padx=10, pady=10, sticky='W')
+    reg_date_entry = ttk.Entry(reg_tab)
+    reg_date_entry.grid(row=3, column=1, padx=10, pady=10, sticky='W')
+    
+    ttk.Label(reg_tab, text="Payment date").grid(row=4, padx=10, pady=10, sticky='W')
+    payment_date_entry = ttk.Entry(reg_tab)
+    payment_date_entry.grid(row=4, column=1, padx=10, pady=10, sticky='W')
+    # Adds a new registration
+    def add_registration():
+        if len(pistus_edition_entry.get()) == 0 or \
+            len(reg_fee_entry.get()) == 0 or \
+                len(stud_number_entry.get()) == 0 or \
+                    len(reg_date_entry.get()) == 0:
+            messagebox.showerror("Registration error", 'Fill in all the mandatory fields (*)')
+            return False
+        try:
+            # Check if the pistus edition already exists.
+            self.cursor.execute("SELECT * FROM PistusEdition WHERE year=?", (pistus_edition_entry.get(),))
+            row = self.cursor.fetchone()
+            # if not, we add it.
+            if row is None:
+                add_pistus_edition(pistus_edition_entry.get(), reg_fee_entry.get(), self.cursor, self.conn)
+            
+            reg_date = datetime.datetime.strptime(reg_date_entry.get(), '%Y/%m/%d').date()
+            payment_date = None
+            if len(payment_date_entry.get()) > 0:
+                payment_date = datetime.datetime.strptime(payment_date_entry.get(), '%Y/%m/%d').date()
         
-        register_student_to_pistus_edition(stud_number_entry.get(), pistus_edition_entry.get(), \
-                reg_date_entry.get(), self.cursor, self.conn, payment_date_entry.get())
-        
-    except sqlite3.Error as error:
-        messagebox.showerror('Registration error', error)
-        return False
-    messagebox.showinfo('Registration', 'Registration added successfully!')
-    return True
+            register_student_to_pistus_edition(stud_number_entry.get(), pistus_edition_entry.get(), \
+                    reg_date, self.cursor, self.conn, payment_date)
+            
+        except sqlite3.Error as error:
+            messagebox.showerror('Registration error', error)
+            return False
+        messagebox.showinfo('Registration', 'Registration added successfully!')
+        return True
 
-ttk.Button(reg_tab, text="Register", command=add_registration).grid(row=5, column=1, padx=10, pady=10)</code></pre>
+    ttk.Button(reg_tab, text="Register", command=add_registration).grid(row=5, column=1, padx=10, pady=10)</code></pre>
 
+<h2>The Deadline Management Module</h2>
 
-  
-  <!--<h2>The Deadline Management Module</h2>
+  <p>The <b>Deadline Management module</b> 
+  makes sure that all students pay their dues on time.
+  More specifically, this module is executed as soon as the application 
+  <TT>PistusResa</TT> is opened and then every 24 hours.
+  At each execution, the module operates the three following tasks:
 
-  The Deadline Management module is responsible for automatically checking
-  every day the payment deadline of each student.
-  More specifically, this module has the following three tasks:
   <ol>
-    <li> <b>Data Loading.</b>. Load into two separate lists the registrations of the students who have exceeded the
-      deadline payment
-      and those who still have two days left to the deadline.
-    <li> <b>Registration removal.</b> Remove the registration of the students that have exceeded the deadline payment.
-    <li> <b>Email reminder.</b> Send an email reminder to the students who haven't paid their dues two days before the
-      deadline.
+    <li> <b>Data Loading.</b> Loads into two separate lists the registrations of the students who have exceeded the
+      deadline payment (the deadline payment is computed as the registration date + 5 days)
+      and those who still have &#8804; 2  days left to the deadline.
+    <li> <b>Registration removal.</b> Removes the registration of the students that have exceeded the deadline payment.
+    <li> <b>Email reminder.</b> Sends an email reminder to the students 
+      involved in the registrations loaded in the second list. 
   </ol>
-  This module executes these three tasks every day at midnight.
-  We're now going to develop the three tasks separately.
+ 
+ 
+  We're now going to develop the three tasks separately.</p>
+
+  <ul class="exercise">
+    <li class="exercise">Create a Python file
+    named <TT>ddm.py</TT> in the package <TT>gui</TT>.</li>
+
+    <li class="exercise"> Copy the following code to the file <TT>dmm.py</TT>.
+<pre class="line-numbers"><code class="language-python">class DeadlineManagementModule():
+  
+  def __init__(self, conn, cursor, app):
+      self.cursor = cursor
+      self.conn = conn
+      self.app = app
+
+  def deadline_management(self):
+      print("Printing this every 5 seconds")
+      self.app.after(5000, self.deadline_management)</code></pre>
+The previous code:
+<ul>
+  <li> Creates a class <TT>DeadlineManagementModule</TT> with three properties: the object 
+    <TT>conn</TT> used to connect to the database, the object <TT>cursor</TT> used to 
+    query the database and the main window <TT>app</TT> of <TT>PistusResa</TT>.
+  <li> Defines a function <TT>deadline_management()</TT> that calls itself every 5 seconds.
+</ul>
+<li class="exercise"> Add the following lines to the file <TT>main_window.py</TT> right after the 
+  line that reads <TT>app = PistusResaGUI(conn, cursor, parent=main_window)</TT>.
+<pre class="line-numbers"><code class="language-python">dmm = DeadlineManagementModule(conn, cursor, app)
+app.after(0, dmm.deadline_management)</code></pre>
+The previous code:
+<ul>
+  <li> Creates an object <TT>dmm</TT> of the class <TT>DeadlineManagementModule</TT>.
+  <li> Calls the function <TT>dmm.deadline_management</TT> immediately when the main window of the 
+    application is started.
+</ul>
+</ul>
+
+<p>
+  <div class="exercisebox">
+    Run the file <TT>main_window.py</TT> and checks whether the 
+    message "Printing this every 5 seconds" appears on the terminal every five seconds.
+    <ul class="warning">
+      <li class="warning"> Everything's works? Great! You've just created a module that 
+        is activated in the background to do so task.
+    </ul>
+  </div>
+</p>
+
+<ul class="exercise">
+  <li class="exercise"> By using the graphical interface of 
+    <TT>PistusResa</TT>, register yourself to next year's Pistus edition.
+    As a registration date, specify two days ago. 
+    This way, you'll have in your database one student (you) that has still two days left to the 
+    payment deadline. 
+    Remember to specify a date in the format YYYY/MM/DD.
+</ul>
 
   <h3>Data Loading</h3>
 
-  <p>
-    <div class="exercisebox"> Write a function
-      <TT>load_data()</TT> that loads into a list L1 the registrations of
-      the students who have exceeded the deadline payment and a list
-      L2 those who still have two days left to the deadline.
-      The function returns a tuple (L1, L2).
+  In the class <TT>DeadlineManagementModule</TT> we define 
+  a function <TT>load_data()</TT> as follows:
+<pre><code class="language-python">load_data(self): (expired_registrations, last_minute_payment)</code></pre>
+The output of this function is a tuple <TT>(expired_registrations, reminder_registration)</TT>, where:
+<ul>
+  <li> <TT>expired_registrations</TT> is the list of all registrations that exceeded the payment deadline.
+    Remember that the payment deadline is computed as <TT>registration_date</TT> + 5.
+    Each item of this list is an object of the class <TT>Registration</TT>
+    that you defined in the file <TT>etl.extraction.py</TT>.
+  <li> <TT>reminder_registration</TT> is the list of all registrations whose payment deadline is 
+  two days from now</TT> Each item of this list is an object of the class <TT>Registration</TT>
+  that you defined in the file <TT>etl.extraction.py</TT>.
+</ul>
+
+<p>
+    <div class="exercisebox"> Write the code for the function 
+      <TT>load_data</TT>. 
+    <ul class="warning">
+      <li class="warning"> In SQLite, you can calculate the difference between 
+        two dates by first converting the dates into the Julian days.
+        For instance, the following SQL queries loads the number of 
+        days between today's date and the registration date 
+        for all the registrations.
+<pre><code class="language-sql">SELECT julianday('now') - julianday(registration_date)
+FROM registration</code></pre> 
+    </ul>
     </div>
   </p>
+  <ul class="test">
+    <li class="test"> Create a file <TT>dmm_load_test.py</TT> in the package <TT>gui</TT>
+      and copy the following code:
+<pre><code class="language-python">import unittest
+import sqlite3
+from gui.dmm import DeadlineManagementModule
 
-  (test)
+class TestDataLoad(unittest.TestCase):
+    def test_DataLoad(self):
+        conn = sqlite3.connect('./db/pistus.db')
+        cursor = conn.cursor()
+        dmm = DeadlineManagementModule(conn, cursor, None)
+        (expired_registrations, reminder_registrations) = dmm.load_data()
+        
+        self.assertEqual(len(expired_registrations), 42, "The number of expired registrations should be 42")
+        self.assertEqual(len(reminder_registrations), 1, "The number of reminder registrations should be 1")
+        cursor.close()
+        conn.close()
+
+if __name__ == '__main__':
+    unittest.main()</code></pre>
+  <ul class="warning">
+    <li class="warning"> Run this file to check whether your implementation of the function 
+        <TT>load_data()</TT> is correct.
+    <li class="warning"> This test will also create in the folder <TT>gui</TT> 
+      a file named <TT>expired_registrations </TT> that stores all the 
+      expired registrations. You'll need them later to verify that 
+      these registrations are successfully removed from the database.
+  </ul>
+  
+    
+  </ul>
 
   <h3>Registration Removal</h3>
 
+In the class <TT>DeadlineManagementModule</TT> we define 
+  a function <TT>remove_registrations()</TT> as follows:
+<pre><code class="language-python">remove_registrations(self, expired_registrations): Success</code></pre>
+The input is:
+<ul>
+  <li> <TT>expired_registrations</TT>. The list of all registrations that missed the payment 
+    deadline. This is the first list returned by the function <TT>load_data()</TT>
+</ul>
+The output is a boolean value:
+<ul>
+  <li> <TT>True</TT>. If the registrations could be removed.
+  <li> <TT>False</TT>. If the registrations could not be removed.
+</ul>
+
   <p>
-    <div class="exercisebox"> Write a function
-      <TT>delete_registration()</TT> that deletes from the database a registration,
-      given its number. Importantly, the function must not delete the data about the student.
-      (maybe an exception to deal with the case where there is no registration with that number)
+    <div class="exercisebox"> Write the code to implement the function 
+      <TT>remove_registration()</TT>. 
+      <ul class="warning">
+        <li class="warning"> Remember to commit the modifications to the database.
+      </ul>
     </div>
   </p>
-
-   we should generate some data and delete those who exceeded the deadline)
 
   <h3>Email reminder</h3>
 
+In the class <TT>DeadlineManagementModule</TT> we define 
+a function <TT>email_reminder()</TT> as follows:
+<pre><code class="language-python">email_reminder(self, reminder_registrations)</code></pre>
+The input is:
+<ul>
+  <li> <TT>reminder_registrations.</TT> The list of all registrations 
+    whose payment deadline is &#8804; 2  days away. This is the second list returned 
+    by the function <TT>load_data</TT>.
+</ul> 
+The function does not return any output.
+
+<ul class="warning">
+  <li class="warning"> In order to actually send an email through a Python program, you would need to connect to the SMTP 
+    server of your email provider. 
+    However, this will require you to adjust the security settings of your email account, which would expose 
+    it to some security risks.
+    A solution that we'll use in this lab is to set up a local SMTP debugging server.
+    Open a new terminal and type the following command in the terminal:
+<pre><code class="language-python">python -m smtpd -c DebuggingServer -n localhost:1025</code></pre>
+The previous command will start a SMTP server on <TT>localhost</TT> (that is, your machine) at port 1025.
+After executing the command, the terminal will not show any output, it will just hang waiting for connections.
+Do not close the terminal window, otherwise you would stop the server.
+When you "send" an email through this port, the content of the email is displayed in the terminal.
+No actual email is sent.
+
+
+
+</ul>
+
   <p>
-    <div class="exercisebox"> Write a function
-      <TT>email_reminder()</TT> that, given an email address, sends a email reminder.
+    <div class="exercisebox"> Write the code to implement the function
+      <TT>email_reminder()</TT>.
+      <ul class='rtfm'>
+        <li class='rtfm'> You might want to <a href="./docs/email.html" target="_blank">check the documentation</a>
+          to find out how to send an email from your Python program.
+      </ul>
     </div>
   </p>
 
-  (test )
 
   <h3>Putting All Together</h3>
-
+  We now complete the function <TT>deadline_management()</TT> so as it calls the three
+  functions defined above. 
   <p>
-    <div class="exercisebox"> Write a function
-      <TT>deadline_management()</TT> that triggers itself every day and executes the three tasks.
+    <div class="exercisebox"> Complete the function 
+      <TT>deadline_management()</TT> by adding the code that calls the three
+      functions <TT>load_data()</TT>, <TT>remove_registrations</TT> and 
+      <TT>email_reminder</TT>. 
     </div>
   </p>
 
-  <h2>The Authentification Module</h2>
+  <ul class="test">
+      <li class="test"> By using DB Browser for SQLite, run the following query:
+<pre><code class="language-sql">SELECT * FROM Registration WHERE payment_date IS NULL</code></pre>
+You should see only one registration in the table <TT>Registration</TT> (yours).
 
-  This is inspired to https://github.com/jkordas/client-server-authentication-demo/blob/master/src/client.py
-
+<li class="test"> Look in the terminal where you opened the SMTP server. 
+  You should see the email reminder that you sent. 
+  </ul>
   
 
+  <h2>The Registration Management Module</h2>
 
-  <h2>The Payment Module</h2>
+  <p>The <b>registration management module</b> allows a Pistus organizer to 
+    see the registrations and modify the data associated to them.
+  In particular, it provides the following functionalities:
 
-  <h2>The Reservation Management Module</h2>
+  <ul>
+    <li> Get all registrations of a specific student.
+    <li> Insert a new email address for a student.
+    <li> Modify an email  address of a student.
+    <li> Delete an email address of a student.
+    <li> Remove a student from an association.
+    <li> Add a student to an association.
+    <li> Remove a registration.
+    <li> Update the payment date of a registration.
+  </ul>
+
+</p>
+
+  <ul class="exercise">
+    <li class="exercise"> Create a new package named <TT>management</TT> and a new file <TT>registration_management.py</TT> in it.
+  </ul>
+
+  <h3>Get all the registrations of a student</h3>
+  We define the following function in <TT>registration_management.py</TT>.
+<pre><code class="language-python">get_registrations(stud_number, cursor): registrations</code></pre>
+The input is:
+<ul>
+  <li> <TT>stud_number</TT>. The number of the student for which the registrations will be returned.
+  <li> <TT>cursor</TT>. The object used to query the database.
+</ul>
+The output is a list where each item is an object of the class <TT>etl.extraction.Registration</TT>.
+The list might be empty.
+
+<p>
+  <div class="exercisebox"> Write the code to implement the function <TT>remove_registration()</TT>.
+    <ul class="warning">
+      <li class="warning"> Remember to commit the modifications to the database.
+    </ul>
+
+  </div>
+</p>
+
+  <h3>Insert an email address</h3>
+  We define the following function in <TT>registration_management.py</TT>.
+<pre><code class="language-python">insert_email(email_address, stud_number, cursor, conn): success</code></pre>
+The input is:
+<ul>
+  <li> <TT>email_address</TT>. The email address to insert.
+  <li> <TT>stud_number</TT>. The number of the student associated to the new email address.
+  <li> <TT>cursor</TT>. The object used to query the database.
+  <li> <TT>conn</TT>. The object used to connect to the database.
+</ul>
+The output is a boolean value <TT>success</TT>:
+<ul>
+  <li> <TT>True</TT>, if the email address could be successfully created.
+  <li> <TT>False</TT>, otherwise.
+</ul>
+
+<p>
+  <div class="exercisebox"> Write the code to implement the function <TT>insert_email()</TT>.
+    <ul class="warning">
+      <li class="warning"> Remember to commit the modifications to the database.
+    </ul>
+
+  </div>
+</p>
+
+<h3>Modify an email address</h3>
+  We define the following function in <TT>registration_management.py</TT>.
+<pre><code class="language-python">modify_email(current_email_address, new_email_address, cursor, conn): success</code></pre>
+The input is:
+<ul>
+  <li> <TT>current_email_address</TT>. The current email address to modify.
+  <li> <TT>new_email_address</TT>. The new email address.
+  <li> <TT>cursor</TT>. The object used to query the database.
+  <li> <TT>conn</TT>. The object used to connect to the database.
+</ul>
+The output is a boolean value <TT>success</TT>:
+<ul>
+  <li> <TT>True</TT>, if the email address could be successfully updated.
+  <li> <TT>False</TT>, otherwise.
+</ul>
+
+<p>
+  <div class="exercisebox"> Write the code to implement the function <TT>modify_email()</TT>.
+    <ul class="warning">
+      <li class="warning"> Remember to commit the modifications to the database.
+    </ul>
+
+  </div>
+</p>
 
 
-  <h2>The GUI</h2>
+<h3>Delete an email address</h3>
+  We define the following function in <TT>registration_management.py</TT>.
+<pre><code class="language-python">delete_email(email_address, cursor, conn): success</code></pre>
+The input is:
+<ul>
+  <li> <TT>email_address</TT>. The email address to delete.
+  <li> <TT>cursor</TT>. The object used to query the database.
+  <li> <TT>conn</TT>. The object used to connect to the database.
+</ul>
+The output is a boolean value <TT>success</TT>:
+<ul>
+  <li> <TT>True</TT>, if the email address could be successfully deleted.
+  <li> <TT>False</TT>, otherwise.
+</ul>
 
-  When a student wants to register, he has first to type her student number.
-  The system will check whether the data on that student are already there.
+<p>
+  <div class="exercisebox"> Write the code to implement the function <TT>delete_email()</TT>.
+    <ul class="warning">
+      <li class="warning"> Remember to commit the modifications to the database.
+    </ul>
 
-  1) function in the registration module: get_student(stud_number) to get the data about the student.
+  </div>
+</p>
 
-  if the data on the student are already in the database, the other fields will be filled automatically;
-  the student has just to confirm, or it might modify some data.
+<h3>Remove a student from an association</h3>
+  We define the following function in <TT>registration_management.py</TT>.
+<pre><code class="language-python">remove_student_from_association(stud_number, asso_name, cursor, conn): success</code></pre>
+The input is:
+<ul>
+  <li> <TT>stud_number</TT>. The number of the student to remove from the association.
+  <li> <TT>asso_name</TT>. The name of the association from which the student has to be removed.
+  <li> <TT>cursor</TT>. The object used to query the database.
+  <li> <TT>conn</TT>. The object used to connect to the database.
+</ul>
+The output is a boolean value <TT>success</TT>:
+<ul>
+  <li> <TT>True</TT>, if the student could be successfully removed from the association.
+  <li> <TT>False</TT>, otherwise.
+</ul>
 
-  2) function in the registration module: modify_student(columns, values) -- 
-  stud number cannot be changed (disable textfield in the GUI)
-  also, edit_associations, delete_association for a student or add association for the student.
+<p>
+  <div class="exercisebox"> Write the code to implement the function <TT>remove_student_from_association()</TT>.
+    <ul class="warning">
+      <li class="warning"> Remember to commit the modifications to the database.
+    </ul>
 
-  if the the data on the student are not in the database (new student), the student has to fill in 
-  all the information (including the info on the associations --- give an association name that already exists).
-
-  3) function insert_student() 
+  </div>
+</p>
 
 
-  <h3>Database Operations</h3>
-  <p> We'll now code some functions to implement
-    read/write operations on the Pistus database. All these functions will run SQL
-    queries against the Pistus database.
+<h3>Add a student to an association</h3>
+  We define the following function in <TT>registration_management.py</TT>.
+<pre><code class="language-python">add_student_to_association(stud_number, asso_name, cursor, conn): success</code></pre>
+The input is:
+<ul>
+  <li> <TT>stud_number</TT>. The number of the student to add to the association.
+  <li> <TT>asso_name</TT>. The name of the association to which the student has to be added.
+  <li> <TT>cursor</TT>. The object used to query the database.
+  <li> <TT>conn</TT>. The object used to connect to the database.
+</ul>
+The output is a boolean value <TT>success</TT>:
+<ul>
+  <li> <TT>True</TT>, if the student could be successfully added to the association.
+  <li> <TT>False</TT>, otherwise.
+</ul>
 
-    <p>
-      <div class="exercisebox"> In file <TT>database.py</TT>, write a function
-        <TT>add_student</TT> that adds a new student to the database. <p>Input
-          parameters: <ul>
-            <li> <TT>db</TT>: The connection object returned by the
-              function <TT>connect_to_pistus</TT>.
-            <li> <TT>student_number</TT>: The
-              student number.
-            <li> <TT>nickname</TT>: The student nickname.
-            <li>
-              <TT>fname</TT>: The student first name.
-            <li> <TT>lname</TT>: The student
-              last name.
-            <li> <TT>nationality</TT>: The student nationality.
-            <li>
-              <TT>gender</TT>: The student gender.
-            <li> <TT>emails</TT>: The list of the
-              student email addresses.
-            <li> <TT>associations</TT>: The list of the names
-              of the associations to which the student belongs.
-          </ul>
-        </p>
-        <p>Output
-          parameters: none.</p>
-      </div>
-    </p>
+<p>
+  <div class="exercisebox"> Write the code to implement the function <TT>add_student_to_association()</TT>.
+    <ul class="warning">
+      <li class="warning"> Remember to commit the modifications to the database.
+    </ul>
 
-    <p>
-      <div class="exercisebox"> In file <TT>database.py</TT>, write a function
-        <TT>add_registration</TT> that adds the registration of a student to the
-        Pistus. Importantly, if the student is already registered, the function will
-        trow an exception (HERE SPECIFY).
+  </div>
+</p>
 
-        <p>Input parameters: <ul>
-            <li> <TT>db</TT>: The connection object returned
-              by the function <TT>connect_to_pistus</TT>.
-            <li> <TT>student_number</TT>:
-              The student number.
-            <li> <TT>registration_date</TT>: The registration
-              date.
-            <li> <TT>payment_date</TT>: The payment date (optional parameter).
-          </ul>
-        </p>
-        <p>Output parameters: none.</p>
-      </div>
-    </p>
 
-    <p>
-      <div class="exercisebox"> In file <TT>database.py</TT>, write a function
-        <TT>validate_payment</TT> that writes the payment date relative to the
-        registration of a student. <p>Input parameters: <ul>
-            <li> <TT>db</TT>: The
-              connection object returned by the function <TT>connect_to_pistus</TT>.
-            <li>
-              <TT>student_number</TT>: The student number.
-            <li> <TT>payment_date</TT>: The
-              payment date.
-          </ul>
-        </p>
-        <p>Output parameters: none.</p>
-      </div>
-    </p>
+<h3>Add a student to an association</h3>
+  We define the following function in <TT>registration_management.py</TT>.
+<pre><code class="language-python">add_student_to_association(stud_number, asso_name, cursor, conn): success</code></pre>
+The input is:
+<ul>
+  <li> <TT>stud_number</TT>. The number of the student to add to the association.
+  <li> <TT>asso_name</TT>. The name of the association to which the student has to be added.
+  <li> <TT>cursor</TT>. The object used to query the database.
+  <li> <TT>conn</TT>. The object used to connect to the database.
+</ul>
+The output is a boolean value <TT>success</TT>:
+<ul>
+  <li> <TT>True</TT>, if the student could be successfully added to the association.
+  <li> <TT>False</TT>, otherwise.
+</ul>
 
-    <p>
-      <div class="exercisebox"> In file <TT>database.py</TT>, write a function
-        <TT>paid_registrations</TT> that returns the students that have paid the
-        fee. <p>Input parameters: <ul>
-            <li> <TT>db</TT>: The connection object
-              returned by the function <TT>connect_to_pistus</TT>.
-          </ul>
-        </p>
-        <p>Output
-          parameters: a list of tuples. Each tuple contains, in the following order:
-          student number, student nickname, student first name, student last name,
-          registration date, payment date. </p>
-      </div>
-    </p>
+<p>
+  <div class="exercisebox"> Write the code to implement the function <TT>add_student_to_association()</TT>.
+    <ul class="warning">
+      <li class="warning"> Remember to commit the modifications to the database.
+    </ul>
 
-    <p>
-      <div class="exercisebox"> In file <TT>database.py</TT>, write a function
-        <TT>unpaid_registrations</TT> that returns the students that haven't paid
-        the fee. <p>Input parameters: <ul>
-            <li> <TT>db</TT>: The connection object
-              returned by the function <TT>connect_to_pistus</TT>.
-          </ul>
-        </p>
-        <p>Output
-          parameters: a list of tuples. Each tuple contains, in the following order:
-          student number, student nickname, student first name, student last name,
-          registration date. </p>
-      </div>
-    </p>
+  </div>
+</p>
 
-    <p>
-      <div class="exercisebox"> In file <TT>database.py</TT>, write a function
-        <TT>delete_registration</TT> that deletes the registration of a student.
-        <p>Input parameters: <ul>
-            <li> <TT>db</TT>: The connection object returned
-              by the function <TT>connect_to_pistus</TT>.
-            <li> <TT>student_number</TT>:
-              The student number.
-          </ul>
-        </p>
-        <p>Output parameters: none. </p>
-      </div>
-    </p>
+<h3>Remove a Registration</h3>
+  We define the following function in <TT>registration_management.py</TT>.
+<pre><code class="language-python">remove_registration(stud_number, edition_year, cursor, conn): success</code></pre>
+The input is:
+<ul>
+  <li> <TT>stud_number</TT>. The number of the student for which the registration has to be removed.
+  <li> <TT>edition_year</TT>. The year of the Pistus edition from which the student will be removed.
+  <li> <TT>cursor</TT>. The object used to query the database.
+  <li> <TT>conn</TT>. The object used to connect to the database.
+</ul>
+The output is a boolean value <TT>success</TT>:
+<ul>
+  <li> <TT>True</TT>, if the registration could be successfully removed.
+  <li> <TT>False</TT>, otherwise.
+</ul>
 
-    <p>
-      <div class="exercisebox"> In file <TT>database.py</TT>, write a function
-        <TT>delete_student</TT> that deletes a student from the database.
+<p>
+  <div class="exercisebox"> Write the code to implement the function <TT>remove_registration()</TT>.
+    <ul class="warning">
+      <li class="warning"> Remember to commit the modifications to the database.
+    </ul>
 
-        <p>Input parameters: <ul>
-            <li> <TT>db</TT>: The connection object returned
-              by the function <TT>connect_to_pistus</TT>.
-            <li> <TT>student_number</TT>:
-              The student number.
-          </ul>
-        </p>
-        <p>Output parameters: none. </p>
-      </div>
-    </p>
+  </div>
+</p>
+
+<h3>Update the payment date of a registration</h3>
+  We define the following function in <TT>registration_management.py</TT>.
+<pre><code class="language-python">update_payment_date(stud_number, edition_year, payment_date, cursor, conn): success</code></pre>
+The input is:
+<ul>
+  <li> <TT>stud_number</TT>. The number of the student for which the payment date will be updated.
+  <li> <TT>edition_year</TT>. The year of the Pistus edition for which the payment date will be updated.
+  <li> <TT>payment_date</TT>. The new payment date.
+  <li> <TT>cursor</TT>. The object used to query the database.
+  <li> <TT>conn</TT>. The object used to connect to the database.
+</ul>
+The output is a boolean value <TT>success</TT>:
+<ul>
+  <li> <TT>True</TT>, if the payment date could be succesfully updated/
+  <li> <TT>False</TT>, otherwise.
+</ul>
+
+<p>
+  <div class="exercisebox"> Write the code to implement the function <TT>update_payment_date()</TT>.
+    <ul class="warning">
+      <li class="warning"> Remember to commit the modifications to the database.
+    </ul>
+
+  </div>
+</p>
+
+<p>
+    <div class="exercisebox"> Complete the GUI with all the elements necessary to manage the registrations.
+    
+    </div>
   </p>
--->
+
+
+<h2>The Authentification Module</h2>
+
+<p>The goal of the <b>Authentication Module</b> is to 
+grant the access to the functionalities of <TT>PistusResa</TT> only 
+to authorized users.</p>
+
+<p>More specifically, the module provides two functionalities:
+<ul>
+  <li> Account creation. Any account is identified by a <b>username</b> and associated to a <b>password</b>.
+  <li> Login procedure. In order to get access to <TT>PistusResa</TT>, any user has to connect by specifying 
+    her username and password.
+</ul>
+When an account is created, the username and the password are stored in the Pistus database.
+For security reasons, the password will be stored in <b>hashed form</b>, rather than plain text.
+To this extent, we'll be using a <b>hashing algorithm</b> that transforms the password 
+into another string that is virtually impossible to transform back to the original string.
+
+<ul class="exercise">
+  <li class="exercise"> Add to the Pistus database a new table named <TT>Login</TT> by executing the following SQL query in the 
+    DB Browser for SQLite.
+<pre><code class="language-sql">CREATE TABLE Login(username VARCHAR(50) PRIMARY KEY, password BINARY(32))</code></pre>
+The column <TT>password</TT> will store a binary string, which is the hashed form of a password.
+</ul>
+</p>
+
+<p>When a user wants to log in, she provides her username and password.
+  The provided password is then hashed with the same algorithm used to encode it the first time.
+  The hashed form of the provided password will be compared with the hashed form stored in the database.
+  If the two passwords match, the user will be granted access to <TT>PistusResa</TT>.
+</p>
+
+<ul class="warning">
+  <li class="warning"> In order to hash a password, we will be using the Python package <TT>passlib</TT>
+    that is not included in the Anaconda distribution. 
+    In order to install it, if you're a Linux or MacOS user, type the following command:
+<pre><code class="language-python">pip install passlib</code></pre>
+If you're a Windows user, type tye following command:
+<pre><code class="language-python">conda install passlib</code></pre>
+</ul>
+
+
+<ul class="exercise">
+  <li class="exercise"> Create a package <TT>authentication</TT> and a new Python file <TT>authentication_module.py</TT> in it.
+</ul>  
+
+<h3>Creating an Account</h3>
+
+We define the following function in the file <TT>authentication_module.py</TT>.
+
+<pre><code class="language-python">create_account(username, plain_password, cursor, conn):success</code></pre>
+The input is:
+<ul>
+  <li> <TT>username</TT>. The username associated to the account to be created.
+  <li> <TT>plain_password</TT>. The password in plain text to hash.
+  <li> <TT>cursor</TT>. The object used to query the database.
+  <li> <TT>conn</TT>. The object used to connect to the database.
+</ul>
+
+The function will hash the plain text password and will store it into the Pistus database.
+The output is a boolean value:
+
+<ul>
+    <li> <TT>True</TT>, if the account could be successfully created.
+    <li> <TT>False</TT>, otherwise.
+</ul>
+
+<p>
+  <div class="exercisebox">Write the code to implement the function <TT>create_account</TT>.
+    <ul class="rtfm">
+      <li class="rtfm"> You might want to <a href="./docs/hashing.html" target="_blank">check the documentation</a> to learn how to hash a password.
+    </ul>
+  </div>
+</p>
+
+<h3>Login procedure</h3>
+
+We define the following function in the file <TT>authentication_module.py</TT>.
+
+<pre><code class="language-python">login(username, plain_password, cursor):success</code></pre>
+The input is:
+<ul>
+  <li> <TT>username</TT>. The username associated to the account used to log in.
+  <li> <TT>plain_password</TT>. The password in plain text provided by the user when logging in.
+  <li> <TT>cursor</TT>. The object used to query the database.
+</ul>
+
+The function will create the hash of the plain text password provided by the user and will compare it against 
+the hash version in the database.
+
+The output is a boolean value:
+
+<ul>
+    <li> <TT>True</TT>, if the passwords match.
+    <li> <TT>False</TT>, otherwise.
+</ul>
+
+<p>
+  <div class="exercisebox">Write the code to implement the function <TT>login</TT>.
+  </div>
+</p>
+
+<p>
+    <div class="exercisebox"> Complete the GUI with all the elements necessary to create an account and 
+      provide a login mechanism.
+    </div>
+  </p>
 
 </body>
 

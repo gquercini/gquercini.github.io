@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>SIP &ndash; Hashin Passwords</title>
+  <link rel="stylesheet" type="text/css" href="../styles/exercises.css">
+
+  <link rel="stylesheet" href="../styles/prism.css">
+  <script src="../scripts/prism.js"></script>
+
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+  <script>hljs.initHighlightingOnLoad();</script>
+  <script> function
+      showHideSolution(elem, elemLink, show, hide) {
+      state =
+        document.getElementById(elem).style.display; if (state == "none") {
+          document.getElementById(elem).style.display = 'block';
+          document.getElementById(elemLink).innerHTML = hide
+        } else {
+        document.getElementById(elem).style.display = 'none';
+        document.getElementById(elemLink).innerHTML = show
+      }
+
+    } </script>
+</head>
+
+<body>
+    <h1>Information Systems and Programming</h1>
+
+    <img src="../figs/cs-logo.png" alt="cs-logo" class="logo">
+      
+    <h1>Hashing Passwords</h1>
+
+    <p>When a user creates an account, identified by a username and authenticated by a password, 
+            the password is stored somewhere (e.g., a database or a file) in a hashed form, so that 
+            whoever gains access to the database will not be able to recover the original password.</p>
+
+    <p>
+        When a user logs in, she provides her username and password; the provided password will be hashed and 
+        will be compared against the hashed password stored in the database. 
+        If the two passwords match, the user is granted access.
+    </p>
+
+    This procedure is implemented in Python as follows:
+
+<pre class="line-numbers"><code class="language-python">from passlib.context import CryptContext
+
+pwd_context = CryptContext(
+        schemes=["pbkdf2_sha256"],
+        default="pbkdf2_sha256",
+        pbkdf2_sha256__default_rounds=30000
+)
+
+def encrypt_password(password):
+    return pwd_context.encrypt(password)
+
+
+def check_encrypted_password(password, hashed):
+    return pwd_context.verify(password, hashed)
+
+
+print("Insert username")
+username = input()
+
+print("Insert your password")
+plain_pwd = input()
+hashed_pwd = encrypt_password(plain_pwd)
+
+
+print("Now we verify the pwd. Insert the password again")
+new_plain_pwd = input()
+
+
+if check_encrypted_password(new_plain_pwd, hashed_pwd):
+    print("The password is correct")
+else:
+    print("The password is incorrect")</code></pre>
+
+Below you'll find the explanation of the code:
+<ul>
+    <li> <b>Lines 3 to 7.</b> We specify the hashing algorithm to use, as well as some configuration parameters. 
+        There are many hashing algorithms. 
+        In order to choose one, you can refer to <a href="https://passlib.readthedocs.io/en/stable/narr/quickstart.html#making-a-decision" target="_blank">this guide</a>.
+        PBKDF2 is the algorithm that we use here. As configuration parameter, we specify the number of rounds. 
+        A round is a part of the hashing algorithm that is iterated many times; the more iterations you specify, the 
+        harder the hashed password will be to decode (but the longer the computational time).
+    <li> <b>Lines 9-10.</b> We define a function that returns the hashed version of a plain text password.
+    <li> <b>Lines 13-14.</b> We define a function that returns <TT>True</TT> if the provided password matches the provided hashed version.
+    <li> <b>Lines 17 to 32</b>. Just a test program that asks the user to input a password, then hashes it and askes the user to specify it again 
+        to check whether they match.
+</ul>
+    
+</body>
+
+</html>
