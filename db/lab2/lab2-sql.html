@@ -1134,7 +1134,200 @@ CREATE TABLE Loan (loan_nbr INT PRIMARY KEY, loan_type VARCHAR(50), amount FLOAT
 
 
   <li> Write the following queries in SQL:
-      <ol class="queryitem">
+    <ol class="queryitem">
+
+        <li class="queryitem"> Get the name, street name, street number and postal code of 
+          all the banks in the database
+            [<a href="#" onclick="showHideSolution('banks-info', 'banks-info-link', 'See solution', 'Hide solution');return false;"><span id="banks-info-link">See solution</span></a>].
+              <div id="banks-info" style="display:none;" class="reltables">
+<pre><code class="language-sql">SELECT name_bank, street_number, street_name, postal_code
+FROM Bank</code></pre>
+              </div>
+          <ul class="warning">
+            <li class="warning"> <a href="#" onclick="showHideSolution('nbanks-info-expected', 'nbanks-info-expected-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="nbanks-info-expected-link">Show the expected result</span></a>.
+              <div id="nbanks-info-expected" align="center" style="display:none;">
+                <table class="tg">
+                    <tr>
+                        <th class="tg-0lax">First Bank</th>
+                        <th class="tg-0lax">2</th>
+                        <th class="tg-0lax">first street</th>
+                        <th class="tg-0lax">12234</th>
+                      </tr>
+                      <tr>
+                        <td class="tg-0lax">Second Bank</td>
+                        <td class="tg-0lax">1</td>
+                        <td class="tg-0lax">second street</td>
+                        <td class="tg-0lax">12342</td>
+                      </tr>
+                      <tr>
+                        <td class="tg-0lax">Third Bank</td>
+                        <td class="tg-0lax">34</td>
+                        <td class="tg-0lax">third street</td>
+                        <td class="tg-0lax">4321</td>
+                      </tr>
+                      <tr>
+                        <td class="tg-0lax">Fourth Bank</td>
+                        <td class="tg-0lax">21</td>
+                        <td class="tg-0lax">fourth street</td>
+                        <td class="tg-0lax">90871</td>
+                      </tr>
+                    </table>
+              </div>
+        </ul>
+
+
+        <li class="queryitem"> Get the city and country of all banks in the database.
+            [<a href="#" onclick="showHideSolution('bank-city-country', 'bank-city-country-link', 'See solution', 'Hide solution');return false;"><span id="bank-city-country-link">See solution</span></a>].
+              <div id="bank-city-country" style="display:none;" class="reltables">
+<pre><code class="language-sql">SELECT name_bank, city, country
+FROM Bank ba, Address a
+WHERE ba.postal_code = a.postal_code
+</code></pre>
+              </div>
+          <ul class="warning">
+            <li class="warning"> <a href="#" onclick="showHideSolution('nbank-city-country-expected', 'nbank-city-country-expected-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="nbank-city-country-expected-link">Show the expected result</span></a>.
+              <div id="nbank-city-country-expected" align="center" style="display:none;">
+                <table class="tg">
+                    <tr>
+                        <th class="tg-0lax">First Bank</th>
+                        <th class="tg-0lax">fifth_city</th>
+                        <th class="tg-0lax">country_4</th>
+                      </tr>
+                      <tr>
+                        <td class="tg-0lax">Second Bank</td>
+                        <td class="tg-0lax">third_city</td>
+                        <td class="tg-0lax">country_2</td>
+                      </tr>
+                      <tr>
+                        <td class="tg-0lax">Third Bank</td>
+                        <td class="tg-0lax">second_city</td>
+                        <td class="tg-0lax">country_1</td>
+                      </tr>
+                      <tr>
+                        <td class="tg-0lax">Fourth Bank</td>
+                        <td class="tg-0lax">fourth_city</td>
+                        <td class="tg-0lax">country_5</td>
+                      </tr>
+                    </table>
+              </div>
+        </ul>
+
+        <li class="queryitem"> Count the number of accounts by customer.
+            [<a href="#" onclick="showHideSolution('accounts-by-customer', 'accounts-by-customer-link', 'See solution', 'Hide solution');return false;"><span id="accounts-by-customer-link">See solution</span></a>].
+              <div id="accounts-by-customer" style="display:none;" class="reltables">
+<pre><code class="language-sql">SELECT ssn, count(*)
+FROM Account
+GROUP BY ssn</code></pre>
+              </div>
+          <ul class="warning">
+            <li class="warning"> <a href="#" onclick="showHideSolution('naccounts-by-customer-expected', 'naccounts-by-customer-expected-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="naccounts-by-customer-expected-link">Show the expected result</span></a>.
+              <div id="naccounts-by-customer-expected" align="center" style="display:none;">
+                <table class="tg">
+                    <tr>
+                        <th class="tg-0lax">128765434</th>
+                        <th class="tg-0lax">4</th>
+                      </tr>
+                      <tr>
+                        <td class="tg-0lax">172863542</td>
+                        <td class="tg-0lax">2</td>
+                      </tr>
+                    </table>
+              </div>
+        </ul>
+
+        <li class="queryitem"> Get the amount of money owned by the customer 
+            [<a href="#" onclick="showHideSolution('money-smith', 'money-smith-link', 'See solution', 'Hide solution');return false;"><span id="money-smith-link">See solution</span></a>].
+              <div id="money-smith" style="display:none;" class="reltables">
+<pre><code class="language-sql">SELECT SUM(balance)
+FROM Account a, Customer c
+WHERE a.ssn = c.ssn AND 
+c.first_name = "John" AND
+c.last_name = "Smith"</code></pre>
+              </div>
+          <ul class="warning">
+            <li class="warning"> <a href="#" onclick="showHideSolution('nmoney-smith-expected', 'nmoney-smith-expected-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="nmoney-smith-expected-link">Show the expected result</span></a>.
+              <div id="nmoney-smith-expected" align="center" style="display:none;">
+                <table class="tg">
+                    <tr>
+                        <th class="tg-0lax">900021488</th>
+                    </tr>
+                  </table>
+              </div>
+        </ul>
+
+        <li class="queryitem"> Return the average amount of money loaned by any bank for a mortgage.
+            [<a href="#" onclick="showHideSolution('loan-mortgage', 'loan-mortgage-link', 'See solution', 'Hide solution');return false;"><span id="loan-mortgage-link">See solution</span></a>].
+              <div id="loan-mortgage" style="display:none;" class="reltables">
+<pre><code class="language-sql">SELECT AVG(amount)
+FROM Loan
+WHERE loan_type = "mortgage"
+    </code></pre>
+              </div>
+          <ul class="warning">
+            <li class="warning"> <a href="#" onclick="showHideSolution('nloan-mortgage-expected', 'nloan-mortgage-expected-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="nloan-mortgage-expected-link">Show the expected result</span></a>.
+              <div id="nloan-mortgage-expected" align="center" style="display:none;">
+                <table class="tg">
+                    <tr>
+                        <th class="tg-0lax">571000</th>
+                      </tr>
+                    </table>
+              </div>
+        </ul>
+
+        <li class="queryitem"> Get the amount of money loaned by each bank.
+            [<a href="#" onclick="showHideSolution('loan-each-bank', 'loan-each-bank-link', 'See solution', 'Hide solution');return false;"><span id="loan-each-bank-link">See solution</span></a>].
+              <div id="loan-each-bank" style="display:none;" class="reltables">
+<pre><code class="language-sql">SELECT ba.name_bank, sum(amount)
+FROM Loan l, Branch br, Bank ba 
+WHERE l.branch_id = br.branch_id AND 
+br.code_bank = ba.code_bank
+GROUP BY ba.code_bank
+    </code></pre>
+              </div>
+          <ul class="warning">
+            <li class="warning"> <a href="#" onclick="showHideSolution('nloan-each-bank-expected', 'nloan-each-bank-expected-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="nloan-each-bank-expected-link">Show the expected result</span></a>.
+              <div id="nloan-each-bank-expected" align="center" style="display:none;">
+                <table class="tg">
+                    <tr>
+                        <th class="tg-0lax">First Bank</th>
+                        <th class="tg-0lax">7000</th>
+                      </tr>
+                      <tr>
+                        <td class="tg-0lax">Second Bank</td>
+                        <td class="tg-0lax">1142000</td>
+                      </tr>
+                      <tr>
+                        <td class="tg-0lax">Third Bank</td>
+                        <td class="tg-0lax">10000</td>
+                      </tr>
+                    </table>
+              </div>
+        </ul>
+
+<li class="queryitem"> Get the social security number, the first and last name of all customers
+  of the bank with name "First Bank".
+  [<a href="#" onclick="showHideSolution('first-bank-customers', 'first-bank-customers-link', 'See solution', 'Hide solution');return false;"><span id="first-bank-customers-link">See solution</span></a>].
+    <div id="first-bank-customers" style="display:none;" class="reltables">
+      <pre><code class="language-sql">SELECT distinct c.ssn, c.first_name, c.last_name
+FROM Account a, Customer c, Branch br, Bank ba
+WHERE a.branch_id = br.branch_id AND 
+a.ssn =  c.ssn AND 
+ba.code_bank = br.code_bank AND
+ba.name_bank = "First Bank"</code></pre>
+    </div>
+<ul class="warning">
+  <li class="warning"> <a href="#" onclick="showHideSolution('first-bank-customers-expected', 'first-bank-customers-expected-link', 'Show the expected result', 'Hide the expected result');return false;"><span id="first-bank-customers-expected-link">Show the expected result</span></a>.
+    <div id="first-bank-customers-expected" align="center" style="display:none;">
+      <table class="tg">
+  <tr>
+      <th class="tg-0lax">128765434</th>
+      <th class="tg-0lax">John</th>
+      <th class="tg-0lax">Smith</th>
+    </tr>
+          </table>
+    </div>
+</ul>
+
         <li class="queryitem"> Get all the data (including the full address) on the customers that have a checking account
           with a negative balance
           [<a href="#" onclick="showHideSolution('banking-system-q1', 'banking-system-q1-link', 'See solution', 'Hide solution');return false;"><span id="banking-system-q1-link">See solution</span></a>].
