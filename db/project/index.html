@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>Introduction to Databases &ndash; Project</title>
+  <link rel="stylesheet" type="text/css" href="../../styles/exercises.css">
+
+  <link rel="stylesheet" href="../../styles/prism.css">
+  <script src="../../scripts/prism.js"></script>
+
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML' async></script>
+
+  <script>hljs.initHighlightingOnLoad();</script>
+  <script> function
+      showHideSolution(elem, elemLink, show, hide) {
+      state =
+        document.getElementById(elem).style.display; if (state == "none") {
+          document.getElementById(elem).style.display = 'block';
+          document.getElementById(elemLink).innerHTML = hide
+        } else {
+        document.getElementById(elem).style.display = 'none';
+        document.getElementById(elemLink).innerHTML = show
+      }
+
+    } </script>
+</head>
+
+<body>
+
+  <h1>Introduction to Databases</h1>
+
+  <img src="./figs/cs-logo.png" alt="cs-logo" class="logo">
+
+  <h1>Project <br><br> Interacting with a MySQL Server</h1>
+
+  <h2>Introduction</h2>
+
+  <h2>Application Context</h2>
+
+  <p>We intend to manage the data of a travel reservation system 
+  with clients all over the world.
+  Upon registration, customers are automatically given a numeric identifier and 
+  they are asked to indicate their first and family names, a phone number, an email 
+  address, their passport number and their country of residence. 
+  Any customer can book a trip that includes the reservation of <b>one or more flights</b> and, possibly, 
+  <b>one or more hotels</b>.
+  <ul class="warning">
+    <li class="warning"> Alice wants to fly from Paris, France to Sydney, Australia. 
+      Since there is no direct flight connecting the two locations, her trip will include 
+      two flights, one from Paris, France to Dubai, UAE and the other from Dubai, UAE to Sydney, Australia.  
+  </ul>
+  <p>A flight is operated by an airline company, of which the system keeps
+  its name (e.g., <i>British Airways</i>), the country where the airline is incorporated
+  and, when available, its IATA code (e.g., <i>BA</i>, a two-letter code identifying the airline), 
+  its ICAO code (e.g., <i>BAW</i>, a three-letter code identifying the airline) and alternate name
+  or alias (e.g., <i>British</i>). </p>
+
+  <p>A flight connects two airports, each having a name 
+  (e.g., <i>London Heathrow Airport</i>), and, possibly, a IATA (e.g., <i>LHR</i>)
+  and ICAO code (e.g., <i>EGLL</i>); an airport serves a specific location (e.g., 
+  <i>London, UK</i>) and its precise position is given by its geographic 
+  coordinates (latitude and longitude).</p>
+
+  <p>A flight connecting two airports at specific departure and arrival times is identified by a flight number.
+  Two flights operated by two different airline companies cannot have the same flight number, but 
+  the same flight number can denote two flights operated by the same airline company on different days.
+  </p>
+
+  <ul class="warning">
+    <li class="warning"> Emirates flight EK074 leaves Paris, France at 10 AM and arrives at Dubai, UAE at 7:40 PM (regardless of the departure day).
+  </ul>
+
+  <p>For each flight booked by a customer, the system keeps the seat number, the travel class (e.g., economy or business),
+      the price and the date of the flight. 
+      Usually, airlines include details on the type of aircraft they plan to use on their flight schedules;
+      these details include the name of the aircraft (e.g., <i>Boeing 787-8</i>) and, when  available,
+      the IATA code  (e.g., 788, a unique three-letter identifier for the aircraft) and 
+      the ICAO code (e.g., B788, a unique four-letter identifier for the aircraft).</p>
+  
+  <p>
+    The system maintains a list of hotels, with their names, addresses and reviews. 
+    For each review, the system keeps its author, the date, the text of the review, 
+    whether the review is positive or negative and a numeric score (a real number between 0 and 10). 
+    When a customer books an hotel, the system keeps the price paid, the date of booking, the check-in and 
+    check-out dates, the number of 
+    people, the  room type (e.g., <i>standard</i>, ,<i>superior</i>) and whether the 
+    breakfast is included. 
+  </p>
+
+  <h2>Creation of a Relational Database</h2>
+
+  You'll now proceed to the definition of a relational database for 
+  our travel reservation system.
+  First, you need to define the <b>logical schema</b>
+  and then you'll define the tables that compose the database.
+  
+  <h3>The Logical Schema</h3>
+
+  Before defining the logical schema of the database, answer the following questions:
+  
+  <ol type="a"> 
+    <li> Can you use the name of the hotel as a primary key? Justify your answer.
+    <li> Can you use the flight number as a primary key to identify a flight? Justify your answer and, 
+      in case of a negative answer, propose a solution.
+    <li> Knowing that it is unlikely that two reviews have the same textual content, would you 
+      use it as a primary key? Justify your answer.
+    <li> Knowing that the IATA code uniquely identifies an airline, would you choose it as a primary key
+      for the entity <TT>Airline</TT>? Justify your answer.
+      <ul class="warning">
+        <li class="warning"> Read carefully the context of the application.</li>
+      </ul>
+    <li> Consider the following statement:
+
+      <blockquote><i>It is possible to express in the ER diagram 
+          the constraint that a customer cannot review an hotel if she never stayed at that hotel</i></blockquote>
+        Is it true or false? Justify your answer.
+  </ol>
+
+  <div class="exercisebox">
+      Given the application context and the dataset, propose an Entity-Relationship diagram 
+      describing the logical model of a relational database. 
+      <ul class="warning">
+        <li class="warning"> Specify all the attributes for each entity and relation.
+        <li class="warning"> For each entity, underline the attributes composing the primary key.
+        <li class="warning"> For each relation, clearly indicate the minimum and maximum cardinality.
+      </ul>
+  </div>
+
+  <h3>Normalization</h3>
+
+  <div class="exercisebox">
+      Translate the logical schema into a collection of tables. 
+      For each table: 
+    <ul>
+        <li> Indicate its name and the names of the columns (but not their types). 
+        <li> Underline the columns that are part of the primary key.
+        <li> Indicate the entity in the ER diagram to which the table corresponds.
+      </ul>
+    <ul class="warning">
+      <li class="warning"> YTo make sure you choose the right data types for the 
+        columns, you can also check the values in the dataset.
+    </ul>
+  </div>
+
+  <p>Which <b>normal form</b> are you tables in?</p>
+
+  <div class="exercisebox">
+    For each table:
+    <ul>
+        <li> Indicate all the <b>functional dependencies</b> that you can find.
+        <li> Indicate the normal form that the table satisfies. Justify your answer.
+      </ul>
+  </div>
+
+  <p><b>Normalize</b> your tables.</p>
+
+  <div class="exercisebox">
+    Normalize each table up to the <b>Boyce-Codd Normal Form (BCNF)</b>.
+  </div>
+
+  <h3>The Physical Schema</h3>
+
+  <p>You can now define the <b>physical schema</b> of your database.</p>
+
+  <div class="exercisebox">
+    Write the SQL code to create the tables. For each table:
+    <ul>
+      <li> Indicate the <b>primary key</b>.
+      <li> Indicate the <b>foreign keys</b>.
+      <li> Indicate NOT NULL and UNIQUE constraints, if needed.
+    </ul>
+  </div>
+
+  <h3>Database Creation and Data Import</h3>
+
+  <ul class="raise">
+    <li class="raise"> Given all the installation problems 
+      with MySQL, it is highly recommended that you use
+      SQLite as a DBMS!
+  </ul>
+
+  <p><b>SQLite</b> is a software library written in C that implements a Relational DataBase 
+  Management System (RDBMS). 
+  SQLite does not need you to install a server. 
+  A database is simply created and managed by calling the functions of this
+  library.
+  Typically, the database is just a binary file stored in your computer.</p>
+  
+  <h4>Create a Database in SQLite</h4>
+
+  In order to create a database in SQLite, you just need to download and 
+  install 
+  <a href="https://sqlitebrowser.org/dl/" target="_blank">DB Browser for SQLite</a>. 
+  a graphical interface to any SQLite database. 
+  
+  <p>After the installation:
+    <ul>
+      <li> Open the program and click on <b>New Database</b>;
+      <li> The program will ask you 
+          to specify a name for the database file and the folder
+          where you want to store it.
+          <ul class="warning">
+           <li class="warning"> Suggested <b>extensions</b> for the 
+        database file are .db, .sqlite, .sqlite3, .db3.
+          </ul>
+      <li> The program will display a pop-up window where you can create the tables.
+      </ul>
+    </p>
+    
+    <div class="exercisebox">
+    Create a SQLite database with the tables that you defined in Exercise 5.
+  </div>
+
+  <h4>Data Import</h4>
+
+  <h4>Queries</h4>
+
+
+  
+</body>
+
+</html>
