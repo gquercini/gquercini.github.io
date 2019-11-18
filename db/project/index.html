@@ -32,23 +32,66 @@
 
   <img src="./figs/cs-logo.png" alt="cs-logo" class="logo">
 
-  <h1>Project <br><br> Interacting with a MySQL Server</h1>
+  <h1>Project <br><br> Designing the database of a travel reservation system</h1>
 
   <h2>Introduction</h2>
+
+  The goal of this project is to assess your knowledge 
+  of the main notions presented in classroom.
+  The project must be implemented by <b>groups of max 2 students</b>.
+  The project is divided in two parts:
+
+  <ul>
+    <li> The first part consists in designing a relational database for the given 
+      application context, importing the data of a given dataset 
+      into a SQLite database and querying the data in SQL.
+    <li> The second part (OPTIONAL) consists in designing a labelled property graph
+      importing the data into Neo4j and querying the data in Cypher.
+  </ul>
+
+  <p>The project is meant to be done during class hours on November 19th and 26th 
+    (the last two classes of the database course).</p>
+  
+  <p> The deadline to submit the work is <b>Friday November 29th.</b> </p>
+
+  <p>Here is what <b>you have to submit:</b>
+    <ul>
+      <li> A report in PDF containing the answers to all the questions 
+        and exercises, except the (SQL/Cypher) queries (max 10 pages).
+      <li> The file <TT>.db</TT> containing the SQLite database with all the 
+        data.
+      <li> A file <TT>.sql</TT> with all the SQL queries.
+    </ul>
+    If you develop the optional part, you'll also submit:
+    <ul>
+      <li> The directory containing the Neo4j database with all the data.
+      <li> A <TT>.txt</TT> file with all the Cypher queries.
+    </ul>
+
+    Please compress all the files  in a <b>zip archive</b> 
+    and send it to <a href = "mailto: gianluca.quercini@centralesupelec.fr">gianluca.quercini@centralesupelec.fr</a>.
+    In the email, <b>specify the name and family name of the group</b>.
+    I'll send you a confirmation when I receive the project, so 
+    if you don't receive any confirmation, do not hesitate to contact me. 
+
+  </p>
+
 
   <h2>Application Context</h2>
 
   <p>We intend to manage the data of a travel reservation system 
   with clients all over the world.
   Upon registration, customers are automatically given a numeric identifier and 
-  they are asked to indicate their first and family names, a phone number, an email 
-  address, their passport number and their country of residence. 
+  they are asked to indicate their first and family names, their gender, 
+  date of birth, a phone number, an email 
+  address and their country of residence. 
   Any customer can book a trip that includes the reservation of <b>one or more flights</b> and, possibly, 
   <b>one or more hotels</b>.
   <ul class="warning">
-    <li class="warning"> Alice wants to fly from Paris, France to Sydney, Australia. 
-      Since there is no direct flight connecting the two locations, her trip will include 
-      two flights, one from Paris, France to Dubai, UAE and the other from Dubai, UAE to Sydney, Australia.  
+    <li class="warning"> Alice wants to fly from Paris, France to New York City (NYC), USA  
+      and she intends to stay in NYC for 10 days. Her trip includes 
+      two flights: an outbound flight from Paris to NYC and an inbound flight 
+      from NYC to Paris; and an hotel in NYC.
   </ul>
   <p>A flight is operated by an airline company, of which the system keeps
   its name (e.g., <i>British Airways</i>), the country where the airline is incorporated
@@ -79,14 +122,30 @@
       the ICAO code (e.g., B788, a unique four-letter identifier for the aircraft).</p>
   
   <p>
-    The system maintains a list of hotels, with their names, addresses and reviews. 
-    For each review, the system keeps its author, the date, the text of the review, 
-    whether the review is positive or negative and a numeric score (a real number between 0 and 10). 
-    When a customer books an hotel, the system keeps the price paid, the date of booking, the check-in and 
-    check-out dates, the number of 
-    people, the  room type (e.g., <i>standard</i>, ,<i>superior</i>) and whether the 
+    The system maintains a list of hotels, with their names, addresses and 
+    an average review score, which is a real number denoting the average grade assigned 
+    to the hotel by its customers. 
+    Customers can write a review for an hotel; in which case the system 
+    stores the text of the review, the date and its author.
+    When a customer books an hotel, the system keeps the price paid, 
+    the check-in and 
+    check-out dates and whether the 
     breakfast is included. 
   </p>
+  
+  <h2>The Dataset</h2>
+
+  You can download the dataset by clicking <a href="./dataset.zip">here</a>.
+  The dataset consists of 7 CSV files: <i>aircrafts.csv</i>, 
+  <i>airlines.csv</i>, <i>airports.csv</i>, 
+  <i>hotels.csv</i>, <i>customers.csv</i>, <i>hotel_bookings.csv</i>,
+  <i>flight_bookings.csv</i>.
+  The separator character in each file is the tab character ('\t').
+
+  <ul class="exercise">
+    <li class="exercise"> Take some time to look at the content of the files
+      to understand the structure that your tables will have.
+  </ul>
 
   <h2>Creation of a Relational Database</h2>
 
@@ -105,8 +164,8 @@
       in case of a negative answer, propose a solution.
     <li> Knowing that it is unlikely that two reviews have the same textual content, would you 
       use it as a primary key? Justify your answer.
-    <li> Knowing that the IATA code uniquely identifies an airline, would you choose it as a primary key
-      for the entity <TT>Airline</TT>? Justify your answer.
+    <li> Knowing that the IATA code uniquely identifies an aircraft, would you choose it as a primary key
+      for the entity <TT>Aircraft</TT>? Justify your answer.
       <ul class="warning">
         <li class="warning"> Read carefully the context of the application.</li>
       </ul>
@@ -138,12 +197,12 @@
         <li> Indicate the entity in the ER diagram to which the table corresponds.
       </ul>
     <ul class="warning">
-      <li class="warning"> YTo make sure you choose the right data types for the 
+      <li class="warning"> To make sure you choose the right data types for the 
         columns, you can also check the values in the dataset.
     </ul>
   </div>
 
-  <p>Which <b>normal form</b> are you tables in?</p>
+  <p>Which <b>normal form</b> are your tables in?</p>
 
   <div class="exercisebox">
     For each table:
@@ -185,13 +244,13 @@
   SQLite does not need you to install a server. 
   A database is simply created and managed by calling the functions of this
   library.
-  Typically, the database is just a binary file stored in your computer.</p>
+  Typically, the database is just a file stored in your computer.</p>
   
   <h4>Create a Database in SQLite</h4>
 
   In order to create a database in SQLite, you just need to download and 
   install 
-  <a href="https://sqlitebrowser.org/dl/" target="_blank">DB Browser for SQLite</a>. 
+  <a href="https://sqlitebrowser.org/dl/" target="_blank">DB Browser for SQLite</a>, 
   a graphical interface to any SQLite database. 
   
   <p>After the installation:
@@ -205,6 +264,8 @@
         database file are .db, .sqlite, .sqlite3, .db3.
           </ul>
       <li> The program will display a pop-up window where you can create the tables.
+        Alternatively, you can directly execute the SQL code that you wrote 
+        before to create your tables.
       </ul>
     </p>
     
@@ -214,9 +275,129 @@
 
   <h4>Data Import</h4>
 
-  <h4>Queries</h4>
+  <p>In order to import the data into the database, you can 
+  write a Python code that reads the input CSV files and 
+  populates the tables of the database.</p>
+
+  <ul class="raise">
+      <li class="raise"> When importing the data into the 
+        database, you might get some errors 
+        concerning the violation of some constraints (primary key or foreign key).
+        In this case you might want to:
+        <ul> 
+          <li> check the validity of the schema of the database and its constraints.
+          <li> if the schema and the constraints seem to be valid, think of how you can fit 
+            your data into the schema
+  </ul>
+    
+
+  <p>Here is a sample Python code that:
+    <ul>
+      <li> connects to a SQLite database contained in a file called
+        <i>my_db.db</i>.
+      <li> reads a file <i>test.csv</i>
+      <li> imports its content into a table named <TT>test</TT> 
+    </ul>  
+  </p>
+  <pre class="line-numbers"><code class="language-python">import sqlite3
+import csv
+import datetime
+
+# Connect to the database contained in the file my_db.db
+conn = sqlite3.connect('my_db.db')
+
+# Create an object cursor, used to do read/write operations on the 
+# database
+cursor = conn.cursor()
+try:
+    # Open the input CSV file
+    with open('test.csv', 'r', encoding='utf-8') as csv_file:
+        # Delete all data from the table test
+        cursor.execute("DELETE FROM test") 
+        # Commit the modification. 
+        conn.commit()
+        csv_reader = csv.reader(csv_file, delimiter='\t')
+        # Skip the header of the CSV file
+        next(csv_reader)
+        for line in csv_reader:
+            # The values of the first column must be stored as strings.
+            string_column = line[0]
+            # The values of the second column must be stored as integer numbers.
+            integer_column = int(line[1])
+            # The values of the third column must be stored as real numbers.
+            float_column = float(line[2])
+            # The values of the fourth column must be stored as dates (format dd/mm/yyyy).
+            date_column = datetime.datetime.strptime(line[3], "%d/%m/%Y") 
+            # Insert the values into the table
+            cursor.execute("INSERT INTO test VALUES(?, ?, ?, ?)",\
+                  (string_column, integer_column, float_column, date_column))
+# If anything goes wrong, raise an exception
+except sqlite3.Error as error:
+    # Print the reason of the exception.
+    print("Error while loading the data: {}".format(error))
+# Whether an exception is raised or not, at the end, the following 
+# instructions are executed.
+finally:
+    # Commit the modifications to the database.
+    conn.commit()
+    # Closes the connection to the database.
+    cursor.close()
+    conn.close()
+    print("The connection to the database is now closed")</code></pre>
 
 
+<h4>Queries</h4>
+
+<div class="exercisebox">
+  <p>Write the following queries in SQL:</p>
+  <ol>
+  <li> Count the number of rows in each table.
+      <li> Get the average ticket price on Air France flights.
+      <li> Count the number of customers by country. Sort by decreasing order.
+      <li> Select the names of the airports in Paris, France. Sort by name in alphabetical order.
+      <li> Select the name of the cities (city and country name) 
+        with the most airports. Sort by city and country name in alphabetical order.
+      <li> Select the name of the airline companies that use an Airbus A300. 
+        Sort by name in alphabetical order.
+      <li> Select the identifier, first and family names of all customers 
+        who flew to Sydney, Australia. Sort by identifier.
+      <li> Select the identifier, name, city and country of the busiest 
+        airport (the one with more outbound and inbound flights). Sort by identifier.
+      <li> Select the average price in the economy class.
+      <li> Select the average price in the business class.
+      <li> Select the name, city and country of the destination airport of 
+        french customers. Sort by name in alphabetical order.
+      <li> Select the destination cities (specify city and country name) 
+        preferred by women. Sort by city and country.
+      <li> Select the destination cities (specify city and country name) preferred by men.
+          Sort by city and country.
+      <li> Count the number of customers by country flying to Paris. Sort
+        the result in decreasing order.
+      <li> Count the number of hotels by city. Sort the result in decreasing order.
+      <li> Determine the amount of money spent by Tatiana REZE in flights. 
+      <ol>
+      
+</div>
+<p>
+<div class='exercisebox'>
+  <ol>
+    <li> Write a query to get all the information of a customer with a given family name.
+      Run the query multiple times and note the average running time of the query.
+    <li> Create an index on the column containing the family name of a customer.
+    <li> Rerun the same query multiple times and note the average running times
+      of the query.
+    <li> Do you observe any difference? Can you explain what is going on here?
+  </ol>
+</div>
+</p>
+
+<h2>Optional Part: Neo4j</h2>
+
+<ul>
+  <li> Define a labelled property graph model for the database of the travelling agency.
+  <li> Write in Cypher all the queries of the Exercise 7.
+  <li> Import the data into Neo4j and test the queries.
+</ul>
   
 </body>
 
