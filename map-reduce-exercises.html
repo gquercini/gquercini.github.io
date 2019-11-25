@@ -92,9 +92,10 @@ def reducer(self, year, temps):
           <ul>
             <li> The input is a RDD \(temps\), where each element is a line \(year,month,temp\) of the input file.
             <li> Transform \(temps\) into a RDD where each element is a list \([year,month, temp]\).
-            <li> Transform \(temps\) into a RDD where each element is a tuple \((year, [temp])\).
-            <li> Transform \(temps\) into a RDD where each element is a tuple \((year, temperatures)\), where \(temperatures\) is the list
-              of temperatures in the given \(year\).
+            <li> Transform \(temps\) into a RDD where each element is a key-value pair \((year, (temp, 1))\).
+            <li> Transform \(temps\) into a RDD where each element is a tuple \((year, (sum(temperatures), len(temperatures)))\), 
+              where \(sum(temperatures)\) is the sum of temperatures in the given \(year\) and 
+              \(len(temperatures)\) is the number of temperatures registered in the year.
             <li> Transform \(temps\) into a RDD where each element is a tuple \((year, sum(temperatures)/len(temperatures))\).
           </ul>
           <br>
@@ -102,12 +103,12 @@ def reducer(self, year, temps):
           <pre>
           <code>
 def avg_temperature(filename):
-    temperatures = sc.textFile(filename)\
-                    .map(lambda line: line.split(","))\
-                    .map(lambda triple: (triple[0], [float(triple[2])]))\
-                    .reduceByKey(lambda x, y: x+y)\
-                    .map(lambda t: (t[0], sum(t[1])/len(t[1])))
-    return temperatures
+  temps = sc.textFile(filename)\
+    .map(lambda line: line.split(","))\
+    .map(lambda triple: (triple[0],(float(triple[2]),1)))\
+    .reduceByKey(lambda x, y:((x[0]+x[1]),(y[0]+y[1])))\
+    .mapValues(lambda t:t[0]/t[1])
+  return temps
           </pre>
         </code>
         </div>
