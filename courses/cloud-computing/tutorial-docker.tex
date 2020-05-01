@@ -1,0 +1,2629 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math}
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\hypersetup{
+  pdftitle={Getting started with Docker},
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+\urlstyle{same} % disable monospaced font for URLs
+\usepackage[margin=1in]{geometry}
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs}
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+% Set default figure placement to htbp
+\makeatletter
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+\usepackage[many]{tcolorbox}
+\usepackage{xcolor}
+
+\definecolor{theme}{RGB}{51, 187, 255}
+
+
+\newtcolorbox{whitebox}{
+  colback=white,
+  colframe=theme,
+  coltext=black,
+  boxsep=5pt,
+  arc=4pt}
+
+
+\newenvironment{infobox}[1]
+  {
+  \begin{itemize}
+  \renewcommand{\labelitemi}{
+    \raisebox{-.7\height}[0pt][0pt]{
+      
+    }
+  }
+  \setlength{\fboxsep}{1em}
+  \begin{whitebox}
+  \item
+  }
+  {
+  \end{whitebox}
+  \end{itemize}
+  }
+
+\title{Getting started with Docker}
+\author{}
+\date{\vspace{-2.5em}}
+
+\usepackage{amsthm}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}{Lemma}[section]
+\newtheorem{corollary}{Corollary}[section]
+\newtheorem{proposition}{Proposition}[section]
+\newtheorem{conjecture}{Conjecture}[section]
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}[section]
+\theoremstyle{definition}
+\newtheorem{example}{Example}[section]
+\theoremstyle{definition}
+\newtheorem{exercise}{Exercise}[section]
+\theoremstyle{remark}
+\newtheorem*{remark}{Remark}
+\newtheorem*{solution}{Solution}
+\let\BeginKnitrBlock\begin \let\EndKnitrBlock\end
+\begin{document}
+\maketitle
+
+In this tutorial you'll learn:
+
+\begin{itemize}
+\tightlist
+\item
+  How to run \textbf{containers}.
+\item
+  How to define and build \textbf{images}.
+\item
+  How to create and use \textbf{volumes}.
+\item
+  How to define and use \textbf{networks}.
+\end{itemize}
+
+Prerequisites:
+
+\begin{itemize}
+\tightlist
+\item
+  Having installed Docker on your computer.
+  See the \href{/courses/cloud-computing/installing-docker}{installation guide}.
+\item
+  Being familiar with the notions of containers, images,
+  volumes and networks in Docker.
+  See the \href{/courses/cloud-computing/docker-primer}{Docker primer}
+  for an introduction.
+\item
+  Being familiar with the \href{/courses/cloud-computing/linux-introduction}{basic notions of Linux}.
+\item
+  Don't hesitate to look at the \href{/courses/cloud-computing/docker-cheat-sheet}{Docker cheat sheet}
+  to verify the syntax of the Docker commands.
+\end{itemize}
+
+\begin{infobox}{warning}
+
+\textbf{Terminology}
+
+\begin{itemize}
+\item
+  You'll use the \textbf{terminal} to run Docker commands.
+  Referring to the
+  \href{/courses/cloud-computing/docker-primer\#fig:docker-architecture}{Docker architecture},
+  the terminal is the \textbf{client} that communicates with
+  the Docker daemon.
+\item
+  Docker runs \textbf{containers} on your computer.
+  We'll refer to your computer as the \textbf{host},
+  the containers being the \textbf{guests}.
+\end{itemize}
+
+\begin{itemize}
+\tightlist
+\item
+  A \textbf{containerized application}
+  is an application running in a container.
+\end{itemize}
+
+\end{infobox}
+
+\hypertarget{running}{%
+\section{Running containers}\label{running}}
+
+The command used to run a container
+is \texttt{docker\ run} followed by four parameters:
+
+\begin{verbatim}
+docker run [options] image-name [command] [arg]
+\end{verbatim}
+
+The four parameters are:
+
+\begin{itemize}
+\tightlist
+\item
+  \emph{options}. List of options.
+\item
+  \emph{image-name}. The fully qualified name of the image used to run the container.
+\item
+  \emph{command}. The command to be executed in the container.
+\item
+  \emph{arg}. The arguments taken by the command executed in the container.
+\end{itemize}
+
+Only the parameter \emph{image-name} is mandatory.
+The fully qualified name of an image is specified as a sequence of four fields,
+formatted as follows:
+
+\begin{verbatim}
+registry_url/user/name:tag
+\end{verbatim}
+
+where:
+
+\begin{itemize}
+\tightlist
+\item
+  \emph{registry\_url} (optional). The URL of the registry that provides the image.
+  If its value is not specified, the image
+  will be looked up for in the
+  \href{https://hub.docker.com}{DockerHub registry}.
+\item
+  \emph{user} (optional). The identifier of the user or organization that created the image.
+  The default value is \emph{library}.
+\item
+  \emph{name} (mandatory). The name of the image.
+\item
+  \emph{tag} (optional). It specifies the image version.
+  If its value is not specified,
+  the tag \emph{latest} is used, pointing to the latest image version.
+\end{itemize}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-1}{}{\label{exr:unnamed-chunk-1} }
+For each of the following images,
+specify the registry name, the user, the name and the tag.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  registry.redhat.io/rhel8/mysql-80
+\item
+  alpine:3.11
+\end{enumerate}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  alpine
+\end{enumerate}
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Registry: \emph{registry.redhat.io}, user: \emph{rhel8}, name: \emph{mysql-80},
+  tag: \emph{latest}
+\item
+  Registry: \emph{DockerHub}, user: \emph{library}, name: \emph{alpine}, tag: \emph{3.11}
+\item
+  Registry: \emph{DockerHub}, user: \emph{library}, name: \emph{alpine}, tag: \emph{latest}
+\end{enumerate}
+
+\end{infobox}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-2}{}{\label{exr:unnamed-chunk-2} }What's the difference between the following image names?
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  alpine:latest
+\item
+  registry.hub.docker.com/library/alpine
+\end{enumerate}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  alpine
+\end{enumerate}
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+There's no difference. They all point to the same image, that is
+the latest version of \emph{alpine} in the DockerHub registry.
+
+\end{infobox}
+
+We now learn how to use the command \texttt{docker\ run} and some of
+its options.
+In the following exercises, we'll run containers from the image named
+\emph{alpine} that is
+\href{https://hub.docker.com/_/alpine}{available on the DockerHub registry}.
+This image provides a lightweight distribution
+(i.e., it doesn't contain many features) of Linux.
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-3}{}{\label{exr:unnamed-chunk-3} }You want to run the container from the latest version of
+the image \emph{alpine}.
+Which command would you write in the terminal?
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+The goal of this exercise is to start playing with the
+\texttt{docker\ run} command.
+Since the question doesn't say anything about the
+options, nor does it mention the command to run inside the container,
+we'd type:
+
+\begin{verbatim}
+docker run alpine
+\end{verbatim}
+
+\end{infobox}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-4}{}{\label{exr:unnamed-chunk-4} }Execute the command that you proposed in the previous exercise,
+observe the output in the terminal and explain the actions
+taken by Docker to run the container.
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+The output obtained from executing the command should
+look like as follows:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ExtensionTok{Unable}\NormalTok{ to find image }\StringTok{\textquotesingle{}alpine:latest\textquotesingle{}}\NormalTok{ locally}
+\ExtensionTok{latest}\NormalTok{: Pulling from library/alpine}
+\ExtensionTok{aad63a933944}\NormalTok{: Pull complete }
+\ExtensionTok{Digest}\NormalTok{: sha256:b276d875eeed9c7d3f1cfa7edb06b22ed22b14219a7d67c52c56612330348239}
+\ExtensionTok{Status}\NormalTok{: Downloaded newer image for alpine:latest}
+\end{Highlighting}
+\end{Shaded}
+
+Here's what happens under the hood:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Docker looks for an image named \emph{alpine:latest} in the host
+  computer and cannot find it.
+\item
+  Docker \emph{pulls} (i.e., downloads) the image from the DockerHub registry.
+\end{enumerate}
+
+\end{infobox}
+
+Okay but \textbf{where's the result of running the container?}
+
+First of all, let's see if the container is still running in the first
+place.
+In order to list all containers still running on the host, type the
+following command:
+
+\begin{verbatim}
+docker container ls 
+\end{verbatim}
+
+Your container shouldn't appear in the output,
+because it's not running.
+In order to see all containers, including those that are not
+running, type the following command:
+
+\begin{verbatim}
+docker container ls -a
+\end{verbatim}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-5}{}{\label{exr:unnamed-chunk-5} }What information is displayed for each container?
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+\begin{itemize}
+\item
+  The identifier of the container.
+\item
+  The name of the image used to run the container (it should be \emph{alpine} for your
+  container).
+\item
+  The command executed within the container (it should be \texttt{/bin/sh} for your container).
+\item
+  When the container has been created.
+\item
+  The container current status (it should be \emph{exited (0) x seconds ago} for your container).
+\item
+  The network ports used by the container (we'll study them later).
+\item
+  The name of the container. If you don't specify any when you
+  run the container (as is our case),
+  Docker generates a random name by concatenating an adjective and
+  a famous scientist's name (e.g., \emph{agitated\_newton}).
+\end{itemize}
+
+\end{infobox}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-6}{}{\label{exr:unnamed-chunk-6} }By looking at the command executed within the container (\texttt{/bin/sh}),
+can you tell why the container stopped without giving any output?
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+The command is \texttt{/bin/sh};
+the container runs a Linux terminal.
+But since we didn't specify what to do with that terminal
+(we didn't run any Linux command, nor we tried to access the terminal),
+the container stopped.
+
+\end{infobox}
+
+We're now going to do something useful with the image \emph{alpine}.
+But first, we start with some good practices that you should
+adopt while playing with images and containers.
+
+\hypertarget{good-practices}{%
+\subsection{Good practices}\label{good-practices}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Name your containers.} Although Docker assigns a default name to a new container,
+  it's usually a good practice to give a container a name of your
+  choice to make it easily distinguishable. You can do it by using the option
+  \texttt{-\/-name}. Try the following:
+\end{enumerate}
+
+\begin{verbatim}
+docker run --name my-alpine alpine
+\end{verbatim}
+
+As before, the container stops immediately.
+If you list all your containers by typing again:
+
+\begin{verbatim}
+docker container ls -a
+\end{verbatim}
+
+you should see a container named \emph{my-alpine}.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  \textbf{Remove automatically a container if you use it once.}
+  Unless you want to reuse your container later, you can ask Docker to automatically remove it
+  when it stops by using the option \texttt{-\/-rm}.
+  This will prevent unused containers from taking up too much disk space.
+\end{enumerate}
+
+Try the following:
+
+\begin{verbatim}
+docker run --rm --name container-to-remove alpine
+\end{verbatim}
+
+If you list all the containers you should see that there is no container
+named \emph{container-to-remove}.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{2}
+\tightlist
+\item
+  \textbf{Remove unused containers.} Stopped containers that have been run without
+  using the option \texttt{-\/-rm} are still stored in the host.
+  If you want to remove a specific
+  container (e.g., \emph{my-alpine}), use the following command:
+\end{enumerate}
+
+\begin{verbatim}
+docker container rm my-alpine
+\end{verbatim}
+
+If you want to remove all stopped containers, use the
+following command:
+
+\begin{verbatim}
+docker container prune
+\end{verbatim}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{3}
+\tightlist
+\item
+  \textbf{Remove unused images.} Images can take up a lot of disk space.
+  As a result, you should remember to remove those that you don't intend to use
+  any longer.
+  The commands to remove a specific image
+  and prune unused ones are \texttt{docker\ image\ rm}
+  and \texttt{docker\ image\ prune\ -a} respectively.
+\end{enumerate}
+
+\hypertarget{pass-a-command-to-the-containerized-application}{%
+\subsection{Pass a command to the containerized application}\label{pass-a-command-to-the-containerized-application}}
+
+Remember that the template of \texttt{docker\ run} is the following:
+
+\begin{verbatim}
+docker run [options] image-name [command] [arg]
+\end{verbatim}
+
+The optional parameter \emph{command} refers to a command
+that you can pass the containerized application, possibly with some arguments
+(parameter \emph{arg}).
+
+Let's see an example.
+As we saw before, when we run a container from the image \emph{alpine},
+a Linux terminal \texttt{/bin/sh} is launched.
+
+\begin{infobox}{warning}
+
+\textbf{Notice}
+
+The Linux terminal \texttt{/bin/sh} is run within the
+container.
+Henceforth, we'll use the following terms:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Host terminal.} The terminal that you use to
+  interact with the operating system of your computer.
+\end{itemize}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Guest terminal.} The terminal that is run within
+  the container.
+\end{itemize}
+
+\end{infobox}
+
+By using the optional parameter \emph{command}, we can run
+a command in the guest terminal.
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:command-in-guest}{}{\label{exr:command-in-guest} }
+Run a container from the image \emph{alpine} and execute the
+Linux command \texttt{ls} that lists the content of the current directory.
+
+\begin{itemize}
+\tightlist
+\item
+  Where are the listed files stored?
+  In the host or in the container?
+\end{itemize}
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+\begin{verbatim}
+docker run --rm --name ls-test alpine ls
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  The command \texttt{ls} is run in the guest terminal, therefore
+  what we see in the output is a list of files stored in the
+  container.
+\end{itemize}
+
+\end{infobox}
+
+\begin{infobox}{warning}
+
+\textbf{Notice}
+
+In Exercise \ref{exr:command-in-guest} the command
+\texttt{ls} is executed in the guest terminal, but its
+output is redirected to the host terminal.
+
+In other words, when we run the container, we
+don't interact directly with the guest terminal;
+we just send a command and the output is redirected
+to the host terminal.
+
+\end{infobox}
+
+Now let's see how to execute a command in the guest terminal
+that also requires an argument.
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-7}{}{\label{exr:unnamed-chunk-7} }By using the Linux utility \texttt{ping}, check
+whether the Web site www.centralesupelec.fr is reachable.
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+\begin{verbatim}
+docker run --rm --name ping-test alpine ping www.centralesupelec.fr
+\end{verbatim}
+
+In order to interrupt \texttt{ping}
+just type the key combination that you's use to
+interrupt any other command in your terminal.
+(typically Ctrl-C on Windows and Cmd-C in MacOs).
+
+\end{infobox}
+
+\hypertarget{interacting-with-a-container}{%
+\subsection{Interacting with a container}\label{interacting-with-a-container}}
+
+An application running in a container might need to interact
+with the user.
+For instance, the Linux
+command \texttt{rev} reverses whatever
+the user types on the keyboard.
+In order to interact with a container, you should use the option
+\texttt{-it} of \texttt{docker\ run}.
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-8}{}{\label{exr:unnamed-chunk-8} }Run a container from the image \emph{alpine} to execute the
+Linux command \texttt{rev} and interact with it.
+You can stop interacting with \texttt{rev} by typing Ctrl+C at any time.
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+\begin{verbatim}
+docker run --rm --name rev -it alpine rev
+\end{verbatim}
+
+After typing the command, type a word on your keyboard
+(e.g., \emph{deeps}), press \emph{Return} and
+you should see the same word reversed (e.g., \emph{speed}).
+
+The option \texttt{-t} opens a guest terminal (so we can see its
+output); the option \texttt{-i} allows you to write directly
+into the guest terminal.
+
+In order to stop using the guest terminal,
+you'll need to press Ctrl+D (both in Windows and MacOs).
+
+\end{infobox}
+
+Now run the following command:
+
+\begin{verbatim}
+docker run  --name my-alpine -it alpine
+\end{verbatim}
+
+\textbf{Note:} we didn't use the option \texttt{-\/-rm} (the container will not be removed
+when we stop it, we're going to use it again).
+Moreover, we didn't specify any command to run in the guest terminal.
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-9}{}{\label{exr:unnamed-chunk-9} }What do you obtain?
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+When we run a container from the image \emph{alpine}, the command
+\texttt{/bin/sh} is executed within the container.
+Since we specified the option \texttt{-it}, what we obtain is an access to the
+Linux terminal running in the container.
+
+\end{infobox}
+
+\hypertarget{starting-and-stopping-containers.}{%
+\subsection{Starting and stopping containers.}\label{starting-and-stopping-containers.}}
+
+\texttt{docker\ run} is a shorthand for two Docker commands, namely
+\texttt{docker\ create}, that creates a container from an image,
+and \texttt{docker\ start}, that starts the container after its creation.
+
+Suppose now that you want to download a Web page
+by using Linux Alpine.
+You can use the Linux command \texttt{wget} followed by the URL of the page
+that you want to download.
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-10}{}{\label{exr:unnamed-chunk-10} }By using the guest terminal
+in the container \emph{my-alpine},
+download
+\href{https://www.centralesupelec.fr/fr/presentation}{this Web page}.
+
+\begin{itemize}
+\tightlist
+\item
+  Where will the Web page be saved? The host computer or the container?
+\end{itemize}
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+Just type in \emph{my-alpine} guest terminal the following command:
+
+\begin{verbatim}
+wget https://www.centralesupelec.fr/fr/presentation
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  The Web page will be saved in the current directory
+  of the container. You can verify that the file is there
+  by typing \texttt{ls} in the guest terminal.
+\end{itemize}
+
+\end{infobox}
+
+In \emph{my-alpine} guest terminal type \texttt{exit}.
+This closes the guest terminal and, as a result, stops the
+container.
+
+\begin{infobox}{warning}
+
+\textbf{NOTICE}
+
+Stopping the container will not erase any of the files
+stored in the container. Removing the container will.
+
+\end{infobox}
+
+If you want to start the container \emph{my-alpine} again, you can
+use the following command:
+
+\begin{verbatim}
+docker container start -ai my-alpine
+\end{verbatim}
+
+This will open the guest terminal of the container again;
+type \texttt{ls} to verify that
+the Web page that you downloaded before is still there.
+
+\hypertarget{simple-use-case}{%
+\subsection{A simple use case}\label{simple-use-case}}
+
+Suppose that you need to download all the figures of
+\href{https://www.centralesupelec.fr/fr/presentation}{this Web page}.
+The Linux utility \texttt{wget} comes in handy.
+However, you don't have Linux and you'd like to
+avoid the hassle of installing it on your computer, or in a virtual machine,
+just for this task.
+
+A great alternative is to run Linux in a Docker container.
+Unfortunately, the Alpine distribution that we've been playing
+with doesn't provide
+an implementation of \texttt{wget} with all the options that we need.
+
+We turn to another Linux distribution, \textbf{Ubuntu},
+for which DockerHub has
+\href{https://hub.docker.com/_/ubuntu/}{several images}.
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-11}{}{\label{exr:unnamed-chunk-11} }Run a container with Ubuntu 19.10 and open a guest terminal.
+Call the container \emph{dl-figures}, and avoid the option
+\texttt{-\/-rm}, we'll use this container later.
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+\begin{verbatim}
+docker run --name dl-figures -it ubuntu:19.10
+\end{verbatim}
+
+If you look at the DockerHub registry Web page
+\href{https://hub.docker.com/_/ubuntu/}{describing Ubuntu},
+you'll see that the version 19.10 has many tags, including \emph{19.10},
+\emph{eoan-20200313}, \emph{eoan}, \emph{rolling}.
+You can use any of these tags to download the image.
+Another way to write the previous command is:
+
+\begin{verbatim}
+docker run --name dl-figures -it ubuntu:eoan
+\end{verbatim}
+
+\end{infobox}
+
+From now on, we'll be interacting with the guest Ubuntu terminal.
+If you type the command \texttt{wget},
+you'll get an error (\texttt{bash:\ wget:\ command\ not\ found}).
+
+\begin{infobox}{warning}
+
+\textbf{Notice}
+
+The image \emph{Ubuntu} doesn't include all the commands that you'd find
+in a full-blown Ubuntu distribution;
+the reason is to keep the size of the image small,
+a necessary constraint given that
+images are transferred over the Internet.
+
+\end{infobox}
+
+Luckily, there's a way to install \texttt{wget} in our Ubuntu distribution.
+Ubuntu provides a powerful command-line package manager called
+\textbf{Advanced Package Tool} (APT).
+First, you need to run the following command:
+
+\begin{verbatim}
+apt-get update
+\end{verbatim}
+
+which fetches the available packages from a list of sources
+available in file \texttt{/etc/apt/sources.list}.
+
+Then, you can install \texttt{wget} by running the following command:
+
+\begin{verbatim}
+apt-get install -y wget
+\end{verbatim}
+
+In order to obtain all the figures from a
+Web page, type the following command:
+
+\begin{verbatim}
+wget -nd -H -p -P /my-figures -A jpg,jpeg,png,gif -e robots=off -w 0.5 https://www.centralesupelec.fr/fr/presentation
+\end{verbatim}
+
+You should see in the current directory a new folder
+named \emph{my-figures} containing the downloaded figures;
+verify it by typing \texttt{ls\ my-figures}.
+
+Before terminating, don't forget to read your fortune cookie.
+In the shell, run the following command:
+
+\begin{verbatim}
+apt-get install -y fortune
+\end{verbatim}
+
+and then:
+
+\begin{verbatim}
+/usr/games/fortune -s
+\end{verbatim}
+
+When you're done, you can simply type the command \texttt{exit} to quit
+the guest terminal and stop the container.
+
+\begin{infobox}{warning}
+
+\textbf{Notice}
+
+You might wonder how you can transfer the downloaded figures
+from the container to the host computer.
+We'll see that later
+when we introduce the notion of \textbf{volumes}.
+
+\end{infobox}
+
+\hypertarget{creating-images}{%
+\section{Creating Images}\label{creating-images}}
+
+A Docker image can be thought of as a template to create and run a container.
+An image is a file that contains a \textbf{layered filesystem} with each layer being \textbf{immutable};
+this means that the files that belong to a layer cannot be
+modified or deleted, nor can files be added to a layer.
+
+When a container is created from an image, it
+will be composed of all the image read-only layers and, on top of
+them, a writable layer (termed the \textbf{container layer}),
+where all the new files created in the container will be written.
+For example, the figures that we downloaded in the container
+\emph{dl-figures} were stored in the writable layer of that container.
+
+\hypertarget{interactive-image-creation}{%
+\subsection{Interactive image creation}\label{interactive-image-creation}}
+
+When we run the container \emph{dl-figures} in Section \ref{simple-use-case},
+we modified the container to
+install the command \texttt{wget}.
+You can see the modifications by typing the
+following command:
+
+\begin{verbatim}
+docker diff dl-figures
+\end{verbatim}
+
+The output consists of a list of files tagged with the letter A, C or D, indicating
+respectively that the file has been added (A), changed (C) or deleted (D).
+In this list you'll find the downloaded figures, as well as
+other files that have been added or modified or deleted
+when we installed \texttt{wget}.
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-12}{}{\label{exr:unnamed-chunk-12} }If layers, except the top one, are immutable,
+how can files that belong to the lower layers be modified or deleted?
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+All files marked with A are new and therefore are
+added to the writable layer of the container.
+
+As for the existing files, they live in the immutable layers
+of the image, and therefore cannot be touched directly.
+Instead, they are copied from the bottom layers to the writable layer where
+they are modified.
+This strategy is called \textbf{copy-on-write}.
+
+The structure of layers generates a \textbf{layered filesystem} in the image;
+if different copies of the same file exist in different layers,
+the copy in the uppermost layer
+overwrites the others.
+
+\end{infobox}
+
+We can create a new image from the container \emph{dl-figures}, one that provides
+a Ubuntu distribution with the command \texttt{wget} already installed,
+with the following command:
+
+\begin{verbatim}
+docker commit dl-figures ubuntu-with-wget
+\end{verbatim}
+
+The command creates a new image called \emph{ubuntu-with-wget}.
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-14}{}{\label{exr:unnamed-chunk-14} }Run a container from the image \emph{ubuntu-with-wget} and verify that the command
+\emph{wget} is actually installed.
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+Just type the following command:
+
+\begin{verbatim}
+docker run --rm -it ubuntu-with-wget
+\end{verbatim}
+
+In the guest terminal type \texttt{wget}: you should see the
+following output:
+
+\begin{verbatim}
+wget: missing URL
+Usage: wget [OPTION]... [URL]...
+
+Try `wget --help` for more options.
+\end{verbatim}
+
+\end{infobox}
+
+\hypertarget{dockerfiles}{%
+\subsection{Dockerfiles}\label{dockerfiles}}
+
+The interactive creation of an image is a manual, and therefore inefficient, process.
+The most common way to create an image is to use a \textbf{Dockerfile}, a
+text file that contains all the instructions necessary to
+build the image.
+The advantage of the Dockerfile is that it can be interpreted
+by the Docker engine, which makes the creation of images an automated
+and repeatable task.
+
+Inspired by the previous example, suppose that we want to create a containerized
+application to download figures from a Web page.
+As a template for this application, we need to build a new
+image, that we'll call \emph{fig-downloader}.
+
+The Dockerfile containing the instructions to build the image
+\emph{fig-downloader} is as follows:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{FROM}\NormalTok{ ubuntu:eoan}
+\KeywordTok{RUN}\NormalTok{ apt{-}get update}
+\KeywordTok{RUN}\NormalTok{ apt{-}get install {-}y wget}
+\KeywordTok{RUN}\NormalTok{ mkdir {-}p /my{-}figures}
+\KeywordTok{WORKDIR}\NormalTok{ /my{-}figures}
+\KeywordTok{ENTRYPOINT}\NormalTok{ [}\StringTok{"wget"}\NormalTok{, }\StringTok{"{-}nd"}\NormalTok{, }\StringTok{"{-}r"}\NormalTok{, }\StringTok{"{-}A"}\NormalTok{, }\StringTok{"jpg,jpeg,bmp,png,gif"}\NormalTok{]}
+\KeywordTok{CMD}\NormalTok{ [}\StringTok{"https://www.centralesupelec.fr/fr/presentation"}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+Here's the explanation:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  We use the image \emph{ubuntu:eoan} as the \textbf{base image}.
+  This corresponds to the instruction \texttt{FROM\ ubuntu:eoan}.
+\item
+  We install the utility \texttt{wget} in the base image.
+  This corresponds to the
+  instructions \texttt{RUN\ apt-get\ update} and \texttt{RUN\ apt-get\ install\ -y\ wget}.
+\item
+  We create a directory \emph{my-figures} under the root directory of the image.
+  This corresponds to the instruction \texttt{RUN\ mkdir\ -p\ /my-figures}.
+\item
+  We set the newly created directory \emph{/my-figures} as the
+  \textbf{working directory} of the image. This corresponds to the
+  instruction \texttt{WORKDIR\ /my-figures}.
+\item
+  We specify the command to be executed when a container is run from this image.
+  This corresponds to the instruction \texttt{ENTRYPOINT\ {[}"wget",\ "-nd",\ "-r",\ "-A",\ "jpg,jpeg,bmp,png,gif"{]}}.
+  This instruction means: execute \texttt{wget} with the options
+  \texttt{-nd}, \texttt{-r}, \texttt{-A};
+  the last option takes a list of file
+  extensions (\texttt{jpg,jpeg,bmp,png,gif}) as its argument.
+\item
+  Remember that the utility \texttt{wget} takes the URL of the Web page as
+  an argument. The URL will be specified when we run the container from
+  the image \emph{fig-downloader}.
+  Optionally, we can specify a default argument by using the
+  keyword CMD. The meaning of the instruction
+  \texttt{CMD\ {[}"https://www.centralesupelec.fr/fr/presentation"{]}} is:
+  if we don't give any URL when we run the container, the figures will
+  be downloaded from
+  \url{https://www.centralesupelec.fr/fr/presentation}.
+\end{enumerate}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-15}{}{\label{exr:unnamed-chunk-15} }What's the relation between the Dockerfile lines and the image layers?
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+Each line corresponds to a new layer.
+The first line corresponds to the bottom layer;
+the last line to the top layer.
+
+\end{infobox}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:dockerfile-creation}{}{\label{exr:dockerfile-creation} }Could you identify a problem in this Dockerfile?
+Modify the Dockerfile accordingly.
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+When creating an image, we should keep the number of layers relatively
+small; in fact, the more the layers, the bigger the image will be.
+Here we create three separate layers with three RUN commands; we can
+simply merge the three layers.
+The resulting Dockerfile will be:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{FROM}\NormalTok{ ubuntu:eoan}
+\KeywordTok{RUN}\NormalTok{ apt{-}get update \&\& \textbackslash{}}
+\NormalTok{    apt{-}get install {-}y wget \&\& \textbackslash{}}
+\NormalTok{    mkdir {-}p /my{-}figures}
+\KeywordTok{WORKDIR}\NormalTok{ /my{-}figures}
+\KeywordTok{ENTRYPOINT}\NormalTok{ [}\StringTok{"wget"}\NormalTok{, }\StringTok{"{-}nd"}\NormalTok{, }\StringTok{"{-}r"}\NormalTok{, }\StringTok{"{-}A"}\NormalTok{, }\StringTok{"jpg,jpeg,bmp,png,gif"}\NormalTok{]}
+\KeywordTok{CMD}\NormalTok{ [}\StringTok{"https://www.centralesupelec.fr/fr/presentation"}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\end{infobox}
+
+\hypertarget{building-an-image}{%
+\subsection{Building an image}\label{building-an-image}}
+
+We're now going to build an image from a Dockerfile.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Create a directory named \emph{fig-downloader} in your computer with
+  a file named \emph{Dockerfile} inside.
+\item
+  In the \emph{Dockerfile} write the set of instructions that
+  you proposed in Exercise \ref{exr:dockerfile-creation}.
+\item
+  In the terminal, set the working directory to \emph{fig-downloader}.
+\item
+  Build an image called \emph{fig-downloader} by executing the following command:
+\end{enumerate}
+
+\begin{verbatim}
+docker build -t fig-downloader .
+\end{verbatim}
+
+The \texttt{.} at the end of the command means that the Docker engine will
+look for a file named \emph{Dockerfile} in the working directory.
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-16}{}{\label{exr:unnamed-chunk-16} }Once the image is built, type the command \texttt{docker\ image\ ls\ -a}.
+What are the images with repository and tag \texttt{\textless{}none\textgreater{}}?
+Why are there three of such images?
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+These are the \textbf{intermediate images}.
+Once a layer is compiled, an intermediate image is created that
+contains that layer and all the layers underneath.
+In other words, the intermediate image
+corresponding to the layer \(i\) contains all files
+up to the layer \(i\), including layers 1 through \(i-1\).
+
+The intermediate layers are used by the \textbf{build cache},
+of which we'll see an example later.
+
+Although there are five layers in the new image, there are only
+three intermediate images because:
+
+\begin{itemize}
+\tightlist
+\item
+  the base image is \emph{ubuntu:eoan}.
+\item
+  the image corresponding to the top layer is the final image \emph{fig-downloader}.
+\end{itemize}
+
+\end{infobox}
+
+\begin{infobox}{curiosity}
+
+\textbf{Good to know}
+
+If you give the Dockerfile a different name (say, \emph{Dockerfile-fig-downloader}),
+the command to build the image will be:
+
+\begin{verbatim}
+docker build -t fig-downloader -f Dockerfile-fig-downloader .
+\end{verbatim}
+
+The option \texttt{-f} is used to specify the name of the Dockerfile.
+
+\end{infobox}
+
+Let's dive deeper into the anatomy of an image.
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-17}{}{\label{exr:unnamed-chunk-17} }Run the following command:
+
+\texttt{docker\ history\ fig-downloader}
+
+and analyze the layers of the new image.
+
+\begin{itemize}
+\tightlist
+\item
+  Why do some layers have an ID, while others
+  are marked as missing?
+\end{itemize}
+
+\begin{itemize}
+\tightlist
+\item
+  Can you find the identifiers of the intermediate images?
+\end{itemize}
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+The layers with an ID correspond to the layers of
+the new image, including the top layer and the base image.
+The layers marked as \emph{missing} are those that compose the
+base image. Those layers are not stored in\\
+your computer,
+simply because they belong to an image
+that hasn't been built on your computer
+and you downloaded from the DockerHub registry.
+
+By looking at the output of \texttt{docker\ image\ ls\ -a} and the output of this command,
+we see that the layers between the base image and the top layer have the
+same identifiers as the intermediate images.
+
+\end{infobox}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:dl-1-container}{}{\label{exr:dl-1-container} }Run the following command:
+
+\texttt{docker\ run\ -\/-name\ dl-1\ fig-downloader}
+
+What does it do? Where are the downloaded pictures?
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+We downloaded the figures
+of the page \url{https://www.centralesupelec.fr/fr/presentation}.
+The downloaded pictures are in the folder \emph{/my-figures}
+of the container \emph{dl-1}.
+For now, don't worry about accessing them.
+
+\end{infobox}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-18}{}{\label{exr:unnamed-chunk-18} }Run the following command:
+
+\begin{verbatim}
+docker run --name dl-2 fig-downloader https://www.centralesupelec.fr/fr/nos-campus
+\end{verbatim}
+
+What does it do? Where are the downloaded pictures?
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+We downloaded the figures
+of the page \url{https://www.centralesupelec.fr/fr/nos-campus}.
+We basically overwrote the URL specified by the CMD keyword with a new
+one.
+The downloaded pictures are in the folder \emph{/my-figures}
+of the container \emph{dl-2}.
+For now, don't worry about accessing these figures.
+
+\end{infobox}
+
+\hypertarget{containerized-python-application}{%
+\subsection{Containerized Python application}\label{containerized-python-application}}
+
+Download \href{/courses/cloud-computing/word-frequency.zip}{this archive file}
+and unzip it into your working directory.
+In this archive you'll find:
+
+\begin{itemize}
+\tightlist
+\item
+  A Dockerfile.
+\item
+  A Python script \emph{main.py} that asks the user to enter the URL and the language of a Web page,
+  and prints the 10 most frequent words occurring in that page.
+\item
+  A file \emph{requirements.txt} with the list of the Python packages
+  needed to run the given script.
+\end{itemize}
+
+The content of the Dockerfile is as follows:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{FROM}\NormalTok{ python:3.7{-}slim}
+\KeywordTok{RUN}\NormalTok{ mkdir {-}p /app}
+\KeywordTok{WORKDIR}\NormalTok{ /app}
+\KeywordTok{COPY}\NormalTok{ ./main.py ./requirements.txt /app/}
+\KeywordTok{RUN}\NormalTok{ pip install {-}r requirements.txt}
+\KeywordTok{ENTRYPOINT}\NormalTok{ [}\StringTok{"python"}\NormalTok{, }\StringTok{"main.py"}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-19}{}{\label{exr:unnamed-chunk-19} }Describe what this Dockerfile does.
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+\begin{itemize}
+\tightlist
+\item
+  Takes \emph{python:3.7-slim} as the base image.
+\item
+  Creates a new folder \emph{app} in the image under the root directory.
+\item
+  Changes the working directory to \emph{/app}.
+\item
+  Copies the files \emph{main.py} and \emph{requirements.txt} from the local
+  computer to the directory \emph{/app} in the image.
+\item
+  Runs the command \texttt{pip\ install} to install the Python libraries
+  specified in the file \emph{requirements.txt}.
+\item
+  Executes the command \texttt{python\ main.py}.
+\end{itemize}
+
+\end{infobox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-20}{}{\label{exr:unnamed-chunk-20} }Build an image called \emph{wordfreq} from this Dockerfile.
+\EndKnitrBlock{exercise}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+\begin{verbatim}
+docker build -t wordfreq .
+\end{verbatim}
+
+\end{infobox}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-21}{}{\label{exr:unnamed-chunk-21} }Without changing the Dockerfile, rebuild the same image.
+What do you notice?
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+The build is very fast.
+Since we didn't change the Dockerfile, the image
+is rebuilt by using the image layers created
+previously.
+This is clearly indicated by the phrase \textbf{using cache} written
+at each layer.
+Using the already stored layers is called \textbf{build cache}.
+
+\end{infobox}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-22}{}{\label{exr:unnamed-chunk-22} }What happens if you modify a line in the Python script and
+you rebuild the image?
+Is the build cache still used?
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+Add any instruction at the end of \emph{main.py}, such as:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\BuiltInTok{print}\NormalTok{(}\StringTok{"I added this line"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+then rebuild the image.
+The three bottom layers are not affected by the modification, therefore
+they benefit from the build cache.
+Layer 4 is the first affected by the modification.
+This layer, and those above, need therefore to be
+rebuilt.
+
+\end{infobox}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-23}{}{\label{exr:unnamed-chunk-23} }Considering how the build cache is used in Docker,
+can you tell what's wrong with this Dockerfile?
+Modify the Dockerfile accordingly and rebuild the image.
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+Each time we modify \emph{main.py} and we rebuild the image,
+the layer 4 and 5 are recreated, meaning that all the Python packages
+are downloaded and installed.
+Depending on the size and number of the packages, this might
+take some while.
+A better way to structure the Dockerfile is to install the
+packages before copying the Python script to the image.
+Here is how we should modify the Dockerfile:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{FROM}\NormalTok{ python:3.7{-}slim}
+\KeywordTok{RUN}\NormalTok{ mkdir {-}p /app}
+\KeywordTok{WORKDIR}\NormalTok{ /app}
+\KeywordTok{COPY}\NormalTok{ ./requirements.txt /app/}
+\KeywordTok{RUN}\NormalTok{ pip install {-}r requirements.txt}
+\KeywordTok{COPY}\NormalTok{ ./main.py /app/}
+\KeywordTok{ENTRYPOINT}\NormalTok{ [}\StringTok{"python"}\NormalTok{, }\StringTok{"main.py"}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+\end{infobox}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-24}{}{\label{exr:unnamed-chunk-24} }Modify \emph{main.py} by adding a new line of code and rebuild the image.
+What changed?
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+The Python packages are not reinstalled, as a result rebuilding the image\\
+takes much less time than before.
+
+\end{infobox}
+
+\hypertarget{data-volumes}{%
+\section{Data Volumes}\label{data-volumes}}
+
+In Exercise \ref{exr:dl-1-container} you've been asked to run a container named
+\emph{dl-1} to download some figures from a Web page.
+The figures were downloaded into the
+directory \emph{/my-figures} of the container.
+But we left a question unanswered.
+
+\textbf{How do we transfer those figures from the container to the host computer?}
+
+One way to go about that is to run the following command in the host terminal:
+
+\begin{verbatim}
+docker cp dl-1:/my-figures .
+\end{verbatim}
+
+This will copy the directory \emph{/my-figures} from the container \emph{dl-1} to
+the host computer working directory.
+You can verify it by yourself.
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-25}{}{\label{exr:unnamed-chunk-25} }Can you tell why this solution is less than ideal?
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  After running the container we need to do an additional action to copy
+  the figures from the container to the host computer.
+\item
+  The container is created and run only to download some figures.
+  We'd like to remove it automatically (with the option \texttt{-\/-rm}) when its
+  execution is over. However, if we do so, the pictures will be lost before
+  we can copy them to the host computer.
+\end{enumerate}
+
+\end{infobox}
+
+\hypertarget{using-a-host-volume}{%
+\subsection{Using a host volume}\label{using-a-host-volume}}
+
+A better solution is to \textbf{mount} (i.e., attach)
+a directory of the host computer at the container's directory
+\emph{/my-figures} when we run it.
+Let's see how it works.
+
+\textbf{Step 1.} Create a directory named \emph{figs-volume} in your working directory.
+
+\textbf{Step 2.} Type and execute the following command:
+
+\begin{verbatim}
+docker run --rm -v $(pwd)/figs-volume:/my-figures fig-downloader
+\end{verbatim}
+
+This command runs a container from the image \emph{fig-downloader}.
+
+\begin{itemize}
+\item
+  With the option \texttt{-v} we specify that we want to mount the directory
+  \emph{\$(pwd)/figs-volume} (\emph{\$(pwd)} indicates the host working directory)
+  at the directory \emph{figs-volume} in the container;
+\item
+  The option \texttt{-\/-rm} indicates that we want the container to be
+  removed when its execution is over.
+\end{itemize}
+
+\textbf{Step 3.} Verify that the pictures are in the folder \emph{figs-volume}.
+
+In this example, we've used the directory \emph{figs-volume} as a
+\textbf{volume} (essentially, an external storage area) of the container;
+when the container is destroyed, the volume remains with all its data.
+
+\hypertarget{docker-volumes}{%
+\subsection{Docker volumes}\label{docker-volumes}}
+
+In the example that we've just described, we've used a host
+directory as a volume.
+This is useful when we, or an application running on the host, need
+to access the files produced by a container.
+In all the other cases, a container should use a \textbf{Docker volume}, which
+is managed directly by the Docker engine.
+
+Let's create a new Docker volume called \emph{data-volume}:
+
+\begin{verbatim}
+docker volume create data-volume
+\end{verbatim}
+
+\begin{infobox}{curiosity}
+
+\textbf{Good to know (advanced notion)}
+
+\textbf{Where the data will be actually stored?}
+
+You can inspect the new volume by typing the
+following command:
+
+\begin{verbatim}
+docker volume inspect data-volume
+\end{verbatim}
+
+A \emph{mount point} is indicated; that's the folder where the data
+will be actually stored.
+If your computer runs Linux, that folder will be available
+on the host; if your computer runs Windows or MacOS,
+you'll not find that folder on your computer.
+Instead, it will be available in the virtual machine
+that Docker use on MacOS and Windows.
+
+\textbf{Do you want to see the directory? (Instructions for MacOS)}
+
+One way to look into the hidden VM is to run
+the following containerized application:
+
+\begin{verbatim}
+docker run -it --rm --privileged --pid=host justincormack/nsenter1
+\end{verbatim}
+
+This application will open a guest terminal into the VM.
+You can then use the commands \texttt{cd} and \texttt{ls}
+to browse to the directory indicated as the mount path
+of the new volume.
+
+\end{infobox}
+
+\hypertarget{sharing-data}{%
+\subsubsection{Sharing data}\label{sharing-data}}
+
+A Docker volume can be used to share data between containers.
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-26}{}{\label{exr:unnamed-chunk-26} }Run a container from the image \texttt{ubuntu:eoan},
+specifying the options to:
+
+\begin{itemize}
+\item
+  Remove the container once its execution is over.
+\item
+  Interact with the guest Linux terminal in the container.
+\end{itemize}
+
+\begin{itemize}
+\tightlist
+\item
+  Mount the volume \emph{data-volume} at the container's directory \emph{/data}.
+\end{itemize}
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+\begin{verbatim}
+docker run --rm -it -v data-volume:/data ubuntu:eoan 
+\end{verbatim}
+
+\end{infobox}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-27}{}{\label{exr:unnamed-chunk-27} }Type a command in the guest Linux terminal to create a file
+\emph{test-file.txt} in the directory \emph{/data}.
+Verify that the file is created.
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+The following command:
+
+\begin{verbatim}
+echo "This is a new file" > /data/test-file.txt
+\end{verbatim}
+
+creates a file \emph{test-file.txt} with the line of text
+``This is a new file''.
+
+In order to verify that the file is created, we can
+type the following command:
+
+\begin{verbatim}
+ls /data/test-file.txt
+\end{verbatim}
+
+To see the content of the file, we can type:
+
+\begin{verbatim}
+cat /data/test-file.txt
+\end{verbatim}
+
+\end{infobox}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-28}{}{\label{exr:unnamed-chunk-28} }Run a container from the image \emph{alpine:latest},
+specifying the options to:
+
+\begin{itemize}
+\item
+  Remove the container once its execution is over.
+\item
+  Interact with the guest Linux terminal in the container.
+\end{itemize}
+
+\begin{itemize}
+\tightlist
+\item
+  Mount the volume \emph{data-volume} to the directory \emph{/my-data}
+  of the container.
+\end{itemize}
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+\begin{verbatim}
+docker container run --rm -it -v data-volume:/my-data alpine
+\end{verbatim}
+
+\end{infobox}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-29}{}{\label{exr:unnamed-chunk-29} }Verify that you can read the file \emph{test-file.txt}.
+Which folder would you look in?
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+We need to look in the folder \emph{/my-data} because this is where
+we mounted \emph{data-volume}.
+
+\begin{verbatim}
+cat /my-data/test-file.txt
+\end{verbatim}
+
+\end{infobox}
+
+In the guest terminals of both containers type \texttt{exit}.
+This will terminate and destroy (since we used
+the option \texttt{-\/-rm}) the containers.
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-30}{}{\label{exr:unnamed-chunk-30} }Will the file \emph{test-file.txt} be removed?
+Why?
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+No.~The file that we created before has been saved in the volume
+\emph{data-volume}. Volumes are a way to persist data beyond the life span
+of a container.
+
+\end{infobox}
+
+\hypertarget{single-host-networking}{%
+\section{Single-Host Networking}\label{single-host-networking}}
+
+In order to let containers communicate and, therefore, co-operate,
+Docker defines a simple networking model known as
+the \href{/courses/cloud-computing/docker-primer\#single-host-networking}{\textbf{container network model}}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-31}{}{\label{exr:unnamed-chunk-31} }Describe the output of the following command:
+
+\texttt{docker\ network\ ls}
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+The command lists all the networks created by Docker on
+your computer.
+For each network, the values of four attributes are shown:
+
+\begin{itemize}
+\tightlist
+\item
+  The identifier.
+\item
+  The name.
+\item
+  The driver used by the network.
+\item
+  The scope of the network (local or global).
+  A local scope means that the network connects containers
+  running on the same host, as opposed to a global scope that
+  means that containers on different hosts can communicate.
+\end{itemize}
+
+Depending on the containers that you used
+in the past, you might see different networks.
+However, three networks are worth noting:
+
+\begin{itemize}
+\tightlist
+\item
+  The network named \textbf{bridge}, that uses the driver \textbf{bridge} and a local scope.
+  By default, any new container is attached to this network.
+\item
+  The network named \textbf{host}, that uses the driver \textbf{host} and a local scope.
+  It's used when we want a container to directly use the network interface of the host.
+  It's important to remember that this network should only be used when analyzing the
+  host's network traffic. In the other cases, using this network exposes
+  the container to all sorts of security risks.
+\item
+  The network named \textbf{none}, that uses the driver \textbf{null} and a local scope.
+  Attaching a container to this network means that the container
+  isn't connected to any network, and therefore it's completely isolated.
+\end{itemize}
+
+\end{infobox}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-32}{}{\label{exr:unnamed-chunk-32} }The following command:
+
+\texttt{docker\ network\ inspect\ bridge}
+
+outputs the configuration of the network \textbf{bridge}.
+By looking at this configuration, can you tell
+what IP addresses will be given to the containers attached to this
+network? What's the IP address of the router of this network?
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+The information is specified in the field named \textbf{IPAM}, more specifically:
+
+\begin{itemize}
+\item
+  \textbf{Subnet} indicates the range of IP addresses used by the network.
+  The value of this field should be 172.17.0.0/16;
+  the addresses range from 172.17.0.1 to 172.17.255.255.
+\item
+  \textbf{Gateway} indicates the IP address of the router of the network.
+  The value should be 172.17.0.1
+\end{itemize}
+
+\end{infobox}
+
+\hypertarget{creating-networks}{%
+\subsection{Creating networks}\label{creating-networks}}
+
+By default, any new container is attached to the network named \emph{bridge}.
+As a result, all new containers will be able to communicate over this network.
+This is not a good idea.
+If a hacker can compromise any of these containers, s/he might
+be able to attack the other containers as well.
+As a rule of thumb, we should attach two containers to the same network \textbf{only} on a
+need-to-communicate basis.
+
+\begin{infobox}{exercisebox}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-33}{}{\label{exr:unnamed-chunk-33} }What if a container doesn't need to use the network at all?
+Try to run a container from the image \emph{alpine}
+disconnected from all networks and
+verify that you cannot ping the URL
+\href{http://www.google.com}{www.google.com}.
+
+Look at the \href{/courses/cloud-computing/docker-cheat-sheet}{Docker cheat sheet}
+to learn how to attach a container to a network.
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+We should attach the container to the network \textbf{none}.
+As an example, we run the following command:
+
+\begin{verbatim}
+docker run --rm -it --network none alpine /bin/sh
+\end{verbatim}
+
+Then we try to ping www.google.com as follows:
+
+\begin{verbatim}
+ping www.google.com
+\end{verbatim}
+
+We should obtain the following message:
+
+\begin{verbatim}
+bad address 'www.google.com'
+\end{verbatim}
+
+Type the command \texttt{exit} to quit the container.
+
+Instead, if we run Linux Alpine without specifying the network
+(meaning that the container will be attached to the network \emph{bridge}):
+
+\begin{verbatim}
+docker run --rm -it  alpine /bin/sh
+\end{verbatim}
+
+and we try to ping www.google.com, we should get an answer.
+In some cases, the command ping would just hang and show no
+output; this is usually fixed by restarting Docker.
+
+\end{infobox}
+
+In order to create a new network, you can use the following command:
+
+\begin{verbatim}
+docker network create network_name
+\end{verbatim}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-34}{}{\label{exr:unnamed-chunk-34} }Create two networks named \emph{buckingham} and \emph{rochefort} that
+use the driver \emph{bridge}.
+By using the \texttt{docker\ network\ inspect} command,
+look at the IP addresses of the new networks and write them down.
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+Just run the following commands:
+
+\begin{verbatim}
+docker network create buckingham
+docker network create rochefort
+\end{verbatim}
+
+The IP addresses for the network \emph{buckingham} are
+172.18.0.0/16 (addresses from 172.18.0.1 to 172.18.255.255);
+The IP addresses for the network \emph{rochefort} are:
+172.19.0.0/16 (assuming that you create \emph{buckingham}
+before \emph{rochefort}).
+
+The IP addresses may be different on your machines.
+
+\end{infobox}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-35}{}{\label{exr:unnamed-chunk-35} }Create three containers \emph{athos}, \emph{porthos} and \emph{aramis} and attach them
+to the two networks \emph{buckingham} and \emph{rochefort} as displayed
+\href{/courses/cloud-computing/docker-primer\#fig:cnm}{in this figure}.
+\textbf{The three containers will open a Linux Alpine shell}.
+You'll need to launch the commands in three separate tabs of your terminal window.
+
+\begin{itemize}
+\tightlist
+\item
+  What will the IP addresses of the three containers be in the two networks?
+  Remember that \emph{porthos} is attached to two networks, therefore it'll have two
+  network interfaces (endpoints) and, as a result, two IP addresses.
+\end{itemize}
+
+\begin{itemize}
+\tightlist
+\item
+  Verify your answers by inspecting the two networks (use the
+  command \texttt{docker\ network\ inspect}).
+\end{itemize}
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+Here are the commands to run \emph{athos} and \emph{aramis} while connecting
+them to \emph{buckingham} and \emph{rochefort} respectively.
+
+\begin{verbatim}
+docker run --rm -it --name athos --network buckingham  alpine /bin/sh
+docker run --rm -it --name aramis --network rochefort   alpine /bin/sh
+\end{verbatim}
+
+Here's the command to run \emph{porthos} and attach it to
+\emph{buckingham}:
+
+\begin{verbatim}
+docker run --rm -it --name porthos --network buckingham   alpine /bin/sh
+\end{verbatim}
+
+The following command attaches \emph{porthos} to the second network \emph{rochefort}:
+
+\begin{verbatim}
+docker network connect rochefort porthos
+\end{verbatim}
+
+As for the IP addresses, each network has IP addresses
+in the range 172.x.0.0/16, where x is 18 in the
+network \emph{buckingham} and 19 in the network \emph{rochefort}.
+The address 172.x.0.1 is reserved for the router.
+Therefore, the containers will be assigned
+IP addresses from 172.x.0.2.
+In this solution, we created \emph{athos}, \emph{aramis} and \emph{portos}
+in this order.
+Therefore, the IP addresses will be:
+
+\begin{itemize}
+\tightlist
+\item
+  In network \emph{buckingham}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \emph{athos}: 172.18.0.2
+  \item
+    \emph{porthos}: 172.18.0.3
+  \end{itemize}
+\item
+  In network \emph{rochefort}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \emph{aramis}: 172.19.0.2
+  \item
+    \emph{porthos}: 172.19.0.3
+  \end{itemize}
+\end{itemize}
+
+You can actually verify this configuration by inspecting
+the two networks with the following commands:
+
+\begin{verbatim}
+docker network inspect buckingham
+docker network inspect rochefort
+\end{verbatim}
+
+The IP addresses might be different on your machines.
+
+\end{infobox}
+
+\hypertarget{communication-between-containers}{%
+\subsection{Communication between containers}\label{communication-between-containers}}
+
+Let's see if and when the three containers can communicate.
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-36}{}{\label{exr:unnamed-chunk-36} }Which containers are able to communicate?
+Justify your answer.
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+The only containers that cannot communicate are \emph{athos} and \emph{aramis},
+because they're not connected to the same network.
+
+\end{infobox}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-37}{}{\label{exr:unnamed-chunk-37} }Try to ping \emph{porthos} from \emph{athos} by using its IP address.
+
+\begin{itemize}
+\tightlist
+\item
+  Which IP address of \emph{porthos} would you use?
+\end{itemize}
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+We need to use the IP address assigned to the endpoint linking
+\emph{porthos} to the network \emph{buckingham}, to which \emph{athos} is connected.
+In our case, this is 172.18.0.3.
+
+\end{infobox}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-38}{}{\label{exr:unnamed-chunk-38} }Try to ping \emph{porthos} from \emph{athos} by using its name.
+Do you succeed? Are you surprised?
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+We succeed. Indeed, the network \emph{buckingham} provides a DNS server, that
+can translate names into IP addresses.
+
+\end{infobox}
+
+You can now exit the three containers.
+
+\hypertarget{a-containerized-chat-room}{%
+\subsection{A containerized chat room}\label{a-containerized-chat-room}}
+
+We developed a simple chat room in Python that you can download
+\href{/courses/cloud-computing/chat-room.zip}{here}.
+
+Participants use a \emph{client} program to connect to the chat room;
+the chat room is managed by a \emph{server} application that receives the
+client connections and forwards the messages between the users.
+The archive contains the following files:
+
+\begin{itemize}
+\tightlist
+\item
+  \emph{client.py}. Implementation of the chat room client.
+\item
+  \emph{server.py}. Implementation of the chat room server.
+\item
+  \emph{utils.py}. Library with utility functions used
+  in both \emph{client.py} and \emph{server.py}.
+\end{itemize}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-39}{}{\label{exr:unnamed-chunk-39} }By using Dockerfiles, create two images \texttt{chat-client} and \texttt{chat-server}
+that will be used to run the client and the server in Docker.
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+The Dockerfile for the client (let's call it \emph{Dockerfile-client})
+is as follows.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{FROM}\NormalTok{ python:3.7{-}slim}
+\KeywordTok{RUN}\NormalTok{ mkdir {-}p /app}
+\KeywordTok{WORKDIR}\NormalTok{ /app}
+\KeywordTok{COPY}\NormalTok{ ./client.py ./utils.py /app/}
+\KeywordTok{ENTRYPOINT}\NormalTok{ [}\StringTok{"python"}\NormalTok{, }\StringTok{"client.py"}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+We build the image with the following command:
+
+\begin{verbatim}
+docker build -t chat-client -f Dockerfile-client .
+\end{verbatim}
+
+The Dockerfile for the server (let's call it \emph{Dockerfile-server})
+is as follows.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{FROM}\NormalTok{ python:3.7{-}slim}
+\KeywordTok{RUN}\NormalTok{ mkdir {-}p /app}
+\KeywordTok{WORKDIR}\NormalTok{ /app}
+\KeywordTok{COPY}\NormalTok{ ./server.py ./utils.py /app/}
+\KeywordTok{ENTRYPOINT}\NormalTok{ [}\StringTok{"python"}\NormalTok{, }\StringTok{"server.py"}\NormalTok{]}
+\end{Highlighting}
+\end{Shaded}
+
+We build the image with the following command:
+
+\begin{verbatim}
+docker build -t chat-server -f Dockerfile-server .
+\end{verbatim}
+
+\begin{infobox}{curiosity}
+
+\textbf{Good to know}
+
+The first three layers in both images are identical.
+Therefore, when building the second image \emph{chat-server}
+the Docker engine reuses the cached layers
+created for the first image.
+This is indicated in the output of the
+\texttt{docker\ build} command with the phrase \emph{using cache}.
+
+\end{infobox}
+
+\end{infobox}
+
+We'll now run both containers.
+Since they need to communicate, they need to be attached to the same
+network (e.g., \emph{buckingham}).
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-40}{}{\label{exr:unnamed-chunk-40} }Run a container from the image \emph{server-chat}.
+Set the options to:
+
+\begin{itemize}
+\item
+  Automatically remove the container once its execution is over.
+\item
+  Give the container a name (e.g., \emph{server-chat}).
+\item
+  The server will print messages on the screen.
+  In order to see them, you must use the option \texttt{-t}.
+\end{itemize}
+
+Also, keep in mind that \emph{server.py} takes an argument
+that is the \textbf{port number} where the server will listen to incoming connections.
+Choose a random port number in the interval {[}49152-65535{]}.
+
+\textbf{What is the IP address of the server?}
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+We execute the following command:
+
+\begin{verbatim}
+docker container run --rm -t --name chat-server --network buckingham chat-server 64903
+\end{verbatim}
+
+In my case, the IP address is 172.18.0.2 and port number is 64903
+
+\end{infobox}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-41}{}{\label{exr:unnamed-chunk-41} }
+Run a container from the image \emph{client-chat}.
+Set the options to:
+
+\begin{itemize}
+\item
+  Automatically remove the container once its execution is over.
+\item
+  Give the container a name (e.g., \emph{client-chat}).
+\item
+  Since you'll use the client to write messages in the chat room,
+  remember to set the option \texttt{-it}.
+\end{itemize}
+
+The client takes two arguments: the host where the server is running
+and the port which the server is listening to.
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+\begin{verbatim}
+docker run --rm -it --name chat-client --network buckingham chat-client 172.18.0.2 64903
+\end{verbatim}
+
+Instead of the server host IP address, we can use the
+server container name (the network \emph{buckingham} has a DNS server).
+
+As a result, we can run the client as follows:
+
+\begin{verbatim}
+docker run --rm -it --name chat-client --network buckingham chat-client chat-server 64903
+\end{verbatim}
+
+\end{infobox}
+
+Once the client is started, you'll be prompted to enter your name.
+Then you can start writing messages.
+
+\begin{infobox}{warning}
+
+\textbf{Notice}
+
+\begin{itemize}
+\item
+  You can type \emph{\#quit} at any moment to exit the chat room (client-side).
+\item
+  Type Ctrl-C to stop the server.
+\end{itemize}
+
+\end{infobox}
+
+Now, suppose that one of your classmates wants to join the chat room, but
+s/he's on another computer.
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-42}{}{\label{exr:unnamed-chunk-42} }Do you think your classmate can connect to the containerized server running in
+your machine? Justify your answer.
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+No, s/he can't.
+The two containers can communicate only if they're connected to the same
+network.
+
+\end{infobox}
+
+What we need to do here is to expose our server to the outside world.
+The server runs in a container \(c\) that, in turns, runs on the host machine \(h\).
+The server listens to port \(p_c\) that is opened \textbf{inside the container}.
+We need to map port \(p_c\) to a port \(p_h\) in the host computer.
+This way, the classmate client will connect to the server by specifying
+the \textbf{IP address of the host \(h\)} (not \(c\)) and \(p_h\) as the port number.
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:unnamed-chunk-43}{}{\label{exr:unnamed-chunk-43} }Stop both the server and the client.
+
+Run the server by specifying the option to map port
+\(p_c\) (e.g., 64903) to port \(p_h\) (e.g., 8080).
+As before, attach the server to the network \emph{buckingham}.
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+We need to use the option \texttt{-p}. The command to run the container is:
+
+\begin{verbatim}
+docker run --rm -it --name chat-server --network buckingham -p 8080:64903 chat-server 64903
+\end{verbatim}
+
+\end{infobox}
+
+\begin{infobox}{warning}
+
+\textbf{Notice}
+
+Assuming that the name of the server container is
+\emph{chat-server}, run the following command:
+
+\begin{verbatim}
+docker container port chat-server
+\end{verbatim}
+
+The output should look like as follows:
+
+\begin{verbatim}
+64903/tcp -> 0.0.0.0:8080
+\end{verbatim}
+
+This means that the port 64903 (\(p_c\)) in the container is mapped to the port
+8080 (\(p_h\)) of the host computer.
+When a remote client wants to connect to the server, it'll use port 8080.
+The IP address 0.0.0.0 means that a client can connect to the server
+by using any of its IP addresses.
+
+\end{infobox}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{If you're on the same local network as one of your classmate},
+  do Exercise \ref{exr:remote-chat-server}
+\item
+  \textbf{If none of your classmates is on your local network}, do
+  Exercise \ref{exr:local-chat-server}
+\end{enumerate}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:remote-chat-server}{}{\label{exr:remote-chat-server} }Ask your classmate to connect to your server.
+For this, you'll need to tell your classmate the IP address
+of your machine and the port number \(p_h\).
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+Assuming that the IP address of your machine is 192.168.1.8,
+the command will be the following:
+
+\begin{verbatim}
+docker run --rm -it --name chat-client chat-client 192.168.1.8 8080
+\end{verbatim}
+
+\end{infobox}
+
+\begin{infobox}{exercisebox}
+
+\textbf{Exercise}
+
+\BeginKnitrBlock{exercise}
+\protect\hypertarget{exr:local-chat-server}{}{\label{exr:local-chat-server} }Since none of your classmates is on your local
+network (COVID-19 be damned!), you'll need to simulate
+a distant connection to the server running on your machine.
+
+Simply run an instance of the client
+without attaching it to the network \emph{buckingham}.
+The IP address of the server will be the IP address of your machine;
+the port will be \(p_h\).
+\EndKnitrBlock{exercise}
+
+\end{infobox}
+
+Solution
+
+\begin{infobox}{exercisebox}
+
+Assuming that the IP address of your machine is 192.168.1.8,
+the command will be the following:
+
+\begin{verbatim}
+docker run --rm -it --name chat-client chat-client 192.168.1.8 8080
+\end{verbatim}
+
+\end{infobox}
+
+\end{document}

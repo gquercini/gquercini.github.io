@@ -1053,6 +1053,8 @@ volumes and networks in Docker.
 See the &lt;a href=&#34;/courses/cloud-computing/docker-primer&#34; target=&#34;_blank&#34;&gt;Docker primer&lt;/a&gt;
 for an introduction.&lt;/li&gt;
 &lt;li&gt;Being familiar with the &lt;a href=&#34;/courses/cloud-computing/linux-introduction&#34; target=&#34;_blank&#34;&gt;basic notions of Linux&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Don’t hesitate to look at the &lt;a href=&#34;/courses/cloud-computing/docker-cheat-sheet&#34; target=&#34;_blank&#34;&gt;Docker cheat sheet&lt;/a&gt;
+to verify the syntax of the Docker commands.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Terminology&lt;/strong&gt;&lt;/p&gt;
@@ -1086,7 +1088,7 @@ is &lt;code&gt;docker run&lt;/code&gt; followed by four parameters:&lt;/p&gt;
 &lt;li&gt;&lt;em&gt;arg&lt;/em&gt;. The arguments taken by the command executed in the container.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Only the parameter &lt;em&gt;image-name&lt;/em&gt; is mandatory.
-The fuly qualified name of an image is specified as a sequence of four fields,
+The fully qualified name of an image is specified as a sequence of four fields,
 formatted as follows:&lt;/p&gt;
 &lt;pre class=&#34;shell&#34;&gt;&lt;code&gt;registry_url/user/name:tag&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;where:&lt;/p&gt;
@@ -1094,12 +1096,13 @@ formatted as follows:&lt;/p&gt;
 &lt;li&gt;&lt;em&gt;registry_url&lt;/em&gt; (optional). The URL of the registry that provides the image.
 If its value is not specified, the image
 will be looked up for in the
-&lt;a href=&#34;https://hub.docker.com/_/registry&#34; target=&#34;_blank&#34;&gt;DockerHub registry&lt;/a&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;user&lt;/em&gt;. The identifier of the user or organization that created the image.&lt;/li&gt;
+&lt;a href=&#34;https://hub.docker.com&#34; target=&#34;_blank&#34;&gt;DockerHub registry&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;user&lt;/em&gt; (optional). The identifier of the user or organization that created the image.
+The default value is &lt;em&gt;library&lt;/em&gt;.&lt;/li&gt;
 &lt;li&gt;&lt;em&gt;name&lt;/em&gt; (mandatory). The name of the image.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;tag&lt;/em&gt; (optional). It specifies the version of the image.
+&lt;li&gt;&lt;em&gt;tag&lt;/em&gt; (optional). It specifies the image version.
 If its value is not specified,
-the tag &lt;em&gt;latest&lt;/em&gt; is taken, pointing to the latest version of the image.&lt;/li&gt;
+the tag &lt;em&gt;latest&lt;/em&gt; is used, pointing to the latest image version.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
@@ -1107,7 +1110,7 @@ the tag &lt;em&gt;latest&lt;/em&gt; is taken, pointing to the latest version of 
 &lt;div class=&#34;exercise&#34;&gt;
 &lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.1  &lt;/strong&gt;&lt;/span&gt;
 For each of the following images,
-specify the name of the registry, the user, the name and the tag.&lt;/p&gt;
+specify the registry name, the user, the name and the tag.&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;&lt;p&gt;registry.redhat.io/rhel8/mysql-80&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;alpine:3.11&lt;/p&gt;&lt;/li&gt;
@@ -1166,8 +1169,8 @@ place.
 In order to list all containers still running on the host, type the
 following command:&lt;/p&gt;
 &lt;pre class=&#34;shell&#34;&gt;&lt;code&gt;docker container ls &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Your container shouldn’t appear in the output of the command.
-This is because it’s not running.
+&lt;p&gt;Your container shouldn’t appear in the output,
+because it’s not running.
 In order to see all containers, including those that are not
 running, type the following command:&lt;/p&gt;
 &lt;pre class=&#34;shell&#34;&gt;&lt;code&gt;docker container ls -a&lt;/code&gt;&lt;/pre&gt;
@@ -1192,7 +1195,8 @@ adopt while playing with images and containers.&lt;/p&gt;
 &lt;div id=&#34;good-practices&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.1&lt;/span&gt; Good practices&lt;/h2&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;strong&gt;Name your containers.&lt;/strong&gt; Although Docker assigns a default name to a new container, it’s usually a good practice to give a container a name of your
+&lt;li&gt;&lt;strong&gt;Name your containers.&lt;/strong&gt; Although Docker assigns a default name to a new container,
+it’s usually a good practice to give a container a name of your
 choice to make it easily distinguishable. You can do it by using the option
 &lt;code&gt;--name&lt;/code&gt;. Try the following:&lt;/li&gt;
 &lt;/ol&gt;
@@ -1202,7 +1206,8 @@ If you list all your containers by typing again:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;docker container ls -a&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;you should see a container named &lt;em&gt;my-alpine&lt;/em&gt;.&lt;/p&gt;
 &lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;strong&gt;Remove a container when it stops.&lt;/strong&gt; Unless you want to reuse your container later, you can ask Docker to automatically remove it
+&lt;li&gt;&lt;strong&gt;Remove automatically a container if you use it once.&lt;/strong&gt;
+Unless you want to reuse your container later, you can ask Docker to automatically remove it
 when it stops by using the option &lt;code&gt;--rm&lt;/code&gt;.
 This will prevent unused containers from taking up too much disk space.&lt;/li&gt;
 &lt;/ol&gt;
@@ -1229,16 +1234,16 @@ and prune unused ones are &lt;code&gt;docker image rm&lt;/code&gt;
 and &lt;code&gt;docker image prune -a&lt;/code&gt; respectively.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
-&lt;div id=&#34;execute-a-command-within-a-container&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.2&lt;/span&gt; Execute a command within a container&lt;/h2&gt;
+&lt;div id=&#34;pass-a-command-to-the-containerized-application&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.2&lt;/span&gt; Pass a command to the containerized application&lt;/h2&gt;
 &lt;p&gt;Remember that the template of &lt;code&gt;docker run&lt;/code&gt; is the following:&lt;/p&gt;
 &lt;pre class=&#34;shell&#34;&gt;&lt;code&gt;docker run [options] image-name [command] [arg]&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The optional parameter &lt;em&gt;command&lt;/em&gt; refers to a command
-to be executed within the container, possibly with some arguments
-(parameter &lt;em&gt;arg&lt;/em&gt;).
+that you can pass the containerized application, possibly with some arguments
+(parameter &lt;em&gt;arg&lt;/em&gt;).&lt;/p&gt;
+&lt;p&gt;Let’s see an example.
 As we saw before, when we run a container from the image &lt;em&gt;alpine&lt;/em&gt;,
-a Linux terminal
-&lt;code&gt;/bin/sh&lt;/code&gt; is launched.&lt;/p&gt;
+a Linux terminal &lt;code&gt;/bin/sh&lt;/code&gt; is launched.&lt;/p&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Notice&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;The Linux terminal &lt;code&gt;/bin/sh&lt;/code&gt; is run within the
@@ -1479,12 +1484,13 @@ with the following command:&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;dockerfiles&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.2&lt;/span&gt; Dockerfiles&lt;/h2&gt;
-&lt;p&gt;The most common way to create an image is to use a &lt;strong&gt;Dockerfile&lt;/strong&gt;, a
+&lt;p&gt;The interactive creation of an image is a manual, and therefore inefficient, process.
+The most common way to create an image is to use a &lt;strong&gt;Dockerfile&lt;/strong&gt;, a
 text file that contains all the instructions necessary to
 build the image.
 The advantage of the Dockerfile is that it can be interpreted
 by the Docker engine, which makes the creation of images an automated
-and repeatable task, rather than manual like the interactive method.&lt;/p&gt;
+and repeatable task.&lt;/p&gt;
 &lt;p&gt;Inspired by the previous example, suppose that we want to create a containerized
 application to download figures from a Web page.
 As a template for this application, we need to build a new
@@ -1530,7 +1536,7 @@ be downloaded from
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;span id=&#34;exr:unnamed-chunk-15&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.3  &lt;/strong&gt;&lt;/span&gt;What is the relation between the Dockerfile lines and the image layers?
+&lt;span id=&#34;exr:unnamed-chunk-15&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.3  &lt;/strong&gt;&lt;/span&gt;What’s the relation between the Dockerfile lines and the image layers?
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -1582,7 +1588,7 @@ the command to build the image will be:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;docker history fig-downloader&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;and analyze the layers of the new image.&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Why do some layers have an ID, while other
+&lt;li&gt;Why do some layers have an ID, while others
 are marked as &lt;i&gt;missing&lt;/i&gt;?&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div class=&#34;last-child&#34;&gt;
@@ -1667,14 +1673,14 @@ Is the build cache still used?
 &lt;div class=&#34;exercise&#34;&gt;
 &lt;span id=&#34;exr:unnamed-chunk-23&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.13  &lt;/strong&gt;&lt;/span&gt;Considering how the build cache is used in Docker,
 can you tell what’s wrong with this Dockerfile?
-Modify the Dockerfile accordingly.
+Modify the Dockerfile accordingly and rebuild the image.
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;span id=&#34;exr:unnamed-chunk-24&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.14  &lt;/strong&gt;&lt;/span&gt;Modify &lt;em&gt;main.py&lt;/em&gt; and rebuild the image.
+&lt;span id=&#34;exr:unnamed-chunk-24&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.14  &lt;/strong&gt;&lt;/span&gt;Modify &lt;em&gt;main.py&lt;/em&gt; by adding a new line of code and rebuild the image.
 What changed?
 &lt;/div&gt;
 &lt;/div&gt;
@@ -1682,7 +1688,7 @@ What changed?
 &lt;/div&gt;
 &lt;div id=&#34;data-volumes&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Data Volumes&lt;/h1&gt;
-&lt;p&gt;In Exercise &lt;a href=&#34;#exr:dl-1-container&#34;&gt;2.7&lt;/a&gt; you’be been asked to run a container named
+&lt;p&gt;In Exercise &lt;a href=&#34;#exr:dl-1-container&#34;&gt;2.7&lt;/a&gt; you’ve been asked to run a container named
 &lt;em&gt;dl-1&lt;/em&gt; to download some figures from a Web page.
 The figures were downloaded into the
 directory &lt;em&gt;/my-figures&lt;/em&gt; of the container.
@@ -1736,16 +1742,16 @@ is managed directly by the Docker engine.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Good to know (advanced notion)&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Where the data will be actually stored?&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;You can inspect the new volume by typing the
-following command (or, you can click on the volume in the GUI):&lt;/p&gt;
+following command:&lt;/p&gt;
 &lt;pre class=&#34;shell&#34;&gt;&lt;code&gt;docker volume inspect data-volume&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;A &lt;em&gt;mount path&lt;/em&gt; is indicated; that’s the folder where the data
+&lt;p&gt;A &lt;em&gt;mount point&lt;/em&gt; is indicated; that’s the folder where the data
 will be actually stored.
 If your computer runs Linux, that folder will be available
 on the host; if your computer runs Windows or MacOS,
 you’ll not find that folder on your computer.
-Instead, it will be available in the hidden virtual machine
-that Docker for Windows and Docker for Mac use.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Do you want to see the directory?&lt;/strong&gt;&lt;/p&gt;
+Instead, it will be available in the virtual machine
+that Docker use on MacOS and Windows.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Do you want to see the directory? (Instructions for MacOS)&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;One way to look into the hidden VM is to run
 the following containerized application:&lt;/p&gt;
 &lt;pre class=&#34;shell&#34;&gt;&lt;code&gt;docker run -it --rm --privileged --pid=host justincormack/nsenter1&lt;/code&gt;&lt;/pre&gt;
@@ -1765,7 +1771,7 @@ of the new volume.&lt;/p&gt;
 specifying the options to:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Remove the container once its execution is over.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Interact with the terminal in the container.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Interact with the guest Linux terminal in the container.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div class=&#34;last-child&#34;&gt;
 &lt;ul&gt;
@@ -1791,7 +1797,7 @@ Verify that the file is created.
 specifying the options to:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Remove the container once its execution is over.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Interact with the terminal in the container.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Interact with the guest Linux terminal in the container.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div class=&#34;last-child&#34;&gt;
 &lt;ul&gt;
@@ -1860,10 +1866,13 @@ need-to-communicate basis.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;span id=&#34;exr:unnamed-chunk-33&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.3  &lt;/strong&gt;&lt;/span&gt;What if a container doesn’t need to use the network at all?
-Try to run a container disconnected from any network and
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-33&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.3  &lt;/strong&gt;&lt;/span&gt;What if a container doesn’t need to use the network at all?
+Try to run a container from the image &lt;em&gt;alpine&lt;/em&gt;
+disconnected from all networks and
 verify that you cannot ping the URL
-&lt;a href=&#34;http://www.google.com&#34; target=&#34;_blank&#34;&gt;www.google.com&lt;/a&gt;.
+&lt;a href=&#34;http://www.google.com&#34; target=&#34;_blank&#34;&gt;www.google.com&lt;/a&gt;.&lt;/p&gt;
+Look at the &lt;a href=&#34;/courses/cloud-computing/docker-cheat-sheet&#34; target=&#34;_blank&#34;&gt;Docker cheat sheet&lt;/a&gt;
+to learn how to attach a container to a network.
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;p&gt;In order to create a new network, you can use the following command:&lt;/p&gt;
@@ -1932,6 +1941,7 @@ Justify your answer.
 Do you succeed? Are you surprised?
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;p&gt;You can now exit the three containers.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;a-containerized-chat-room&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.3&lt;/span&gt; A containerized chat room&lt;/h2&gt;
@@ -1942,8 +1952,8 @@ the chat room is managed by a &lt;em&gt;server&lt;/em&gt; application that recei
 client connections and forwards the messages between the users.
 The archive contains the following files:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;em&gt;client.py&lt;/em&gt;. Implementation of the chat room client-side.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;server.py&lt;/em&gt;. Implementation of the chat room server-side.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;client.py&lt;/em&gt;. Implementation of the chat room client.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;server.py&lt;/em&gt;. Implementation of the chat room server.&lt;/li&gt;
 &lt;li&gt;&lt;em&gt;utils.py&lt;/em&gt;. Library with utility functions used
 in both &lt;em&gt;client.py&lt;/em&gt; and &lt;em&gt;server.py&lt;/em&gt;.&lt;/li&gt;
 &lt;/ul&gt;
@@ -1966,12 +1976,13 @@ network (e.g., &lt;em&gt;buckingham&lt;/em&gt;).&lt;/p&gt;
 Set the options to:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Automatically remove the container once its execution is over.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Give a name to the container (e.g., &lt;em&gt;server-chat&lt;/em&gt;).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Give the container a name (e.g., &lt;em&gt;server-chat&lt;/em&gt;).&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;The server will print messages on the screen.
 In order to see them, you must use the option &lt;code&gt;-t&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Also, keep in mind that &lt;em&gt;server.py&lt;/em&gt; takes an argument
-that is the &lt;strong&gt;port number&lt;/strong&gt; where the server will listen to incoming connections.&lt;/p&gt;
+that is the &lt;strong&gt;port number&lt;/strong&gt; where the server will listen to incoming connections.
+Choose a random port number in the interval [49152-65535].&lt;/p&gt;
 &lt;strong&gt;What is the IP address of the server?&lt;/strong&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -1984,8 +1995,8 @@ Run a container from the image &lt;em&gt;client-chat&lt;/em&gt;.
 Set the options to:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Automatically remove the container once its execution is over.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Give a name to the container (e.g., &lt;em&gt;client-chat&lt;/em&gt;).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Since you’ll use the the client to write messages in the chat room,
+&lt;li&gt;&lt;p&gt;Give the container a name (e.g., &lt;em&gt;client-chat&lt;/em&gt;).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Since you’ll use the client to write messages in the chat room,
 remember to set the option &lt;code&gt;-it&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 The client takes two arguments: the host where the server is running
@@ -2017,50 +2028,57 @@ The server listens to port &lt;span class=&#34;math inline&#34;&gt;\(p_c\)&lt;/s
 We need to map port &lt;span class=&#34;math inline&#34;&gt;\(p_c\)&lt;/span&gt; to a port &lt;span class=&#34;math inline&#34;&gt;\(p_h\)&lt;/span&gt; in the host computer.
 This way, the classmate client will connect to the server by specifying
 the &lt;strong&gt;IP address of the host &lt;span class=&#34;math inline&#34;&gt;\(h\)&lt;/span&gt;&lt;/strong&gt; (not &lt;span class=&#34;math inline&#34;&gt;\(c\)&lt;/span&gt;) and &lt;span class=&#34;math inline&#34;&gt;\(p_h\)&lt;/span&gt; as the port number.&lt;/p&gt;
-&lt;p&gt;We implement this solution step by step.&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;Stop both the server and the client running on your machine.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Declare the port number to expose.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;span id=&#34;exr:unnamed-chunk-43&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.13  &lt;/strong&gt;&lt;/span&gt;How would you add this declaration?
-Modify the Dockerfile accordingly?
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-43&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.13  &lt;/strong&gt;&lt;/span&gt;Stop both the server and the client.&lt;/p&gt;
+Run the server by specifying the option to map port
+&lt;span class=&#34;math inline&#34;&gt;\(p_c\)&lt;/span&gt; (e.g., 64903) to port &lt;span class=&#34;math inline&#34;&gt;\(p_h\)&lt;/span&gt; (e.g., 8080).
+As before, attach the server to the network &lt;em&gt;buckingham&lt;/em&gt;.
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;Rebuild the image &lt;em&gt;server-chat&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Run the server container so that that the exposed port
-is mapped to a random port in the host computer.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;span id=&#34;exr:unnamed-chunk-44&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.14  &lt;/strong&gt;&lt;/span&gt;Which option of the command &lt;code&gt;docker container run&lt;/code&gt; would you use?
-Write the command to run the container and execute it.
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;Verify that the exposed port &lt;span class=&#34;math inline&#34;&gt;\(p_c\)&lt;/span&gt; is correctly mapped to a port &lt;span class=&#34;math inline&#34;&gt;\(p_h\)&lt;/span&gt;
-in the host computer by running the following command.&lt;/li&gt;
-&lt;/ol&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Notice&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Assuming that the name of the server container is
+&lt;em&gt;chat-server&lt;/em&gt;, run the following command:&lt;/p&gt;
 &lt;pre class=&#34;shell&#34;&gt;&lt;code&gt;docker container port chat-server&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The output should look like as follows:&lt;/p&gt;
+&lt;pre class=&#34;shell&#34;&gt;&lt;code&gt;64903/tcp -&amp;gt; 0.0.0.0:8080&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;This means that the port 64903 (&lt;span class=&#34;math inline&#34;&gt;\(p_c\)&lt;/span&gt;) in the container is mapped to the port
+8080 (&lt;span class=&#34;math inline&#34;&gt;\(p_h\)&lt;/span&gt;) of the host computer.
+When a remote client wants to connect to the server, it’ll use port 8080.
+The IP address 0.0.0.0 means that a client can connect to the server
+by using any of its IP addresses.&lt;/p&gt;
+&lt;/div&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;If you’re on the same local network as one of your classmate&lt;/strong&gt;,
+do Exercise &lt;a href=&#34;#exr:remote-chat-server&#34;&gt;4.14&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;If none of your classmates is on your local network&lt;/strong&gt;, do
+Exercise &lt;a href=&#34;#exr:local-chat-server&#34;&gt;4.15&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;span id=&#34;exr:unnamed-chunk-45&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.15  &lt;/strong&gt;&lt;/span&gt;How do you read the output of this command?
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;ol start=&#34;6&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;Run a client from your host computer (same as before).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Ask any of your classmates to connect to your server.
+&lt;span id=&#34;exr:remote-chat-server&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.14  &lt;/strong&gt;&lt;/span&gt;Ask your classmate to connect to your server.
 For this, you’ll need to tell your classmate the IP address
-of your machine and the port number &lt;span class=&#34;math inline&#34;&gt;\(p_h\)&lt;/span&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
+of your machine and the port number &lt;span class=&#34;math inline&#34;&gt;\(p_h\)&lt;/span&gt;.
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:local-chat-server&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.15  &lt;/strong&gt;&lt;/span&gt;Since none of your classmates is on your local
+network (COVID-19 be damned!), you’ll need to simulate
+a distant connection to the server running on your machine.&lt;/p&gt;
+&lt;p&gt;Simply run an instance of the client
+without attaching it to the network &lt;em&gt;buckingham&lt;/em&gt;.
+The IP address of the server will be the IP address of your machine;
+the port will be &lt;span class=&#34;math inline&#34;&gt;\(p_h\)&lt;/span&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 </description>
