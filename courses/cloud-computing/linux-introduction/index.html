@@ -28,12 +28,9 @@
   
     
   
-  <meta name="description" content=" This page is still under construction
- Use of shell /bin/sh
- Explanation of wget
- Notion of working directory, root directory.
- Main linux commands cd/ls redirection, pipes…
-  ">
+  <meta name="description" content="Disclaimer
+This introduction is still under construction. As of today, it only provides the elements necessary to have a basic understanding to use Docker.
+ 1 Introduction Linux is a family of open source operating systems that has its roots in Unix, an operating system developed in the 1970s at the Bell Labs research center by, among others, Ken Thompson and Dennis Ritchie. For this reason, Linux is said to be a Unix-like operating system.">
 
   
   <link rel="alternate" hreflang="en-us" href="/courses/cloud-computing/linux-introduction/">
@@ -239,12 +236,9 @@
   <meta property="og:site_name" content="Gianluca Quercini">
   <meta property="og:url" content="/courses/cloud-computing/linux-introduction/">
   <meta property="og:title" content="Introduction to Linux | Gianluca Quercini">
-  <meta property="og:description" content=" This page is still under construction
- Use of shell /bin/sh
- Explanation of wget
- Notion of working directory, root directory.
- Main linux commands cd/ls redirection, pipes…
-  "><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="Disclaimer
+This introduction is still under construction. As of today, it only provides the elements necessary to have a basic understanding to use Docker.
+ 1 Introduction Linux is a family of open source operating systems that has its roots in Unix, an operating system developed in the 1970s at the Bell Labs research center by, among others, Ken Thompson and Dennis Ritchie. For this reason, Linux is said to be a Unix-like operating system."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
   
     
@@ -663,13 +657,222 @@
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<p><strong>This page is still under construction</strong></p>
+<div class="infobox warning">
+<p><strong>Disclaimer</strong></p>
+<p>This introduction is still under construction.
+As of today, it only provides the elements necessary to
+have a basic understanding to use Docker.</p>
+</div>
+<div id="introduction" class="section level1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<p>Linux is a family of open source <strong>operating systems</strong> that has
+its roots in <strong>Unix</strong>, an operating system developed in the 1970s
+at the Bell Labs research center by, among others, Ken Thompson
+and Dennis Ritchie.
+For this reason, Linux is said to be a <strong>Unix-like</strong> operating system.</p>
+<p>A Unix-like operating system is composed of three parts:</p>
+<ol style="list-style-type: decimal">
+<li><p>The <strong>kernel</strong>. It’s the core of the operating system,
+acting as an intermediary between the applications and the
+hardware devices. Its tasks include
+memory management, process scheduling and input-output management.</p></li>
+<li><p>The <strong>shell</strong>. This is the command-line terminal that acts as an interface
+between the user and the kernel.
+The shell interprets and executes the commands typed by the user.
+Many variants exist of the shell; the default shell provided by
+most Linux distributions is called <strong>Bash</strong>.
+Usually, a shell provides some useful functionalities
+to the user, including <em>filename completion</em> (one can type
+part of the name of a command or a file and press the Tab key to have the
+shell complete it) and the history (list of all commands typed by the user, so
+if the user needs to retype a command, s/he can just
+use the cursor keys to retrieve it in the history).</p></li>
+<li><p>The <strong>applications</strong>. These are the user programs running on top
+of the operating system (e.g., Firefox).</p></li>
+</ol>
+<p>The first Linux kernel has been released as an open source software
+by Linus Torvalds on September 17, 1991.
+Being open source, the source code can be read, modified
+and distributed by anyone under the GNU General Public License.
+This has been key to the success and the rapid adoption of Linux.
+Since then, many different
+Linux <strong>distributions</strong> have been developed and made available for free;
+all distributions are based on the Linux kernel, they mainly differ
+in the applications and tools they provide.
+Some of the most popular are Ubuntu, Debian and Fedora.</p>
+</div>
+<div id="the-directory-structure" class="section level1">
+<h1><span class="header-section-number">2</span> The directory structure</h1>
+<p>In Linux all files are organized in a hierarchical file system
+that can be represented as a tree (Figure <a href="#fig:linux-filesystem">2.1</a>).
+At the top of the hierarchy stands a special directory called
+the <strong>root</strong>, that is usually written as a slash (/).</p>
+<div class="figure" style="text-align: center"><span id="fig:linux-filesystem"></span>
+<img src="/courses/cloud-computing/linux-introduction/linux-filesystem.pdf" alt="Linux directory structure" width="100%" />
+<p class="caption">
+Figure 2.1: Linux directory structure
+</p>
+</div>
+<p>The root directory includes many special directories, such
+as <em>boot</em> (contains configuration files necessary to
+boot Linux), <em>lib</em> (contains shared library files necessary to boot the
+system),
+<em>bin</em> (contains user executable files), <em>dev</em> (contains files that represent
+hardware devices) and <em>etc</em> (contains the local system configuration files).</p>
+<p>Each user is assigned a special directory called <strong>home</strong>
+(i.e., <em>laura</em>, <em>michel</em>) that is stored
+under the <em>home</em> directory;
+despite its name, the directory named <em>root</em> is not the root directory, but
+the home directory of the user <strong>root</strong>, that is the administrator of the system.
+Each directory (except the root directory /)
+has one <strong>parent</strong> directory and zero or many <strong>children</strong> directories.
+For instance, the parent directory of <em>home</em> is the root directory / and
+its children directories are <em>laura</em> and <em>michel</em>.</p>
+<p>When a user (e.g., Laura) logs in the system and opens a shell,
+her <strong>working directory</strong> (i.e., the directory where she finds herself in)
+is her home directory.
+From there, Laura can type any Linux command and reference any
+file or directory in the file system (if she has the necessary rights).
+In Linux, Laura has two ways to specify the name of a directory or a file:
+absolute paths or relative paths.</p>
+<p>The <strong>absolute path</strong> to a file or directory is
+the full path of that file or directory in the
+tree hierarchy starting from the root.
+If Laura types the command <code>pwd</code> (i.e., <strong>p</strong>rint <strong>w</strong>orking <strong>d</strong>irectory), as
+in Figure <a href="#fig:user-pwd">2.2</a>, she’ll get the absolute path <em>/home/laura</em> of her home
+directory.</p>
+<div class="figure" style="text-align: center"><span id="fig:user-pwd"></span>
+<img src="/courses/cloud-computing/linux-introduction/user-pwd.png" alt="Home and current directory" width="60%" />
+<p class="caption">
+Figure 2.2: Home and current directory
+</p>
+</div>
+<p>Referring to Figure <a href="#fig:linux-filesystem">2.1</a>:</p>
 <ul>
-<li><p>Use of shell /bin/sh</p></li>
-<li><p>Explanation of wget</p></li>
-<li><p>Notion of working directory, root directory.</p></li>
-<li><p>Main linux commands cd/ls redirection, pipes…</p></li>
+<li>the absolute path of the file <em>meeting.txt</em> is <em>/home/laura/work/meeting.txt</em>;</li>
+<li>the absolute path of the file <em>family.jpg</em> is <em>/home/laura/personal/family.jpg</em>;</li>
+<li>the absolute path of the directory <em>michel</em> is <em>/home/michel</em>.</li>
 </ul>
+<p>The <strong>relative path</strong> to a file or a directory is
+given with respect to the working directory.
+In order to specify a relative path, Laura might need to use
+the symbol “.”, that indicates the working directory,
+and “..”, that indicates the parent of the working directory.
+If Laura wants to reference the file <em>family.jpg</em> and her working directory is
+<em>/home/laura</em>, she’ll type <em>../personal/family.jpg</em>.
+If Laura wants to reference the file <em>meeting.txt</em>,
+she’ll type <em>./meeting.txt</em>, or simply <em>meeting.txt</em>, as any path is relative to the
+current directory, if Laura doesn’t specify otherwise.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 2.1  </strong></span>
+If Laura’s current directory is <em>/etc</em>, what would<br />
+the relative path of the file <em>/home/laura/work/meeting.txt</em> be?</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p><em>../home/laura/work/meeting.txt</em></p>
+</div>
+</details>
+</div>
+<div id="useful-linux-commands" class="section level1">
+<h1><span class="header-section-number">3</span> Useful Linux commands</h1>
+<p>Linux provides many useful commands to navigate the file system and
+manipulate files and directories.</p>
+<div id="pwd" class="section level2">
+<h2><span class="header-section-number">3.1</span> pwd</h2>
+<p>pwd stands for <strong>p</strong>rint <strong>w</strong>ork <strong>d</strong>irectory.
+It returns the absolute path of the working directory.</p>
+</div>
+<div id="ls" class="section level2">
+<h2><span class="header-section-number">3.2</span> ls</h2>
+<p>Used to list the content of the working directory.
+The command has several options, in particular:</p>
+<ul>
+<li><code>ls -l</code>. Show a detailed view of the content of the working directory.</li>
+<li><code>ls -a</code>. Includes the hidden files in the working directory.
+In Linux, all files whose name begins with “.” are hidden.</li>
+</ul>
+</div>
+<div id="cd" class="section level2">
+<h2><span class="header-section-number">3.3</span> cd</h2>
+<p>cd stands for <strong>c</strong>hange <strong>d</strong>irectory;
+the command is used to change
+working directory.</p>
+<p>If Laura’s working directory is <em>/home/laura</em>
+and she wants to move to the directory <em>work</em> she’ll type the
+following command:</p>
+<pre class="shell"><code>cd work</code></pre>
+<p>If she wants to return to her home directory, she’ll type:</p>
+<pre class="shell"><code>cd ..</code></pre>
+</div>
+<div id="mkdir" class="section level2">
+<h2><span class="header-section-number">3.4</span> mkdir</h2>
+<p>mkdir stands for “make directory”.
+This command is used to create a new directory.</p>
+<p>Suppose that Laura’s working directory is <em>/home/laura</em>;
+in order to create a new directory <em>/home/laura/videos</em>, she’ll type:</p>
+<pre><code>mkdir videos</code></pre>
+<p>If she wants to create a new directory <em>/home/laura/videos/birthday</em>, she’ll type:</p>
+<pre><code>mkdir videos/birthday</code></pre>
+</div>
+<div id="rm" class="section level2">
+<h2><span class="header-section-number">3.5</span> rm</h2>
+<p>This command is used to remove a file or a directory.
+Suppose Laura’s working directory is <em>/home/laura</em>.
+In order to remove the file <em>meeting.txt</em>, she’ll type:</p>
+<pre><code>rm meeting.txt</code></pre>
+<p>If she wants to remove a directory (for example <em>videos</em>),
+she’ll type:</p>
+<pre><code>rm -r videos</code></pre>
+<p>This will delete the directory <em>videos</em> and all its content.</p>
+</div>
+<div id="cat" class="section level2">
+<h2><span class="header-section-number">3.6</span> cat</h2>
+<p>This command is useful for different tasks.
+One possible use is to show the content of a file.
+If Laura types:</p>
+<pre><code>cat meeting.txt</code></pre>
+<p>she’ll get the content of the file <em>meeting.txt</em>.</p>
+</div>
+<div id="echo" class="section level2">
+<h2><span class="header-section-number">3.7</span> echo</h2>
+<p>This command writes to the screen whatever Laura gives it as a parameter.
+If Laura types:</p>
+<pre><code>echo hello world</code></pre>
+<p>the command will print the string “hello world”.
+Although this might not sound very useful,
+the command <code>echo</code> comes in handy when combined with
+others.
+For instance, if Laura types:</p>
+<pre><code>echo hello world &gt; hello.txt</code></pre>
+<p>a new file named <em>hello.txt</em> is created in
+the working directory containing the string
+“hello world”.
+This is a very useful way to create a new file with some content.</p>
+</div>
+<div id="cp" class="section level2">
+<h2><span class="header-section-number">3.8</span> cp</h2>
+<p>This command is used to create a copy of a file or directory.
+Suppose that Laura’s working directory is <em>/home/laura</em>.
+If she types:</p>
+<pre><code>cp meeting.txt ./personal</code></pre>
+<p>a new copy of <em>meeting.txt</em> is created in the directory
+<em>/home/laura/personal</em>.</p>
+</div>
+<div id="mv" class="section level2">
+<h2><span class="header-section-number">3.9</span> mv</h2>
+<p>This command is used to move a file or directory.
+Suppose that Laura’s current directory is <em>/home/laura</em> that contains
+two children directories named <em>personal</em> and <em>videos</em>.
+If Laura wants to move the directory <em>videos</em> under <em>personal</em>, she’ll type:</p>
+<pre><code>mv videos personal</code></pre>
+</div>
+</div>
 
           </div>
 
