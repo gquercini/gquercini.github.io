@@ -653,7 +653,10 @@
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<p><strong>This page is still under construction</strong></p>
+<div class="infobox warning">
+<p><strong>Disclaimer</strong></p>
+<p>This page is still under construction</p>
+</div>
 <div id="introduction" class="section level1">
 <h1><span class="header-section-number">1</span> Introduction</h1>
 <p><strong>Docker</strong> is defined as
@@ -668,98 +671,237 @@ ships or trucks was a long and tedious
 task, because each package needed to be handled in a different way.
 Containers, on the other hand, have standard dimensions and thus the process of loading/unloading them
 could be standardized as well.</p>
-<p>Similarly, before the advent of Docker, the development and deployment of a new software application in
+<p>Similarly, before the advent of Docker,
+the development and deployment of a new software application in
 an enterprise was extremely complicated.
 Different teams of <em>developers</em> would produce different types of applications
 that the <em>operations engineers</em> would need to install on production servers.
-Commonly, these applications rely on external libraries that need to be installed
-on the production server; sometimes, two applications may depend on different versions of the same library
+The deployment procedure would depend on the type
+of the application; deploying a Python application is not the same
+as deploying a Java application.
+Moreover, applications usually rely on external libraries that need to be installed
+on the production server;
+sometimes, two applications may depend on different versions of the same library
 that might not be completely compatible between each other.</p>
 <p>Docker addresses this issue by providing the ability of packaging software applications
-with all their dependencies into isolated environment called, not suprisingly, <strong>containers</strong>.
+with all their dependencies into isolated environments called, not suprisingly, <strong>containers</strong>.
 The operations engineers don’t need to know the dependencies of each application, they just see
-the container as a black box that can be handled in a standardized way, no matter the application it contains.</p>
+the container as a black box that can be handled in a standardized way,
+regardless of the application it contains.</p>
 <div class="infobox curiosity">
 <p><strong>Did you know?</strong></p>
 <p>The word <em>docker</em> refers to a worker whose task is loading and unloading goods from a mean of
 transportation, such as a truck, train, ship or airplanes.</p>
 </div>
-<p>Docker is based on a <strong>client-server architecture</strong> (Figure <a href="#fig:docker-architecture">1.1</a>).</p>
-<div class="figure" style="text-align: center"><span id="fig:docker-architecture"></span>
-<img src="/courses/cloud-computing/docker-architecture.svg" alt="[Docker architecture](https://docs.docker.com/engine/docker-overview/)" width="100%" />
+<div id="what-are-containers" class="section level2">
+<h2><span class="header-section-number">1.1</span> What are containers?</h2>
+<p>A <strong>container</strong> packages a piece of software with all
+its dependencies.
+In order to run the application in the container, it suffices to run
+the container, with no other action.</p>
+<div class="infobox definitionbox">
+<p><strong>Definition</strong></p>
+
+<div class="definition">
+<p><span id="def:unnamed-chunk-1" class="definition"><strong>Definition 1.1  </strong></span>
+A <strong>container</strong>
+is a standard unit of software
+that packages up code and all its dependencies
+so the application runs quickly and reliably from one
+computing environment to another.</p>
+</div>
+</div>
+<p>Figure <a href="#fig:docker-container">1.1</a> shows some examples of
+Docker containers.</p>
+<div class="figure" style="text-align: center"><span id="fig:docker-container"></span>
+<img src="/courses/cloud-computing/docker-primer/container.png" alt="Example of Docker containers" width="100%" />
 <p class="caption">
-Figure 1.1: <a href="https://docs.docker.com/engine/docker-overview/">Docker architecture</a>
+Figure 1.1: Example of Docker containers
 </p>
 </div>
-<p>The <em>client</em> (in our case, a command-line terminal) talks to the <em>server</em> (the Docker daemon) by sending some commands
-that the server can understand.
-The role of the Docker daemon is to manage all the Docker objects necessary to run containerized applications.
-Two objects are particularly important to this purpose: images and containers.</p>
-<p>An <strong>image</strong> is essentially an archive that contains a filesystem with the necessary files and commands to build and
-run an application.
-An image can be seen as a template with the necessary instructions for creating a Docker container.</p>
-<p>The Docker daemon looks for images in a special repository called a <strong>registry</strong>;
-as of the time writing, some public registries exist, such as <a href="https://hub.docker.com/_/registry">Docker Hub</a>,
-<a href="https://cloud.google.com/container-registry">Google</a>, <a href="https://aws.amazon.com/ecr/">Amazon AWS</a> and
-<a href="https://azure.microsoft.com/en-us/services/container-registry/">Microsoft Azure</a>.
-If not instructed otherwise, the Docker daemon is configured to look in the Docker Hub registry.</p>
-<p>A <strong>container</strong> is a runnable instance of an image.
-In order to run a container:</p>
-<div id="first-example-hello-world" class="section level2">
-<h2><span class="header-section-number">1.1</span> First example: Hello World</h2>
-<p>In the Docker Hub registry you can find an <a href="https://hub.docker.com/_/hello-world">image called <em>hello-world</em></a>
-that contains a simple application written in C that prints a “hello world” message on screen.</p>
-<p>Open the terminal and type the following command:</p>
-<pre><code>docker run --name hello-world hello-world</code></pre>
-<ul>
-<li>The image <em>hello-world</em> includes a binary file that has been compiled on Linux.
-Yet, you can execute it even if your computer runs another operating system, such as Windows and
-MacOS.
-This is possible because Docker runs the containers in a Linux Virtual Machine.</li>
-</ul>
-<details>
-<p><summary>What is an image?</summary></p>
-<p>You can think of an <strong>image</strong> as a set of instructions that need
-to be executed to create and run a container;
-each instruction corresponds to a <strong>layer</strong> in the image.
-A <strong>layer</strong> is a filesystem that contains files and folders.</p>
-<p><img src="/img/cc/docker-tutorial/image-layers.png" /></p>
-<p>The above figure shows the layers of the image <em>hello-world</em> that we used
-before.
-For the moment, don’t worry about the syntax of the instructions that you see in the figure.
-We’ll study them in a minute.</p>
-<p>The <strong>base layer</strong> corresponds to the following instruction:</p>
-<p><code>COPY hello /</code></p>
-<p>which copies a file named <em>hello</em> from the machine where the image
-has been created to the root folder (represented by /) in the image.</p>
-<p>The <strong>layer 2</strong> corresponds to the following instruction:</p>
-<p><code>CMD [&quot;/hello&quot;]</code></p>
-<p>that will be executed when a container is run from this image.
-This instruction will execute the binary file <em>hello</em>.
-This layer doesn’t contain any file and folder, but just
-a command.</p>
-<p>All layers in an image are <strong>immutable</strong>, which means that
-they cannot be modified.
-By virtue of their immutability, layers can be stored as separate
-entities (not belonging to any specific images) and can therefore be
-shared among different images.</p>
-<div id="so-what-happens-when-i-run-a-container" class="section level4">
-<h4><span class="header-section-number">1.1.0.1</span> So, what happens when I run a container?</h4>
-<p>When we invoke the run command on an image, the Docker engine
-creates a new container from that image and adds a new layer
-(also known as the <em>container layer</em>) that is writable;
-this means that all the files created within the container
-will be written to this new container layer.
-When we executed the command <code>wget</code> within the Ubuntu container,
-we downloaded some pictures from a Web page, and those pictures
-have been saved in the writable layer of the container.</p>
-<p>The image below shows that many containers can be run from<br />
-the same image;
-the different containers can share the immutable layers
-of the image (which saves a lot of disk space), and each container
-will have its own writable container layer.</p>
-</details>
+<p>The container <span class="math inline">\(A\)</span> includes the source code of a Python application, the
+Python interpreter and all the Python libraries necessary to
+run the application.
+This container can be run on any machine where Docker is installed;
+no need to install the Python interpreter and the
+libraries, since they are already included in the container.</p>
+<div class="infobox warning">
+<p><strong>Good to know</strong></p>
+<p>As we’ll explain later, a container is
+created from a template called <strong>image</strong>.
+All containers created from an image
+built on a specific hardware
+architecture (e.g., on a x86 machine with a processor
+that is compatible with Intel 8086 and its successors) can only
+be run on machines with the same architecture.
+In other words, we cannot
+run a container on a Raspberry PI if that container has
+been created from an image built on a x86 architecture.</p>
 </div>
+<p>The container <span class="math inline">\(B\)</span> in Figure <a href="#fig:docker-container">1.1</a>
+includes a PHP application
+that interacts with a MySQL database; the container includes
+the PHP environment necessary to run the application and
+the DBMS MySQL.
+Finally, the container <span class="math inline">\(C\)</span> includes a binary file compiled from a
+program written in C and a minimal Linux distribution, called
+Linux Alpine, necessary to run the binary file.</p>
+</div>
+<div id="hows-a-container-different-from-a-virtual-machine" class="section level2">
+<h2><span class="header-section-number">1.2</span> How’s a container different from a virtual machine?</h2>
+<p>A virtual machine is another effective way to package
+an application with all its dependencies.
+Similarly to a container, a virtual machine can be ported
+to any machine and easily deployed.</p>
+<div class="figure" style="text-align: center"><span id="fig:vm-containers"></span>
+<img src="/courses/cloud-computing/docker-primer/vm-containers.png" alt="Virtual machines Vs containers" width="100%" />
+<p class="caption">
+Figure 1.2: Virtual machines Vs containers
+</p>
+</div>
+<p>The main difference between a virtual machine and a
+container (Figure <a href="#fig:vm-containers">1.2</a>)
+is that the former always includes an operating system,
+while the latter is run on the operating system of the host machine;
+as a result, a container doesn’t need to include an operating system
+and, therefore, is much lighter than a virtual machine.</p>
+</div>
+<div id="what-is-an-image" class="section level2">
+<h2><span class="header-section-number">1.3</span> What is an image?</h2>
+<p>An <strong>image</strong> is a read-only template that contains
+the files and the instructions necessary to create and run
+containers.</p>
+<div class="figure" style="text-align: center"><span id="fig:image"></span>
+<img src="/courses/cloud-computing/docker-primer/image.png" alt="A Docker image" width="50%" />
+<p class="caption">
+Figure 1.3: A Docker image
+</p>
+</div>
+<p>The image in Figure <a href="#fig:image">1.3</a> contains:</p>
+<ul>
+<li><p>A file <em>main.py</em> with the source code of a Python application.</p></li>
+<li><p>A full-blown Python interpreter.</p></li>
+<li><p>All Python libraries necessary to run the Python application.</p></li>
+<li><p>The command to execute (<code>python main.py</code>) when a container is
+run from this image.</p></li>
+</ul>
+</div>
+<div id="how-does-docker-work" class="section level2">
+<h2><span class="header-section-number">1.4</span> How does Docker work?</h2>
+<p>Docker is based on a <strong>client-server architecture</strong> (Figure <a href="#fig:docker-architecture">1.4</a>).
+The <em>client</em> is any application capable of interacting
+with Docker.
+Docker provides a command-line interface (CLI)
+allowing the user to enter commands to run
+containers (<code>docker run</code>), build images (<code>docker build</code>)
+or download images from a register (<code>docker pull</code>).</p>
+<div class="figure" style="text-align: center"><span id="fig:docker-architecture"></span>
+<img src="/courses/cloud-computing/docker-primer/docker-architecture.svg" alt="[Docker architecture](https://docs.docker.com/engine/docker-overview/)" width="100%" />
+<p class="caption">
+Figure 1.4: <a href="https://docs.docker.com/engine/docker-overview/">Docker architecture</a>
+</p>
+</div>
+<p>The client talks to the <strong>Docker daemon</strong>,
+a background process that manages Docker objects
+such as containers and images.
+More specifically, the Docker daemon can download images
+from a special repository called a <strong>registry</strong> and creates and runs
+containers from those images.
+There exist public and private Docker registries.
+As of the time writing, examples of public registries include
+<a href="https://hub.docker.com/_/registry">Docker Hub</a>,
+<a href="https://cloud.google.com/container-registry">Google</a>,
+<a href="https://aws.amazon.com/ecr/">Amazon AWS</a> and
+<a href="https://azure.microsoft.com/en-us/services/container-registry/">Microsoft Azure</a>.
+If not instructed otherwise,
+the Docker daemon is configured to search for images in the Docker Hub registry.</p>
+</div>
+<div id="high-level-docker-architecture" class="section level2">
+<h2><span class="header-section-number">1.5</span> High-level Docker architecture</h2>
+<p>The high-level Docker architecture is shown in Figure <a href="#fig:docker">1.5</a>.
+At the top stands the <strong>Docker engine</strong>, a client-server application
+for building and containerizing applications.
+The Docker engine includes
+the Docker daemon (the server), the Docker CLI (the client) and a REST API
+used by the client and the server to communicate (Fig. <a href="#fig:docker-engine">1.6</a>).
+The Docker engine manages all Docker objects, such as containers, images,
+network and volumes (that we’ll discuss later) by using two tools,
+namely <strong>containerd</strong> and <strong>runc</strong>.</p>
+<div class="figure" style="text-align: center"><span id="fig:docker"></span>
+<img src="/courses/cloud-computing/docker-primer/docker.png" alt="High-level Docker architecture" width="60%" />
+<p class="caption">
+Figure 1.5: High-level Docker architecture
+</p>
+</div>
+<p><strong>containerd</strong> is an <a href="https://github.com/containerd/containerd" target="_blank">industry-standard <strong>container runtime</strong></a>
+that manages the complete container lifecycle, including
+image transfer and storage,
+container execution and supervision, low-level storage and network attachments.</p>
+<p><strong>runc</strong> is a command-line tool invoked by <strong>containerd</strong> to run containers
+with the proper parameters.</p>
+<div class="figure" style="text-align: center"><span id="fig:docker-engine"></span>
+<img src="/courses/cloud-computing/docker-primer/docker-engine.png" alt="Docker engine" width="60%" />
+<p class="caption">
+Figure 1.6: Docker engine
+</p>
+</div>
+<p>The Docker engine is built on top of several features of the Linux kernel.</p>
+<p>The Linux <strong>namespaces</strong> are used to partition the system resources
+(such as files, usernames, hostnames, network interfaces)
+so that a process can only see the resources in one partition and
+cannot interfere with the ones in other partitions.
+In other words, namespaces provide the mechanism to isolate
+containers from one another; when a container runs, it is not
+aware that the others are even existing.</p>
+<p>While namespaces are used to partition software resources in the system, <strong>control groups</strong> (or, <strong>cgroups</strong>)
+are used to limit the access
+to the hardware resources, such as the processor or the memory.</p>
+<p>Finally, <strong>layer capabilities</strong> are a set of features that support
+layered filesystems used to build Docker images.</p>
+<p>Although Linux must be entirely credited for setting up
+the technology necessary to implement containers,
+Docker had the merit of bringing this technology to
+the end user.</p>
+</div>
+<div id="docker-on-macos-and-windows" class="section level2">
+<h2><span class="header-section-number">1.6</span> Docker on macOS and Windows</h2>
+<p>Although Docker rests
+on the shoulders of Linux, it can be
+used on macOS and Windows as well.</p>
+<p>On these two systems, Docker comes with two flavours: <strong>Docker Toolbox</strong> and
+<strong>Docker Desktop</strong>.
+The <a href="https://docs.docker.com/toolbox/" target="_blank">Docker Toolbox</a>
+is a version that is maintained for older
+macOS and Windows systems (Figure <a href="#fig:docker-for-mac">1.7</a>).
+It installs a Linux virtual machine by using VirtualBox as the hypervisor
+on top of which runs the Docker engine.</p>
+<div class="figure" style="text-align: center"><span id="fig:docker-for-mac"></span>
+<img src="/courses/cloud-computing/docker-primer/docker-for-mac.png" alt="Docker for macOS" width="60%" />
+<p class="caption">
+Figure 1.7: Docker for macOS
+</p>
+</div>
+<p>The Docker Desktop for macOS also uses a Linux virtual machine,
+built with <a href="https://github.com/linuxkit/linuxkit" target="_blank">LinuxKit</a>,
+but it uses Hyperkit, an hypervisor built by using a virtualization
+framework provided by the operating system (Figure <a href="#fig:docker-for-mac">1.7</a>).</p>
+<div class="figure" style="text-align: center"><span id="fig:docker-for-windows"></span>
+<img src="/courses/cloud-computing/docker-primer/docker-for-windows.png" alt="Docker for Windows" width="90%" />
+<p class="caption">
+Figure 1.8: Docker for Windows
+</p>
+</div>
+<p>The Docker Toolbox on Windows has the same architecture as in macOS,
+with a Linux virtual machine in VirtualBox (Figure <a href="#fig:docker-for-windows">1.8</a>).</p>
+<p>Windows Server 2016 and higher natively supports Docker; this means that the
+Windows Server kernel has added the necessary functionalities to implement
+the containers (namespaces, cgroupes and layer capabilities).</p>
+<p>Docker Desktop for Windows (for Windows Professional, Enterprise, or Education)
+runs containers in virtual machines called <em>Hyper-V containers</em>,
+using Hyper-V, the native hypervisor provided by Windows.
+An Hyper-V container includes
+a minimal version of a Windows or Linux kernel, depending on whether
+a Windows or Linux Docker container is run.</p>
 </div>
 </div>
 <div id="single-host-networking" class="section level1">
