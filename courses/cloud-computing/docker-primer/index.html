@@ -904,10 +904,88 @@ a minimal version of a Windows or Linux kernel, depending on whether
 a Windows or Linux Docker container is run.</p>
 </div>
 </div>
+<div id="running-containers" class="section level1">
+<h1><span class="header-section-number">2</span> Running containers</h1>
+<p>The command used to run a container
+is <code>docker run</code> followed by four parameters:</p>
+<pre class="shell"><code>docker run [options] image-name [command] [arg]</code></pre>
+<p>The four parameters are:</p>
+<ul>
+<li><em>options</em>. List of options.</li>
+<li><em>image-name</em>. The fully qualified name of the image used to run the container.</li>
+<li><em>command</em>. The command to be executed in the container.</li>
+<li><em>arg</em>. The arguments taken by the command executed in the container.</li>
+</ul>
+<p>Only the parameter <em>image-name</em> is mandatory.</p>
+<div id="fully-qualified-image-names" class="section level2">
+<h2><span class="header-section-number">2.1</span> Fully-qualified image names</h2>
+<p>The fully qualified name of an image is specified
+as a sequence of four fields, formatted as follows:</p>
+<pre class="shell"><code>registry_url/user/name:tag</code></pre>
+<p>where:</p>
+<ul>
+<li><em>registry_url</em> (optional). The URL of the registry that provides the image.
+If its value is not specified, the image
+will be looked up for in the
+<a href="https://hub.docker.com" target="_blank">DockerHub registry</a>.</li>
+<li><em>user</em> (optional). The identifier of the user or organization that created the image.
+The default value is <em>library</em>.</li>
+<li><em>name</em> (mandatory). The name of the image.</li>
+<li><em>tag</em> (optional). It specifies the image version.
+If its value is not specified,
+the tag <em>latest</em> is used, pointing to the latest image version.</li>
+</ul>
+<p>An image can be associated to several tags.
+For instance, the version 18.04 of the<br />
+<a href="https://hub.docker.com/_/ubuntu/" target="_blank">ubuntu image</a>
+on the DockerHub registry is associated with the tags
+<em>18.04</em>, <em>bionic-20200403</em> and <em>bionic</em>.
+The following names can be used to refer to that version:</p>
+<pre><code>registry.hub.docker.com/library/ubuntu:bionic-20200403 
+registry.hub.docker.com/library/ubuntu:18.04 
+ubuntu:bionic</code></pre>
+<p>Evidently, one would always choose the last name, as it is shorter.</p>
+</div>
+<div id="what-happens-when-we-run-a-container" class="section level2">
+<h2><span class="header-section-number">2.2</span> What happens when we run a container?</h2>
+<p>The command <code>docker run</code> is a <em>wrapper</em> for (i.e., uses behind the scenes)
+three Docker commands: <code>docker pull</code>, <code>docker create</code> and <code>docker start</code>.</p>
+<p>Let’s see what happens when we execute the following command:</p>
+<pre><code>docker run hello-world</code></pre>
+<p>The Docker daemon goes through the following steps (Figure <a href="#fig:docker-run-actions">2.1</a>):</p>
+<ol style="list-style-type: decimal">
+<li>Look for an image called <em>hello-world</em> in the host computer.</li>
+<li>If the image is found, go to step 6.</li>
+<li>Otherwise, look for an image called <em>hello-world</em> in the DockerHub registry.</li>
+<li>If the image is not found, raise an error and stop.</li>
+<li>Otherwise, <em>pull</em> (i.e., download) the image from the Dockerhub registry
+(using the command <code>docker pull hello-world</code>).</li>
+<li>Create a container (<code>docker create --name condescending_liskov hello-world</code>) from
+the image.</li>
+<li>Run the container (<code>docker start condescending_liskov</code>).</li>
+</ol>
+<div class="figure" style="text-align: center"><span id="fig:docker-run-actions"></span>
+<img src="/courses/cloud-computing/docker-primer/docker-run-actions.png" alt="Runinng a Docker container" width="90%" />
+<p class="caption">
+Figure 2.1: Runinng a Docker container
+</p>
+</div>
+<p>When we run a container by using the command <code>docker run</code>,
+we can also specify a name for the container with the option <code>--name</code>;
+if we don’t, the Docker daemon will assign a random name obtained by concatenating
+an adjective to the name of a famous scientist (e.g., <em>condescending_liskov</em>).</p>
+<p>When the containerized application, that is the application running in the container, stops,
+the container is stopped as well.
+However, the container is not removed from the host computer.</p>
+</div>
+<div id="how-to-list-containers" class="section level2">
+<h2><span class="header-section-number">2.3</span> How to list containers?</h2>
+</div>
+</div>
 <div id="single-host-networking" class="section level1">
-<h1><span class="header-section-number">2</span> Single-host networking</h1>
+<h1><span class="header-section-number">3</span> Single-host networking</h1>
 <div id="cnm" class="section level2">
-<h2><span class="header-section-number">2.1</span> Container network model</h2>
+<h2><span class="header-section-number">3.1</span> Container network model</h2>
 <p>In order to let containers communicate and, therefore, co-operate,
 Docker defines a simple networking model known as
 the <strong>container network model</strong> (CNM), illustrated
@@ -915,7 +993,7 @@ in the following figure.</p>
 <div class="figure" style="text-align: center"><span id="fig:cnm"></span>
 <img src="/courses/cloud-computing/cnm.png" alt="The container network model" width="100%" />
 <p class="caption">
-Figure 2.1: The container network model
+Figure 3.1: The container network model
 </p>
 </div>
 <p><img src="/img/cc/docker-tutorial/cnm.png" /></p>
