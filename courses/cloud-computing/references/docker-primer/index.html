@@ -1,0 +1,1204 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Gianluca Quercini">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="An introduction to Docker">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/courses/cloud-computing/references/docker-primer/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="rgb(0, 136, 204)">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="/courses/cloud-computing/references/docker-primer/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="Gianluca Quercini">
+  <meta property="og:url" content="/courses/cloud-computing/references/docker-primer/">
+  <meta property="og:title" content="Docker primer | Gianluca Quercini">
+  <meta property="og:description" content="An introduction to Docker"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
+  
+    
+    
+  
+
+  
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Docker primer | Gianluca Quercini</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#experience"><span>Experience</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#publications"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  
+
+  
+
+<div class="container-fluid docs">
+  <div class="row flex-xl-nowrap">
+    <div class="col-12 col-md-3 col-xl-2 docs-sidebar">
+      
+
+
+<script src="/js/toggle-menu.js"></script>
+
+
+
+
+
+
+
+  
+    
+  
+
+
+
+
+<form class="docs-search d-flex align-items-center">
+  <button class="btn docs-toggle d-md-none p-0 mr-3" type="button" data-toggle="collapse" data-target="#docs-nav" aria-controls="docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    <span><i class="fas fa-bars"></i></span>
+  </button>
+
+  
+</form>
+
+<nav class="collapse docs-links" id="docs-nav">
+  
+
+  
+  
+  
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="overview" class="docs-toc-link" href="/courses/cloud-computing/overview/">Overview</a>
+    
+    <div id="overview-ddowncontent" class="overview-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="overview">
+        <a href="/courses/cloud-computing/overview/">Cloud Computing</a>
+      </li>
+      
+      
+      <li class="overview">
+        <a href="/courses/cloud-computing/overview/installing-docker/">Installing Docker</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="lectures" class="docs-toc-link" href="/courses/cloud-computing/lectures/lectures/">Lectures</a>
+    
+    <div id="lectures-ddowncontent" class="lectures-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="lectures">
+        <a href="/courses/cloud-computing/lectures/lectures/">Overview</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="tutorials" class="docs-toc-link" href="/courses/cloud-computing/tutorials/cc-tutorials/">Tutorials</a>
+    
+    <div id="tutorials-ddowncontent" class="tutorials-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="tutorials">
+        <a href="/courses/cloud-computing/tutorials/cc-tutorials/">Overview</a>
+      </li>
+      
+      
+      <li class="tutorials">
+        <a href="/courses/cloud-computing/tutorials/tutorial-docker/">1. Getting started with Docker</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="labs" class="docs-toc-link" href="/courses/cloud-computing/labs/cc-labs/">Lab assignments</a>
+    
+    <div id="labs-ddowncontent" class="labs-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="labs">
+        <a href="/courses/cloud-computing/labs/cc-labs/">Overview</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="exam" class="docs-toc-link" href="/courses/cloud-computing/exam/exam-presentation/">Exam</a>
+    
+    <div id="exam-ddowncontent" class="exam-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="exam">
+        <a href="/courses/cloud-computing/exam/exam-presentation/">Grading</a>
+      </li>
+      
+      
+      <li class="exam">
+        <a href="/courses/cloud-computing/exam/project/">Final project</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="resources" class="docs-toc-link" href="/courses/cloud-computing/references/cc-references/">Resources</a>
+    
+    <div id="resources-ddowncontent" class="resources-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="resources">
+        <a href="/courses/cloud-computing/references/cc-references/">References</a>
+      </li>
+      
+      <script>open_menu_on_load("resources".concat("-ddowncontent"))</script>
+      <li class="active resources">
+        <a href="/courses/cloud-computing/references/docker-primer/">Docker primer</a>
+      </li>
+      
+      
+      <li class="resources">
+        <a href="/courses/cloud-computing/references/docker-cheat-sheet/">Docker Cheat sheet</a>
+      </li>
+      
+      
+      <li class="resources">
+        <a href="/courses/cloud-computing/references/linux-introduction/">Introduction to Linux</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  
+</nav>
+
+    </div>
+
+    
+
+    <main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 docs-content" role="main">
+
+      <article class="article">
+
+        <div class="docs-article-container">
+          <div class="heading">Cloud computing — Docker primer</div>
+          <h1>Docker primer</h1>
+          <hr>
+          <div class="logo">
+            <p><img src="/img/cs-logo.png" width="20%" style="display: block; margin: auto;" /></p>
+            </div>
+
+          <div class="article-style">
+            
+
+
+<p><link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/cloud-computing.css"></p>
+<div class="infobox warning">
+<p><strong>Disclaimer</strong></p>
+<p>This page is still under construction</p>
+</div>
+<div id="introduction" class="section level1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<p><strong>Docker</strong> is defined as
+<a href="https://docs.docker.com/engine/docker-overview/" target="_blank">“an open platform for developing,
+shipping and running applications”</a>.</p>
+<p>In order to understand the importance of Docker in software development, it is useful
+to make an analogy to the transportation industry <span class="citation">(Schenker 2018)</span>.
+Before the advent of <em>containers</em>, goods were packaged in
+boxes of different types and dimensions.
+As a result, loading and unloading the merchandise from
+ships or trucks was a long and tedious
+task, because each package needed to be handled in a different way.
+Containers, on the other hand, have standard dimensions and thus the process of loading/unloading them
+could be standardized as well.</p>
+<p>Similarly, before the advent of Docker,
+the development and deployment of a new software application in
+an enterprise was extremely complicated.
+Different teams of <em>developers</em> would produce different types of applications
+that the <em>operations engineers</em> would need to install on production servers.
+The deployment procedure would depend on the type
+of the application; deploying a Python application is not the same
+as deploying a Java application.
+Moreover, applications usually rely on external libraries that need to be installed
+on the production server;
+sometimes, two applications may depend on different versions of the same library
+that might not be completely compatible between each other.</p>
+<p>Docker addresses this issue by providing the ability of packaging software applications
+with all their dependencies into isolated environments called, not suprisingly, <strong>containers</strong>.
+The operations engineers don’t need to know the dependencies of each application, they just see
+the container as a black box that can be handled in a standardized way,
+regardless of the application it contains.</p>
+<div class="infobox curiosity">
+<p><strong>Did you know?</strong></p>
+<p>The word <em>docker</em> refers to a worker whose task is loading and unloading goods from a mean of
+transportation, such as a truck, train, ship or airplanes.</p>
+</div>
+<div id="what-are-containers" class="section level2">
+<h2><span class="header-section-number">1.1</span> What are containers?</h2>
+<p>A <strong>container</strong> packages a piece of software with all
+its dependencies.
+In order to run the application in the container, it suffices to run
+the container, with no other action.</p>
+<div class="infobox definitionbox">
+<p><strong>Definition</strong></p>
+
+<div class="definition">
+<p><span id="def:unnamed-chunk-1" class="definition"><strong>Definition 1.1  </strong></span>
+A <strong>container</strong>
+is a standard unit of software
+that packages up code and all its dependencies
+so the application runs quickly and reliably from one
+computing environment to another.</p>
+</div>
+</div>
+<p>Figure <a href="#fig:docker-container">1.1</a> shows some examples of
+Docker containers.</p>
+<div class="figure" style="text-align: center"><span id="fig:docker-container"></span>
+<img src="/courses/cloud-computing/docker-primer/container.png" alt="Example of Docker containers" width="100%" />
+<p class="caption">
+Figure 1.1: Example of Docker containers
+</p>
+</div>
+<p>The container <span class="math inline">\(A\)</span> includes the source code of a Python application, the
+Python interpreter and all the Python libraries necessary to
+run the application.
+This container can be run on any machine where Docker is installed;
+no need to install the Python interpreter and the
+libraries, since they are already included in the container.</p>
+<div class="infobox warning">
+<p><strong>Good to know</strong></p>
+<p>As we’ll explain later, a container is
+created from a template called <strong>image</strong>.
+All containers created from an image
+built on a specific hardware
+architecture (e.g., on a x86 machine with a processor
+that is compatible with Intel 8086 and its successors) can only
+be run on machines with the same architecture.
+In other words, we cannot
+run a container on a Raspberry PI if that container has
+been created from an image built on a x86 architecture.</p>
+</div>
+<p>The container <span class="math inline">\(B\)</span> in Figure <a href="#fig:docker-container">1.1</a>
+includes a PHP application
+that interacts with a MySQL database; the container includes
+the PHP environment necessary to run the application and
+the DBMS MySQL.
+Finally, the container <span class="math inline">\(C\)</span> includes a binary file compiled from a
+program written in C and a minimal Linux distribution, called
+Linux Alpine, necessary to run the binary file.</p>
+</div>
+<div id="hows-a-container-different-from-a-virtual-machine" class="section level2">
+<h2><span class="header-section-number">1.2</span> How’s a container different from a virtual machine?</h2>
+<p>A virtual machine is another effective way to package
+an application with all its dependencies.
+Similarly to a container, a virtual machine can be ported
+to any machine and easily deployed.</p>
+<div class="figure" style="text-align: center"><span id="fig:vm-containers"></span>
+<img src="/courses/cloud-computing/docker-primer/vm-containers.png" alt="Virtual machines Vs containers" width="100%" />
+<p class="caption">
+Figure 1.2: Virtual machines Vs containers
+</p>
+</div>
+<p>The main difference between a virtual machine and a
+container (Figure <a href="#fig:vm-containers">1.2</a>)
+is that the former always includes an operating system,
+while the latter is run on the operating system of the host machine;
+as a result, a container doesn’t need to include an operating system
+and, therefore, is much lighter than a virtual machine.</p>
+</div>
+<div id="what-is-an-image" class="section level2">
+<h2><span class="header-section-number">1.3</span> What is an image?</h2>
+<p>An <strong>image</strong> is a read-only template that contains
+the files and the instructions necessary to create and run
+containers.</p>
+<div class="figure" style="text-align: center"><span id="fig:image"></span>
+<img src="/courses/cloud-computing/docker-primer/image.png" alt="A Docker image" width="50%" />
+<p class="caption">
+Figure 1.3: A Docker image
+</p>
+</div>
+<p>The image in Figure <a href="#fig:image">1.3</a> contains:</p>
+<ul>
+<li><p>A file <em>main.py</em> with the source code of a Python application.</p></li>
+<li><p>A full-blown Python interpreter.</p></li>
+<li><p>All Python libraries necessary to run the Python application.</p></li>
+<li><p>The command to execute (<code>python main.py</code>) when a container is
+run from this image.</p></li>
+</ul>
+</div>
+<div id="how-does-docker-work" class="section level2">
+<h2><span class="header-section-number">1.4</span> How does Docker work?</h2>
+<p>Docker is based on a <strong>client-server architecture</strong> (Figure <a href="#fig:docker-architecture">1.4</a>).
+The <em>client</em> is any application capable of interacting
+with Docker.
+Docker provides a command-line interface (CLI)
+allowing the user to enter commands to run
+containers (<code>docker run</code>), build images (<code>docker build</code>)
+or download images from a register (<code>docker pull</code>).</p>
+<div class="figure" style="text-align: center"><span id="fig:docker-architecture"></span>
+<img src="/courses/cloud-computing/docker-primer/docker-architecture.svg" alt="[Docker architecture](https://docs.docker.com/engine/docker-overview/)" width="100%" />
+<p class="caption">
+Figure 1.4: <a href="https://docs.docker.com/engine/docker-overview/">Docker architecture</a>
+</p>
+</div>
+<p>The client talks to the <strong>Docker daemon</strong>,
+a background process that manages Docker objects
+such as containers and images.
+More specifically, the Docker daemon can download images
+from a special repository called a <strong>registry</strong> and creates and runs
+containers from those images.
+There exist public and private Docker registries.
+As of the time writing, examples of public registries include
+<a href="https://hub.docker.com/_/registry">Docker Hub</a>,
+<a href="https://cloud.google.com/container-registry">Google</a>,
+<a href="https://aws.amazon.com/ecr/">Amazon AWS</a> and
+<a href="https://azure.microsoft.com/en-us/services/container-registry/">Microsoft Azure</a>.
+If not instructed otherwise,
+the Docker daemon is configured to search for images in the Docker Hub registry.</p>
+</div>
+<div id="high-level-docker-architecture" class="section level2">
+<h2><span class="header-section-number">1.5</span> High-level Docker architecture</h2>
+<p>The high-level Docker architecture is shown in Figure <a href="#fig:docker">1.5</a>.
+At the top stands the <strong>Docker engine</strong>, a client-server application
+for building and containerizing applications.
+The Docker engine includes
+the Docker daemon (the server), the Docker CLI (the client) and a REST API
+used by the client and the server to communicate (Fig. <a href="#fig:docker-engine">1.6</a>).
+The Docker engine manages all Docker objects, such as containers, images,
+network and volumes (that we’ll discuss later) by using two tools,
+namely <strong>containerd</strong> and <strong>runc</strong>.</p>
+<div class="figure" style="text-align: center"><span id="fig:docker"></span>
+<img src="/courses/cloud-computing/docker-primer/docker.png" alt="High-level Docker architecture" width="60%" />
+<p class="caption">
+Figure 1.5: High-level Docker architecture
+</p>
+</div>
+<p><strong>containerd</strong> is an <a href="https://github.com/containerd/containerd" target="_blank">industry-standard <strong>container runtime</strong></a>
+that manages the complete container lifecycle, including
+image transfer and storage,
+container execution and supervision, low-level storage and network attachments.</p>
+<p><strong>runc</strong> is a command-line tool invoked by <strong>containerd</strong> to run containers
+with the proper parameters.</p>
+<div class="figure" style="text-align: center"><span id="fig:docker-engine"></span>
+<img src="/courses/cloud-computing/docker-primer/docker-engine.png" alt="Docker engine" width="60%" />
+<p class="caption">
+Figure 1.6: Docker engine
+</p>
+</div>
+<p>The Docker engine is built on top of several features of the Linux kernel.</p>
+<p>The Linux <strong>namespaces</strong> are used to partition the system resources
+(such as files, usernames, hostnames, network interfaces)
+so that a process can only see the resources in one partition and
+cannot interfere with the ones in other partitions.
+In other words, namespaces provide the mechanism to isolate
+containers from one another; when a container runs, it is not
+aware that the others are even existing.</p>
+<p>While namespaces are used to partition software resources in the system, <strong>control groups</strong> (or, <strong>cgroups</strong>)
+are used to limit the access
+to the hardware resources, such as the processor or the memory.</p>
+<p>Finally, <strong>layer capabilities</strong> are a set of features that support
+layered filesystems used to build Docker images.</p>
+<p>Although Linux must be entirely credited for setting up
+the technology necessary to implement containers,
+Docker had the merit of bringing this technology to
+the end user.</p>
+</div>
+<div id="docker-on-macos-and-windows" class="section level2">
+<h2><span class="header-section-number">1.6</span> Docker on macOS and Windows</h2>
+<p>Although Docker rests
+on the shoulders of Linux, it can be
+used on macOS and Windows as well.</p>
+<p>On these two systems, Docker comes with two flavours: <strong>Docker Toolbox</strong> and
+<strong>Docker Desktop</strong>.
+The <a href="https://docs.docker.com/toolbox/" target="_blank">Docker Toolbox</a>
+is a version that is maintained for older
+macOS and Windows systems (Figure <a href="#fig:docker-for-mac">1.7</a>).
+It installs a Linux virtual machine by using VirtualBox as the hypervisor
+on top of which runs the Docker engine.</p>
+<div class="figure" style="text-align: center"><span id="fig:docker-for-mac"></span>
+<img src="/courses/cloud-computing/docker-primer/docker-for-mac.png" alt="Docker for macOS" width="60%" />
+<p class="caption">
+Figure 1.7: Docker for macOS
+</p>
+</div>
+<p>The Docker Desktop for macOS also uses a Linux virtual machine,
+built with <a href="https://github.com/linuxkit/linuxkit" target="_blank">LinuxKit</a>,
+but it uses Hyperkit, an hypervisor built by using a virtualization
+framework provided by the operating system (Figure <a href="#fig:docker-for-mac">1.7</a>).</p>
+<div class="figure" style="text-align: center"><span id="fig:docker-for-windows"></span>
+<img src="/courses/cloud-computing/docker-primer/docker-for-windows.png" alt="Docker for Windows" width="90%" />
+<p class="caption">
+Figure 1.8: Docker for Windows
+</p>
+</div>
+<p>The Docker Toolbox on Windows has the same architecture as in macOS,
+with a Linux virtual machine in VirtualBox (Figure <a href="#fig:docker-for-windows">1.8</a>).</p>
+<p>Windows Server 2016 and higher natively supports Docker; this means that the
+Windows Server kernel has added the necessary functionalities to implement
+the containers (namespaces, cgroupes and layer capabilities).</p>
+<p>Docker Desktop for Windows (for Windows Professional, Enterprise, or Education)
+runs containers in virtual machines called <em>Hyper-V containers</em>,
+using Hyper-V, the native hypervisor provided by Windows.
+An Hyper-V container includes
+a minimal version of a Windows or Linux kernel, depending on whether
+a Windows or Linux Docker container is run.</p>
+</div>
+</div>
+<div id="running-containers" class="section level1">
+<h1><span class="header-section-number">2</span> Running containers</h1>
+<p>The command used to run a container
+is <code>docker run</code> followed by four parameters:</p>
+<pre class="shell"><code>docker run [options] image-name [command] [arg]</code></pre>
+<p>The four parameters are:</p>
+<ul>
+<li><em>options</em>. List of options.</li>
+<li><em>image-name</em>. The fully qualified name of the image used to run the container.</li>
+<li><em>command</em>. The command to be executed in the container.</li>
+<li><em>arg</em>. The arguments taken by the command executed in the container.</li>
+</ul>
+<p>Only the parameter <em>image-name</em> is mandatory.</p>
+<div id="fully-qualified-image-names" class="section level2">
+<h2><span class="header-section-number">2.1</span> Fully-qualified image names</h2>
+<p>The fully qualified name of an image is specified
+as a sequence of four fields, formatted as follows:</p>
+<pre class="shell"><code>registry_url/user/name:tag</code></pre>
+<p>where:</p>
+<ul>
+<li><em>registry_url</em> (optional). The URL of the registry that provides the image.
+If its value is not specified, the image
+will be looked up for in the
+<a href="https://hub.docker.com" target="_blank">DockerHub registry</a>.</li>
+<li><em>user</em> (optional). The identifier of the user or organization that created the image.
+The default value is <em>library</em>.</li>
+<li><em>name</em> (mandatory). The name of the image.</li>
+<li><em>tag</em> (optional). It specifies the image version.
+If its value is not specified,
+the tag <em>latest</em> is used, pointing to the latest image version.</li>
+</ul>
+<p>An image can be associated to several tags.
+For instance, the version 18.04 of the<br />
+<a href="https://hub.docker.com/_/ubuntu/" target="_blank">ubuntu image</a>
+on the DockerHub registry is associated with the tags
+<em>18.04</em>, <em>bionic-20200403</em> and <em>bionic</em>.
+The following names can be used to refer to that version:</p>
+<pre><code>registry.hub.docker.com/library/ubuntu:bionic-20200403 
+registry.hub.docker.com/library/ubuntu:18.04 
+ubuntu:bionic</code></pre>
+<p>Evidently, one would always choose the last name, as it is shorter.</p>
+</div>
+<div id="what-happens-when-we-run-a-container" class="section level2">
+<h2><span class="header-section-number">2.2</span> What happens when we run a container?</h2>
+<p>The command <code>docker run</code> is a <em>wrapper</em> for (i.e., uses behind the scenes)
+three Docker commands: <code>docker pull</code>, <code>docker create</code> and <code>docker start</code>.</p>
+<p>Let’s see what happens when we execute the following command:</p>
+<pre><code>docker run hello-world</code></pre>
+<p>The Docker daemon goes through the following steps (Figure <a href="#fig:docker-run-actions">2.1</a>):</p>
+<ol style="list-style-type: decimal">
+<li>Look for an image called <em>hello-world</em> in the host computer.</li>
+<li>If the image is found, go to step 6.</li>
+<li>Otherwise, look for an image called <em>hello-world</em> in the DockerHub registry.</li>
+<li>If the image is not found, raise an error and stop.</li>
+<li>Otherwise, <em>pull</em> (i.e., download) the image from the Dockerhub registry
+(using the command <code>docker pull hello-world</code>).</li>
+<li>Create a container (<code>docker create --name condescending_liskov hello-world</code>) from
+the image.</li>
+<li>Run the container (<code>docker start condescending_liskov</code>).</li>
+</ol>
+<div class="figure" style="text-align: center"><span id="fig:docker-run-actions"></span>
+<img src="/courses/cloud-computing/docker-primer/docker-run-actions.png" alt="Runinng a Docker container" width="90%" />
+<p class="caption">
+Figure 2.1: Runinng a Docker container
+</p>
+</div>
+<p>When we run a container by using the command <code>docker run</code>,
+we can also specify a name for the container with the option <code>--name</code>;
+if we don’t, the Docker daemon will assign a random name obtained by concatenating
+an adjective to the name of a famous scientist (e.g., <em>condescending_liskov</em>).</p>
+<p>When the containerized application, that is the application running in the container, stops,
+the container is stopped as well.
+However, the container is not removed from the host computer.</p>
+</div>
+<div id="how-to-list-containers" class="section level2">
+<h2><span class="header-section-number">2.3</span> How to list containers?</h2>
+</div>
+</div>
+<div id="single-host-networking" class="section level1">
+<h1><span class="header-section-number">3</span> Single-host networking</h1>
+<div id="cnm" class="section level2">
+<h2><span class="header-section-number">3.1</span> Container network model</h2>
+<p>In order to let containers communicate and, therefore, co-operate,
+Docker defines a simple networking model known as
+the <strong>container network model</strong> (CNM), illustrated
+in the following figure.</p>
+<div class="figure" style="text-align: center"><span id="fig:cnm"></span>
+<img src="/courses/cloud-computing/docker-primer/cnm.png" alt="The container network model" width="100%" />
+<p class="caption">
+Figure 3.1: The container network model
+</p>
+</div>
+<p><img src="/img/cc/docker-tutorial/cnm.png" /></p>
+<p>The figure shows three containers (from left to right, Athos, Porthos and Aramis);
+the CNM consists of three elements:</p>
+<ul>
+<li><strong>Sandbox.</strong> It contains
+the network configuration of the container, such as IP and MAC addresses, routing tables and
+DNS records.</li>
+<li><strong>Endpoint.</strong> Connection between the sandbox and a network.</li>
+<li><strong>Network.</strong> Object that provides the function to connect two or more endpoints.</li>
+</ul>
+<p>The actual implementation of the network is called a <strong>driver</strong>.
+Docker provides some built-in drivers, such as <em>bridge</em>, <em>host</em>, <em>overlay</em> and <em>null</em>;
+third-party drivers can be used by installing the corresponding plugins.</p>
+</div>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1>References</h1>
+<div id="refs" class="references">
+<div id="ref-Schenker2018">
+<p>Schenker, Gabriel. 2018. <em>Learn Docker - Fundamentals of Docker 18.x</em>. 1st edition. Packt Publishing,</p>
+</div>
+</div>
+</div>
+
+          </div>
+
+          
+
+
+
+          
+        </div>
+
+        
+      </article>
+
+      
+
+    </main>
+  </div>
+</div>
+
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.1/anchor.min.js" integrity="sha256-pB/deHc9CGfFpJRjC43imB29Rse8tak+5eXqntO94ck=" crossorigin="anonymous"></script>
+    <script>
+      anchors.add();
+    </script>
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.6f7ce8be710290b8c431bbc97f405d15.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
