@@ -28,10 +28,10 @@
   
     
   
-  <meta name="description" content="Project">
+  <meta name="description" content="Description of the SQL tutorial.">
 
   
-  <link rel="alternate" hreflang="en-us" href="/courses/databases/exam/project/">
+  <link rel="alternate" hreflang="en-us" href="/courses/databases/tutorials/sql/">
 
   
 
@@ -219,7 +219,7 @@
   <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_2.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_2.png">
 
-  <link rel="canonical" href="/courses/databases/exam/project/">
+  <link rel="canonical" href="/courses/databases/tutorials/sql/">
 
   
   
@@ -233,9 +233,9 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Gianluca Quercini">
-  <meta property="og:url" content="/courses/databases/exam/project/">
-  <meta property="og:title" content="Description | Gianluca Quercini">
-  <meta property="og:description" content="Project"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:url" content="/courses/databases/tutorials/sql/">
+  <meta property="og:title" content="SQL queries | Gianluca Quercini">
+  <meta property="og:description" content="Description of the SQL tutorial."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
   
     
@@ -258,7 +258,7 @@
 
 
 
-  <title>Description | Gianluca Quercini</title>
+  <title>SQL queries | Gianluca Quercini</title>
 
 </head>
 
@@ -597,8 +597,8 @@
         <a href="/courses/databases/tutorials/normalization/">2. Normalization</a>
       </li>
       
-      
-      <li class="tutorials">
+      <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
+      <li class="active tutorials">
         <a href="/courses/databases/tutorials/sql/">3. SQL queries</a>
       </li>
       
@@ -616,8 +616,8 @@
     <div id="project-ddowncontent" class="project-ddowncontent ddowncontent">
     <ul class="nav docs-sidenav">
       
-      <script>open_menu_on_load("project".concat("-ddowncontent"))</script>
-      <li class="active project">
+      
+      <li class="project">
         <a href="/courses/databases/exam/project/">Project</a>
       </li>
       
@@ -659,8 +659,8 @@
       <article class="article">
 
         <div class="docs-article-container">
-          <div class="heading">Introduction to Databases — Final project</div>
-          <h1>Description</h1>
+          <div class="heading">Introduction to databases — Tutorial 3</div>
+          <h1>SQL queries</h1>
           <hr>
           <div class="logo">
             <p><img src="/img/cs-logo.png" width="20%" style="display: block; margin: auto;" /></p>
@@ -672,7 +672,75 @@
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<p>Soon available.</p>
+<p>In this tutorial you’ll learn:</p>
+<ul>
+<li>How to write <strong>SQL queries</strong>.</li>
+</ul>
+<p><strong>Prerequisites:</strong></p>
+<ul>
+<li>Having attended <a href="/courses/cloud-computing/lectures/lectures">Lecture 3</a>.</li>
+</ul>
+<div id="database-of-a-social-network-platform" class="section level1">
+<h1><span class="header-section-number">1</span> Database of a social network platform</h1>
+<p>We consider the following collection of relational tables:</p>
+<p><TT>UserAccount</TT> (<u>nickname</u>, first_name, last_name, city, country)</p>
+<p><TT>Post</TT> (<u>post_id</u>, content, date, time, lat, long, nickname)</p>
+<p><TT>EmailAddress</TT> (<u>email_address</u>, nickname)</p>
+<p><TT>Relationship</TT> (<u>nickname_src</u>, <u>nickname_dst</u>, type, date)</p>
+<p><TT>Tag</TT> (<u>post_id</u>, <u>nickname</u>)</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1.1  </strong></span>
+Write the following queries in SQL:</p>
+<p>Q1. Count the number of posts by nickname. Sort by number of posts in descending order.</p>
+<p>Q2. Get the identifier and the content of all the posts of the user with nickname <em>nick_BLANCO</em>.</p>
+<p>Q3. Get the number of user accounts by country. Order by number of countries in descending order.</p>
+<p>Q4. Get the identifier of the posts where the user with nickname <em>nick_ANIS</em> is tagged.</p>
+<p>Q5. Get the content of all the posts where the user with nickname <em>nick_ANIS</em> is tagged.</p>
+<p>Q6. Get the email addresses of the user with nickname <em>nick_BLANCO</em>.</p>
+<p>Q7. Get the nicknames of the friends of the user with nickname <em>nick_BLANCO</em>.</p>
+<p>Q8. Get the the first and last names of the friends of the user with nickname <em>nick_BLANCO</em>.</p>
+<p>Q9. For each user, get the number of followers by country. Rank the countries by the number of followers in descending order.</p>
+<p>Q10. Get the first and family name of the users tagged by the user with nickname <em>nick_CAMERON</em>.</p>
+<p>Q11. Get the nickname, first and last name of the common friends of the users with nickname <em>nick_CAMERON</em> and
+<em>nick_ANIS</em>.</p>
+<p>Q12. Rank the users by the number of their followers.
+The user with the most followers must appear at the top of the list.</p>
+</div>
+</div>
+</div>
+<div id="database-of-a-banking-system" class="section level1">
+<h1><span class="header-section-number">2</span> Database of a banking system</h1>
+<p>We consider the following collection of relational tables:</p>
+<p><TT>Bank</TT> (<u>code_bank</u>, name, street_number, street_name, postal_code)</p>
+<p><TT>Branch</TT> (<u>branch_id</u>, street_number, street_name, postal_code, code_bank)</p>
+<p><TT>Account</TT> (<u>acct_nbr</u>, acct_type, balance, branch_id, ssn)</p>
+<p><TT>Loan</TT> (<u>loan_nbr</u>, loan_type, amount, branch_id, ssn)</p>
+<p><TT>Customer</TT> (<u>ssn</u>, first_name, last_name, telephone, street_number,
+street_name, postal_code)</p>
+<p><TT>Address</TT> (<u>postal_code</u>, city, country)</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 2.1  </strong></span>
+Write the following queries in SQL:</p>
+<p>Q1. Get the name, street name, street number and postal code of all the banks in the database.</p>
+<p>Q2. Get the city and country of all banks in the database.</p>
+<p>Q3. Count the number of accounts by customer.</p>
+<p>Q4. Get the amount of money owned by the customer.</p>
+<p>Q5. Return the average amount of money loaned by any bank for a mortgage.</p>
+<p>Q6. Get the amount of money loaned by each bank.</p>
+<p>Q7. Get the social security number, the first and last name of all customers of the bank with name “Bank of America”.</p>
+<p>Q8. Get all the data (including the full address) on the customers that have a checking account with a negative balance.</p>
+<p>Q9. Get the SSN of all customers that have no loan at the “Bank of America”.</p>
+<p>Q10. Get the name of the bank that has the most branches.</p>
+<p>Q11. Get the SSN of all customers having an account in more than one bank.</p>
+</div>
+</div>
+</div>
 
           </div>
 
