@@ -3805,6 +3805,32 @@ special symbols.&lt;/p&gt;
 Derive a minimal set &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{G}\)&lt;/span&gt; of functional dependencies that is equivalent to &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{F}\)&lt;/span&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;First, we rewrite the FDs such that each has a singleton right side.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(A, B \rightarrow C\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(D \rightarrow B\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(D \rightarrow C\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(A \rightarrow B\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The first has two attributes in the determinant, therefore we need to check whether we
+can eliminate one of the two columns.&lt;/p&gt;
+&lt;p&gt;We have &lt;span class=&#34;math inline&#34;&gt;\(A \rightarrow B\)&lt;/span&gt;. By &lt;strong&gt;augmentation&lt;/strong&gt; we obtain:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[A \rightarrow A, B\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;We have &lt;span class=&#34;math inline&#34;&gt;\(A, B \rightarrow C\)&lt;/span&gt;. By &lt;strong&gt;transitivity&lt;/strong&gt; we obtain:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[A \rightarrow C\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Therefore, the column &lt;span class=&#34;math inline&#34;&gt;\(B\)&lt;/span&gt; is not useful and we can drop it.&lt;/p&gt;
+&lt;p&gt;The set &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{G}\)&lt;/span&gt; consists of the following FDs:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(A \rightarrow C\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(D \rightarrow B\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(D \rightarrow C\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(A \rightarrow B\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;candidate-keys-and-normal-forms-1&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Candidate keys and normal forms (1)&lt;/h1&gt;
@@ -3828,6 +3854,27 @@ insurance\_number \rightarrow insurance\_expiration\_date
 &lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;Derive a minimal set &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{G}\)&lt;/span&gt; of functional dependencies that is equivalent to &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{F}\)&lt;/span&gt;.
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;First, we need to rewrite the FDs such that each has a singleton right side.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(ssn \rightarrow first\_name\)&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(ssn \rightarrow last\_name\)&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(ssn \rightarrow phone\_number\)&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(ssn \rightarrow insurance\_number\)&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(ssn \rightarrow insurance\_expiration\_date\)&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(insurance\_number \rightarrow insurance\_expiration\_date\)&lt;/span&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The determinant of each FD is composed of only one column, therefore
+it is already irreducible.
+It is easy to see that all FDs with &lt;TT&gt;ssn&lt;/TT&gt; as a determinant must be
+kept (otherwise we lose some information).&lt;/p&gt;
+&lt;p&gt;By transitivity from 4. and 6. we obtain:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ssn \rightarrow insurance\_expiration\_date\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Therefore, &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{G}\)&lt;/span&gt; is obtained from &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{F}\)&lt;/span&gt; by removing 5.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -3835,6 +3882,15 @@ insurance\_number \rightarrow insurance\_expiration\_date
 &lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.2  &lt;/strong&gt;&lt;/span&gt;Given &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{G}\)&lt;/span&gt;, identify the candidate keys in the table &lt;TT&gt;Patient&lt;/TT&gt;.
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;From the functional dependencies in &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{F}\)&lt;/span&gt;, it’s easy to see that
+that the only column that implies all the others
+is &lt;TT&gt;ssn&lt;/TT&gt;. Therefore, {&lt;TT&gt;ssn&lt;/TT&gt;} is the only candidate key in
+this table.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -3842,6 +3898,18 @@ insurance\_number \rightarrow insurance\_expiration\_date
 &lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.3  &lt;/strong&gt;&lt;/span&gt;Specify the normal form of the table &lt;TT&gt;Patient&lt;/TT&gt;. Justify your answer.
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;It is immediate to verify that the table is 1NF.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The table is 2NF because there is only one candidate key, which is composed of
+only one column.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The table is not in 3NF. Indeed, there is a functional dependency
+between two non-prime columns &lt;span class=&#34;math inline&#34;&gt;\(insurance\_number \rightarrow insurance\_expiration\_date\)&lt;/span&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -3850,6 +3918,20 @@ insurance\_number \rightarrow insurance\_expiration\_date
 table &lt;TT&gt;Patient&lt;/TT&gt;?
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;We need to split the data relative to the patient from the
+data relative to the insurance.
+Therefore, we propose the following two tables:&lt;/p&gt;
+&lt;pre&gt;
+&lt;TT&gt;Patient&lt;/TT&gt; (&lt;u&gt;ssn&lt;/u&gt;, first_name, last_name, phone_number, insurance_number)
+&lt;TT&gt;Insurance&lt;/TT&gt; (&lt;u&gt;insurance_number&lt;/u&gt;, insurance_expiration_date)
+&lt;/pre&gt;
+&lt;p&gt;Note that the column &lt;em&gt;insurance_number&lt;/em&gt; in table &lt;TT&gt;Patient&lt;/TT&gt; is foreign key to
+the column &lt;em&gt;insurance_number&lt;/em&gt; in table &lt;TT&gt;Insurance&lt;/TT&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;candidate-keys-and-normal-forms-2&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Candidate keys and normal forms (2)&lt;/h1&gt;
@@ -3870,6 +3952,25 @@ The following set &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{F}\)&lt;/sp
 Specify the candidate keys of the table &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;First, let’s try sets composed of only one column: &lt;span class=&#34;math inline&#34;&gt;\(\{A\}\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(\{B\}\)&lt;/span&gt;,
+&lt;span class=&#34;math inline&#34;&gt;\(\{C\}\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(\{D\}\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\{E\}\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;We have the following:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\{A\}^+_{\mathcal{F}} = \{A\}\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\{B\}^+_{\mathcal{F}} = \{B\}\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\{C\}^+_{\mathcal{F}} = \{A, B, C, D, E\}\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\{D\}^+_{\mathcal{F}} = \{D, E\}\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\{E\}^+_{\mathcal{F}} = \{E\}\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Therefore, &lt;span class=&#34;math inline&#34;&gt;\(\{C\}\)&lt;/span&gt; is a candidate key because it implies all the other columns.&lt;/p&gt;
+&lt;p&gt;From the functional dependency 1., we obtain that &lt;span class=&#34;math inline&#34;&gt;\(\{A, B\}\)&lt;/span&gt; imply &lt;span class=&#34;math inline&#34;&gt;\(C\)&lt;/span&gt;; therefore,
+by transitivity they imply all the other columns.&lt;/p&gt;
+&lt;p&gt;In conclusion, we have two candidate keys: &lt;span class=&#34;math inline&#34;&gt;\(\{C\}\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\{A, B\}\)&lt;/span&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -3882,6 +3983,17 @@ We assume that &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is in 
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is in 2NF. In fact, all non-prime columns depend
+entirely on both candidate keys.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is not in 3NF. In fact, the functional dependency &lt;span class=&#34;math inline&#34;&gt;\(D \rightarrow E\)&lt;/span&gt; is
+between two non-prime columns.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;candidate-keys-and-normal-forms-3&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Candidate keys and normal forms (3)&lt;/h1&gt;
@@ -3901,6 +4013,25 @@ The following set &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{F}\)&lt;/sp
 Specify the candidate keys of the table &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The following hold:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\{A\}^+_{\mathcal{F}} = \{A, C\}\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\{B\}^+_{\mathcal{F}} = \{B\}\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\{C\}^+_{\mathcal{F}} = \{C\}\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\{D\}^+_{\mathcal{F}} = \{D\}\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\{E\}^+_{\mathcal{F}} = \{E\}\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;It is clear that the only possible candidate key could be {A, B}; let’s verify it
+by computing the closure of {A, B} under &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{F}\)&lt;/span&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(\{A, B\}^+_{\mathcal{F}} = \{A, B, C, D, E\}\)&lt;/span&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Indeed, {A, B} is the candidate key.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -3913,6 +4044,17 @@ We assume that &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is in 
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is not in 2NF. In fact, the non-prime column &lt;span class=&#34;math inline&#34;&gt;\(C\)&lt;/span&gt; is functionally dependent on
+only one part of the candidate key.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is not in 3NF, because it doesn’t fulfill the first condition, that is
+being in 2NF.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;candidate-keys-and-normal-forms-4&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;5&lt;/span&gt; Candidate keys and normal forms (4)&lt;/h1&gt;
@@ -3931,6 +4073,29 @@ We assume that &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is in 
 Specify the candidate keys of the table &lt;TT&gt;Student&lt;/TT&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;If we consider each column independently we have:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\{stud\_id\}^+_{\mathcal{F}} = \{stud\_id, stud\_ssn\}\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\{stud\_ssn\}^+_{\mathcal{F}} = \{stud\_id, stud\_ssn\}\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;No single column implies all the other columns. Therefore,
+the candidate key must be composed of at least 2 columns.&lt;/p&gt;
+&lt;p&gt;It is also easy to verify that:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(\{stud\_id, stud\_ssn\}^+_{\mathcal{F}} = \{stud\_id, stud\_ssn\}\)&lt;/span&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We are left with two possibilities:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\{stud\_id, course\}^+_{\mathcal{F}} = \{stud\_id, stud\_ssn, course\}\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\{stud\_ssn, course\}^+_{\mathcal{F}} = \{stud\_id, stud\_ssn, course\}\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In conclusion, there are two candidate keys: &lt;span class=&#34;math inline&#34;&gt;\(\{stud\_id, course\}\)&lt;/span&gt; and
+&lt;span class=&#34;math inline&#34;&gt;\(\{stud\_ssn, course\}\)&lt;/span&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -3944,6 +4109,17 @@ We assume that &lt;TT&gt;Student&lt;/TT&gt; is in 1NF.&lt;/p&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;TT&gt;Student&lt;/TT&gt; is in 2NF. There are no non-prime columns.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;TT&gt;Student&lt;/TT&gt; is in 3NF. There are no non-prime columns.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;TT&gt;Student&lt;/TT&gt; is not in BCNF. In both functional dependencies the determinant
+is not a superkey.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
