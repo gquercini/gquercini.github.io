@@ -715,6 +715,107 @@ Write the following queries in SQL:</p>
 The user with the most followers must appear at the top of the list.</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+Q1.
+<pre>
+SELECT nickname, count(*) as nbPosts
+FROM Post
+GROUP BY nickname 
+ORDER BY nbPosts DESC;
+</pre>
+Q2.
+<pre>
+SELECT post_id,content
+FROM Post 
+WHERE nickname = 'nick_BLANCO';
+</pre>
+Q3.
+<pre>
+SELECT country, COUNT(*) c
+FROM UserAccount
+GROUP BY country
+ORDER BY c DESC;
+</pre>
+Q4.
+<pre>
+SELECT post_id
+FROM Tag t
+WHERE t.nickname='nick_ANIS';
+</pre>
+Q5.
+<pre>
+SELECT content
+FROM Tag t JOIN Post p ON t.post_id=p.post_id 
+WHERE t.nickname='nick_ANIS';
+</pre>
+Q6.
+<pre>
+SELECT e.email_address
+FROM UserAccount u JOIN EmailAddress e ON u.nickname = e.nickname
+WHERE u.nickname = 'nick_BLANCO';
+</pre>
+Q7.
+<pre>
+SELECT t.nickname_dst  
+FROM UserAccount u JOIN Relationship t ON u.nickname = t.nickname_src
+WHERE u.nickname = 'nick_BLANCO' and t.type = 'friendship';
+</pre>
+Q8.
+<pre>
+SELECT u1.first_name, u1.last_name  
+FROM UserAccount u JOIN Relationship t ON u.nickname = t.nickname_src
+  JOIN UserAccount u1 ON u1.nickname = t.nickname_dst
+WHERE u.nickname = 'nick_BLANCO' and t.type = 'friendship';
+</pre>
+Q9.
+<pre>
+SELECT nickname_dst, country, count(*) as nbFollowers
+FROM UserAccount u JOIN Relationship r ON u.nickname = r.nickname_src
+WHERE type='follower'
+GROUP BY nickname_dst, country
+ORDER BY nickname_dst, country, nbFollowers DESC
+</pre>
+Q10.
+<pre>
+SELECT first_name, last_name
+FROM UserAccount
+WHERE nickname in
+  (
+    SELECT distinct u.nickname
+    FROM Post p JOIN Tag t ON p.post_id=t.post_id 
+        JOIN UserAccount u ON u.nickname=t.nickname
+    WHERE p.nickname='nick_CAMERON'
+  )
+</pre>
+Q11.
+<pre>
+SELECT nickname, first_name, last_name
+FROM UserAccount
+WHERE nickname IN
+  ( SELECT nickname_dst as nickname
+    FROM Relationship
+    WHERE nickname_src='nick_CAMERON' AND type='friendship'
+          AND nickname_dst IN
+            ( SELECT nickname_dst as nickname
+              FROM Relationship
+              WHERE nickname_src='nick_ANIS'
+                    AND type='friendship')
+  )
+</pre>
+Q12.
+<pre>
+SELECT u.nickname, u.first_name, u.last_name, nbFollowers
+FROM UserAccount u JOIN
+      (SELECT nickname_dst as nickname, count(*) as nbFollowers
+      FROM Relationship r
+      WHERE r.type='follower'
+      GROUP BY r.nickname_dst) temp ON u.nickname = temp.nickname
+ORDER BY nbFollowers DESC
+</pre>
+</div>
+</details>
 </div>
 <div id="database-of-a-banking-system" class="section level1">
 <h1><span class="header-section-number">2</span> Database of a banking system</h1>
@@ -745,6 +846,100 @@ Write the following queries in SQL:</p>
 <p>Q11. Get the SSN of all customers having an account in more than one bank.</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+Q1.
+<pre>
+SELECT name_bank, street_number, street_name, postal_code
+FROM Bank
+</pre>
+Q2.
+<pre>
+SELECT name_bank, city, country
+FROM Bank ba JOIN Address a ON ba.postal_code = a.postal_code
+</pre>
+Q3.
+<pre>
+SELECT ssn, count(*)
+FROM Account
+GROUP BY ssn
+</pre>
+Q4.
+<pre>
+SELECT SUM(balance)
+FROM Account a JOIN Customer c ON a.ssn = c.ssn
+WHERE c.first_name = "John" AND c.last_name = "Smith"
+</pre>
+Q5.
+<pre>
+SELECT AVG(amount)
+FROM Loan
+WHERE loan_type = "mortgage"
+</pre>
+Q6.
+<pre>
+SELECT ba.name_bank, sum(amount)
+FROM Loan l JOIN Branch br ON l.branch_id = br.branch_id
+    JOIN Bank ba  ON br.code_bank = ba.code_bank
+GROUP BY ba.code_bank
+</pre>
+Q7.
+<pre>
+SELECT distinct c.ssn, c.first_name, c.last_name
+FROM Account a JOIN Customer c ON a.ssn =  c.ssn
+      JOIN Branch br ON a.branch_id = br.branch_id
+      JOIN Bank ba ON ba.code_bank = br.code_bank
+WHERE ba.name_bank = "Bank of America"
+</pre>
+Q8.
+<pre>
+SELECT c.*, addr.city, addr.country
+FROM Customer c JOIN Account acc ON c.ssn = acc.ssn
+    JOIN Address addr ON c.postal_code = addr.postal_code
+WHERE  acc.balance < 0 and acc.acct_type='checking'
+</pre>
+Q9.
+<pre>
+SELECT ssn
+FROM Customer
+WHERE ssn NOT IN (
+    SELECT c.ssn
+    FROM Customer c JOIN Loan l ON c.ssn = l.ssn
+            JOIN Branch br ON l.branch_id=br.branch_id
+            JOIN Bank ba ON br.code_bank=ba.code_bank 
+    WHERE ba.name_bank='Bank of America'
+  )
+</pre>
+Q10.
+<pre>
+SELECT name_bank
+FROM Bank
+WHERE code_bank IN 
+(
+  SELECT code_bank
+  FROM Branch
+  GROUP BY code_bank
+  HAVING COUNT(*) =
+        (SELECT MAX(nb_Branches)
+         FROM 
+              (SELECT count(*) as nb_Branches
+                FROM Branch
+                GROUP BY code_bank)
+        )
+)
+</pre>
+Q11.
+<pre>
+SELECT ssn
+  FROM
+      (SELECT  distinct a.ssn as ssn, br.code_bank as code_bank
+       FROM Account a JOIN Branch br ON a.branch_id = br.branch_id)
+  GROUP BY ssn
+  HAVING COUNT(*) > 1
+</pre>
+</div>
+</details>
 </div>
 
           </div>
