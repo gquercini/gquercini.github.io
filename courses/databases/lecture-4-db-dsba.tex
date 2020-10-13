@@ -1,0 +1,1286 @@
+
+\documentclass[xcolor=table]{beamer}
+
+\usepackage[percent]{overpic}
+
+
+
+\usepackage{tikz, animate}
+\usetikzlibrary{graphs,shapes,quotes, arrows}
+\usepackage{scalefnt}
+
+\usepackage{changepage}
+
+\usepackage{pifont,mdframed}
+
+\usepackage{soul}
+\makeatletter
+\let\HL\hl
+\renewcommand\hl{%
+  \let\set@color\beamerorig@set@color
+  \let\reset@color\beamerorig@reset@color
+  \HL}
+\makeatother
+\definecolor{darkreddark}{RGB}{0, 109, 163}
+\sethlcolor{darkreddark}
+
+%\usepackage{../handoutWithNotes}
+%\usepackage{pgfpages}
+%\pgfpagesuselayout{3 on 1 with notes}[a4paper, border shrink=5mm]
+
+\usepackage{etoolbox}
+
+\newcommand{\Cross}{$\mathbin{\tikz [x=1.4ex,y=1.4ex,line width=.2ex, red] \draw (0,0) -- (1,1) (0,1) -- (1,0);}$}%
+
+\newcommand{\Checkmark}{$\color[rgb]{0,0.66,0}\checkmark$}
+
+\usepackage[absolute,overlay]{textpos}
+
+\usepackage{textcomp}
+
+
+
+\usepackage{wasysym}
+
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+\usepackage{fancyvrb}
+\usepackage{xcolor}
+
+
+\newenvironment{warning}
+  {\par\begin{mdframed}[linewidth=2pt,linecolor=darkred]%
+    \begin{list}{}{\leftmargin=1cm
+                   \labelwidth=\leftmargin}\item[\Large\ding{43}]}
+  {\end{list}\end{mdframed}\par}
+
+
+
+
+\AtBeginEnvironment{cli}{\bf \small}
+\newtcolorbox{cli}[1][]
+{
+  colframe = black,
+  colback  = black,
+  coltitle = black,  
+  coltext = white
+  #1,
+}
+
+\newtcolorbox{dockerfile}[1][]
+{
+  colframe = darkred!80!black,
+  colback  = darkred!80!black,
+  coltitle = darkred!80!black,  
+  coltext = white
+  #1,
+}
+
+\newcommand{\dcommand}[1]{\textbf{\textcolor{white}{\hl{#1}}}}
+
+\definecolor{background}{HTML}{EEEEEE}
+
+\makeatletter
+\let \@sverbatim \@verbatim
+\def \@verbatim {\@sverbatim \verbatimplus}
+{\catcode`'=13 \gdef \verbatimplus{\catcode`'=13 \chardef '=13 }} 
+\makeatother
+
+\mode<presentation>{
+\usetheme{ai}
+
+\usenavigationsymbolstemplate{}
+%\setbeamertemplate{headline}{}
+%\setbeamercovered{transparent}   
+}
+
+\mode<handout>{
+  \usepackage[bar]{beamerthemetree}
+  \beamertemplatesolidbackgroundcolor{black!5}
+}
+
+%\AtBeginSection[]{
+%  \begin{frame}
+%  \vfill
+%  \centering
+%  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+%    \usebeamerfont{title}\insertsectionhead\par%
+%  \end{beamercolorbox}
+%  \vfill
+%  \end{frame}
+%}
+
+\usepackage{amsmath,amssymb}
+\usepackage{comment}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{url}
+\usepackage{colortbl}
+
+\setbeamerfont{author}{size=\normalsize,parent=structure}
+\setbeamerfont{institute}{size=\small,parent=structure}
+\setbeamerfont{date}{size=\normalsize,parent=structure}
+\setbeamercolor{date}{fg=darkred!80!black}
+
+\beamertemplatetransparentcovereddynamic
+
+\title[Information systems and programming]{{\bf Introduction to Databases}\\Lecture 4 -- Advanced relational database concepts}
+\author[Gianluca Quercini]{%
+  {\bf Gianluca Quercini}\newline \vfill \href{mailto:gianluca.quercini@centralesupelec.fr}{\small gianluca.quercini@centralesupelec.fr} \vfill}
+
+\date{Master DSBA 2020 -- 2021}
+\pgfdeclareimage[height=1.5cm]{inf}{../figs/logo-cs}
+
+\logo{\pgfuseimage{inf}}
+
+
+\begin{document}
+
+{
+\setbeamertemplate{footline}{} 
+\begin{frame}
+  \titlepage
+\end{frame}
+}
+\addtocounter{framenumber}{-1}
+
+\logo{}
+
+\section{Advanced database concepts}
+
+\subsection{Objectives}
+
+\begin{frame}{What you will learn}
+  
+  In this lecture you will learn:
+  \vfill
+\begin{itemize}
+  
+  \item The notion of {\bf views} and {\bf materialized views}.
+  \vfill
+  
+  \item General principles of {\bf database indexes}.
+  \vfill
+  
+  \item {\bf Transactions} and their role in database {\bf consistency} and {\bf failure recovery}.
+  
+  
+\end{itemize}
+
+\end{frame}
+
+\subsection{Views}
+
+\begin{frame}[fragile]{Virtual views}
+  \begin{definition}[Virtual view]
+    A {\bf virtual view} is a relational table that does not exist physically
+    and is only defined by a query.
+  \end{definition}
+  \vfill
+  \begin{exampleblock}{Creating a view}
+\begin{verbatim}
+CREATE VIEW <view_name>
+AS <view_definition>
+\end{verbatim}
+    The view definition is a {\bf SQL query}.
+\end{exampleblock}
+\vfill
+\begin{warning}
+  The DBMS only stores the SQL query that defines a view, not the 
+  result of the query.
+\end{warning}
+\end{frame}
+
+\begin{frame}[fragile]{Running example}
+  In the following slides, we consider 
+  a database with the following tables: 
+  \vfill
+  \begin{block}{Table \texttt{Employee}}
+    \footnotesize
+\begin{verbatim}
+CREATE TABLE Employee(
+  emp_id INTEGER PRIMARY KEY,
+  first_name TEXT,
+  last_name TEXT,
+  position TEXT NOT NULL,
+  salary FLOAT DEFAULT 30000,
+  dept_id INTEGER
+)
+\end{verbatim}
+  \end{block}
+  \vfill
+  \begin{exampleblock}{Table \texttt{Department}}
+    \footnotesize
+\begin{verbatim}
+CREATE TABLE Department(
+  dept_id INTEGER PRIMARY KEY,
+  dept_name TEXT,
+  budget FLOAT
+)
+\end{verbatim}
+  \end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]{Creating a virtual view}
+
+\begin{block}{Create a view from a single table}
+  \footnotesize
+\begin{verbatim}
+CREATE VIEW TopEmployee AS
+  SELECT first_name, last_name, salary, dept_id
+  FROM Employee
+  WHERE position IN ("Executive director", "Assistant director")
+\end{verbatim}
+\end{block}
+\vfill
+\begin{exampleblock}{Create a view from multiple tables}
+  \footnotesize
+\begin{verbatim}
+CREATE VIEW AdministrationEmployee AS
+  SELECT first_name, last_name, salary
+  FROM Employee e JOIN Department d ON e.dept_id = d.dept_id
+  WHERE d.dept_name="Administration" 
+\end{verbatim}
+\end{exampleblock}
+\vfill
+\begin{block}{Create a view from a view}
+  \footnotesize
+\begin{verbatim}
+CREATE VIEW TopSalary AS
+  SELECT MAX(salary)
+  FROM TopEmployee
+\end{verbatim}
+\end{block}  
+
+\end{frame}
+
+\begin{frame}[fragile]{Querying a view}
+  \begin{block}{Querying a view}
+    \footnotesize
+\begin{verbatim}
+SELECT AVG(salary)
+FROM TopEmployee
+WHERE position = "Executive director"
+\end{verbatim}
+  \end{block}
+\vfill
+
+\begin{exampleblock}{Querying a view with other tables}
+  \footnotesize
+\begin{verbatim}
+SELECT first_name, last_name, budget
+FROM TopEmployee t JOIN Department d ON t.dept_id=d.dept_id
+WHERE position = "Executive director"
+\end{verbatim}
+\end{exampleblock}
+
+  \vfill
+  \begin{warning}
+    When we query a view, the view is {\bf computed dynamically}.
+  \end{warning}
+\end{frame}
+
+\begin{frame}[fragile]{Virtual views: motivations}
+  \begin{enumerate}
+    \item Simplify the writing of complex SQL queries.
+    \vfill
+    \begin{block}{Without using views}
+      Get the name of the department of the employee 
+      with the highest salary.
+\footnotesize
+\begin{verbatim}
+SELECT d.dept_name 
+FROM department d JOIN
+    (SELECT emp_id, dept_id, salary
+     FROM Employee
+     ORDER BY salary desc 
+     LIMIT 1) max_salary ON d.dept_id=max_salary.dept_id
+\end{verbatim}
+\end{block}
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]{Virtual views: motivations}
+  \begin{enumerate}
+    \item Simplify the writing of complex SQL queries.
+    \vfill
+    \begin{block}{Using views}
+      Get the name of the department of the employee 
+      with the highest salary.
+\footnotesize
+\begin{verbatim}
+CREATE VIEW max_salary as
+  (SELECT emp_id, dept_id, salary
+   FROM Employee
+   ORDER BY salary desc 
+   LIMIT 1)
+
+SELECT d.dept_name
+FROM max_salary m JOIN Department d 
+       ON m.dept_id=d.dept_id
+\end{verbatim}
+\end{block}
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}[fragile]{Virtual views: motivations}
+  \begin{enumerate}
+    \setcounter{enumi}{1}
+    \item Restrict the access to sensitive data.
+    \begin{itemize}
+        \item Create a view with only a {\bf subset of data}.
+        \item Only grant access to the view, not the full table.
+      
+    \end{itemize}
+  \end{enumerate}
+  \vfill
+  \begin{block}{Restrict the access to sensitive data}
+    Create a view where the salary is not visible.
+  \footnotesize
+\begin{verbatim}
+CREATE VIEW Employee_partial AS
+  SELECT emp_id, first_name, last_name, position, dept_id
+  FROM Employee
+\end{verbatim}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Writing to a view}
+  \begin{itemize}
+    \item A {\bf write operation} ({\em insert}, {\em update}, {\em delete}) on a view
+    is translated into a write operation on 
+    the original table/view, {\bf if possible}.
+  \end{itemize}
+  \vfill
+  \begin{block}{Updatability conditions}
+    A view is {\bf not updatable} (cannot {\em insert}, 
+    {\em update}, {\em delete}) if it contains any of 
+    the following:
+    \begin{itemize}
+      \item Aggregate functions.
+      \item DISTINCT, GROUP BY, HAVING, LIMIT, UNION, UNION ALL.
+      \item Subqueries in the SELECT clause.
+      \item Subqueries in the WHERE clause referring to a table in FROM.
+      \item Reference to a nonupdatable view in the FROM clause.
+      \item Inner join operations (with conditions).
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}{Writing to a view}
+  \begin{itemize}
+    \item A {\bf write operation} ({\em insert}, {\em update}, {\em delete}) on a view
+    is translated into a write operation on 
+    the original table/view, {\bf if possible}.
+  \end{itemize}
+  \vfill
+  \begin{block}{Insertability conditions}
+    A view is {\bf insertable} (can {\em insert}) 
+    if {\bf it is updatable} and:
+    \begin{itemize}
+      \item The view contains all columns in the base table that {\bf do not have a default value}.
+      \item The view columns must be {\bf simple column references} (no expressions).
+    \end{itemize}
+  \end{block}
+\end{frame}
+
+\begin{frame}[fragile]{Writing to a view}
+  \begin{block}{Subquery in WHERE referencing a table in FROM}
+
+Get the employees working in the same department as 
+the employee number 1.
+
+\footnotesize
+\begin{Verbatim}[commandchars=\\\{\}]
+CREATE VIEW EmpOneColleague as
+SELECT emp_id, first_name, last_name, salary
+  FROM Employee
+  WHERE dept_id IN 
+  \textcolor{red}{(select dept_id
+  from Employee
+  where emp_id=1)}
+\end{Verbatim}
+\end{block}
+\begin{textblock*}{5cm}(8.6cm, 5.35cm)
+  $\longleftarrow$ {\bf subquery}
+\end{textblock*}
+\vfill
+\begin{itemize}
+  \item The subquery contains a reference to table \texttt{Employee}.
+  \item The table is referenced in the FROM clause.
+  \item The view is {\bf not updatable} (must check a condition on a table being updated).
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Writing to a view}
+  \begin{block}{Subquery in WHERE not referencing a table in FROM}
+
+Get the employees working in the department 
+{\em Administration}
+
+\footnotesize
+\begin{Verbatim}[commandchars=\\\{\}]
+CREATE VIEW AdminEmployee as
+  SELECT emp_id, first_name, last_name, salary FROM Employee
+  WHERE dept_id IN 
+  \textcolor{red}{(select dept_id
+  from Department
+  where dept_name="Administration")}
+\end{Verbatim}
+\end{block}
+\vfill
+\begin{itemize}
+  \item The subquery doesn't reference any table in the FROM clause.
+  \item The view is {\bf updatable}.
+\end{itemize}
+\vfill
+\begin{exampleblock}{Update example}
+  \footnotesize
+\begin{verbatim}
+UPDATE AdminEmployee SET salary=40000
+\end{verbatim}
+This is translated into the following query:
+\begin{verbatim}
+UPDATE Employee SET salary=40000 WHERE dept_id in 
+(SELECT dept_id FROM Department where dept_name="Administration")
+\end{verbatim}
+\end{exampleblock}
+\end{frame}
+
+
+\begin{frame}[fragile]{Writing to a view}
+
+\begin{block}{Subquery in SELECT}
+  \footnotesize
+\begin{Verbatim}[commandchars=\\\{\}]
+CREATE VIEW nbEmployeesPerDepartment
+  SELECT dept_name, 
+    \textcolor{red}{(SELECT count(*)}
+      \textcolor{red}{FROM Employee e}
+      \textcolor{red}{WHERE e.dept_id=d.dept_id)} as nbEmployees
+  FROM Department d
+\end{Verbatim}
+\end{block}
+\vfill
+\begin{itemize}
+  \item This view is {\bf not updatable}. 
+  \item It contains a subquery in the clause SELECT.
+  \item The DBMS would not know how to update the column {\em nbEmployees}.
+\end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Writing to a view}
+  \begin{block}{Updating a view defined with INNER JOIN}
+    \footnotesize
+\begin{Verbatim}[commandchars=\\\{\}]
+CREATE VIEW AdminEmployee as
+  SELECT emp_id, first_name, last_name, salary, budget
+  FROM Employee e JOIN Department d ON e.dept_id=d.dept_id
+  WHERE dept_name="Administration";
+
+UPDATE AdminEmployee SET budget=30000  
+\end{Verbatim}
+\end{block}
+\vfill
+\begin{itemize}
+  \item The update is allowed if the columns of {\bf only one table} are modified.
+  \item The update is {\bf allowed}.
+  \begin{itemize}
+    \item Only the column {\em budget} is updated.
+  \end{itemize}
+\end{itemize}
+\vfill
+\begin{exampleblock}{Update}
+  The update is translated into the following:
+  \footnotesize
+\begin{verbatim}
+UPDATE Department SET budget = 30000
+WHERE dept_name="Administration"
+\end{verbatim}
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]{Writing to a view}
+
+  \begin{block}{Updating a view defined with INNER JOIN}
+    \footnotesize
+\begin{Verbatim}[commandchars=\\\{\}]
+CREATE VIEW AdminEmployee as
+  SELECT emp_id, first_name, last_name, salary, budget
+  FROM Employee e JOIN Department d ON e.dept_id=d.dept_id
+  WHERE dept_name="Administration";
+
+UPDATE AdminEmployee SET budget=30000, salary=40000  
+\end{Verbatim}
+\end{block}
+\vfill
+\begin{itemize}
+  \item The update is {\bf not allowed}.
+    \item We try to modify one column from table \texttt{Employee}.
+    \item We try to modify one column from table \texttt{Department}.
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}[fragile]{Writing to a view}
+
+\begin{block}{Updatable but not insertable view}
+    \footnotesize
+\begin{verbatim}
+CREATE VIEW TopEmployee AS
+  SELECT first_name, last_name, salary, dept_id
+  FROM Employee
+  WHERE position IN ("Executive director", "Assistant director")
+\end{verbatim}
+\end{block}
+\vfill
+\begin{itemize}
+  \item The view \texttt{TopEmployee} is {\bf updatable}.
+  \item The view \texttt{TopEmployee} is {\bf not insertable}.
+\end{itemize}
+\vfill
+\begin{exampleblock}{}
+  \footnotesize{
+\begin{verbatim}
+INSERT INTO TopEmployee VALUES ("John", "Smith", 30000, 14)
+\end{verbatim}
+  }
+is translated into:
+\footnotesize{
+\begin{verbatim}
+INSERT INTO Employee(first_name, last_name, salary, dept_id) 
+VALUES ("John", "Smith", 30000, 14)
+\end{verbatim}
+}
+No value is specified for {\em emp\_id} nor {\em position}: but they cannot be NULL!
+\end{exampleblock}
+\vfill
+
+\end{frame}
+
+\begin{frame}[fragile]{Writing to a view}
+
+  \begin{block}{Updatable and insertable view}
+      \footnotesize
+\begin{verbatim}
+CREATE VIEW TopEmployee AS
+  SELECT emp_id, position, dept_id
+  FROM Employee
+  WHERE position IN ("Executive director", "Assistant director")
+\end{verbatim}
+  \end{block}
+  \vfill
+  \begin{itemize}
+    \item The view \texttt{TopEmployee} is {\bf updatable} and {\bf insertable}.
+  \end{itemize}
+  \vfill
+  \begin{exampleblock}{}
+    \footnotesize{
+\begin{verbatim}
+INSERT INTO TopEmployee VALUES (10, "secretary", 50)
+\end{verbatim}
+    }
+  is translated into:
+  \footnotesize{
+\begin{verbatim}
+INSERT INTO Employee(emp_id, position, dept_id) 
+VALUES (10, "secretary", 50)
+\end{verbatim}
+  }
+This will add the following row into table \texttt{Employee} (note the {\bf default value} for salary).
+\begin{verbatim}
+  (emp_id=10, first_name=NULL, last_name=NULL, position="secretary", 
+   salary=30000, dept_id=50)
+\end{verbatim}
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]{Materialized views}
+
+  \begin{definition}[Materialized view]
+    A {\bf materialized view} is a view 
+    whose result is {\em persisted} as if it was 
+    a normal database table.
+  \end{definition}
+  \vfill
+  \begin{exampleblock}{Creating a view}
+\begin{verbatim}
+CREATE MATERIALIZED VIEW <view_name> 
+AS <view_definition>
+\end{verbatim}
+\end{exampleblock}
+\vfill
+\begin{itemize}
+ \item Useful when the {\bf result} of a query is {\bf referenced frequently}.
+ \item When the underlying table(s) is (are) {\bf updated}, 
+ the view needs to be updated too. {\bf When?}
+\end{itemize}
+\vfill
+\begin{warning}
+  Some DBMS (e.g., MySQL) don't support materialized views.
+\end{warning}
+\end{frame}
+
+\begin{frame}[fragile]{Materialized views}
+  \begin{block}{Materialized view example}
+    \footnotesize
+\begin{verbatim}
+CREATE MATERIALIZED VIEW EmpDept AS
+  SELECT first_name, last_name, dept_name
+  FROM Employee e JOIN Department d ON e.dept_id=d.dept_id
+\end{verbatim}
+  \end{block}
+  \vfill
+\begin{itemize}
+  \item Any update on columns that are not referenced in the view do not alter the 
+  view.
+  \item In the following example, we update the salary of an employee.
+  \item But {\em salary} is not an example of the view \texttt{EmpDept}.
+  \item Therefore, the view is not modified.
+\end{itemize}
+\vfill
+\begin{exampleblock}{Example}
+\footnotesize
+\begin{verbatim}
+UPDATE Employee SET salary=54000 WHERE emp_id=10
+\end{verbatim}
+
+\end{exampleblock}
+\end{frame}
+
+\begin{frame}[fragile]{Materialized views}
+  \begin{block}{Materialized view example}
+    \footnotesize
+\begin{verbatim}
+CREATE MATERIALIZED VIEW EmpDept AS
+  SELECT first_name, last_name, dept_name
+  FROM Employee e JOIN Department d ON e.dept_id=d.dept_id
+\end{verbatim}
+  \end{block}
+\vfill
+\begin{itemize}
+  \item We consider the following INSERT operation.
+\end{itemize}
+\begin{exampleblock}{}
+  \footnotesize
+  \begin{verbatim}
+INSERT INTO Employee VALUES(120, "William", "Tyler", 
+                            "accountant", 50000, 15)
+\end{verbatim}
+\end{exampleblock}
+\vfill
+\begin{itemize}
+  \item To update the view, the DBMS executes the 
+  following operations.
+\end{itemize}
+\vfill
+\begin{block}{}
+  \footnotesize{
+\begin{verbatim}
+SELECT dept_name FROM Department WHERE dept_id = 15;
+\end{verbatim}
+}
+
+The department name returned by this query (say, "Finances") is used 
+in the following INSERT operation:
+
+\footnotesize{\begin{verbatim}
+INSERT INTO EmpDept VALUES ("William", "Tyler", "Finances");
+\end{verbatim}
+}
+
+
+\end{block}
+\end{frame}
+
+\begin{frame}{Materialized views}
+  \begin{itemize}
+    \item It would be {\bf costly} to update a materialized view 
+    each time the underlying tables are updated.
+    \vfill
+    \item A better solution is to {\bf refresh} the materialized view
+    {\bf periodically}.
+    \begin{itemize}
+      \item {\bf Example.} Each night, when the database activity is low.
+    \end{itemize}
+    \vfill
+    \item Querying the materialized view between two refresh operations might 
+    return {\bf stale} data.
+    \vfill
+    \item This might be acceptable in numerous situations.
+    \begin{itemize}
+      \item {\bf Example.} Analysis on product sales.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\subsection{Indexes}
+
+\pgfdeclareimage[width=0.75\textwidth]{indexing}{./figs/final/indexing}
+\begin{frame}{Searching in tables}
+  \begin{block}{}
+    \Large
+    \centering
+    How to efficiently search for data in a table?
+  \end{block}
+  
+  \begin{flushleft}
+    \pgfuseimage{indexing}
+  \end{flushleft}
+
+  \begin{textblock*}{3.5cm}(9.4cm, 6cm)
+    \footnotesize
+    If the table has $n$ rows, \\the search cost is $O(n)$.
+  \end{textblock*}
+
+\end{frame}
+
+\pgfdeclareimage[width=0.9\textwidth]{joining-tables}{./figs/final/joining-tables}
+\pgfdeclareimage[width=0.9\textwidth]{joining-tables-hash}{./figs/final/joining-tables-hash}
+\begin{frame}{Joining two tables}
+\begin{center}
+  \only<1>{\pgfuseimage{joining-tables}}
+  \only<2->{\pgfuseimage{joining-tables-hash}}
+\end{center}
+\vfill
+\begin{block}{}
+\only<1>{  \centering
+  \Large
+  How does the DBMS join two tables? }
+
+  \only<2>{\begin{enumerate}
+    \item {\bf Sequential scan} on \texttt{Department}
+    \begin{itemize}
+      \item To create a {\bf hash table} for fast access to the table.
+    \end{itemize}
+  \end{enumerate}}
+
+  \only<3>{\begin{enumerate}
+    \setcounter{enumi}{1}
+    \item {\bf Sequential scan} on \texttt{Employee}
+    \begin{itemize}
+      \item To match each {\texttt Employee} against his/her department.
+      \item With the {\bf hash table}, finding an employee's department costs O(1).
+    \end{itemize}
+  \end{enumerate}}
+
+  \only<4>{
+    \begin{itemize}
+      \item Let $T_1$, $T2$ be two tables with $n$ and $m$ rows respectively.
+      \item The cost of $T_1$ JOIN $T_2$ is $O(n+m)$.
+    \end{itemize}
+   }
+
+\end{block}
+\end{frame}
+
+
+\begin{frame}{Indexes}
+  \begin{definition}[Index]
+    An {\bf index} on a column, or multiple columns ({\bf composite index}), of a table is a {\em data 
+    structure} that makes it efficient to find the rows that have some specific 
+    values for those columns. \href{http://infolab.stanford.edu/~ullman/dscb.html}{\beamergotobutton{Source}}
+  \end{definition}
+  \vfill
+  \begin{itemize}
+    \item An index is {\bf stored} into the database, {\bf independently} of the data.
+    \begin{itemize}
+      \item Adding or removing an index does not affect the data, nor the queries.
+    \end{itemize}
+    \vfill
+    \item An index is a sequence of \textbf{records} (a.k.a., \textbf{index entries}). 
+    \begin{itemize}
+      \item Each record is a pair (\texttt{search\_key}, \texttt{pointer}).
+      \item \texttt{search\_key}: values of the indexed columns (e.g., \textit{emp\_id}).
+      \item \texttt{pointer}: reference to a row in the table where the values in the indexed columns 
+      match the search key.
+    \end{itemize}
+  \end{itemize}
+
+\end{frame}
+
+\pgfdeclareimage[width=0.8\textwidth]{linear-index}{figs/final/linear-index}
+\begin{frame}{Simple example: linear indexes}
+\begin{itemize}
+  \item Each row has a {\bf logical identifier} {\em rowid}.
+  \item The search keys are \textbf{sorted} in the index. 
+\end{itemize}
+\begin{center}
+    \pgfuseimage{linear-index}
+\end{center}
+\vfill
+\begin{warning}
+  When rows are added/deleted/updated, the index needs to be {\bf updated} too!
+\end{warning}
+\end{frame}
+
+\begin{frame}{Simple example: linear indexes}
+  \begin{block}{Advantages}
+  \begin{itemize}
+    \item \textbf{Efficient search}: $O(\log n)$ (binary search).
+    \item \textbf{Range queries} are supported.
+  \end{itemize}
+\end{block}
+\vfill
+  \begin{exampleblock}{Disadvantages}
+  \begin{itemize}
+  \item \textbf{Update high cost}: $O(n)$.
+  \end{itemize}
+  \begin{itemize}
+    \item Efficient search only when the index can be loaded \textbf{entirely} 
+    in main memory.
+    \begin{itemize}
+      \item Otherwise, the search performance is degraded by disk accesses.
+    \end{itemize}
+    \item Depending on the size of the index, this might not be possible.
+  \end{itemize}
+\end{exampleblock}
+  \end{frame}
+
+\pgfdeclareimage[width=0.9\textwidth]{composite-linear-index}{figs/final/composite-linear-index}
+\begin{frame}{Simple example: linear indexes}
+  \begin{block}{Composite index}
+    \begin{itemize}
+      \item Index defined on more than one column.
+      \item The \textbf{order} of the columns in a composite index matters.
+    \end{itemize}
+    
+  \end{block}
+\vfill
+  \begin{center}
+\pgfuseimage{composite-linear-index}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Simple example: linear indexes}
+\begin{block}{Composite index}
+\begin{verbatim}
+SELECT * FROM Employee 
+WHERE first_name='Elizabeth' AND last_name='Smith' 
+\end{verbatim}
+The index {\bf is used} for this query (accessing both columns).  
+\end{block}
+  \begin{center}
+  \pgfuseimage{composite-linear-index}
+  \end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Simple example: linear indexes}
+  \begin{block}{Composite index}
+\begin{verbatim}
+SELECT * FROM Employee 
+WHERE last_name='Smith' 
+\end{verbatim}
+The index {\bf is used} for this query (accessing the first column).
+  \end{block}
+    \begin{center}
+    \pgfuseimage{composite-linear-index}
+    \end{center}
+  \end{frame}
+
+\begin{frame}[fragile]{Simple example: linear indexes}
+  \begin{block}{Composite index}
+\begin{verbatim}
+SELECT * FROM Employee 
+WHERE first_name='Elizabeth' 
+\end{verbatim}
+The index {\bf is not used} for this query (accessing the second column).
+  \end{block}
+    \begin{center}
+    \pgfuseimage{composite-linear-index}
+    \end{center}
+  \end{frame}
+
+
+
+\pgfdeclareimage[width=1.\textwidth]{b-tree-index}{figs/final/b-tree-index}
+\begin{frame}{B-tree indexes}
+  \begin{center}
+    \pgfuseimage{b-tree-index}
+  \end{center}
+  \href{https://docs.oracle.com/cd/E11882_01/server.112/e40540/indexiot.htm}{\beamergotobutton{Image source}}
+
+  \begin{textblock*}{5cm}(2cm, 2.3cm)
+    \begin{tcolorbox}
+      \footnotesize
+      {\bf Branch blocks}: index data used for searching.
+    \end{tcolorbox}
+  \end{textblock*}
+
+  \begin{textblock*}{5cm}(4cm, 8.3cm)
+    \begin{tcolorbox}
+      \footnotesize
+      {\bf Leaf blocks}: store values.
+    \end{tcolorbox}
+  \end{textblock*}
+
+\end{frame}
+
+\begin{frame}{B-tree indexes}
+  \begin{itemize} 
+    \item A B-tree index is {\bf balanced}.
+    \begin{itemize}
+      \item All leaves are at the same {\bf height}.
+      \item Retrieving a record from anywhere in the index takes 
+      the {\bf same amount of time}.
+    \end{itemize}
+    \vfill
+    \item A {\bf leaf block} contains records of 
+    pairs ({\em search key}, {\em rowid}).
+    \vfill
+    \item Records are sorted by ({\em search key}, {\em rowid}).
+    \begin{itemize}
+      \item Once we locate the search key in the tree, we can 
+      immediately retrieve the pointers to all rows that match the search key.
+    \end{itemize}
+    \vfill
+    \item The leaf blocks are doubly linked. 
+    \begin{itemize}
+      \item Useful to answer {\bf range queries}.
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{B-tree indexes}
+  \begin{block}{Computational cost}
+  Given a table with $n$ rows:
+  \begin{itemize}
+    \item The cost of {\bf searching} for a row in the index 
+    is $O(\log n)$.
+    
+    \item The cost of {\bf inserting} or  {\bf deleting} a new row 
+    is $O(\log n)$.
+  \end{itemize}
+\end{block}
+  \vfill
+  \begin{exampleblock}{Multi-level index}
+    \begin{itemize}
+      \item Useful when an index does not fit in main memory.
+      \item Some levels of the tree can be stored in memory, 
+      the others can be on disk.
+    \end{itemize}
+  \end{exampleblock}
+\end{frame}
+
+\pgfdeclareimage[width=0.9\textwidth]{clustered-index}{figs/final/clustered-index}
+\begin{frame}{Clustered indexes}
+  \begin{definition}[Clustered index]
+    In a {\bf clustered index}, rows are stored 
+    within the index itself. The table is therefore 
+    sorted around the values of the columns on which the 
+    index is defined.
+  \end{definition}
+  \vfill
+  \begin{center}
+    \pgfuseimage{clustered-index}
+  \end{center}
+  \vfill
+  \begin{itemize}
+    \item Reduce the number of read operations to retrieve a row.
+    \item {\bf Only one} clustered index per table is possible.
+    \begin{itemize}
+      \item Built on columns that are part of the {\bf primary key}.
+    \end{itemize} 
+    \item {\bf Secondary indexes} can be created on other columns, if needed.
+    
+  \end{itemize}
+\end{frame}
+  
+  \begin{frame}{Indexes: discussion}
+  \begin{itemize}
+    \item Indexes are key to speed up queries.
+    \item But indexes come with a {\bf cost}.
+    \begin{itemize}
+      \item \textbf{Storage.} The indexes are stored in the database.
+      \item \textbf{Updates}. When rows are inserted, updated 
+      or deleted, indexes must be updated.
+    \end{itemize}
+  \end{itemize}
+  \vfill
+  \begin{block}{When indexes should not be used}
+    \begin{itemize}
+      \item \textbf{Low-read}, \textbf{high write} columns.
+      \item \textbf{Low cardinality} columns (with few distinct values).
+      \item \textbf{Small tables}.  
+      \end{itemize}
+  \end{block}
+  \vfill
+  \begin{itemize}
+    \item {\bf Composite indexes.} Use on columns that {\bf co-occur} frequently.
+    \item {\bf Clustered indexes.} Ideal when queries return most of the columns.
+  \end{itemize}
+    
+  \end{frame}
+  
+  \begin{frame}[fragile]{Create indexes in SQL}
+  \begin{block}{}
+    \footnotesize
+  \begin{verbatim}
+  CREATE INDEX my_index ON Employee(last_name)
+  
+  CREATE UNIQUE INDEX my_index ON Employee(last_name)
+  
+  CREATE INDEX my_index ON Employee(last_name) USING BTREE
+  \end{verbatim} 
+  \end{block}
+  \vfill
+  \begin{exampleblock}{Remember}
+    \begin{itemize}
+    \item On the columns of the primary key an index is {\bf automatically created}.
+    \item If a column is declared as UNIQUE, an index is {\bf automatically created}.
+  \end{itemize}
+  \end{exampleblock}
+  
+  \end{frame}
+
+\subsection{Transactions}
+
+\begin{frame}{Notion of transaction}
+  \begin{block}{Key assumptions so far}
+    \begin{itemize}
+      \item {\bf Only one user} reads/writes the database.
+      \item Read/write operations are executed {\bf in 
+      their entirety}, or {\bf atomically}. 
+    \end{itemize}
+  \end{block}
+  \vfill
+  \begin{exampleblock}{Read operations}
+  \begin{itemize}
+    \item Read operations do not modify the {\bf state} (i.e., the values) of the database.
+    \item Many users can {\bf safely read concurrently}.
+    \item Read operations can be {\bf safely interrupted}.
+  \end{itemize}
+  \end{exampleblock}
+  \vfill
+  \begin{block}{Write operations}
+    \begin{itemize}
+      \item What happens if many users {\bf write concurrently}?
+      \item What happens if a write operation is {\bf interrupted}?
+    \end{itemize}
+  \end{block}
+  
+  \end{frame}
+  
+  \pgfdeclareimage[width=0.9\textwidth]{bank-transaction}{figs/final/bank-transaction}
+  \begin{frame}{Notion of transaction}
+    \begin{exampleblock}{Atomicity}
+      \footnotesize
+      \begin{itemize}
+        \item John Smith wants to transfer 500 euros from his checking to his 
+        savings account.
+        \item What if the database system fails between the two updates?
+      \end{itemize}
+    \end{exampleblock}
+    \begin{center}
+      \pgfuseimage{bank-transaction}
+    \end{center}
+  \end{frame}
+
+  \pgfdeclareimage[width=0.7\textwidth]{seat-choice}{figs/final/seat-choice}
+  \begin{frame}{Notion of transaction}
+    \begin{exampleblock}{Serializability}
+      \footnotesize
+      \begin{itemize}
+        \item Two customers are selecting a seat on a flight.
+        \item What if they select the same seat at the same time?
+      \end{itemize}
+    \end{exampleblock}
+    \vfill
+    \begin{center}
+      \pgfuseimage{seat-choice}
+    \end{center}
+  \end{frame}
+  
+  \begin{frame}[fragile]
+  \frametitle{Notion of transaction}
+  \begin{definition}[Transaction]
+  A \textbf{transaction} is a sequence of read and/or write operations 
+  on a database that are executed as a \textbf{single atomic operation}.
+  Either all are executed or none. Importantly, 
+  the values are stored only if the transaction is successful. 
+  \end{definition}
+  \vfill
+  \begin{exampleblock}{Transaction in SQL}
+  \footnotesize
+  \begin{verbatim}
+  START TRANSACTION;
+  UPDATE Account SET balance=balance-500 WHERE account_nbr=4;
+  UPDATE Account SET balance=balance+500 WHERE account_nbr=5;
+  COMMIT; 
+  \end{verbatim}
+  \end{exampleblock}
+  \end{frame}
+  
+  \begin{frame}{Transactions: COMMIT and ROLLBACK}
+    \begin{block}{Transaction successful: COMMIT}
+      \begin{itemize}
+        \item All changes to the database caused by the transaction
+        are {\bf committed} (i.e., persisted).
+        \item Before COMMIT, changes are tentative, they may or may not 
+        be stored on disk.
+      \end{itemize}
+    \end{block}
+
+    \vfill
+    \begin{exampleblock}{Transaction unsuccessful: ROLLBACK}
+      \begin{itemize}
+        \item All changes to the database caused by the transaction
+        are {\bf rolled back} (i.e., undone).
+      \end{itemize}
+    \end{exampleblock}
+  \end{frame}
+
+  \begin{frame}{Transactions: serializability}
+    \begin{definition}[Serializable transactions]
+      Two or more transactions are {\bf serializable} if 
+      they behave as if they were run {\em serially}, one at a time.
+    \end{definition}
+    \vfill
+    \begin{itemize}
+      \item By default, transactions are {\bf serializable}.
+      \begin{itemize}
+        \item This means that transactions are completely {\bf isolated}.
+      \end{itemize}
+      \item Transactions that operate on different data are easily serializable.
+      \item Transactions that operate on the same data can be serialized 
+      by using a {\bf locking} mechanism.
+    \end{itemize}
+      
+    \vfill
+    \begin{block}{Locks}
+      \begin{itemize}
+        \item When a transaction operates on a table, 
+        the DBMS may impose a {\bf lock} on (parts of) that table.
+        \item Other transactions are unable to read/write a locked table.
+      \end{itemize}
+    \end{block}
+
+  \end{frame}
+
+  \begin{frame}{Transactions: dirty reads}
+    \begin{itemize}
+      \item {\bf Dirty data} is data written by a transaction 
+      that is not yet committed.
+      \item Serializable transactions {\bf cannot read} dirty data. 
+      \item In some cases, transactions can be allowed to have {\bf dirty reads}.
+      \begin{itemize}
+        \item When dirty reads do not lead to serious problems.
+        \item Avoids the time-consuming work by the DBMS to prevent 
+        dirty reads.
+      \end{itemize}
+    \end{itemize}
+    \vfill
+    \begin{block}{Example}
+      \begin{itemize}
+        \item An available seat is chosen for the customer by the system and set to {\em occupied}.
+        \item If the customer rejects the proposition, the seat is set to {\em available}.
+        \item If another transaction reads the seat status before the customer rejection, 
+        it sees the seat as occupied.
+        \item But there is no risk of giving the same seat to two different customers.
+      \end{itemize}
+    \end{block}
+  \end{frame}
+
+  \begin{frame}{Transactions: recovery}
+    \begin{definition}[Transaction manager]
+      The {\bf transaction manager} is the component of a 
+      database system that makes sure that transactions are executed 
+      correctly.
+    \end{definition}
+    \vfill
+    \begin{exampleblock}{Transaction manager role}
+      \begin{itemize}
+        \item Sends commands to the {\em log manager} to log 
+        information about the transaction execution.
+        \item Assures that concurrently executing transactions 
+        do not interfere with each other.
+      \end{itemize}
+    \end{exampleblock}
+    \begin{warning}
+      Logs are used to {\bf recover} from a {\bf failure}.
+    \end{warning}
+  \end{frame}
+  
+  \begin{frame}{Transactions: recovery}
+    \begin{block}{Undo logging}
+      A {\bf log file} has different types of {\bf records}.
+      \begin{itemize}
+        \item START $T$: marks the beginning of transaction $T$.
+        \item COMMIT $T$: Marks the successful end of transaction $T$.
+        \item ABORT $T$: Marks the unsuccessful end of transaction $T$.
+        \item UPDATE: $(T, X, v)$, meaning that T has changed a database element $X$ and 
+        its former  value is $v$.
+      \end{itemize}
+    \end{block}
+    \vfill
+    \begin{enumerate}
+      \item If $T$ {\bf modifies} $X$, the log record 
+      $(T, X, v)$ is written to disk 
+      {\em before} the new value of $X$ is written to disk.
+      \item If a transaction {\bf commits}, its COMMIT log record 
+      is written {\em after} all database elements changed by $T$
+      are written to disk.
+    \end{enumerate}
+  \end{frame}
+
+  \begin{frame}{Transactions: recovery}
+    \begin{itemize}
+      \item When a {\bf system failure} occurs, the {\bf recovery manager}
+      reads the log file from the end.
+      \begin{itemize}
+        \item From the most recently written record.
+      \end{itemize}
+      \vfill
+      \item If it finds a record $(T, X, v)$:
+      \begin{itemize}
+        \item If $T$ is committed, the record is ignored.
+        \item If $T$ is not committed, the value $v$ is restored to $X$.
+      \end{itemize}
+      \vfill
+      \item For all uncommitted transactions, the recovery manager 
+      writes an ABORT record to the log.
+      \vfill
+      \item The log is stored to the disk and normal operation can resume.
+    \end{itemize}
+    \vfill
+    \begin{warning}
+        Other recovery mechanisms exist (e.g., {\bf redo logging}).
+    \end{warning}
+  \end{frame}
+
+  \begin{frame}
+  \frametitle{Transactions: ACID}
+  Transactions have the following properties (ACID):
+  \begin{itemize}
+  \item \textbf{Atomicity (A).} ``All or nothing''.
+  \item \textbf{Consistency (C).} From a consistent state to a consistent state.
+  \begin{itemize}
+  \item some  operations within the transaction may lead to inconsistencies.
+  \end{itemize}
+  \item \textbf{Isolation (I).}  Serializability of transactions.
+  \item \textbf{Durability (D).} Upon commit, all the updates are permanent.
+  \end{itemize}
+  \begin{itemize}
+    \item A relational database enforces \textbf{strict consistency} with transactions.
+    \item This might hamper performances in a \textbf{distributed database}.
+  \end{itemize}
+  \vfill
+  \begin{warning}
+    Strict consistency is one of the requirements that NoSQL databases 
+    want to ease.
+  \end{warning}
+  \end{frame}
+    
+
+
+
+\begin{frame}{References}
+  \begin{itemize}
+    \item Garcia-Molina, Hector. {\em Database systems: the complete book}. Pearson Education India, 2008.\href{http://infolab.stanford.edu/~ullman/dscb.html}{\beamergotobutton{Click here}}
+  \end{itemize}
+\end{frame}
+
+
+\end{document}
