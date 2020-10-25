@@ -5401,6 +5401,13 @@ the table &lt;TT&gt;Film&lt;/TT&gt;.
 What happens?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The query is not allowed, because there
+are rows in other tables that reference that movie.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -5413,6 +5420,16 @@ joined with &lt;TT&gt;film_actor&lt;/TT&gt;
 for the film “ACE GOLDFINGER”.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;pre&gt;
+SELECT f.film_id, fa.film_id, fa.actor_id, f.title
+FROM film f JOIN film_actor fa ON f.film_id = fa.film_id
+WHERE  f.title=&#34;ACE GOLDFINGER&#34;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -5424,6 +5441,14 @@ Write the query of the previous exercise.
 What happens?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The identifier of the film is changed in all referencing tables.
+This is because the foreign key constraint is defined
+ON UPDATE CASCADE.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;queries&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Queries&lt;/h1&gt;
@@ -5442,6 +5467,64 @@ Write the following queries in SQL:&lt;/p&gt;
 &lt;p&gt;Q7. Return the first and family name of the customers who have rented more than five family movies.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+Q1.
+&lt;pre&gt;
+SELECT first_name,last_name 
+FROM actor
+&lt;/pre&gt;
+Q2.
+&lt;pre&gt;
+SELECT f.title, l.name 
+FROM film AS f JOIN language AS l 
+    ON f.language_id = l.language_id;
+&lt;/pre&gt;
+Q3.
+&lt;pre&gt;
+SELECT first_name, last_name
+FROM store JOIN staff ON manager_staff_id = staff_id
+WHERE store.store_id=2;
+&lt;/pre&gt;
+Q4.
+&lt;pre&gt;
+SELECT first_name,last_name
+FROM actor a  JOIN film_actor fa 
+        ON a.actor_id=fa.actor_id
+        JOIN film f ON fa.Film_ID=f.Film_ID
+WHERE f.title=&#34;ANGELS LIFE&#34;
+&lt;/pre&gt;
+Q5.
+&lt;pre&gt;
+SELECT first_name, last_name, count(*) as nbFilms
+FROM actor a JOIN film_actor fa on a.actor_id=fa.actor_id
+GROUP BY a.actor_id, a.first_name, a.last_name
+ORDER BY nbFilms DESC
+&lt;/pre&gt;
+Q6.
+&lt;pre&gt;
+SELECT c.name , COUNT(*) AS nbFilms 
+FROM category c JOIN film_category fc ON c.category_id = fc.category_id 
+GROUP BY c.category_id 
+HAVING nbFilms BETWEEN 25 AND 55   
+ORDER BY nbFilms DESC
+
+&lt;/pre&gt;
+Q7.
+&lt;pre&gt;
+SELECT r.customer_id, COUNT(*) AS nbFilms 
+FROM rental r  JOIN inventory i ON r.inventory_id = i.inventory_id 
+    JOIN film f ON i.Film_ID = f.Film_ID 
+    JOIN film_category fc on f.Film_ID = fc.Film_ID 
+    JOIN category c ON fc.category_id = c.category_id 
+WHERE c.name = &#34;Family&#34; 
+GROUP BY r.customer_id 
+HAVING nbFilms &gt; 5;
+
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
