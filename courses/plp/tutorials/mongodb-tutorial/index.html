@@ -602,6 +602,11 @@
         <a href="/courses/plp/tutorials/mongodb-tutorial/">4. MongoDB</a>
       </li>
       
+      
+      <li class="tutorials">
+        <a href="/courses/plp/tutorials/neo4j-tutorial/">5. Neo4j</a>
+      </li>
+      
     </ul>
     </div>
     
@@ -660,8 +665,8 @@
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<div id="setting-the-work-environment." class="section level1">
-<h1><span class="header-section-number">1</span> Setting the work environment.</h1>
+<div id="setting-up-the-work-environment." class="section level1">
+<h1><span class="header-section-number">1</span> Setting up the work environment.</h1>
 <ul>
 <li><p>Start the <strong>MongoDB server</strong>. Refer
 to the <a href="/courses/plp/overview/installation-mongodb">documentation</a>
@@ -709,6 +714,30 @@ By using the MongoDB shell, execute the following queries.</p>
 <p>Q8. The title and the genre of the movies of which Hitchcock is director.</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+Q1.
+<pre>db.movies.find({title:"Le parrain III"}, {year:1})</pre>
+Q2.
+<pre>db.movies.find({year:{$gte:1980, $lte:1990}}, {title:1})</pre>
+Q3.
+<pre>db.movies.find({year:{$gte:1980, $lte:1990}}, {title:1}).sort({title:1})</pre>
+Q4.
+<pre>db.movies.find({country:"FR"}, {title:1})</pre>
+Q5.
+<pre>db.movies.find( { $or : [ {genre:"crime" }, {genre:"drama"} ] }, {title:1} )</pre>
+Q6.
+<pre>db.movies.find({country:"FR"}, 
+    {"director.first_name":1, 
+    "director.last_name":1, "director.birth_date":1})
+</pre>
+Q7.
+<pre>db.movies.find({"actors.first_name": "Sofia", "actors.last_name": "Coppola"}, {title:1})</pre>
+Q8.
+<pre>db.movies.find({"director.last_name": "Hitchcock"}, {title:1, genre:1})</pre>
+</div>
+</details>
 </div>
 <div id="querying-the-data-with-the-aggregation-framework" class="section level1">
 <h1><span class="header-section-number">4</span> Querying the data with the aggregation framework</h1>
@@ -725,6 +754,33 @@ by using <strong>aggregation pipelines</strong>.</p>
 <p>Q4. The average number of actors in a film.</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+Q1.
+<pre>
+db.movies.aggregate({$group:{_id:"$country", count:{$sum:1}}}, 
+                    {$sort:{count:-1}})
+</pre>
+Q2.
+<pre>
+db.movies.aggregate({$unwind: "$actors"}, 
+                    {$match: {"actors.role":"Mary Corleone"}}, 
+                    {$project: {"actors.first_name": 1, "actors.last_name":1}})
+</pre>
+Q3.
+<pre>
+db.movies.aggregate({$unwind: "$actors"}, 
+                    {$group: {_id:"$_id", count:{$sum:1}}}, 
+                    {$sort: {count:-1}})  
+</pre>
+Q4.
+<pre>
+db.movies.aggregate( {$project:{nb_actors:{$size: "$actors"}}}, 
+                    {$group: {_id:"_id", avg_nb_actors:{$avg: "$nb_actors"}}})
+</pre>
+</div>
+</details>
 </div>
 <div id="join-in-mongodb" class="section level1">
 <h1><span class="header-section-number">5</span> Join in MongoDB</h1>
@@ -740,6 +796,17 @@ By using the operator <em>$lookup</em> on the collections
 movie “Le parrain III”.</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<pre>
+db.movies.aggregate({$match: {title:"Le parrain III"}}, 
+                    {$lookup: {from: "movies_boffice", localField: "_id", 
+                                foreignField: "_id", as: "movie"}}, 
+                    {$project: {"movie.box_office": 1}})
+</pre>
+</div>
+</details>
 </div>
 
           </div>
