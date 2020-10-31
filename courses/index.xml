@@ -5332,26 +5332,57 @@ FROM actor a JOIN film_actor fa on a.actor_id=fa.actor_id
 GROUP BY a.actor_id, a.first_name, a.last_name
 ORDER BY nbFilms DESC
 &lt;/pre&gt;
+Alternative solution:
+&lt;pre&gt;
+SELECT t.actor_id, t.nb_films
+FROM    
+(SELECT actor_id, count(*) as nb_films
+FROM film_actor
+GROUP BY actor_id
+ORDER BY nb_films DESC) t
+&lt;/pre&gt;
 Q6.
 &lt;pre&gt;
-SELECT c.name , COUNT(*) AS nbFilms 
+SELECT c.name 
 FROM category c JOIN film_category fc ON c.category_id = fc.category_id 
 GROUP BY c.category_id 
-HAVING nbFilms BETWEEN 25 AND 55   
-ORDER BY nbFilms DESC
-
+HAVING count(*) BETWEEN 25 AND 55 
+&lt;/pre&gt;
+Alternative solution:
+&lt;pre&gt;
+SELECT name 
+FROM category
+WHERE category_id IN
+(SELECT category_id
+FROM film_category fc 
+GROUP BY category_id 
+HAVING COUNT(*) BETWEEN 25 AND 55)
 &lt;/pre&gt;
 Q7.
 &lt;pre&gt;
-SELECT r.customer_id, COUNT(*) AS nbFilms 
-FROM rental r  JOIN inventory i ON r.inventory_id = i.inventory_id 
+SELECT c.customer_id, c.first_name, c.last_name,  COUNT(*) AS nbFilms 
+FROM customer c JOIN rental r ON c.customer_id=r.customer_id  
+    JOIN inventory i ON r.inventory_id = i.inventory_id 
     JOIN film f ON i.Film_ID = f.Film_ID 
     JOIN film_category fc on f.Film_ID = fc.Film_ID 
     JOIN category c ON fc.category_id = c.category_id 
 WHERE c.name = &#34;Family&#34; 
 GROUP BY r.customer_id 
 HAVING nbFilms &gt; 5;
-
+&lt;/pre&gt;
+Alternative solution:
+&lt;pre&gt;
+SELECT first_name, last_name
+FROM customer
+WHERE customer_id IN (
+SELECT r.customer_id 
+FROM rental r JOIN inventory i ON r.inventory_id = i.inventory_id 
+    JOIN film f ON i.Film_ID = f.Film_ID 
+    JOIN film_category fc on f.Film_ID = fc.Film_ID 
+    JOIN category c ON fc.category_id = c.category_id 
+WHERE c.name = &#34;Family&#34; 
+GROUP BY r.customer_id 
+HAVING count(*) &gt; 5)
 &lt;/pre&gt;
 &lt;/div&gt;
 &lt;/details&gt;
