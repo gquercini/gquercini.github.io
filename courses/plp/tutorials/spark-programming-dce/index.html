@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Gianluca Quercini">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Description of the tutorial on Spark programming on a cluster">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/courses/plp/tutorials/spark-programming-dce/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="rgb(0, 136, 204)">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="/courses/plp/tutorials/spark-programming-dce/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="Gianluca Quercini">
+  <meta property="og:url" content="/courses/plp/tutorials/spark-programming-dce/">
+  <meta property="og:title" content="Spark programming using a Spark cluster | Gianluca Quercini">
+  <meta property="og:description" content="Description of the tutorial on Spark programming on a cluster"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
+  
+    
+    
+  
+
+  
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Spark programming using a Spark cluster | Gianluca Quercini</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#experience"><span>Experience</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#publications"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  
+
+  
+
+<div class="container-fluid docs">
+  <div class="row flex-xl-nowrap">
+    <div class="col-12 col-md-3 col-xl-2 docs-sidebar">
+      
+
+
+<script src="/js/toggle-menu.js"></script>
+
+
+
+
+
+
+
+  
+    
+  
+
+
+
+
+<form class="docs-search d-flex align-items-center">
+  <button class="btn docs-toggle d-md-none p-0 mr-3" type="button" data-toggle="collapse" data-target="#docs-nav" aria-controls="docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    <span><i class="fas fa-bars"></i></span>
+  </button>
+
+  
+</form>
+
+<nav class="collapse docs-links" id="docs-nav">
+  
+
+  
+  
+  
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="overview" class="docs-toc-link" href="/courses/plp/overview/">Overview</a>
+    
+    <div id="overview-ddowncontent" class="overview-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="overview">
+        <a href="/courses/plp/overview/">Big data algorithms, techniques and platforms</a>
+      </li>
+      
+      
+      <li class="overview">
+        <a href="/courses/plp/overview/installation-mongodb/">Installing MongoDB</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="lectures" class="docs-toc-link" href="/courses/plp/lectures/lectures/">Lectures</a>
+    
+    <div id="lectures-ddowncontent" class="lectures-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="lectures">
+        <a href="/courses/plp/lectures/lectures/">Overview</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="tutorials" class="docs-toc-link" href="/courses/plp/tutorials/cc-tutorials/">Tutorials</a>
+    
+    <div id="tutorials-ddowncontent" class="tutorials-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="tutorials">
+        <a href="/courses/plp/tutorials/cc-tutorials/">Overview</a>
+      </li>
+      
+      
+      <li class="tutorials">
+        <a href="/courses/plp/tutorials/map-reduce/">1. MapReduce</a>
+      </li>
+      
+      <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
+      <li class="active tutorials">
+        <a href="/courses/plp/tutorials/spark-programming-dce/">4. Spark programming using a Spark cluster</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="project" class="docs-toc-link" >Project</a>
+    
+
+  </div>
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="references" class="docs-toc-link" href="/courses/plp/references/cc-references/">References</a>
+    
+    <div id="references-ddowncontent" class="references-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="references">
+        <a href="/courses/plp/references/cc-references/">Bibliography</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  
+</nav>
+
+    </div>
+
+    
+
+    <main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 docs-content" role="main">
+
+      <article class="article">
+
+        <div class="docs-article-container">
+          <div class="heading">Big data algorithms, techniques and platforms — Tutorial 4</div>
+          <h1>Spark programming using a Spark cluster</h1>
+          <hr>
+          <div class="logo">
+            <p><img src="/img/cs-logo.png" width="20%" style="display: block; margin: auto;" /></p>
+            </div>
+
+          <div class="article-style">
+            
+
+
+<p><link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/cloud-computing.css"></p>
+<div id="connection-to-the-cluster" class="section level1">
+<h1><span class="header-section-number">1</span> Connection to the cluster</h1>
+<p>The architecture of the cluster at the CentraleSupélec campus in Metz is shown in the following figure.</p>
+<div class="figure" style="text-align: center"><span id="fig:cluster-metz"></span>
+<img src="/courses/plp/tutorials/spark-dce/cluster-metz.png" alt="Cluster architecture (image credit: [Stéphane Vialle](http://www.metz.supelec.fr/metz/personnel/vialle/){target=&quot;_blank&quot;})" width="100%" />
+<p class="caption">
+Figure 1.1: Cluster architecture (image credit: <a href="http://www.metz.supelec.fr/metz/personnel/vialle/" target="_blank">Stéphane Vialle</a>)
+</p>
+</div>
+<p>In order to use the Spark cluster, you’ll need to go through the following fours steps:</p>
+<ol style="list-style-type: decimal">
+<li><p>Choose a username <a href="https://centralesupelec.edunao.com/mod/choice/view.php?id=41547" target="_blank">on Edunao</a>.
+The password will be communicated by the teacher during the tutorial.</p></li>
+<li><p>Open a SSH connection to the machine <code>phome.metz.supelec.fr</code> from your local machine.</p></li>
+<li><p>Open a SSH connection to the machine <code>slurm1</code> from the machine <code>phome.metz.supelec.fr</code>.</p></li>
+<li><p>On the machine <code>slurm1</code> allocate resources for the job from a named reservation.</p></li>
+</ol>
+<p>Steps 2, 3 and 4 are detailed in the following subsections.</p>
+<div class="infobox warning">
+<p><strong>Opening a SSH connection</strong></p>
+<p>If your operating system is either <strong>Linux</strong> or <strong>MacOS</strong>, the command <code>ssh</code>, necessary to open a SSH connection to
+a computer, is likely to be already available.</p>
+<p>If your operating system is <strong>Windows</strong>, you’re not likely to have a command <code>ssh</code> readily available.
+In that case, you’ll need to install a SSH client.
+A good one is PuTTY, that you can <a href="https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html" target="_blank">download here</a>.</p>
+</div>
+<div id="connect-to-phome" class="section level2">
+<h2><span class="header-section-number">1.1</span> Connect to <code>phome</code></h2>
+<p>If your operating system is <strong>Linux</strong> or <strong>MacOS</strong>, open a command-line terminal and type the following command
+(replace <code>your-username</code> with the username that you chose).</p>
+<p><code>ssh phome.metz.supelec.fr -l your-username</code></p>
+<p>After executing the command, you’ll be prompted to enter the password.</p>
+<p>If your operating system is <strong>Windows</strong>:</p>
+<ol style="list-style-type: decimal">
+<li><p>Launch PuTTY.</p></li>
+<li><p>In the <code>session</code> panel, specify <code>phome.metz.supelec.fr</code>
+as the host name. Select <code>ssh</code> (port 22) as connection type.</p></li>
+<li><p>In the connection panel, set <code>Enable TCP keepalives</code> and set
+30s between <code>keepalives</code>.</p></li>
+<li><p>Click on the button <code>Open</code> and click on the button <code>Yes</code>
+if you receive a warning informing you the key
+of the destination server is not cached yet.</p></li>
+<li><p>A command-line terminal should pop up, prompting you to enter your username and password.</p></li>
+</ol>
+</div>
+<div id="connect-to-slurm1" class="section level2">
+<h2><span class="header-section-number">1.2</span> Connect to <code>slurm1</code></h2>
+<p>In the command-line terminal type the following command:</p>
+<p><code>ssh slurm1</code></p>
+</div>
+<div id="allocate-resources-for-the-job" class="section level2">
+<h2><span class="header-section-number">1.3</span> Allocate resources for the job</h2>
+<p>Once you’re connected to <code>slurm1</code>,
+you can allocate resources for the job by typing the following command
+(<strong>in place of <code>resa-code</code> you will type a code that
+will be communicated by the teacher during the tutorial.</strong>)</p>
+<p><code>srun --reservation=resa-code -N 1 --ntasks-per-node=4 --pty bash</code></p>
+<div class="infobox warning">
+<p><strong>Read carefully</strong></p>
+<p>If you want to access the cluster <strong>after the tutorial</strong>, remember to:</p>
+<ul>
+<li><p>Use the cluster only in the evening in weekdays or during the weekends.</p></li>
+<li><p>In order to allocate the resources, <strong>use the following command</strong> instead
+of the previous one:</p>
+<p><code>srun -p ks1 -N 1 --ntasks-per-node=4 --pty bash</code></p></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="source-file-edition" class="section level1">
+<h1><span class="header-section-number">2</span> Source file edition</h1>
+<p>The Python source files that you’ll be editing in this tutorial are
+stored in the remote machines under your home directory
+<code>/usr/users/cpupsmia1/your-username</code>.
+In order to edit them, you have two options:</p>
+<ol style="list-style-type: decimal">
+<li>Use a remote text editor, such as <em>vim</em> or <em>nano</em> (Linux users, I’m talking to you!).</li>
+</ol>
+<p>or,</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Download the file to your local machine, edit it with your usual code editor and upload it
+to the remote machine (Windows and MacOS users, I’m talking to you!).</li>
+</ol>
+<p>The first option should only be chosen by users who are already familiar with
+command-line editors.</p>
+<p>As for the other users, keep reading this section.</p>
+<div id="macos-users" class="section level2">
+<h2><span class="header-section-number">2.1</span> MacOS users</h2>
+<p>In order to download a file (say, <code>test.txt</code>) from the home directory of a remote machine in the cluster,
+you can type the following command <strong>on your local machine</strong>:</p>
+<p><code>scp your-username@phome.metz.supelec.fr:~/test.txt .</code></p>
+<p>This will copy the file <code>test.txt</code> to your working directory <strong>on your local machine</strong>.</p>
+<p>Once you’re done editing <code>test.txt</code> on your local machine, you can upload the file
+to the remote machine by typing the following command <strong>on your local machine</strong>:</p>
+<p><code>scp wc.txt  your-username@phome.metz.supelec.fr:~</code></p>
+<p>It’s really that easy!</p>
+</div>
+<div id="windows-users" class="section level2">
+<h2><span class="header-section-number">2.2</span> Windows users</h2>
+<p>Windows users can benefit from a graphical client called
+<strong>WinSCP</strong>, that you can <a href="https://winscp.net/eng/download.php" target="_blank">download here</a>.
+Install it, connect to the remote machine and you’ll be able to download/upload
+files from/to the remote machine by a simple drag-and-drop!</p>
+</div>
+</div>
+<div id="exercises" class="section level1">
+<h1><span class="header-section-number">3</span> Exercises</h1>
+<p>The datasets that you’ll be using in this tutorial are
+available under the folder <code>hdfs://sar01:9000/data/</code>
+stored in HDFS.
+In order to see the content of the directory you can type the following command:</p>
+<p><code>hdfs dfs -ls -h hdfs://sar01:9000/data</code></p>
+<div id="warming-up" class="section level2">
+<h2><span class="header-section-number">3.1</span> Warming up</h2>
+<p>In order to get some familiarity with the commands necessary to run Spark programs in the cluster,
+let’s look at an already implemented example.</p>
+<ul>
+<li><p>Copy the file <code>~vialle/DCE-Spark/template_wc.py</code> to your home directory by typing the
+following command:</p>
+<p><code>cp ~vialle/DCE-Spark/template_wc.py ./wc.py</code></p></li>
+<li><p>If you type the command <code>ls</code>, you should see a file named <code>wc.py</code> in your home directory.
+This file contains the Python code to count the number of occurrences of words in a text file.</p></li>
+<li><p>Open the file <code>wc.py</code> by either using a text editor on the remote machine or by downloading it on your
+local machine, as explained in the section above.</p></li>
+<li><p>Locate the following instruction:</p>
+<p><code>text_file = sc.textFile(&quot;hdfs://...&quot;)</code></p>
+<p>and replace it with the following instruction:</p>
+<p><code>text_file = sc.textFile(&quot;hdfs://sar01:9000/data/sherlock.txt&quot;)</code></p>
+<p>This will create an RDD named <code>text_file</code> with the content of the specified file.</p></li>
+<li><p>Similarly, locate the following instruction:</p>
+<p><code>counts.saveAsTextFile(&quot;hdfs://...&quot;)</code></p>
+<p>and replace it with the following instruction (<strong>replace <em>your_username</em> with your username!</strong>):</p>
+<p><code>counts.saveAsTextFile(&quot;hdfs://sar01:9000/cpupsmia1/your_username/sherlock.out&quot;)</code></p>
+<p>This will create an output directory <em>sherlock.out</em> that will contain the files with the output of the program.</p></li>
+<li><p>Run the Python script <code>wc.py</code> with the following command:</p>
+<p><code>spark-submit --master spark://sar01:7077 wc.py</code></p></li>
+<li><p>When the execution is over, the output will be available under the directory
+<code>sherlock.out</code>. To verify it, run the following command:</p>
+<p><code>hdfs dfs -ls -h hdfs://sar01:9000/cpupsmia1/your_username/sherlock.out</code></p>
+<p>As usual, remember to replace <code>your_username</code> with your username.</p></li>
+<li><p>In order to see the result, run the following command:</p>
+<div align="left">
+<code>hdfs dfs -cat hdfs://sar01:9000/cpupsmia1/your_username/sherlock.out/*</code>
+</div></li>
+</ul>
+<div class="infobox warning">
+<p><strong>Output files</strong></p>
+<p>If you rerun the script by specifying an output file that <strong>already exists</strong>,
+you’d get an error.
+If you really want to overwrite the output file, you first need to remove it
+explicitly by typing the following command:</p>
+<div align="left">
+<p><code>hdfs rm -r hdfs://sar01:9000/cpupsmia1/your_username/sherlock.out</code></p>
+</div>
+</div>
+<p>Everything clear? Then you’re ready to go on!</p>
+</div>
+<div id="computing-averages" class="section level2">
+<h2><span class="header-section-number">3.2</span> Computing averages</h2>
+<p>We consider a collection of CSV files containing temperature measurements in the following format:</p>
+<p><code>year,month,day,hours,minutes,seconds,temperature</code></p>
+<p>you can find the files under the directory <code>hdfs://sar01:9000/data/temperatures/</code></p>
+<p>Here are the details for each file:</p>
+<ul>
+<li>File <code>temperatures_86400.csv</code> contains one measurement per day in the years 1980 - 2018.</li>
+<li>File <code>temperatures_2880.csv</code> contains one measurement every 2880 seconds in the years 1980 - 2018.</li>
+<li>File <code>temperatures_86.csv</code> contains one measurement every 86 seconds for the year 1980 alone.</li>
+<li>File <code>temperatures_10.csv</code> contains one measurement every 10 seconds for the years 1980 - 2018.</li>
+</ul>
+<p>We intend to implement a Spark algorithm to generate pairs <span class="math inline">\((y, t_{avg})\)</span>, where
+<span class="math inline">\(y\)</span> is the year and <span class="math inline">\(t_{avg}\)</span> is the average temperature in the year.</p>
+<div id="first-implementation" class="section level3">
+<h3><span class="header-section-number">3.2.1</span> First implementation</h3>
+<p>Copy the file <code>~vialle/DCE-Spark/template_temperatures.py</code>
+to your home directory by typing
+the following command:</p>
+<p><code>cp ~vialle/DCE-Spark/template_temperatures.py ./avg_temperatures_first.py</code></p>
+<p>Open the file <code>avg_temperatures_first.py</code>
+and write the following function:</p>
+<pre><code>def avg_temperature(theTextFile): 
+    temperatures = theTextFile \ 
+                        .map(lambda line: line.split(&quot;,&quot;)) \ 
+                        .map(lambda term: (term[0],   [float(term[6])])) \ 
+                        .reduceByKey(lambda x, y: x+y) \ 
+                        .mapValues(lambda lv: sum(lv)/len(lv)) 
+    return temperatures </code></pre>
+<p>In the same file, locate the two variables <code>input_path</code> and <code>output-path</code>.
+and write the following code:</p>
+<pre><code>input_path = &quot;hdfs://sar01:9000/data/temperatures/&quot;
+output_path = &quot;hdfs://sar01:9000/cpupsmia1/your_username/&quot;</code></pre>
+<p>Always remember to replace <code>your_username</code> with your username!
+<strong>Don’t forget the / at the end of the file paths!</strong>.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 3.1  </strong></span></p>
+<ul>
+<li><p>Run the script <code>avg_temperatures_first.py</code> by using <code>temperatures_86400.csv</code> as an input.
+To this extent, use the following command:</p>
+<div align="left">
+<code>spark-submit --master spark://sar01:7077 avg_temperatures_first.py temperatures_86400.csv</code>
+</div>
+<p>You should find the output of the program under the folder <code>hdfs://sar01:9000/cpupsmia1/your_username/temperatures_86400.out</code></p></li>
+<li>What’s the execution time?
+<ul>
+<li><p>In the output of Spark on the command line you should see a line that mentions something along the following line:</p>
+<p><code>INFO DAGScheduler: Job 0 finished: runJob at SparkHadoopWriter.scala:78, took 3.478220 s</code></p></li>
+</ul></li>
+<li><p>Run the same script by using <code>temperatures_2880.csv</code> as an input.</p></li>
+<li><p>What is the execution time? Does it seem reasonable compared with the execution time that you observed before?
+Justify your answer.</p></li>
+<li><p>Execute the same script by using <code>temperatures_86.csv</code> as an input.</p></li>
+<li>What is the execution time? How would you justify it, knowing that
+the files <code>temperatures_2880.csv</code> and <code>temperatures_86.csv</code> have a similar size (11 MB the former, 9 MB the latter)?</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="second-implementation" class="section level3">
+<h3><span class="header-section-number">3.2.2</span> Second implementation</h3>
+<p>Copy the file <code>~vialle/DCE-Spark/template_temperatures.py</code> to your home directory by typing
+the following command:</p>
+<div align="left">
+<p><code>cp ~vialle/DCE-Spark/template_temperatures.py ./avg_temperatures_second.py</code></p>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 3.2  </strong></span>
+Based on the observations made in the
+previous exercise, write an improved implementation of the
+function <code>avg_temperature</code>.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3.3  </strong></span></p>
+<ul>
+<li><p>Run the script <code>avg_temperatures_second.py</code> by using <code>temperatures_86.csv</code> as an input.</p></li>
+<li><p>What’s the execution time? Compare it with the execution time obtained in the previous exercise and
+comment the difference.</p></li>
+<li><p>Run the same script by using <code>temperatures_10.csv</code> (3 GB!) as an input.
+Do you think that the program takes too long? Why?</p></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="average-and-standard-deviation" class="section level2">
+<h2><span class="header-section-number">3.3</span> Average and standard deviation</h2>
+<p>We use the same files as in the first question.
+Our objective is to write a Spark program that produces
+triples <span class="math inline">\((y, t_{\mu}, t_{\sigma})\)</span>, where <span class="math inline">\(y\)</span>, <span class="math inline">\(t_{\mu}\)</span> and
+<span class="math inline">\(t_{\sigma}\)</span> are the year, the average temperature in the year and the
+standard deviation respectively.</p>
+<p>We can express the standard deviation of <span class="math inline">\(n\)</span> values <span class="math inline">\(x_1 \ldots x_n\)</span> with the following formula:</p>
+<p><span class="math display">\[
+\sigma = \sqrt{\overline{x^2} - \overline{x}^2} = \sqrt{\frac{\sum_{i=1}^n (x_i)^2}{n} - \Bigg(\frac{\sum_{i=1}^n x_i}{n}\Bigg)^2} 
+\]</span></p>
+<p>Copy the file <code>~vialle/DCE-Spark/template_temperatures.py</code> to your home directory by typing
+the following command:</p>
+<p><code>cp ~vialle/DCE-Spark/template_temperatures.py  ./avg_stddev_temp.py</code></p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 3.4  </strong></span></p>
+<ul>
+<li><p>Complete the definition of the function <code>avg_temperature</code> in file <code>avg_stddev_temp.py</code>.</p></li>
+<li><p>Run the script by using <code>temperatures_86400.csv</code> and <code>temperatures_2880.csv</code>
+as input files (small files).</p></li>
+<li><p>Run the script by using <code>temperatures_86.csv</code> and <code>temperatures_10.csv</code> as input files (large files).</p></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+
+          </div>
+
+          
+
+
+
+          
+        </div>
+
+        
+      </article>
+
+      
+
+    </main>
+  </div>
+</div>
+
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.1/anchor.min.js" integrity="sha256-pB/deHc9CGfFpJRjC43imB29Rse8tak+5eXqntO94ck=" crossorigin="anonymous"></script>
+    <script>
+      anchors.add();
+    </script>
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.6f7ce8be710290b8c431bbc97f405d15.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
