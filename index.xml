@@ -133,7 +133,7 @@
 &lt;h1&gt;Lab assignment 1&lt;/h1&gt;
 &lt;p&gt;&lt;strong&gt;Title&lt;/strong&gt;: Advanced Spark programming&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Date and time&lt;/strong&gt;: Monday 11 January 2021, 10:15 AM - 11.45 AM&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Link&lt;/strong&gt;: soon available&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Link&lt;/strong&gt;: &lt;a href=&#34;/courses/plp/tutorials/spark-lab-assignment&#34; target=&#34;_blank&#34;&gt;Click here&lt;/a&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;lab-assignment-2&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Lab assignment 2&lt;/h1&gt;
@@ -2739,6 +2739,129 @@ If Laura wants to move the directory &lt;em&gt;videos&lt;/em&gt; under &lt;em&gt
     </item>
     
     <item>
+      <title>Advanced Spark programming</title>
+      <link>/courses/plp/tutorials/spark-lab-assignment/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/plp/tutorials/spark-lab-assignment/</guid>
+      <description>
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;In this lab assignment you’ll run Spark programs on the cluster located in the CentraleSupélec campus in Metz.
+&lt;a href=&#34;/courses/plp/tutorials/spark-programming-dce&#34; target=&#34;_blank&#34;&gt;Refer to the tutorial 4&lt;/a&gt; to learn how to connect and
+interact with the cluster.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Assignment submission&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;This lab assignment will be &lt;strong&gt;evaluated&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;In order to finalize the submission of the assignment,
+complete &lt;a href=&#34;https://centralesupelec.edunao.com/mod/quiz/view.php?id=42364&#34; target=&#34;_blank&#34;&gt;this form available on Edunao&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The submission deadline is &lt;strong&gt;Monday, January 18, 2021 8:00 AM&lt;/strong&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;common-friends-in-a-social-network&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Common friends in a social network&lt;/h1&gt;
+&lt;p&gt;Consider a social network described by a graph encoded in a text file.
+Each line of the file is a list of identifiers separated by commas.
+For instance, the line &lt;span class=&#34;math inline&#34;&gt;\(A,B,C,D\)&lt;/span&gt; means that &lt;span class=&#34;math inline&#34;&gt;\(A\)&lt;/span&gt; is friend with &lt;span class=&#34;math inline&#34;&gt;\(B\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(C\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(D\)&lt;/span&gt;.
+An excerpt of the file looks like as follows:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;A,B,C,D
+B,A,D
+C,A,D
+D,A,B,C
+...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We suppose that the friendship relation is symmetric: &lt;span class=&#34;math inline&#34;&gt;\((A, B)\)&lt;/span&gt; implies
+&lt;span class=&#34;math inline&#34;&gt;\((B, A)\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;We want to obtain the list of the common friends for each pair of individuals&lt;/strong&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;(A, B), [D]
+(A, C), [D] 
+(A, D), [B, C] 
+(B, C), [D] 
+(B, D), [A] 
+(C, D), [A]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;As an additional constraint, we want to represent a couple only once and avoid
+to represent the symmetric couple.
+In other words, if we output &lt;span class=&#34;math inline&#34;&gt;\((A, B)\)&lt;/span&gt;, we don’t want to output &lt;span class=&#34;math inline&#34;&gt;\((B, A)\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;We use the following input files available in folder &lt;code&gt;hdfs://sar01:9000/data/sn/&lt;/code&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;sn_tiny.csv&lt;/code&gt;. Small social network, that you can use to test your implementation.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;sn_10k_100k.csv&lt;/code&gt;. Social network with &lt;span class=&#34;math inline&#34;&gt;\(10^4\)&lt;/span&gt; individuals and &lt;span class=&#34;math inline&#34;&gt;\(10^5\)&lt;/span&gt; links.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;sn_100k_100k.csv&lt;/code&gt;. Social network with &lt;span class=&#34;math inline&#34;&gt;\(10^5\)&lt;/span&gt; individuals and &lt;span class=&#34;math inline&#34;&gt;\(10^5\)&lt;/span&gt; links.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;sn_1k_100k.csv&lt;/code&gt;. Social network with &lt;span class=&#34;math inline&#34;&gt;\(10^3\)&lt;/span&gt; individuals and &lt;span class=&#34;math inline&#34;&gt;\(10^5\)&lt;/span&gt; links.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;sn_1m_1m.csv&lt;/code&gt;. Social network with &lt;span class=&#34;math inline&#34;&gt;\(10^6\)&lt;/span&gt; individuals and &lt;span class=&#34;math inline&#34;&gt;\(10^6\)&lt;/span&gt; links.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1  &lt;/strong&gt;&lt;/span&gt;
+Write an implementation in Spark based on the MapReduce implementation that we
+discussed in the &lt;a href=&#34;/courses/plp/tutorials/map-reduce#common-friends&#34; target=&#34;_blank&#34;&gt;first tutorial&lt;/a&gt;.
+&lt;strong&gt;Test your implementation on file &lt;code&gt;sn_tiny.csv&lt;/code&gt;.&lt;/strong&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2  &lt;/strong&gt;&lt;/span&gt;
+Run your implementation on the other files and write down the execution times.
+Comment on the execution times considering the file sizes, the number of nodes and links
+and the number of pairs &lt;span class=&#34;math inline&#34;&gt;\(((A, B), X)\)&lt;/span&gt; generated by the algorithm.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;By using a MapReduce-style algorithm, write a Spark program to compute the minimum, maximum and average degree of
+a node in a given graph.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Compute the minimum, maximum and average degree on all the given input files.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Do these values confirm or invalidate the considerations that you made on the execution times of the
+algorithm in the first exercise? Justify your answer.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;creating-an-inverted-index&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Creating an inverted index&lt;/h1&gt;
+&lt;p&gt;In folder &lt;code&gt;hdfs://sar01:9000/data/bbc/&lt;/code&gt; you’ll find a collection of 50
+articles obtained from the BBC website (2004-2005) organized into five subfolders:
+&lt;em&gt;business&lt;/em&gt;, &lt;em&gt;entertainment&lt;/em&gt;, &lt;em&gt;politics&lt;/em&gt;, &lt;em&gt;sport&lt;/em&gt; and &lt;em&gt;technology&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;We want to create an &lt;strong&gt;inverted index&lt;/strong&gt;, which associates each word with the list of the
+files in which the word occurs.
+More specifically, for each word, the inverted index will have a list of the
+names of the files (path relative to the folder &lt;code&gt;/data/bbc&lt;/code&gt;) that contain the word.&lt;/p&gt;
+&lt;p&gt;The inverted index:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;must not contain the same word twice;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;must not contain any stopwords (the list of stopwords is provided in the
+&lt;code&gt;hdfs://sar01:9000/data/stopwords.txt&lt;/code&gt; file);&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Moreover:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Words in the inverted index must only contain letters.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Words in the inverted index must be lowercase.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4  &lt;/strong&gt;&lt;/span&gt;
+Write a Spark program to create an inverted index and execute it on the
+input folder.
+You can use the template available at &lt;code&gt;~vialle/DCE-Spark/template_inverted_index.py&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Data modeling</title>
       <link>/courses/databases/tutorials/data-modeling/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -4851,7 +4974,7 @@ deviation of the temperatures for each year.
 &lt;/div&gt;
 &lt;/details&gt;
 &lt;/div&gt;
-&lt;div id=&#34;common-friends-in-a-social-network&#34; class=&#34;section level1&#34;&gt;
+&lt;div id=&#34;common-friends&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Common friends in a social network&lt;/h1&gt;
 &lt;p&gt;Consider a social network described by a graph encoded in a text file.
 Each line of the file is a list of identifiers separated by commas.
@@ -5394,12 +5517,12 @@ is not a superkey.&lt;/p&gt;&lt;/li&gt;
 &lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
 &lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
 &lt;div id=&#34;connection-to-the-cluster&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Connection to the cluster&lt;/h1&gt;
+&lt;h1&gt;Connection to the cluster&lt;/h1&gt;
 &lt;p&gt;The architecture of the cluster at the CentraleSupélec campus in Metz is shown in the following figure.&lt;/p&gt;
 &lt;div class=&#34;figure&#34; style=&#34;text-align: center&#34;&gt;&lt;span id=&#34;fig:cluster-metz&#34;&gt;&lt;/span&gt;
 &lt;img src=&#34;/courses/plp/tutorials/spark-dce/cluster-metz.png&#34; alt=&#34;Cluster architecture (image credit: [Stéphane Vialle](http://www.metz.supelec.fr/metz/personnel/vialle/){target=&amp;quot;_blank&amp;quot;})&#34; width=&#34;100%&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;
-Figure 1.1: Cluster architecture (image credit: &lt;a href=&#34;http://www.metz.supelec.fr/metz/personnel/vialle/&#34; target=&#34;_blank&#34;&gt;Stéphane Vialle&lt;/a&gt;)
+Figure 1: Cluster architecture (image credit: &lt;a href=&#34;http://www.metz.supelec.fr/metz/personnel/vialle/&#34; target=&#34;_blank&#34;&gt;Stéphane Vialle&lt;/a&gt;)
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;p&gt;In order to use the Spark cluster, you’ll need to go through the following fours steps:&lt;/p&gt;
@@ -5420,7 +5543,7 @@ In that case, you’ll need to install a SSH client.
 A good one is PuTTY, that you can &lt;a href=&#34;https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html&#34; target=&#34;_blank&#34;&gt;download here&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;connect-to-phome&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.1&lt;/span&gt; Connect to &lt;code&gt;phome&lt;/code&gt;&lt;/h2&gt;
+&lt;h2&gt;Connect to &lt;code&gt;phome&lt;/code&gt;&lt;/h2&gt;
 &lt;p&gt;If your operating system is &lt;strong&gt;Linux&lt;/strong&gt; or &lt;strong&gt;MacOS&lt;/strong&gt;, open a command-line terminal and type the following command
 (replace &lt;code&gt;your-username&lt;/code&gt; with the username that you chose).&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;ssh phome.metz.supelec.fr -l your-username&lt;/code&gt;&lt;/p&gt;
@@ -5439,12 +5562,12 @@ of the destination server is not cached yet.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;div id=&#34;connect-to-slurm1&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.2&lt;/span&gt; Connect to &lt;code&gt;slurm1&lt;/code&gt;&lt;/h2&gt;
+&lt;h2&gt;Connect to &lt;code&gt;slurm1&lt;/code&gt;&lt;/h2&gt;
 &lt;p&gt;In the command-line terminal type the following command:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;ssh slurm1&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;allocate-resources-for-the-job&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.3&lt;/span&gt; Allocate resources for the job&lt;/h2&gt;
+&lt;h2&gt;Allocate resources for the job&lt;/h2&gt;
 &lt;p&gt;Once you’re connected to &lt;code&gt;slurm1&lt;/code&gt;,
 you can allocate resources for the job by typing the following command
 (&lt;strong&gt;in place of &lt;code&gt;resa-code&lt;/code&gt; you will type a code that
@@ -5463,7 +5586,7 @@ of the previous one:&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;source-file-edition&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Source file edition&lt;/h1&gt;
+&lt;h1&gt;Source file edition&lt;/h1&gt;
 &lt;p&gt;The Python source files that you’ll be editing in this tutorial are
 stored in the remote machines under your home directory
 &lt;code&gt;/usr/users/cpupsmia1/your-username&lt;/code&gt;.
@@ -5480,7 +5603,7 @@ to the remote machine (Windows and MacOS users, I’m talking to you!).&lt;/li&g
 command-line editors.&lt;/p&gt;
 &lt;p&gt;As for the other users, keep reading this section.&lt;/p&gt;
 &lt;div id=&#34;macos-users&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.1&lt;/span&gt; MacOS users&lt;/h2&gt;
+&lt;h2&gt;MacOS users&lt;/h2&gt;
 &lt;p&gt;In order to download a file (say, &lt;code&gt;test.txt&lt;/code&gt;) from the home directory of a remote machine in the cluster,
 you can type the following command &lt;strong&gt;on your local machine&lt;/strong&gt;:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;scp your-username@phome.metz.supelec.fr:~/test.txt .&lt;/code&gt;&lt;/p&gt;
@@ -5491,7 +5614,7 @@ to the remote machine by typing the following command &lt;strong&gt;on your loca
 &lt;p&gt;It’s really that easy!&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;windows-users&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.2&lt;/span&gt; Windows users&lt;/h2&gt;
+&lt;h2&gt;Windows users&lt;/h2&gt;
 &lt;p&gt;Windows users can benefit from a graphical client called
 &lt;strong&gt;WinSCP&lt;/strong&gt;, that you can &lt;a href=&#34;https://winscp.net/eng/download.php&#34; target=&#34;_blank&#34;&gt;download here&lt;/a&gt;.
 Install it, connect to the remote machine and you’ll be able to download/upload
@@ -5499,14 +5622,14 @@ files from/to the remote machine by a simple drag-and-drop!&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;exercises&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Exercises&lt;/h1&gt;
+&lt;h1&gt;Exercises&lt;/h1&gt;
 &lt;p&gt;The datasets that you’ll be using in this tutorial are
 available under the folder &lt;code&gt;hdfs://sar01:9000/data/&lt;/code&gt;
 stored in HDFS.
 In order to see the content of the directory you can type the following command:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;hdfs dfs -ls -h hdfs://sar01:9000/data&lt;/code&gt;&lt;/p&gt;
 &lt;div id=&#34;warming-up&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.1&lt;/span&gt; Warming up&lt;/h2&gt;
+&lt;h2&gt;Warming up&lt;/h2&gt;
 &lt;p&gt;In order to get some familiarity with the commands necessary to run Spark programs in the cluster,
 let’s look at an already implemented example.&lt;/p&gt;
 &lt;ul&gt;
@@ -5551,7 +5674,7 @@ explicitly by typing the following command:&lt;/p&gt;
 &lt;p&gt;Everything clear? Then you’re ready to go on!&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;computing-averages&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.2&lt;/span&gt; Computing averages&lt;/h2&gt;
+&lt;h2&gt;Computing averages&lt;/h2&gt;
 &lt;p&gt;We consider a collection of CSV files containing temperature measurements in the following format:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;year,month,day,hours,minutes,seconds,temperature&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;you can find the files under the directory &lt;code&gt;hdfs://sar01:9000/data/temperatures/&lt;/code&gt;&lt;/p&gt;
@@ -5565,7 +5688,7 @@ explicitly by typing the following command:&lt;/p&gt;
 &lt;p&gt;We intend to implement a Spark algorithm to generate pairs &lt;span class=&#34;math inline&#34;&gt;\((y, t_{avg})\)&lt;/span&gt;, where
 &lt;span class=&#34;math inline&#34;&gt;\(y\)&lt;/span&gt; is the year and &lt;span class=&#34;math inline&#34;&gt;\(t_{avg}\)&lt;/span&gt; is the average temperature in the year.&lt;/p&gt;
 &lt;div id=&#34;first-implementation&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.2.1&lt;/span&gt; First implementation&lt;/h3&gt;
+&lt;h3&gt;First implementation&lt;/h3&gt;
 &lt;p&gt;Copy the file &lt;code&gt;~vialle/DCE-Spark/template_temperatures.py&lt;/code&gt;
 to your home directory by typing
 the following command:&lt;/p&gt;
@@ -5589,7 +5712,7 @@ output_path = &amp;quot;hdfs://sar01:9000/cpupsmia1/your_username/&amp;quot;&lt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Run the script &lt;code&gt;avg_temperatures_first.py&lt;/code&gt; by using &lt;code&gt;temperatures_86400.csv&lt;/code&gt; as an input.
 To this extent, use the following command:&lt;/p&gt;
@@ -5627,7 +5750,7 @@ all measurements are associated to the same key (1980), and therefore the applic
 &lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;second-implementation&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.2.2&lt;/span&gt; Second implementation&lt;/h3&gt;
+&lt;h3&gt;Second implementation&lt;/h3&gt;
 &lt;p&gt;Copy the file &lt;code&gt;~vialle/DCE-Spark/template_temperatures.py&lt;/code&gt; to your home directory by typing
 the following command:&lt;/p&gt;
 &lt;div align=&#34;left&#34;&gt;
@@ -5637,7 +5760,7 @@ the following command:&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.2  &lt;/strong&gt;&lt;/span&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2  &lt;/strong&gt;&lt;/span&gt;
 Based on the observations made in the
 previous exercise, write an improved implementation of the
 function &lt;code&gt;avg_temperature&lt;/code&gt;.&lt;/p&gt;
@@ -5654,7 +5777,7 @@ function &lt;code&gt;avg_temperature&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.3  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Run the script &lt;code&gt;avg_temperatures_second.py&lt;/code&gt; by using &lt;code&gt;temperatures_86.csv&lt;/code&gt; as an input.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;What’s the execution time? Compare it with the execution time obtained in the previous exercise and
@@ -5678,7 +5801,7 @@ every 10 seconds for each year.&lt;/p&gt;&lt;/li&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;average-and-standard-deviation&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.3&lt;/span&gt; Average and standard deviation&lt;/h2&gt;
+&lt;h2&gt;Average and standard deviation&lt;/h2&gt;
 &lt;p&gt;We use the same files as in the first question.
 Our objective is to write a Spark program that produces
 triples &lt;span class=&#34;math inline&#34;&gt;\((y, t_{\mu}, t_{\sigma})\)&lt;/span&gt;, where &lt;span class=&#34;math inline&#34;&gt;\(y\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(t_{\mu}\)&lt;/span&gt; and
@@ -5695,7 +5818,7 @@ the following command:&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.4  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Complete the definition of the function &lt;code&gt;avg_temperature&lt;/code&gt; in file &lt;code&gt;avg_stddev_temp.py&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Run the script by using &lt;code&gt;temperatures_86400.csv&lt;/code&gt; and &lt;code&gt;temperatures_2880.csv&lt;/code&gt;

@@ -582,7 +582,7 @@
   
   <div class="docs-toc-item">
 
-    <a onclick=open_menu_on_click(this) id="tutorials" class="docs-toc-link" href="/courses/plp/tutorials/cc-tutorials/">Tutorials</a>
+    <a onclick=open_menu_on_click(this) id="tutorials" class="docs-toc-link" href="/courses/plp/tutorials/cc-tutorials/">Tutorials and labs</a>
     
     <div id="tutorials-ddowncontent" class="tutorials-ddowncontent ddowncontent">
     <ul class="nav docs-sidenav">
@@ -594,12 +594,17 @@
       
       
       <li class="tutorials">
-        <a href="/courses/plp/tutorials/map-reduce/">1. MapReduce</a>
+        <a href="/courses/plp/tutorials/map-reduce/">MapReduce</a>
       </li>
       
       <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
       <li class="active tutorials">
-        <a href="/courses/plp/tutorials/spark-programming-dce/">4. Spark programming using a Spark cluster</a>
+        <a href="/courses/plp/tutorials/spark-programming-dce/">Spark programming using a Spark cluster</a>
+      </li>
+      
+      
+      <li class="tutorials">
+        <a href="/courses/plp/tutorials/spark-lab-assignment/">Lab 1. Advanced Spark programming</a>
       </li>
       
     </ul>
@@ -661,12 +666,12 @@
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
 <div id="connection-to-the-cluster" class="section level1">
-<h1><span class="header-section-number">1</span> Connection to the cluster</h1>
+<h1>Connection to the cluster</h1>
 <p>The architecture of the cluster at the CentraleSupélec campus in Metz is shown in the following figure.</p>
 <div class="figure" style="text-align: center"><span id="fig:cluster-metz"></span>
 <img src="/courses/plp/tutorials/spark-dce/cluster-metz.png" alt="Cluster architecture (image credit: [Stéphane Vialle](http://www.metz.supelec.fr/metz/personnel/vialle/){target=&quot;_blank&quot;})" width="100%" />
 <p class="caption">
-Figure 1.1: Cluster architecture (image credit: <a href="http://www.metz.supelec.fr/metz/personnel/vialle/" target="_blank">Stéphane Vialle</a>)
+Figure 1: Cluster architecture (image credit: <a href="http://www.metz.supelec.fr/metz/personnel/vialle/" target="_blank">Stéphane Vialle</a>)
 </p>
 </div>
 <p>In order to use the Spark cluster, you’ll need to go through the following fours steps:</p>
@@ -687,7 +692,7 @@ In that case, you’ll need to install a SSH client.
 A good one is PuTTY, that you can <a href="https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html" target="_blank">download here</a>.</p>
 </div>
 <div id="connect-to-phome" class="section level2">
-<h2><span class="header-section-number">1.1</span> Connect to <code>phome</code></h2>
+<h2>Connect to <code>phome</code></h2>
 <p>If your operating system is <strong>Linux</strong> or <strong>MacOS</strong>, open a command-line terminal and type the following command
 (replace <code>your-username</code> with the username that you chose).</p>
 <p><code>ssh phome.metz.supelec.fr -l your-username</code></p>
@@ -706,12 +711,12 @@ of the destination server is not cached yet.</p></li>
 </ol>
 </div>
 <div id="connect-to-slurm1" class="section level2">
-<h2><span class="header-section-number">1.2</span> Connect to <code>slurm1</code></h2>
+<h2>Connect to <code>slurm1</code></h2>
 <p>In the command-line terminal type the following command:</p>
 <p><code>ssh slurm1</code></p>
 </div>
 <div id="allocate-resources-for-the-job" class="section level2">
-<h2><span class="header-section-number">1.3</span> Allocate resources for the job</h2>
+<h2>Allocate resources for the job</h2>
 <p>Once you’re connected to <code>slurm1</code>,
 you can allocate resources for the job by typing the following command
 (<strong>in place of <code>resa-code</code> you will type a code that
@@ -730,7 +735,7 @@ of the previous one:</p>
 </div>
 </div>
 <div id="source-file-edition" class="section level1">
-<h1><span class="header-section-number">2</span> Source file edition</h1>
+<h1>Source file edition</h1>
 <p>The Python source files that you’ll be editing in this tutorial are
 stored in the remote machines under your home directory
 <code>/usr/users/cpupsmia1/your-username</code>.
@@ -747,7 +752,7 @@ to the remote machine (Windows and MacOS users, I’m talking to you!).</li>
 command-line editors.</p>
 <p>As for the other users, keep reading this section.</p>
 <div id="macos-users" class="section level2">
-<h2><span class="header-section-number">2.1</span> MacOS users</h2>
+<h2>MacOS users</h2>
 <p>In order to download a file (say, <code>test.txt</code>) from the home directory of a remote machine in the cluster,
 you can type the following command <strong>on your local machine</strong>:</p>
 <p><code>scp your-username@phome.metz.supelec.fr:~/test.txt .</code></p>
@@ -758,7 +763,7 @@ to the remote machine by typing the following command <strong>on your local mach
 <p>It’s really that easy!</p>
 </div>
 <div id="windows-users" class="section level2">
-<h2><span class="header-section-number">2.2</span> Windows users</h2>
+<h2>Windows users</h2>
 <p>Windows users can benefit from a graphical client called
 <strong>WinSCP</strong>, that you can <a href="https://winscp.net/eng/download.php" target="_blank">download here</a>.
 Install it, connect to the remote machine and you’ll be able to download/upload
@@ -766,14 +771,14 @@ files from/to the remote machine by a simple drag-and-drop!</p>
 </div>
 </div>
 <div id="exercises" class="section level1">
-<h1><span class="header-section-number">3</span> Exercises</h1>
+<h1>Exercises</h1>
 <p>The datasets that you’ll be using in this tutorial are
 available under the folder <code>hdfs://sar01:9000/data/</code>
 stored in HDFS.
 In order to see the content of the directory you can type the following command:</p>
 <p><code>hdfs dfs -ls -h hdfs://sar01:9000/data</code></p>
 <div id="warming-up" class="section level2">
-<h2><span class="header-section-number">3.1</span> Warming up</h2>
+<h2>Warming up</h2>
 <p>In order to get some familiarity with the commands necessary to run Spark programs in the cluster,
 let’s look at an already implemented example.</p>
 <ul>
@@ -818,7 +823,7 @@ explicitly by typing the following command:</p>
 <p>Everything clear? Then you’re ready to go on!</p>
 </div>
 <div id="computing-averages" class="section level2">
-<h2><span class="header-section-number">3.2</span> Computing averages</h2>
+<h2>Computing averages</h2>
 <p>We consider a collection of CSV files containing temperature measurements in the following format:</p>
 <p><code>year,month,day,hours,minutes,seconds,temperature</code></p>
 <p>you can find the files under the directory <code>hdfs://sar01:9000/data/temperatures/</code></p>
@@ -832,7 +837,7 @@ explicitly by typing the following command:</p>
 <p>We intend to implement a Spark algorithm to generate pairs <span class="math inline">\((y, t_{avg})\)</span>, where
 <span class="math inline">\(y\)</span> is the year and <span class="math inline">\(t_{avg}\)</span> is the average temperature in the year.</p>
 <div id="first-implementation" class="section level3">
-<h3><span class="header-section-number">3.2.1</span> First implementation</h3>
+<h3>First implementation</h3>
 <p>Copy the file <code>~vialle/DCE-Spark/template_temperatures.py</code>
 to your home directory by typing
 the following command:</p>
@@ -856,7 +861,7 @@ output_path = &quot;hdfs://sar01:9000/cpupsmia1/your_username/&quot;</code></pre
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 3.1  </strong></span></p>
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1  </strong></span></p>
 <ul>
 <li><p>Run the script <code>avg_temperatures_first.py</code> by using <code>temperatures_86400.csv</code> as an input.
 To this extent, use the following command:</p>
@@ -894,7 +899,7 @@ all measurements are associated to the same key (1980), and therefore the applic
 </details>
 </div>
 <div id="second-implementation" class="section level3">
-<h3><span class="header-section-number">3.2.2</span> Second implementation</h3>
+<h3>Second implementation</h3>
 <p>Copy the file <code>~vialle/DCE-Spark/template_temperatures.py</code> to your home directory by typing
 the following command:</p>
 <div align="left">
@@ -904,7 +909,7 @@ the following command:</p>
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 3.2  </strong></span>
+<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 2  </strong></span>
 Based on the observations made in the
 previous exercise, write an improved implementation of the
 function <code>avg_temperature</code>.</p>
@@ -921,7 +926,7 @@ function <code>avg_temperature</code>.</p>
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3.3  </strong></span></p>
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3  </strong></span></p>
 <ul>
 <li><p>Run the script <code>avg_temperatures_second.py</code> by using <code>temperatures_86.csv</code> as an input.</p></li>
 <li><p>What’s the execution time? Compare it with the execution time obtained in the previous exercise and
@@ -945,7 +950,7 @@ every 10 seconds for each year.</p></li>
 </div>
 </div>
 <div id="average-and-standard-deviation" class="section level2">
-<h2><span class="header-section-number">3.3</span> Average and standard deviation</h2>
+<h2>Average and standard deviation</h2>
 <p>We use the same files as in the first question.
 Our objective is to write a Spark program that produces
 triples <span class="math inline">\((y, t_{\mu}, t_{\sigma})\)</span>, where <span class="math inline">\(y\)</span>, <span class="math inline">\(t_{\mu}\)</span> and
@@ -962,7 +967,7 @@ the following command:</p>
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 3.4  </strong></span></p>
+<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 4  </strong></span></p>
 <ul>
 <li><p>Complete the definition of the function <code>avg_temperature</code> in file <code>avg_stddev_temp.py</code>.</p></li>
 <li><p>Run the script by using <code>temperatures_86400.csv</code> and <code>temperatures_2880.csv</code>
