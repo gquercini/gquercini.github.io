@@ -4767,6 +4767,20 @@ the files &lt;code&gt;temperatures_2880.csv&lt;/code&gt; and &lt;code&gt;tempera
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The execution time on file &lt;code&gt;temperatures_86400.csv&lt;/code&gt; is around 1.73 seconds.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The execution time on file &lt;code&gt;temperatures_2880.csv&lt;/code&gt; is around 6.23 seconds.
+This is normal, as we have considerably more measurements per year compared to the first file.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The execution time on file &lt;code&gt;temperatures_86.csv&lt;/code&gt; is around 74.96 seconds.
+Although &lt;code&gt;temperatures_86.csv&lt;/code&gt; and
+&lt;code&gt;temperatures_2880.csv&lt;/code&gt; have a comparable size, in the first file
+all measurements are associated to the same key (1980), and therefore the application of &lt;code&gt;reduceByKey&lt;/code&gt; takes much longer than before.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;second-implementation&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.2.2&lt;/span&gt; Second implementation&lt;/h3&gt;
@@ -4785,6 +4799,13 @@ previous exercise, write an improved implementation of the
 function &lt;code&gt;avg_temperature&lt;/code&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;temperatures = text_file.map(lambda line: line.split(&amp;quot;,&amp;quot;))
+                    .map(lambda triple: (triple[0], (float(triple[6]), 1)))
+                    .reduceByKey(lambda t1, t2: (t1[0]+t2[0], t1[1] + t2[1]))
+                    .mapValues(lambda t: t[0]/t[1])&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -4799,6 +4820,17 @@ Do you think that the program takes too long? Why?&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The execution time on file &lt;code&gt;temperatures_86.csv&lt;/code&gt; is around 3.38 seconds.
+This is much more efficient than the first implementation.
+In fact, we don’t create here a huge list of values associated with a given key.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The execution time on file &lt;code&gt;temperatures_10.csv&lt;/code&gt; is around 33 seconds.
+This is entirely acceptable given that file contains 3 GB of data and we have a measurement
+every 10 seconds for each year.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;average-and-standard-deviation&#34; class=&#34;section level2&#34;&gt;
@@ -4828,6 +4860,13 @@ as input files (small files).&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;temperatures = text_file.map(lambda line: line.split(&amp;quot;,&amp;quot;)) 
+    .map(lambda t: (t[0],(float(t[6]), float(t[6])*float(t[6]),1))) 
+    .reduceByKey(lambda f, s: ((f[0]+s[0]),(f[1]+s[1]),(f[2]+s[2])))
+    .mapValues(lambda t : (t[0]/t[2], math.sqrt(t[1]/t[2] - (t[0]/t[2])*(t[0]/t[2]))))&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 </description>

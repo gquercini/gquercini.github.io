@@ -878,6 +878,20 @@ the files <code>temperatures_2880.csv</code> and <code>temperatures_86.csv</code
 </ul>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<ul>
+<li><p>The execution time on file <code>temperatures_86400.csv</code> is around 1.73 seconds.</p></li>
+<li><p>The execution time on file <code>temperatures_2880.csv</code> is around 6.23 seconds.
+This is normal, as we have considerably more measurements per year compared to the first file.</p></li>
+<li><p>The execution time on file <code>temperatures_86.csv</code> is around 74.96 seconds.
+Although <code>temperatures_86.csv</code> and
+<code>temperatures_2880.csv</code> have a comparable size, in the first file
+all measurements are associated to the same key (1980), and therefore the application of <code>reduceByKey</code> takes much longer than before.</p></li>
+</ul>
+</div>
+</details>
 </div>
 <div id="second-implementation" class="section level3">
 <h3><span class="header-section-number">3.2.2</span> Second implementation</h3>
@@ -896,6 +910,13 @@ previous exercise, write an improved implementation of the
 function <code>avg_temperature</code>.</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<pre><code>temperatures = text_file.map(lambda line: line.split(&quot;,&quot;))
+                    .map(lambda triple: (triple[0], (float(triple[6]), 1)))
+                    .reduceByKey(lambda t1, t2: (t1[0]+t2[0], t1[1] + t2[1]))
+                    .mapValues(lambda t: t[0]/t[1])</code></pre>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -910,6 +931,17 @@ Do you think that the program takes too long? Why?</p></li>
 </ul>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<ul>
+<li><p>The execution time on file <code>temperatures_86.csv</code> is around 3.38 seconds.
+This is much more efficient than the first implementation.
+In fact, we don’t create here a huge list of values associated with a given key.</p></li>
+<li><p>The execution time on file <code>temperatures_10.csv</code> is around 33 seconds.
+This is entirely acceptable given that file contains 3 GB of data and we have a measurement
+every 10 seconds for each year.</p></li>
+</ul>
+</details>
 </div>
 </div>
 <div id="average-and-standard-deviation" class="section level2">
@@ -939,6 +971,13 @@ as input files (small files).</p></li>
 </ul>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<pre><code>temperatures = text_file.map(lambda line: line.split(&quot;,&quot;)) 
+    .map(lambda t: (t[0],(float(t[6]), float(t[6])*float(t[6]),1))) 
+    .reduceByKey(lambda f, s: ((f[0]+s[0]),(f[1]+s[1]),(f[2]+s[2])))
+    .mapValues(lambda t : (t[0]/t[2], math.sqrt(t[1]/t[2] - (t[0]/t[2])*(t[0]/t[2]))))</code></pre>
+</details>
 </div>
 </div>
 
