@@ -234,7 +234,7 @@
   
   <meta property="og:site_name" content="Gianluca Quercini">
   <meta property="og:url" content="/courses/plp/tutorials/spark-programming-dce/">
-  <meta property="og:title" content="Spark programming using a Spark cluster | Gianluca Quercini">
+  <meta property="og:title" content="Introduction to Spark programming | Gianluca Quercini">
   <meta property="og:description" content="Description of the tutorial on Spark programming on a cluster"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
   
@@ -258,7 +258,7 @@
 
 
 
-  <title>Spark programming using a Spark cluster | Gianluca Quercini</title>
+  <title>Introduction to Spark programming | Gianluca Quercini</title>
 
 </head>
 
@@ -554,6 +554,11 @@
         <a href="/courses/plp/overview/installation-mongodb/">Installing MongoDB</a>
       </li>
       
+      
+      <li class="overview">
+        <a href="/courses/plp/overview/cluster-connection/">Connecting to the cluster</a>
+      </li>
+      
     </ul>
     </div>
     
@@ -599,7 +604,7 @@
       
       <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
       <li class="active tutorials">
-        <a href="/courses/plp/tutorials/spark-programming-dce/">Spark programming using a Spark cluster</a>
+        <a href="/courses/plp/tutorials/spark-programming-dce/">Introduction to Spark programming</a>
       </li>
       
       
@@ -663,7 +668,7 @@
 
         <div class="docs-article-container">
           <div class="heading">Big data algorithms, techniques and platforms — Tutorial 4</div>
-          <h1>Spark programming using a Spark cluster</h1>
+          <h1>Introduction to Spark programming</h1>
           <hr>
           <div class="logo">
             <p><img src="/img/cs-logo.png" width="20%" style="display: block; margin: auto;" /></p>
@@ -675,165 +680,10 @@
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<div id="connection-to-the-cluster" class="section level1">
-<h1>Connection to the cluster</h1>
-<p>The architecture of the cluster at the CentraleSupélec campus in Metz is shown in the following figure.</p>
-<div class="figure" style="text-align: center"><span id="fig:cluster-metz"></span>
-<img src="/courses/plp/tutorials/spark-dce/cluster-metz.png" alt="Cluster architecture (image credit: [Stéphane Vialle](http://www.metz.supelec.fr/metz/personnel/vialle/){target=&quot;_blank&quot;})" width="100%" />
-<p class="caption">
-Figure 1: Cluster architecture (image credit: <a href="http://www.metz.supelec.fr/metz/personnel/vialle/" target="_blank">Stéphane Vialle</a>)
-</p>
-</div>
-<p>In order to use the Spark cluster, you’ll need to go through the following fours steps:</p>
-<ol style="list-style-type: decimal">
-<li><p>Choose a username <a href="https://centralesupelec.edunao.com/mod/choice/view.php?id=41547" target="_blank">on Edunao</a>.
-The password will be communicated by the teacher during the tutorial.</p></li>
-<li><p>Open a SSH connection to the machine <code>phome.metz.supelec.fr</code> from your local machine.</p></li>
-<li><p>Open a SSH connection to the machine <code>slurm1</code> from the machine <code>phome.metz.supelec.fr</code>.</p></li>
-<li><p>On the machine <code>slurm1</code> allocate resources for the job from a named reservation.</p></li>
-</ol>
-<p>Steps 2, 3 and 4 are detailed in the following subsections.</p>
-<div class="infobox warning">
-<p><strong>Opening a SSH connection</strong></p>
-<p>If your operating system is either <strong>Linux</strong> or <strong>MacOS</strong>, the command <code>ssh</code>, necessary to open a SSH connection to
-a computer, is likely to be already available.</p>
-<p>If your operating system is <strong>Windows</strong>, you’re not likely to have a command <code>ssh</code> readily available.
-In that case, you’ll need to install a SSH client.
-A good one is PuTTY, that you can <a href="https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html" target="_blank">download here</a>.</p>
-</div>
-<div id="connect-to-phome" class="section level2">
-<h2>Connect to <code>phome</code></h2>
-<p>If your operating system is <strong>Linux</strong> or <strong>MacOS</strong>, open a command-line terminal and type the following command
-(replace <code>your-username</code> with the username that you chose).</p>
-<p><code>ssh phome.metz.supelec.fr -l your-username</code></p>
-<p>After executing the command, you’ll be prompted to enter the password.</p>
-<p>If your operating system is <strong>Windows</strong>:</p>
-<ol style="list-style-type: decimal">
-<li><p>Launch PuTTY.</p></li>
-<li><p>In the <code>session</code> panel, specify <code>phome.metz.supelec.fr</code>
-as the host name. Select <code>ssh</code> (port 22) as connection type.</p></li>
-<li><p>In the connection panel, set <code>Enable TCP keepalives</code> and set
-30s between <code>keepalives</code>.</p></li>
-<li><p>Click on the button <code>Open</code> and click on the button <code>Yes</code>
-if you receive a warning informing you the key
-of the destination server is not cached yet.</p></li>
-<li><p>A command-line terminal should pop up, prompting you to enter your username and password.</p></li>
-</ol>
-</div>
-<div id="connect-to-slurm1" class="section level2">
-<h2>Connect to <code>slurm1</code></h2>
-<p>In the command-line terminal type the following command:</p>
-<p><code>ssh slurm1</code></p>
-</div>
-<div id="allocate-resources-for-the-job" class="section level2">
-<h2>Allocate resources for the job</h2>
-<p>Once you’re connected to <code>slurm1</code>,
-you can allocate resources for the job by typing the following command
-(<strong>in place of <code>resa-code</code> you will type a code that
-will be communicated by the teacher during the tutorial.</strong>)</p>
-<p><code>srun --reservation=resa-code -N 1 --ntasks-per-node=4 --pty bash</code></p>
-<div class="infobox warning">
-<p><strong>Read carefully</strong></p>
-<p>If you want to access the cluster <strong>after the tutorial</strong>, remember to:</p>
-<ul>
-<li><p>Use the cluster only in the evening in weekdays or during the weekends.</p></li>
-<li><p>In order to allocate the resources, <strong>use the following command</strong> instead
-of the previous one:</p>
-<p><code>srun -p ks1 -N 1 --ntasks-per-node=4 --pty bash</code></p></li>
-</ul>
-</div>
-</div>
-</div>
-<div id="source-file-edition" class="section level1">
-<h1>Source file edition</h1>
-<p>The Python source files that you’ll be editing in this tutorial are
-stored in the remote machines under your home directory
-<code>/usr/users/cpupsmia1/your-username</code>.
-In order to edit them, you have two options:</p>
-<ol style="list-style-type: decimal">
-<li>Use a remote text editor, such as <em>vim</em> or <em>nano</em> (Linux users, I’m talking to you!).</li>
-</ol>
-<p>or,</p>
-<ol start="2" style="list-style-type: decimal">
-<li>Download the file to your local machine, edit it with your usual code editor and upload it
-to the remote machine (Windows and MacOS users, I’m talking to you!).</li>
-</ol>
-<p>The first option should only be chosen by users who are already familiar with
-command-line editors.</p>
-<p>As for the other users, keep reading this section.</p>
-<div id="macos-users" class="section level2">
-<h2>MacOS users</h2>
-<p>In order to download a file (say, <code>test.txt</code>) from the home directory of a remote machine in the cluster,
-you can type the following command <strong>on your local machine</strong>:</p>
-<p><code>scp your-username@phome.metz.supelec.fr:~/test.txt .</code></p>
-<p>This will copy the file <code>test.txt</code> to your working directory <strong>on your local machine</strong>.</p>
-<p>Once you’re done editing <code>test.txt</code> on your local machine, you can upload the file
-to the remote machine by typing the following command <strong>on your local machine</strong>:</p>
-<p><code>scp wc.txt  your-username@phome.metz.supelec.fr:~</code></p>
-<p>It’s really that easy!</p>
-</div>
-<div id="windows-users" class="section level2">
-<h2>Windows users</h2>
-<p>Windows users can benefit from a graphical client called
-<strong>WinSCP</strong>, that you can <a href="https://winscp.net/eng/download.php" target="_blank">download here</a>.
-Install it, connect to the remote machine and you’ll be able to download/upload
-files from/to the remote machine by a simple drag-and-drop!</p>
-</div>
-</div>
-<div id="exercises" class="section level1">
-<h1>Exercises</h1>
-<p>The datasets that you’ll be using in this tutorial are
-available under the folder <code>hdfs://sar01:9000/data/</code>
-stored in HDFS.
-In order to see the content of the directory you can type the following command:</p>
-<p><code>hdfs dfs -ls -h hdfs://sar01:9000/data</code></p>
-<div id="warming-up" class="section level2">
-<h2>Warming up</h2>
-<p>In order to get some familiarity with the commands necessary to run Spark programs in the cluster,
-let’s look at an already implemented example.</p>
-<ul>
-<li><p>Copy the file <code>~vialle/DCE-Spark/template_wc.py</code> to your home directory by typing the
-following command:</p>
-<p><code>cp ~vialle/DCE-Spark/template_wc.py ./wc.py</code></p></li>
-<li><p>If you type the command <code>ls</code>, you should see a file named <code>wc.py</code> in your home directory.
-This file contains the Python code to count the number of occurrences of words in a text file.</p></li>
-<li><p>Open the file <code>wc.py</code> by either using a text editor on the remote machine or by downloading it on your
-local machine, as explained in the section above.</p></li>
-<li><p>Locate the following instruction:</p>
-<p><code>text_file = sc.textFile(&quot;hdfs://...&quot;)</code></p>
-<p>and replace it with the following instruction:</p>
-<p><code>text_file = sc.textFile(&quot;hdfs://sar01:9000/data/sherlock.txt&quot;)</code></p>
-<p>This will create an RDD named <code>text_file</code> with the content of the specified file.</p></li>
-<li><p>Similarly, locate the following instruction:</p>
-<p><code>counts.saveAsTextFile(&quot;hdfs://...&quot;)</code></p>
-<p>and replace it with the following instruction (<strong>replace <em>your_username</em> with your username!</strong>):</p>
-<p><code>counts.saveAsTextFile(&quot;hdfs://sar01:9000/cpupsmia1/your_username/sherlock.out&quot;)</code></p>
-<p>This will create an output directory <em>sherlock.out</em> that will contain the files with the output of the program.</p></li>
-<li><p>Run the Python script <code>wc.py</code> with the following command:</p>
-<p><code>spark-submit --master spark://sar01:7077 wc.py</code></p></li>
-<li><p>When the execution is over, the output will be available under the directory
-<code>sherlock.out</code>. To verify it, run the following command:</p>
-<p><code>hdfs dfs -ls -h hdfs://sar01:9000/cpupsmia1/your_username/sherlock.out</code></p>
-<p>As usual, remember to replace <code>your_username</code> with your username.</p></li>
-<li><p>In order to see the result, run the following command:</p>
-<div align="left">
-<code>hdfs dfs -cat hdfs://sar01:9000/cpupsmia1/your_username/sherlock.out/*</code>
-</div></li>
-</ul>
-<div class="infobox warning">
-<p><strong>Output files</strong></p>
-<p>If you rerun the script by specifying an output file that <strong>already exists</strong>,
-you’d get an error.
-If you really want to overwrite the output file, you first need to remove it
-explicitly by typing the following command:</p>
-<div align="left">
-<p><code>hdfs dfs rm -r hdfs://sar01:9000/cpupsmia1/your_username/sherlock.out</code></p>
-</div>
-</div>
-<p>Everything clear? Then you’re ready to go on!</p>
-</div>
-<div id="computing-averages" class="section level2">
-<h2>Computing averages</h2>
+<p><a href="/courses/plp/overview/cluster-connection" target="_blank">Refer to this documentation</a> to learn how to connect and
+interact with the cluster.</p>
+<div id="computing-averages" class="section level1">
+<h1>Computing averages</h1>
 <p>We consider a collection of CSV files containing temperature measurements in the following format:</p>
 <p><code>year,month,day,hours,minutes,seconds,temperature</code></p>
 <p>you can find the files under the directory <code>hdfs://sar01:9000/data/temperatures/</code></p>
@@ -846,8 +696,8 @@ explicitly by typing the following command:</p>
 </ul>
 <p>We intend to implement a Spark algorithm to generate pairs <span class="math inline">\((y, t_{avg})\)</span>, where
 <span class="math inline">\(y\)</span> is the year and <span class="math inline">\(t_{avg}\)</span> is the average temperature in the year.</p>
-<div id="first-implementation" class="section level3">
-<h3>First implementation</h3>
+<div id="first-implementation" class="section level2">
+<h2>First implementation</h2>
 <p>Copy the file <code>~vialle/DCE-Spark/template_temperatures.py</code>
 to your home directory by typing
 the following command:</p>
@@ -893,23 +743,9 @@ the files <code>temperatures_2880.csv</code> and <code>temperatures_86.csv</code
 </ul>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<ul>
-<li><p>The execution time on file <code>temperatures_86400.csv</code> is around 1.73 seconds.</p></li>
-<li><p>The execution time on file <code>temperatures_2880.csv</code> is around 6.23 seconds.
-This is normal, as we have considerably more measurements per year compared to the first file.</p></li>
-<li><p>The execution time on file <code>temperatures_86.csv</code> is around 74.96 seconds.
-Although <code>temperatures_86.csv</code> and
-<code>temperatures_2880.csv</code> have a comparable size, in the first file
-all measurements are associated to the same key (1980), and therefore the application of <code>reduceByKey</code> takes much longer than before.</p></li>
-</ul>
 </div>
-</details>
-</div>
-<div id="second-implementation" class="section level3">
-<h3>Second implementation</h3>
+<div id="second-implementation" class="section level2">
+<h2>Second implementation</h2>
 <p>Copy the file <code>~vialle/DCE-Spark/template_temperatures.py</code> to your home directory by typing
 the following command:</p>
 <div align="left">
@@ -925,13 +761,6 @@ previous exercise, write an improved implementation of the
 function <code>avg_temperature</code>.</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<pre><code>temperatures = text_file.map(lambda line: line.split(&quot;,&quot;))
-                    .map(lambda triple: (triple[0], (float(triple[6]), 1)))
-                    .reduceByKey(lambda t1, t2: (t1[0]+t2[0], t1[1] + t2[1]))
-                    .mapValues(lambda t: t[0]/t[1])</code></pre>
-</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -946,21 +775,10 @@ Do you think that the program takes too long? Why?</p></li>
 </ul>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<ul>
-<li><p>The execution time on file <code>temperatures_86.csv</code> is around 3.38 seconds.
-This is much more efficient than the first implementation.
-In fact, we don’t create here a huge list of values associated with a given key.</p></li>
-<li><p>The execution time on file <code>temperatures_10.csv</code> is around 33 seconds.
-This is entirely acceptable given that file contains 3 GB of data and we have a measurement
-every 10 seconds for each year.</p></li>
-</ul>
-</details>
 </div>
 </div>
-<div id="average-and-standard-deviation" class="section level2">
-<h2>Average and standard deviation</h2>
+<div id="average-and-standard-deviation" class="section level1">
+<h1>Average and standard deviation</h1>
 <p>We use the same files as in the first question.
 Our objective is to write a Spark program that produces
 triples <span class="math inline">\((y, t_{\mu}, t_{\sigma})\)</span>, where <span class="math inline">\(y\)</span>, <span class="math inline">\(t_{\mu}\)</span> and
@@ -985,14 +803,6 @@ as input files (small files).</p></li>
 <li><p>Run the script by using <code>temperatures_86.csv</code> and <code>temperatures_10.csv</code> as input files (large files).</p></li>
 </ul>
 </div>
-</div>
-<details>
-<p><summary>Solution</summary></p>
-<pre><code>temperatures = text_file.map(lambda line: line.split(&quot;,&quot;)) 
-    .map(lambda t: (t[0],(float(t[6]), float(t[6])*float(t[6]),1))) 
-    .reduceByKey(lambda f, s: ((f[0]+s[0]),(f[1]+s[1]),(f[2]+s[2])))
-    .mapValues(lambda t : (t[0]/t[2], math.sqrt(t[1]/t[2] - (t[0]/t[2])*(t[0]/t[2]))))</code></pre>
-</details>
 </div>
 </div>
 

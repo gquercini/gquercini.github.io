@@ -28,10 +28,10 @@
   
     
   
-  <meta name="description" content="Presentation of the course Big data algorithms, techniques and platforms">
+  <meta name="description" content="How to connect to the cluster">
 
   
-  <link rel="alternate" hreflang="en-us" href="/courses/plp/overview/">
+  <link rel="alternate" hreflang="en-us" href="/courses/plp/overview/cluster-connection/">
 
   
 
@@ -214,14 +214,12 @@
 
 
   
-  <link rel="alternate" href="/courses/plp/overview/index.xml" type="application/rss+xml" title="Gianluca Quercini">
-  
 
   <link rel="manifest" href="/index.webmanifest">
   <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_2.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_2.png">
 
-  <link rel="canonical" href="/courses/plp/overview/">
+  <link rel="canonical" href="/courses/plp/overview/cluster-connection/">
 
   
   
@@ -235,11 +233,12 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Gianluca Quercini">
-  <meta property="og:url" content="/courses/plp/overview/">
-  <meta property="og:title" content="Big data algorithms, techniques and platforms | Gianluca Quercini">
-  <meta property="og:description" content="Presentation of the course Big data algorithms, techniques and platforms"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:url" content="/courses/plp/overview/cluster-connection/">
+  <meta property="og:title" content="Connecting to the cluster | Gianluca Quercini">
+  <meta property="og:description" content="How to connect to the cluster"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
   
+    
     
   
 
@@ -247,17 +246,19 @@
 
 
 
-
   
 
 
   
 
 
+  
 
 
 
-  <title>Big data algorithms, techniques and platforms | Gianluca Quercini</title>
+
+
+  <title>Connecting to the cluster | Gianluca Quercini</title>
 
 </head>
 
@@ -543,8 +544,8 @@
     <div id="overview-ddowncontent" class="overview-ddowncontent ddowncontent">
     <ul class="nav docs-sidenav">
       
-      <script>open_menu_on_load("overview".concat("-ddowncontent"))</script>
-      <li class="active overview">
+      
+      <li class="overview">
         <a href="/courses/plp/overview/">Big data algorithms, techniques and platforms</a>
       </li>
       
@@ -553,8 +554,8 @@
         <a href="/courses/plp/overview/installation-mongodb/">Installing MongoDB</a>
       </li>
       
-      
-      <li class="overview">
+      <script>open_menu_on_load("overview".concat("-ddowncontent"))</script>
+      <li class="active overview">
         <a href="/courses/plp/overview/cluster-connection/">Connecting to the cluster</a>
       </li>
       
@@ -666,8 +667,8 @@
       <article class="article">
 
         <div class="docs-article-container">
-          <div class="heading"></div>
-          <h1>Big data algorithms, techniques and platforms</h1>
+          <div class="heading">Big data algorithms, techniques and platforms — Connecting to the cluster</div>
+          <h1>Connecting to the cluster</h1>
           <hr>
           <div class="logo">
             <p><img src="/img/cs-logo.png" width="20%" style="display: block; margin: auto;" /></p>
@@ -679,76 +680,173 @@
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<div id="overview" class="section level1">
-<h1>Overview</h1>
-<p>This course aims to introduce the main technologies
-to deal with the many challenges posed by <strong>Big Data</strong>.</p>
-<p>Big Data is a term
-used to describe a collection of data
-that is huge in volume and
-yet grows exponentially over time.
-In short, this data is so voluminous and complex
-that none of the traditional data management tools are capable of
-<em>storing</em> or <em>processing</em> it efficiently.</p>
-<p>In the first part, this course
-introduces the existing technologies
-that make it possible to efficiently
-<strong>process</strong> large volumes of data, namely <strong>Hadoop MapReduce</strong> and
-<strong>Apache Spark</strong>.</p>
-<p>In the second part,
-we will study the solutions that allow to
-<strong>store</strong> and <strong>query</strong> these volumes of data;
-we will focus on a variety of <strong>NoSQL databases</strong>
-(using <strong>MongoDB</strong> and <strong>Neo4j</strong> as case studies).</p>
+<!-- ############ IMPORTANT: CHANGE THESE VALUES BEFORE ANY LAB ############ -->
+<!-- The group to which users in the cluster belong-->
+<!-- User accounts are numbered from the lower to the upper limit-->
+<!-- The link to the Edunao page where the students can choose a username to connect to the cluster. -->
+<!-- ############ END OF MODIFICATIONS ############ -->
+<p>The architecture of the cluster at the CentraleSupélec campus in Metz is shown in the following figure.</p>
+<div class="figure" style="text-align: center"><span id="fig:cluster-metz"></span>
+<img src="/courses/plp/tutorials/spark-dce/cluster-metz.png" alt="Cluster architecture (image credit: [Stéphane Vialle](http://www.metz.supelec.fr/metz/personnel/vialle/){target=&quot;_blank&quot;})" width="100%" />
+<p class="caption">
+Figure 1: Cluster architecture (image credit: <a href="http://www.metz.supelec.fr/metz/personnel/vialle/" target="_blank">Stéphane Vialle</a>)
+</p>
 </div>
-<div id="prerequisites" class="section level1">
-<h1>Prerequisites</h1>
+<p>In order to use the Spark cluster, you’ll need to go through the following fours steps:</p>
+<ol style="list-style-type: decimal">
+<li><p>Choose a username <a href="https://centralesupelec.edunao.com/mod/choice/view.php?id=47207" target="_blank">on Edunao</a>.
+The password will be communicated by the teacher during the tutorial.</p></li>
+<li><p>Open a SSH connection to the machine <code>phome.metz.supelec.fr</code> from your local machine.</p></li>
+<li><p>Open a SSH connection to the machine <code>slurm1</code> from the machine <code>phome.metz.supelec.fr</code>.</p></li>
+<li><p>On the machine <code>slurm1</code> allocate resources for the job from a named reservation.</p></li>
+</ol>
+<p>Steps 2, 3 and 4 are detailed in the following subsections.</p>
+<div class="infobox warning">
+<p><strong>Opening a SSH connection</strong></p>
+<p>If your operating system is either <strong>Linux</strong> or <strong>MacOS</strong>, the command <code>ssh</code>, necessary to open a SSH connection to
+a computer, is likely to be already available.</p>
+<p>If your operating system is <strong>Windows</strong>, you’re not likely to have a command <code>ssh</code> readily available.
+In that case, you’ll need to install a SSH client.
+A good one is PuTTY, that you can <a href="https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html" target="_blank">download here</a>.</p>
+</div>
+<div id="connect-to-phome" class="section level2">
+<h2>Connect to <code>phome</code></h2>
+<p>If your operating system is <strong>Linux</strong> or <strong>MacOS</strong>, open a command-line terminal and type the following command
+(replace <code>your-username</code> with the username that you chose).</p>
+<p><code>ssh phome.metz.supelec.fr -l your-username</code></p>
+<p>After executing the command, you’ll be prompted to enter the password.</p>
+<p>If your operating system is <strong>Windows</strong>:</p>
+<ol style="list-style-type: decimal">
+<li><p>Launch PuTTY.</p></li>
+<li><p>In the <code>session</code> panel, specify <code>phome.metz.supelec.fr</code>
+as the host name. Select <code>ssh</code> (port 22) as connection type.</p></li>
+<li><p>In the connection panel, set <code>Enable TCP keepalives</code> and set
+30s between <code>keepalives</code>.</p></li>
+<li><p>Click on the button <code>Open</code> and click on the button <code>Yes</code>
+if you receive a warning informing you the key
+of the destination server is not cached yet.</p></li>
+<li><p>A command-line terminal should pop up, prompting you to enter your username and password.</p></li>
+</ol>
+</div>
+<div id="connect-to-slurm1" class="section level2">
+<h2>Connect to <code>slurm1</code></h2>
+<p>In the command-line terminal type the following command:</p>
+<p><code>ssh slurm1</code></p>
+</div>
+<div id="allocate-resources-for-the-job" class="section level2">
+<h2>Allocate resources for the job</h2>
+<p>Once you’re connected to <code>slurm1</code>,
+you can allocate resources for the job by typing the following command
+(<strong>in place of <code>resa-code</code> you will type a code that
+will be communicated by the teacher during the tutorial.</strong>)</p>
+<p><code>srun --reservation=resa-code -N 1 --ntasks-per-node=4 --pty bash</code></p>
+<div class="infobox warning">
+<p><strong>Read carefully</strong></p>
+<p>If you want to access the cluster <strong>after the tutorial</strong>, remember to:</p>
 <ul>
-<li><p>Basic understanding of how computer systems work:
-processor, memory, disk operations and functions of the operating system.</p></li>
-<li><p>Good knowledge of relational database management systems.</p></li>
+<li><p>Use the cluster only in the evening in weekdays or during the weekends.</p></li>
+<li><p>In order to allocate the resources, <strong>use the following command</strong> instead
+of the previous one:</p>
+<p><code>srun -p ks1 -N 1 --ntasks-per-node=4 --pty bash</code></p></li>
 </ul>
 </div>
-<div id="teaching-staff" class="section level1">
-<h1>Teaching staff</h1>
-<ul>
-<li><a href="/index.html" target="_blank">Gianluca Quercini</a></li>
-</ul>
 </div>
-<div id="course-summary" class="section level1">
-<h1>Course summary</h1>
-<p><strong>1. Introduction and MapReduce programming.</strong></p>
+<div id="source-file-edition" class="section level1">
+<h1>Source file edition</h1>
+<p>The Python source files that you’ll be editing in this tutorial are
+stored in the remote machines under your home directory
+<code>/usr/users/cpuasi1/your-username</code>.
+In order to edit them, you have two options:</p>
+<ol style="list-style-type: decimal">
+<li>Use a remote text editor, such as <em>vim</em> or <em>nano</em> (Linux users, I’m talking to you!).</li>
+</ol>
+<p>or,</p>
+<ol start="2" style="list-style-type: decimal">
+<li>Download the file to your local machine, edit it with your usual code editor and upload it
+to the remote machine (Windows and MacOS users, I’m talking to you!).</li>
+</ol>
+<p>The first option should only be chosen by users who are already familiar with
+command-line editors.</p>
+<p>As for the other users, keep reading this section.</p>
+<div id="macos-users" class="section level2">
+<h2>MacOS users</h2>
+<p>In order to download a file (say, <code>test.txt</code>) from the home directory of a remote machine in the cluster,
+you can type the following command <strong>on your local machine</strong>:</p>
+<p><code>scp your-username@phome.metz.supelec.fr:~/test.txt .</code></p>
+<p>This will copy the file <code>test.txt</code> to your working directory <strong>on your local machine</strong>.</p>
+<p>Once you’re done editing <code>test.txt</code> on your local machine, you can upload the file
+to the remote machine by typing the following command <strong>on your local machine</strong>:</p>
+<p><code>scp wc.txt  your-username@phome.metz.supelec.fr:~</code></p>
+<p>It’s really that easy!</p>
+</div>
+<div id="windows-users" class="section level2">
+<h2>Windows users</h2>
+<p>Windows users can benefit from a graphical client called
+<strong>WinSCP</strong>, that you can <a href="https://winscp.net/eng/download.php" target="_blank">download here</a>.
+Install it, connect to the remote machine and you’ll be able to download/upload
+files from/to the remote machine by a simple drag-and-drop!</p>
+</div>
+</div>
+<div id="creating-your-working-directory-in-hdfs" class="section level1">
+<h1>Creating your working directory in HDFS</h1>
+<p>In this section, you’ll be walked through the procedure to create a directory
+in HDFS that you’ll use as your working directory in the lab sessions.</p>
+<p>You user account is: <code>cpuasi1_X</code>, where X is between 1 and
+28.</p>
+<p>In order to create your working directory in HDFS, type the following command in the terminal:</p>
+<p><code>hdfs dfs -mkdir hdfs://sar01:9000/cpuasi1/cpuasi1_X</code></p>
+<p>You can verify that the directory is there by listing the content of the folder hdfs://sar01:9000/cpuasi1/
+with the following command:</p>
+<p><code>hdfs dfs -mkdir hdfs://sar01:9000/cpuasi1/</code></p>
+</div>
+<div id="preliminary-exercise" class="section level1">
+<h1>Preliminary exercise</h1>
+<p>The datasets that you’ll be using in this tutorial are
+available under the folder <code>hdfs://sar01:9000/data/</code>
+stored in HDFS.
+In order to see the content of the directory you can type the following command:</p>
+<p><code>hdfs dfs -ls -h hdfs://sar01:9000/data</code></p>
+<p>In order to get some familiarity with the commands necessary to run Spark programs in the cluster,
+let’s look at an already implemented example.</p>
 <ul>
-<li>Basic notions and motivations of Big Data.</li>
-<li>Overview of Hadoop.</li>
-<li>Introduction to MapReduce.</li>
+<li><p>Copy the file <code>~vialle/DCE-Spark/template_wc.py</code> to your home directory by typing the
+following command:</p>
+<p><code>cp ~vialle/DCE-Spark/template_wc.py ./wc.py</code></p></li>
+<li><p>If you type the command <code>ls</code>, you should see a file named <code>wc.py</code> in your home directory.
+This file contains the Python code to count the number of occurrences of words in a text file.</p></li>
+<li><p>Open the file <code>wc.py</code> by either using a text editor on the remote machine or by downloading it on your
+local machine, as explained in the section above.</p></li>
+<li><p>Locate the following instruction:</p>
+<p><code>text_file = sc.textFile(&quot;hdfs://...&quot;)</code></p>
+<p>and replace it with the following instruction:</p>
+<p><code>text_file = sc.textFile(&quot;hdfs://sar01:9000/data/sherlock.txt&quot;)</code></p>
+<p>This will create an RDD named <code>text_file</code> with the content of the specified file.</p></li>
+<li><p>Similarly, locate the following instruction:</p>
+<p><code>counts.saveAsTextFile(&quot;hdfs://...&quot;)</code></p>
+<p>and replace it with the following instruction (<strong>replace <code>cpuasi1_X</code> with your username!</strong>):</p>
+<p><code>counts.saveAsTextFile(&quot;hdfs://sar01:9000/cpuasi1/cpuasi1_X/sherlock.out&quot;)</code></p>
+<p>This will create an output directory <em>sherlock.out</em> that will contain the files with the output of the program.</p></li>
+<li><p>Run the Python script <code>wc.py</code> with the following command:</p>
+<p><code>spark-submit --master spark://sar01:7077 wc.py</code></p></li>
+<li><p>When the execution is over, the output will be available under the directory
+<code>sherlock.out</code>. To verify it, run the following command:</p>
+<p><code>hdfs dfs -ls -h hdfs://sar01:9000/cpuasi1/cpuasi1_X/sherlock.out</code></p>
+<p>As usual, remember to replace <code>cpuasi1_X</code> with your username.</p></li>
+<li><p>In order to see the result, run the following command:</p>
+<div align="left">
+<code>hdfs dfs -cat hdfs://sar01:9000/cpuasi1/cpuasi1_X/sherlock.out/*</code>
+</div></li>
 </ul>
-<p><strong>2. Hadoop and its ecosystem: HDFS.</strong></p>
-<ul>
-<li>In-depth description of the Hadoop Distributed File System (HDFS).</li>
-</ul>
-<p><strong>3. Introduction to Apache Spark.</strong></p>
-<ul>
-<li>Apache Spark, its architecture and functionalities.</li>
-<li>Resilient Distributed Datasets: transformations and actions.</li>
-</ul>
-<p><strong>4. Advanced Apache Spark.</strong></p>
-<ul>
-<li>SparkSQL, Spark streaming, machine learning, graph analysis.</li>
-</ul>
-<p><strong>5. Distributed databases and NoSQL.</strong></p>
-<ul>
-<li><p>Data distribution (replication, sharding, the CAP theorem).</p></li>
-<li><p>Overview of NoSQL databases.</p></li>
-</ul>
-<p><strong>6. Document oriented databases: MongoDB.</strong></p>
-<ul>
-<li>Presentation of MongoDB.</li>
-</ul>
-<p><strong>7. Graph-oriented database systems: Neo4j.</strong></p>
-<ul>
-<li>Presentation of Neo4j.</li>
-</ul>
+<div class="infobox warning">
+<p><strong>Output files</strong></p>
+<p>If you rerun the script by specifying an output file that <strong>already exists</strong>,
+you’d get an error.
+If you really want to overwrite the output file, you first need to remove it
+explicitly by typing the following command:</p>
+<div align="left">
+<p><code>hdfs dfs rm -r hdfs://sar01:9000/cpuasi1/cpuasi1_X/sherlock.out</code></p>
+</div>
+</div>
 </div>
 
           </div>
