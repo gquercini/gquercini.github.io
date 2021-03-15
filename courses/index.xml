@@ -2161,11 +2161,22 @@ You can use the template available at &lt;code&gt;~vialle/DCE-Spark/template_inv
 
 &lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
 &lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;!-- ############ IMPORTANT: CHANGE THESE VALUES BEFORE ANY LAB ############ --&gt;
+&lt;!-- The link to the Edunao page where the students submit their work --&gt;
+&lt;!-- The submission deadline --&gt;
+&lt;!-- ############ END OF MODIFICATIONS ############ --&gt;
 &lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Introduction&lt;/h1&gt;
 &lt;p&gt;The goal of this lab assignment is to learn how to analyze streams of data with the Spark Structured Streaming API.
 &lt;a href=&#34;/courses/plp/overview/cluster-connection&#34; target=&#34;_blank&#34;&gt;Refer to this documentation&lt;/a&gt; to learn how to connect and
 interact with the cluster.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Assignment submission&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;This lab assignment will be &lt;strong&gt;evaluated&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;In order to finalize the submission of the assignment,
+complete &lt;a href=&#34;https://centralesupelec.edunao.com/mod/quiz/view.php?id=48267&#34; target=&#34;_blank&#34;&gt;this form available on Edunao&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The submission deadline is &lt;strong&gt;Tuesday, March 23, 2021 8:00 AM&lt;/strong&gt;.&lt;/p&gt;
+&lt;/div&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Documentation&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;In order to answer the questions and do the exercises, you might want to refer to the following
@@ -2209,7 +2220,7 @@ streamingQuery.awaitTermination()&lt;/code&gt;&lt;/pre&gt;
 &lt;div class=&#34;exercise&#34;&gt;
 &lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;Where does this program get its input?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Where does this program get its input from?&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;What object type does the variable &lt;code&gt;lines&lt;/code&gt; contain?&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Where does this program write its output?&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;What is the output of this program?&lt;/p&gt;&lt;/li&gt;
@@ -2233,13 +2244,11 @@ of the cluster machine.
 &lt;li&gt;Change the value of the variable &lt;code&gt;checkpoint_location&lt;/code&gt; so that it points to the directory that you created at point 3.&lt;/li&gt;
 &lt;li&gt;Change the value of the variable &lt;code&gt;port_number&lt;/code&gt; to any value in the range [49152, 65535].&lt;/li&gt;
 &lt;/ul&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Open a new terminal window, connect to &lt;code&gt;phome.metz.supelec.fr&lt;/code&gt; and then to the same machine that you noted at point 2.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;In the new terminal, start a &lt;strong&gt;netcat server&lt;/strong&gt; listening on the port number that you selected at point 4. Use the following command:&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
+&lt;/ol&gt;
 &lt;p&gt;&lt;code&gt;nc -lk port_number&lt;/code&gt;&lt;/p&gt;
-&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;ol start=&#34;7&#34; style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;Run the Python code with the command &lt;code&gt;spark-submit&lt;/code&gt;. Wait until Spark does not display any more messages on screen.
 &lt;ul&gt;
 &lt;li&gt;In case the program stops for an error, read the box “What to do in case of errors” below.&lt;/li&gt;
@@ -2301,17 +2310,153 @@ typing CTRL-C in the terminal where Spark is running.&lt;/p&gt;&lt;/li&gt;
 &lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;&lt;p&gt;Create a new checkpoint location in HDFS.
-You may also keep the same as before; in this case, make sure you &lt;strong&gt;remove&lt;/strong&gt; all files from that
+You may also keep the same directory as before; in this case, make sure you &lt;strong&gt;remove all files&lt;/strong&gt; from that
 directory.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Write a new program that reads a streaming text from a TCP socket and
 counts the number of occurrences of each word.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Which output mode are you going to choose and why?&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Run the program. Write few lines on the netcat server and observe the output.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Stop the program and rerun it again with no modifications. Write few lines in the netcat terminal and observe the output.
+&lt;li&gt;&lt;p&gt;Stop the program and run it again with no modifications. Write few lines in the netcat terminal and observe the output.
 What can you say about the word counts?&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Stop the program and remove the files in the checkpoint location. Rerun again the program and write few lines
+&lt;li&gt;&lt;p&gt;Stop the program and remove the files in the checkpoint location. Run the program again and write few lines
 on the netcat terminal. What can you say about the word counts?&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Play with the different output modes and observe how the output changes.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;window-operations-on-event-time&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Window operations on event time&lt;/h1&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Netcat and checkpoint&lt;/strong&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;You can stop the netcat server now.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Remember to create a new checkpoint location for this exercise.
+Alternatively, you can also use the same directory as in the previous exercises, but
+you should remove all its files.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;p&gt;We’re now going to find out how to perform aggregations over a sliding event-time window.&lt;/p&gt;
+&lt;p&gt;A given data source generates some words for a certain time interval.
+Each word is accompanied with a timestamp that indicates the exact moment when the word is
+generated. This timestamp is the &lt;strong&gt;event time&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;After generating a word, the data source saves the word and its timestamp into
+a CSV file in a directory named &lt;code&gt;tempws&lt;/code&gt;.
+This directory is stored in your home directory in the local file system of a cluster machine.
+Hence, at any given moment in time, the directory &lt;code&gt;./tempws&lt;/code&gt; will contain zero to many CSV files,
+where each file only contains exactly one line in the format
+&lt;code&gt;word,timestamp&lt;/code&gt; (no whitespace before nor after the comma).&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5  &lt;/strong&gt;&lt;/span&gt;
+Write a Spark program that:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Reads the stream of data from the directory &lt;code&gt;./tempws&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Counts the number of occurrences of each word within 10 minute windows that slide every 5 minutes.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Print the output counts to the console. Use triggers of 5 seconds.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;We now test the new Spark program.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Data source and timeline visualization&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;We provide two Python programs for this exercise: a data generator and
+a tool for visualizing words in a timeline. Instructions to get and run
+these two programs are given in the activity below.&lt;/p&gt;
+&lt;p&gt;The &lt;strong&gt;data generator&lt;/strong&gt; is our data source.
+It generates two words every second for a certain
+amount of time.
+Each word is saved in a separate CSV file in the directory
+&lt;code&gt;./tempws&lt;/code&gt;. It also saves the list of all generated
+words to a summary CSV file.&lt;/p&gt;
+&lt;p&gt;The &lt;strong&gt;visualization tool&lt;/strong&gt; takes as its input the summary CSV file
+written by the data generator and visualizes the words
+on a timeline.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Create a directory named &lt;code&gt;tempws&lt;/code&gt; in your home directory in the local filesystem of the cluster machine.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Copy to your home directory
+in the local filesystem
+the data generator &lt;code&gt;/usr/users/cpu-prof/cpu_quercini/structured-streaming/tempws_gen.py&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Start the Spark program. When running the first time, you might get some errors. Correct your code accordingly.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In another terminal, run the Python script &lt;code&gt;tempws_gen.py&lt;/code&gt;. Use the
+following command to learn how to run this program:&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;python tempws_gen.py --help&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;For this exercise, do not introduce any delay
+(keep the default values of the parameters &lt;code&gt;--delay&lt;/code&gt;, &lt;code&gt;--mindelay&lt;/code&gt;, &lt;code&gt;--maxdelay&lt;/code&gt;).&lt;/p&gt;
+&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;After launching the data generator, you should
+see some output in the terminal where you launched the Spark program.
+&lt;strong&gt;Wait for the script &lt;code&gt;tempws_gen.py&lt;/code&gt; to terminate the data generation&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;p&gt;We now want to analyze the output of the program.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The script &lt;code&gt;tempws_gen.py&lt;/code&gt; has generated
+a file &lt;code&gt;gen_words.csv&lt;/code&gt; in your home directory.
+This file contains the list of all words generated with the relative timestamps.
+&lt;strong&gt;Download the file to your computer&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Download the visualization tool &lt;code&gt;/usr/users/cpu-prof/cpu_quercini/structured-streaming/timeline_visualization.py&lt;/code&gt;
+to your computer.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Visualization tool&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Use the following command to learn how to run the visualization tool:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;python timeline_visualization.py --help&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The visualization tool displays a vertical blue bar at each trigger.
+To this purpose, you’ll need to pass the tool the timestamps associated to the first
+and last trigger and the interval (in seconds) between two consecutive triggers.&lt;/p&gt;
+&lt;p&gt;You can get the timestamps associated to the first and last trigger by analyzing the output of Spark.
+More specifically, for each micro-batch, Spark outputs the progress details of the streaming query; you’ll need
+to look at the timestamp associated to the first and last micro-batch.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 6  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Analyze the output of your Spark program and the timeline of the generated words.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Describe how the counts are updated by the Spark program.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;late-data-and-watermarking&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Late data and watermarking&lt;/h1&gt;
+&lt;p&gt;We’re now going to learn how Structured Streaming handles
+late data in windowed aggregations.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Remove generated files&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Remove all the files in the directory &lt;code&gt;tempws&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;The data generator &lt;code&gt;tempws_gen.py&lt;/code&gt;
+can generate a stream of words, some of which
+might be written to the directory &lt;code&gt;tempws&lt;/code&gt; with some amount of
+delay. In other words, there is a gap between the event time (when the word is generated)
+and the arrival time (when the word is written to the directory).&lt;/p&gt;
+&lt;p&gt;Use the following command to learn how to do it:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;python tempws_gen.py --help&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 7  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Write a Spark program that does the same aggregation as in the previous exercise.
+Additionally, the program must use watermarking to handle late data.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Start the Spark program.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Generate some data with delay with the program &lt;code&gt;tempws_gen.py&lt;/code&gt;.
+Once the data generation stops, you can stop the Spark program.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Visualize the generated words with the visualization tool.
+Late words have the delay indicated between parentheses.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Observe the output of the Spark program and describe how
+the watermarking mechanism works on this example.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
