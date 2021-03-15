@@ -2152,6 +2152,174 @@ You can use the template available at &lt;code&gt;~vialle/DCE-Spark/template_inv
     </item>
     
     <item>
+      <title>Spark structured streaming</title>
+      <link>/courses/plp/tutorials/structured-streaming-lab/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/plp/tutorials/structured-streaming-lab/</guid>
+      <description>
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;The goal of this lab assignment is to learn how to analyze streams of data with the Spark Structured Streaming API.
+&lt;a href=&#34;/courses/plp/overview/cluster-connection&#34; target=&#34;_blank&#34;&gt;Refer to this documentation&lt;/a&gt; to learn how to connect and
+interact with the cluster.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Documentation&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;In order to answer the questions and do the exercises, you might want to refer to the following
+documentation:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The &lt;a href=&#34;https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html&#34; target=&#34;_blank&#34;&gt;Structured Streaming programing guide&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The &lt;a href=&#34;https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql.html&#34; target=&#34;_blank&#34;&gt;Spark SQL API reference&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;!-- ############ IMPORTANT: CHANGE THESE VALUES BEFORE ANY LAB ############ --&gt;
+&lt;!-- The group to which users in the cluster belong--&gt;
+&lt;!-- User accounts are numbered from the lower to the upper limit--&gt;
+&lt;!-- ############ END OF MODIFICATIONS ############ --&gt;
+&lt;/div&gt;
+&lt;div id=&#34;warming-up&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Warming up&lt;/h1&gt;
+&lt;p&gt;Consider the following program.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;from pyspark.sql import SparkSession
+from pyspark.sql.types import *
+import pyspark.sql.functions as F
+
+port_number = COMPLETE HERE
+checkpoint_location = COMPLETE HERE
+
+spark = (SparkSession.builder.appName(&amp;quot;Structured Streaming - exo1&amp;quot;).getOrCreate())
+
+lines = (spark\
+        .readStream.format(&amp;quot;socket&amp;quot;)\
+        .option(&amp;quot;host&amp;quot;, &amp;quot;localhost&amp;quot;)\
+        .option(&amp;quot;port&amp;quot;, port_number)\
+        .load())
+
+streamingQuery = lines.writeStream\
+                .option(&amp;quot;checkpointLocation&amp;quot;, checkpoint_location)\
+                .format(&amp;quot;console&amp;quot;).start()
+
+streamingQuery.awaitTermination()&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Where does this program get its input?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What object type does the variable &lt;code&gt;lines&lt;/code&gt; contain?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Where does this program write its output?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What is the output of this program?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What is the option &lt;code&gt;checkpointLocation&lt;/code&gt; intended for?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What does the instruction &lt;code&gt;streamingQuery.awaitTermination()&lt;/code&gt;?&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;You can now verify your answers to the previous questions by &lt;strong&gt;executing the program&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Connect to the cluster, if you haven’t done so yet. &lt;a href=&#34;/courses/plp/overview/cluster-connection&#34; target=&#34;_blank&#34;&gt;Refer to this documentation&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;After running the command &lt;code&gt;srun ...&lt;/code&gt;, you should be connected to a machine on the cluster Kyle.
+Note the name of this machine (you should see it at the terminal prompt).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Create a checkpoint directory for the first exercise (e.g., &lt;code&gt;checkpoint_exo1&lt;/code&gt;) under your home directory
+&lt;code&gt;hdfs://sar01:9000/cpuasi1/cpuasi1_X&lt;/code&gt; &lt;strong&gt;in HDFS&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Copy and paste the code into a Python file (e.g., &lt;code&gt;exo1.py&lt;/code&gt;) that you’ll save into your home directory &lt;strong&gt;in the local filesystem&lt;/strong&gt;
+of the cluster machine.
+&lt;ul&gt;
+&lt;li&gt;Change the value of the variable &lt;code&gt;checkpoint_location&lt;/code&gt; so that it points to the directory that you created at point 3.&lt;/li&gt;
+&lt;li&gt;Change the value of the variable &lt;code&gt;port_number&lt;/code&gt; to any value in the range [49152, 65535].&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Open a new terminal window, connect to &lt;code&gt;phome.metz.supelec.fr&lt;/code&gt; and then to the same machine that you noted at point 2.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In the new terminal, start a &lt;strong&gt;netcat server&lt;/strong&gt; listening on the port number that you selected at point 4. Use the following command:&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;nc -lk port_number&lt;/code&gt;&lt;/p&gt;
+&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Run the Python code with the command &lt;code&gt;spark-submit&lt;/code&gt;. Wait until Spark does not display any more messages on screen.
+&lt;ul&gt;
+&lt;li&gt;In case the program stops for an error, read the box “What to do in case of errors” below.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;In the netcat terminal, write few lines of text. Look at the terminal where the Spark program is running and observe the output.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;What to do in case of errors&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;If any error arises, &lt;strong&gt;before&lt;/strong&gt; running the &lt;code&gt;spark-submit&lt;/code&gt; again it would be better to remove
+all files from the checkpoint directory.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Stop the program&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;When you’re done with your experiments, you can stop the Spark program by simply
+typing CTRL-C in the terminal where Spark is running.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Don’t stop the netcat server, you’ll need it in the next exercise.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;triggering-policy&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Triggering policy&lt;/h1&gt;
+&lt;p&gt;In a Structured Streaming program we can choose a &lt;strong&gt;triggering policy&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;What is a triggering policy?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What is the triggering policy in the previous program?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Modify the code of the previous program in order to set the
+&lt;code&gt;Fixed interval micro-batch&lt;/code&gt; triggering policy.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Run the program. How is the behaviour of this program different from before?&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;checkpoint-location-and-output-mode&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Checkpoint location and output mode&lt;/h1&gt;
+&lt;p&gt;We’re now going to see the impact of the checkpoint location and the output modes on a streaming query.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;What is an output mode and what are the available options?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;What is the output mode of the previous program?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;We’re now going to write a new streaming query.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Create a new checkpoint location in HDFS.
+You may also keep the same as before; in this case, make sure you &lt;strong&gt;remove&lt;/strong&gt; all files from that
+directory.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Write a new program that reads a streaming text from a TCP socket and
+counts the number of occurrences of each word.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Which output mode are you going to choose and why?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Run the program. Write few lines on the netcat server and observe the output.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Stop the program and rerun it again with no modifications. Write few lines in the netcat terminal and observe the output.
+What can you say about the word counts?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Stop the program and remove the files in the checkpoint location. Rerun again the program and write few lines
+on the netcat terminal. What can you say about the word counts?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Play with the different output modes and observe how the output changes.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Data modeling</title>
       <link>/courses/databases/tutorials/data-modeling/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
