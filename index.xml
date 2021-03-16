@@ -3366,19 +3366,19 @@ you should remove all its files.&lt;/p&gt;&lt;/li&gt;
 Each word is accompanied with a timestamp that indicates the exact moment when the word is
 generated. This timestamp is the &lt;strong&gt;event time&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;After generating a word, the data source saves the word and its timestamp into
-a CSV file in a directory named &lt;code&gt;tempws&lt;/code&gt;.
-This directory is stored in your home directory in the local file system of a cluster machine.
-Hence, at any given moment in time, the directory &lt;code&gt;./tempws&lt;/code&gt; will contain zero to many CSV files,
+a CSV file in a directory on HDFS.
+For convenience, we’ll refer to this directory as the &lt;strong&gt;source directory&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;At any given moment, the source will contain zero to many CSV files,
 where each file only contains exactly one line in the format
 &lt;code&gt;word,timestamp&lt;/code&gt; (no whitespace before nor after the comma).&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5  &lt;/strong&gt;&lt;/span&gt;
-Write a Spark program that:&lt;/p&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Write a Spark program that:&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;Reads the stream of data from the directory &lt;code&gt;./tempws&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Reads the stream of data from the source directory.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Counts the number of occurrences of each word within 10 minute windows that slide every 5 minutes.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;Print the output counts to the console. Use triggers of 5 seconds.&lt;/li&gt;
 &lt;/ol&gt;
@@ -3393,8 +3393,8 @@ these two programs are given in the activity below.&lt;/p&gt;
 &lt;p&gt;The &lt;strong&gt;data generator&lt;/strong&gt; is our data source.
 It generates two words every second for a certain
 amount of time.
-Each word is saved in a separate CSV file in the directory
-&lt;code&gt;./tempws&lt;/code&gt;. It also saves the list of all generated
+Each word is saved in a separate CSV file in source directory.
+It also saves the list of all generated
 words to a summary CSV file.&lt;/p&gt;
 &lt;p&gt;The &lt;strong&gt;visualization tool&lt;/strong&gt; takes as its input the summary CSV file
 written by the data generator and visualizes the words
@@ -3403,21 +3403,29 @@ on a timeline.&lt;/p&gt;
 &lt;div class=&#34;infobox activitybox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;Create a directory named &lt;code&gt;tempws&lt;/code&gt; in your home directory in the local filesystem of the cluster machine.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Create the source directory under your home directory
+&lt;code&gt;hdfs://sar01:9000/cpuasi1/cpuasi1_X&lt;/code&gt; &lt;strong&gt;in HDFS&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Copy to your home directory
 in the local filesystem
-the data generator &lt;code&gt;/usr/users/cpu-prof/cpu_quercini/structured-streaming/tempws_gen.py&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Start the Spark program. When running the first time, you might get some errors. Correct your code accordingly.&lt;/p&gt;&lt;/li&gt;
+the data generator that you find at the following path&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;/usr/users/cpu-prof/cpu_quercini/structured-streaming/tempws_gen.py&lt;/code&gt;.&lt;/p&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Start your Spark program. When running the first time, you might get some errors. Correct your code accordingly.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;In another terminal, run the Python script &lt;code&gt;tempws_gen.py&lt;/code&gt;. Use the
 following command to learn how to run this program:&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;&lt;code&gt;python tempws_gen.py --help&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;python3 tempws_gen.py --help&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;For this exercise, do not introduce any delay
 (keep the default values of the parameters &lt;code&gt;--delay&lt;/code&gt;, &lt;code&gt;--mindelay&lt;/code&gt;, &lt;code&gt;--maxdelay&lt;/code&gt;).&lt;/p&gt;
 &lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;After launching the data generator, you should
+&lt;li&gt;&lt;p&gt;After launching the data generator, you should
 see some output in the terminal where you launched the Spark program.
-&lt;strong&gt;Wait for the script &lt;code&gt;tempws_gen.py&lt;/code&gt; to terminate the data generation&lt;/strong&gt;.&lt;/li&gt;
+&lt;strong&gt;Wait for the script &lt;code&gt;tempws_gen.py&lt;/code&gt; to terminate the data generation&lt;/strong&gt;.
+The output might be a bit overwhelming. Scroll up to identify the results
+on each micro-batch.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;If you need to rerun the Spark program and the data generator, make sure you delete all the files in the
+checkpoint location and the source directory.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;p&gt;We now want to analyze the output of the program.&lt;/p&gt;
@@ -3466,7 +3474,7 @@ might be written to the directory &lt;code&gt;tempws&lt;/code&gt; with some amou
 delay. In other words, there is a gap between the event time (when the word is generated)
 and the arrival time (when the word is written to the directory).&lt;/p&gt;
 &lt;p&gt;Use the following command to learn how to do it:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;python tempws_gen.py --help&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;python3 tempws_gen.py --help&lt;/code&gt;&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
