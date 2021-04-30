@@ -1,0 +1,2149 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Gianluca Quercini">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Text of the lab assignment on multi-service applications">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/courses/cloud-computing/tutorials/tutorial-kube/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="rgb(0, 136, 204)">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="/courses/cloud-computing/tutorials/tutorial-kube/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="Gianluca Quercini">
+  <meta property="og:url" content="/courses/cloud-computing/tutorials/tutorial-kube/">
+  <meta property="og:title" content="Multi-service applications | Gianluca Quercini">
+  <meta property="og:description" content="Text of the lab assignment on multi-service applications"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
+  
+    
+    
+  
+
+  
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Multi-service applications | Gianluca Quercini</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#experience"><span>Experience</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#publications"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  
+
+  
+
+<div class="container-fluid docs">
+  <div class="row flex-xl-nowrap">
+    <div class="col-12 col-md-3 col-xl-2 docs-sidebar">
+      
+
+
+<script src="/js/toggle-menu.js"></script>
+
+
+
+
+
+
+
+  
+    
+  
+
+
+
+
+<form class="docs-search d-flex align-items-center">
+  <button class="btn docs-toggle d-md-none p-0 mr-3" type="button" data-toggle="collapse" data-target="#docs-nav" aria-controls="docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    <span><i class="fas fa-bars"></i></span>
+  </button>
+
+  
+</form>
+
+<nav class="collapse docs-links" id="docs-nav">
+  
+
+  
+  
+  
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="overview" class="docs-toc-link" href="/courses/cloud-computing/overview/">Overview</a>
+    
+    <div id="overview-ddowncontent" class="overview-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="overview">
+        <a href="/courses/cloud-computing/overview/">Cloud Computing</a>
+      </li>
+      
+      
+      <li class="overview">
+        <a href="/courses/cloud-computing/overview/installing-docker/">Installing Docker</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="lectures" class="docs-toc-link" href="/courses/cloud-computing/lectures/lectures/">Lectures</a>
+    
+    <div id="lectures-ddowncontent" class="lectures-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="lectures">
+        <a href="/courses/cloud-computing/lectures/lectures/">Overview</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="tutorials" class="docs-toc-link" href="/courses/cloud-computing/tutorials/cc-tutorials/">Tutorials</a>
+    
+    <div id="tutorials-ddowncontent" class="tutorials-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="tutorials">
+        <a href="/courses/cloud-computing/tutorials/cc-tutorials/">Overview</a>
+      </li>
+      
+      
+      <li class="tutorials">
+        <a href="/courses/cloud-computing/tutorials/tutorial-docker/">1. Getting started with Docker</a>
+      </li>
+      
+      <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
+      <li class="active tutorials">
+        <a href="/courses/cloud-computing/tutorials/tutorial-kube/">2. Multi-service applications</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="labs" class="docs-toc-link" href="/courses/cloud-computing/labs/cc-labs/">Lab assignments</a>
+    
+    <div id="labs-ddowncontent" class="labs-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="labs">
+        <a href="/courses/cloud-computing/labs/cc-labs/">Overview</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="exam" class="docs-toc-link" >Exam</a>
+    
+
+  </div>
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="resources" class="docs-toc-link" href="/courses/cloud-computing/references/cc-references/">Resources</a>
+    
+    <div id="resources-ddowncontent" class="resources-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="resources">
+        <a href="/courses/cloud-computing/references/cc-references/">References</a>
+      </li>
+      
+      
+      <li class="resources">
+        <a href="/courses/cloud-computing/references/docker-primer/">Docker primer</a>
+      </li>
+      
+      
+      <li class="resources">
+        <a href="/courses/cloud-computing/references/docker-cheat-sheet/">Docker Cheat sheet</a>
+      </li>
+      
+      
+      <li class="resources">
+        <a href="/courses/cloud-computing/references/linux-introduction/">Introduction to Linux</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  
+</nav>
+
+    </div>
+
+    
+
+    <main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 docs-content" role="main">
+
+      <article class="article">
+
+        <div class="docs-article-container">
+          <div class="heading">Cloud computing — Tutorial 2</div>
+          <h1>Multi-service applications</h1>
+          <hr>
+          <div class="logo">
+            <p><img src="/img/cs-logo.png" width="20%" style="display: block; margin: auto;" /></p>
+            </div>
+
+          <div class="article-style">
+            
+
+
+<p><link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/cloud-computing.css"></p>
+<p>In this tutorial you’ll learn:</p>
+<ul>
+<li><p>How to <strong>build</strong> and <strong>deploy</strong> a <strong>multi-service application</strong> with <strong>Docker Compose</strong>.</p></li>
+<li><p>How to <strong>push an image</strong> to <strong>DockerHub</strong>.</p></li>
+<li><p>How to <strong>deploy</strong> a <strong>multi-service application</strong> with <strong>Kubernetes</strong>.</p></li>
+</ul>
+<div class="infobox warning">
+<p><strong>Warning</strong></p>
+<p>This tutorial is adapted from the examples presented in Chapters
+14 and 20 of the book <a href="https://www.packtpub.com/product/learn-docker-fundamentals-of-docker-19-x-second-edition/9781838827472" target="_blank">G. Schenker, <em>Learn Docker - Fundamentals of Docker 19.x</em> (March 2020)</a>.</p>
+</div>
+<div id="docker-compose" class="section level1">
+<h1><span class="header-section-number">1</span> Docker Compose</h1>
+<p>In this section, you’re going to build and deploy a multi-service application
+by using <a href="https://docs.docker.com/compose/" target="_blank"><strong>Docker Compose</strong></a>.</p>
+<p>Download <a href="/courses/cloud-computing/tutorial-kube/pet-store.zip">this archive file</a> and unzip it into a folder on your
+own computer.
+The archive contains all the necessary files to build and run
+a web application consisting of two services:</p>
+<ul>
+<li><p><strong>web</strong>. This is the <strong>frontend</strong> (the part the user interacts with)
+of the application.
+It consists of HTML and JavaScript code.</p></li>
+<li><p><strong>db</strong>. This is the <strong>backend</strong> (the part hidden to the user).
+It is a <a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a> (relational) database.</p></li>
+</ul>
+<p>The structure of the application is shown in Figure <a href="#fig:pet-store-struct">1.1</a>.
+The root directory of the application contains two subdirectories, one for each service
+(<code>database</code> and <code>web</code>).</p>
+<div class="figure" style="text-align: center"><span id="fig:pet-store-struct"></span>
+<img src="/courses/cloud-computing/tutorial-kube/pet-store-files.pdf" alt="Structure of the application" width="100%" />
+<p class="caption">
+Figure 1.1: Structure of the application
+</p>
+</div>
+<div class="infobox curiosity">
+<p><strong>Good to know</strong></p>
+<ul>
+<li><p>The files with extension <code>.conf</code> under the directory <code>database</code> contain
+configuration parameters of the PostgreSQL database.</p></li>
+<li><p>The file <code>init-db.sql</code> under the directory <code>database</code> contains the SQL queries
+to populate the database with some data (photos of cats).</p></li>
+<li><p>The directory <code>web</code> contains the HTML and JavaScript code of the web application.
+The file <code>package.json</code> contains the dependencies to install.</p></li>
+</ul>
+</div>
+<p>Both directories contain a <strong>Dockerfile</strong>.
+The one in directory <code>database</code> is as follows:</p>
+<pre class="dockerfile"><code>FROM postgres:10.2-alpine
+COPY init-db.sql /docker-entrypoint-initdb.d/
+ENV POSTGRES_USER dockeruser
+ENV POSTGRES_PASSWORD dockerpass
+ENV POSTGRES_DB pets</code></pre>
+<p>The Dockerfile builds on an existing image called <code>postgres:10-2-alpine</code>,
+that is <a href="https://hub.docker.com/_/postgres" target="_blank">documented here</a>.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1.1  </strong></span>
+Consider the following line in the Dockerfile:</p>
+<p><code>COPY init-db.sql /docker-entrypoint-initdb.d/</code></p>
+<p>By looking at the documentation of the image <code>postgres:10-2-alpine</code>,
+answer the two following questions:</p>
+<ul>
+<li><p>Where is the directory <code>/docker-entrypoint-initdb.d/</code>?</p></li>
+<li><p>Why do we copy the file <code>init-db.sql</code> to this directory?</p></li>
+</ul>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<ul>
+<li><p>The directory already exists in the base image.</p></li>
+<li><p>By looking at the documentation, we learn that
+we can put any initialization script in this directory.
+In other words, at the startup the database will execute the
+SQL queries in file <code>init-db.sql</code> so that the database
+is populated with new data.</p></li>
+</ul>
+<p>From the documentation, we also learn that the script is not executed
+if the data directory is not empty. This means that already existing databases
+will not be touched.</p>
+</div>
+</details>
+<p>The last three lines of the Dockerfile contain a keyword (<code>ENV</code>)
+that we never came across before.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 1.2  </strong></span>
+Look again at the documentation of the image <code>postgres:10-2-alpine</code>
+and try to explain the meaning of the last three lines of the Dockerfile.</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>These lines set the value of three <strong>environment variables</strong>, useful
+to pass some parameters to the database.
+From the documentation we learn that:</p>
+<ul>
+<li><p><code>POSTGRES_USER</code> is the name of the database user. If not set,
+the default is the user <code>postgre</code>.</p></li>
+<li><p><code>POSTGRES_PASSWORD</code> is the password associated with the
+user. This is the only mandatory variable.</p></li>
+<li><p><code>POSTGRES_DB</code> is the name given to the database.
+If not specified, the database name would be the same as the username.</p></li>
+</ul>
+</div>
+</details>
+<p>The Dockerfile of the web application is as follows:</p>
+<pre class="dockerfile"><code>FROM node:9.6-alpine
+RUN mkdir /app
+WORKDIR /app
+COPY package.json /app/
+RUN npm install
+COPY ./src /app/src
+EXPOSE 3000
+CMD node src/server.js</code></pre>
+<p>The Dockerfile builds on the image <code>node:9.6-alpine</code> that contains
+a Node.js environment, a JavaScript-based platform for server-side
+applications.
+The instructions in the Dockerfile look like the ones of the examples
+that we’ve seen in the first tutorial and in the lectures.</p>
+<div class="infobox curiosity">
+<p><strong>Good to know</strong></p>
+<ul>
+<li><p>The command <code>npm install</code> installs all the dependencies specified
+in the file <code>package.json</code>
+from the <a href="https://docs.npmjs.com/about-npm" target="_blank">software registry npm</a>.</p></li>
+<li><p>The instruction <code>EXPOSE 3000</code> informs that the container
+listens on port 3000 when it is executed from the image.</p></li>
+</ul>
+<p>From the <a href="https://docs.docker.com/engine/reference/builder/#expose" target="_blank">Docker documentation</a>
+we learn
+that the <em>“<code>EXPOSE</code> instruction
+does not actually publish the port.
+It functions as a type of
+documentation between
+the person who builds the image
+and the person who runs the container, about which ports are intended to be published”</em>.</p>
+<p>In order to actually publish the port, we’ll use the file
+<code>docker-compose.yml</code>.</p>
+</div>
+<div id="describing-the-application" class="section level2">
+<h2><span class="header-section-number">1.1</span> Describing the application</h2>
+<p>The application showcases a building block of a pet store.
+In the current version, the application lets users look at few pictures
+of cats.</p>
+<p>The root directory of the application contains a file named
+<code>docker-compose.yml</code> that contains the <strong>declarative configuration</strong>
+of the application.
+The content of the file is as follows. It is a sequence of key-value pairs.</p>
+<div class="scroll-vert">
+<pre><code>version: &quot;3.6&quot;
+services:
+  web:
+    build: web
+    image: pet-store-web
+    networks:
+      - backend
+    ports:
+      - 5000:3000
+  db:
+    build: database
+    image: pet-store-db
+    networks:
+      - backend
+    volumes:
+      - pets-data:/var/lib/postgresql/data
+
+networks:
+  backend:
+
+volumes:
+  pets-data:</code></pre>
+</div>
+<p>There are three main sections:</p>
+<ul>
+<li><p><code>services</code>. Defines the services of the application. Here two services
+are defined: <code>web</code> and <code>db</code>.</p></li>
+<li><p><code>networks</code>. Defines the networks used by the application.
+Here one network is defined: <code>backend</code>.</p></li>
+<li><p><code>volumes</code>. Defines the volumes used by the application.
+Here one volume is defined: <code>pets-data</code>.
+The volume is attached to the directory <code>/var/lib/postgresql/data</code>
+(that is in the container).</p></li>
+</ul>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 1.3  </strong></span>
+What key informs <code>docker compose</code> where to find the
+Dockerfile of the two services?</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>The value of the key <code>build</code> is the name of the directory that contains
+the Dockefile. For the service <code>web</code>, this is the directory
+<code>web</code>; for the service <code>db</code>, it is the directory <code>database</code>.
+All paths are relative to the position of the file <code>docker-compose.yml</code>
+itself.</p>
+</div>
+</details>
+<p>When we’ll build the application from the file <code>docker-compose.yml</code>,
+two images will be created, one for each service.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 1.4  </strong></span>
+What will the name of the two images be?
+What key in the file <code>docker-compose.yml</code> gives you this information?</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>The name of the image corresponding to the service <code>web</code>
+will be <code>pet-store-web</code>.</p>
+<p>The name of the image corresponding to the service <code>db</code>
+will be <code>pet-store-db</code>.</p>
+<p>This information is given by the key <code>image</code>
+in the file <code>docker-compose.yml</code>.</p>
+</div>
+</details>
+</div>
+<div id="building-the-application" class="section level2">
+<h2><span class="header-section-number">1.2</span> Building the application</h2>
+<p>We now build the application.</p>
+<ul>
+<li><p>Open the command-line terminal and by using the command <code>cd</code>
+position yourself in the root directory
+<code>pet-store</code> of the application.</p></li>
+<li><p>Execute the following command:</p></li>
+</ul>
+<p><code>docker-compose build</code></p>
+<ul>
+<li>When the build is complete, verify that the two images corresponding
+to the two services have been created (which docker command do you need here?).</li>
+</ul>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>docker images</p>
+</div>
+</details>
+</div>
+<div id="executing-the-application" class="section level2">
+<h2><span class="header-section-number">1.3</span> Executing the application</h2>
+<p>We now execute the application with the following command:</p>
+<p><code>docker-compose up -d</code></p>
+<div class="infobox curiosity">
+<p><strong>Good to know</strong></p>
+<p>The option <code>-d</code> in the previous command means that the application is
+executed <strong>in the background</strong> or, in other words,
+the containers are run as <strong>daemons</strong> (hence, the <code>-d</code>).
+This means that any output of the application is not
+shown in the terminal.</p>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 1.5  </strong></span>
+Verify that the network and the volumes associated with the
+application have been correctly created.</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>Type the commands:</p>
+<p><code>docker volume ls</code></p>
+<p>and</p>
+<p><code>docker network ls</code></p>
+<p>to verify respectively that the volumes and the networks have been created</p>
+</div>
+</details>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 1.6  </strong></span>
+How many containers do you expect to be associated to
+the application?</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>Each <strong>image</strong> corresponds to a <strong>service</strong>.
+Here we have two.
+Each <strong>container</strong> corresponds to a <strong>service instance</strong>.</p>
+<p>We didn’t specify any parameter when we launched the application,
+so by default one instance of each service is executed.</p>
+<p>So, we expect to have <strong>two containers</strong> associated to the application:
+one container for the service <code>web</code> and one for the
+service <code>db</code>.</p>
+</div>
+</details>
+<p>You can verify the answer to the previous question by typing the following command:</p>
+<p><code>docker-compose ps</code></p>
+<p>This command is exactly equivalent to <code>docker container ls</code>, except that
+it only shows the containers associated with the application
+that we’ve just executed.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 1.7  </strong></span>
+In the output of the command <code>docker-compose ps</code>, can you explain
+the meaning of the following?</p>
+<p><code>0.0.0.0:5000-&gt;3000/tcp</code></p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>The notation 5000-&gt;3000 means that the port
+5000 of the host computer is <strong>mapped</strong>
+to the port 3000 of the container.
+This mechanism is explained in
+<a href="https://centralesupelec.edunao.com/pluginfile.php/135595/mod_resource/content/2/cm2-slides.pdf" target="blank">slide 77 of the lecture on Docker</a>.
+More specifically,
+when a client application connects to the port 5000 of the host computer,
+the connection is redirected to the port 3000 of the container.</p>
+<p>The IP address 0.0.0.0 means that we can connect to the container by
+using any IP address on the host computer.</p>
+</div>
+</details>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 1.8  </strong></span>
+Can you
+tell which URL you have to type in your web browser
+to access the application?</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p><code>http://localhost:5000</code> or <code>http://127.0.0.1:5000/</code>.</p>
+<p>In the network settings of you computer, you can also
+get the IP address associated by the DHCP server of your<br />
+local network and use that address to connect to the application
+from another device <strong>connected to the same network</strong>
+(for instance, your mobile phone).</p>
+</div>
+</details>
+<div class="infobox warning">
+<p><strong>Warning</strong></p>
+<p>If you want to see the cats, you need to append
+<code>/pet</code> to the URL that you found in the previous question.
+This is determined in file <code>server.js</code>.</p>
+</div>
+</div>
+<div id="shutting-down-the-application" class="section level2">
+<h2><span class="header-section-number">1.4</span> Shutting down the application</h2>
+<p>You can shut down the application by typing the following command:</p>
+<p><code>docker-compose down</code></p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-9" class="exercise"><strong>Exercise 1.9  </strong></span>
+Does shutting down the application remove the networks created
+for the application?
+What about the volumes?</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>Just type the command:</p>
+<p><code>docker network ls</code></p>
+<p>and you’ll see that the network <code>backend</code> is not there anymore.</p>
+<p>Type the command:</p>
+<p><code>docker volume ls</code></p>
+<p>and you’ll see that the volume <code>pet-store_pets-data</code> is still there.</p>
+<p>By default volumes are not removed, to avoid the risk of permanently deleting
+data that might still be useful later.
+If you wish to remove the volumes when shutting down the application,
+you can type:</p>
+<p><code>docker-compose down -v</code></p>
+</div>
+</details>
+</div>
+<div id="scaling-a-service" class="section level2">
+<h2><span class="header-section-number">1.5</span> Scaling a service</h2>
+<p>When we launch the application, we can specify the
+number of instances of each service.
+This is useful when we expect our application to be solicited by many users;
+the workload will be automatically balanced across all the instances of the service.</p>
+<p>Let’s launch our application with 3 instances of the service <code>web</code>:</p>
+<p><code>docker-compose up --scale web=3 -d</code></p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-10" class="exercise"><strong>Exercise 1.10  </strong></span>
+Running the previous command results in an error.</p>
+<ul>
+<li><p>Can you explain why?</p></li>
+<li>What fix would you propose in file <code>docker-compose.yml</code>?</li>
+</ul>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<ul>
+<li><p>We’re trying to bind three instances to the port 5000 on the host computer. This is not
+possible.</p></li>
+<li><p>In the section <code>ports</code> of file
+<code>docker-compose.yml</code> we need to remove 5000 and we only leave 3000. This way, each time we run a container, a random port will be chosen on the host computer to bind it
+with port 3000 of the container.</p></li>
+</ul>
+</div>
+</details>
+<div class="infobox warning">
+<p><strong>Warning</strong></p>
+<p>You need to shut down the application before relaunching it again.
+In fact, even if we got an error, an instance of the <code>db</code> service and
+an instance of the service <code>web</code> are still running.</p>
+</div>
+<ul>
+<li><p>Modify the file <code>docker-compose.yml</code> and relaunch the application.</p></li>
+<li><p>Run the following command and verify that you actually have three running instances of the
+service <code>web</code>.</p></li>
+</ul>
+<p><code>docker-compose ps</code></p>
+<ul>
+<li>Try to connect to the application by using the three port numbers indicated in the output
+of the previous command.</li>
+</ul>
+<div class="infobox warning">
+<p><strong>Warning</strong></p>
+<p>Don’t forget to shut down the application before you
+go on.</p>
+</div>
+</div>
+</div>
+<div id="pushing-an-application" class="section level1">
+<h1><span class="header-section-number">2</span> Pushing an application</h1>
+<p>Once we have built an application, we might want to
+share it by pushing it to the DockerHub registry or any
+other container registry, be it private or public.</p>
+<div id="creating-an-account-on-dockerhub" class="section level2">
+<h2><span class="header-section-number">2.1</span> Creating an account on DockerHub</h2>
+<p>You need to create an account on the <a href="https://hub.docker.com/" target="_blank">DockerHub website</a>
+in order to perform this activity.</p>
+</div>
+<div id="renaming-the-images" class="section level2">
+<h2><span class="header-section-number">2.2</span> Renaming the images</h2>
+<p>In order to push your images to the registry, you need to rename them, so as the new name
+has the following structure:</p>
+<p><code>yourusername/image-name:image-tag</code></p>
+<p>For instance, since my username is <code>quercinigia</code>, I’ll rename
+the two images <code>pet-store-web</code> and <code>pet-store-db</code> with the
+<code>docker tag</code> command as follows:</p>
+<p><code>docker tag pet-store-web quercinigia/pet-store-web:1.0</code></p>
+<p><code>docker tag pet-store-db quercinigia/pet-store-db:1.0</code></p>
+<p>I chosen 1.0 as a tag, but feel free to pick another one.</p>
+</div>
+<div id="logging-in" class="section level2">
+<h2><span class="header-section-number">2.3</span> Logging in</h2>
+<p>You need to log in to your DockerHub account.</p>
+<details>
+<p><summary>Instructions for Docker Desktop (macOS and Windows)</summary></p>
+<ul>
+<li><p>macOS users: to see how to log in <a href="https://webtv.centralesupelec.fr/videos/log-in-docker-macos/" target="_blank">click here</a>.</p></li>
+<li><p>Windows users: to see how to log in <a href="https://webtv.centralesupelec.fr/videos/log-in-docker-windows/" target="_blank">click here</a>.</p></li>
+</ul>
+</details>
+<details>
+<p><summary>Instructions for the Linux VM</summary></p>
+<p>Log in to DockerHub by typing the following command in the terminal
+(replace YOUR-USERNAME with your actual username).</p>
+<p><code>docker login -u YOUR-USERNAME</code></p>
+<div class="infobox warning">
+<p><strong>Warning</strong></p>
+<p>You might get a warning that
+your password will be stored unencrypted.
+There are methods to prevent this from happening.
+These methods being out of the scope of this course,
+the interested reader can
+look them up <a href="https://www.techrepublic.com/article/how-to-setup-secure-credential-storage-for-docker/" target="_blank">at this link</a>.</p>
+</div>
+</details>
+</div>
+<div id="pushing-the-images" class="section level2">
+<h2><span class="header-section-number">2.4</span> Pushing the images</h2>
+<p>Once you’re successfully logged in, you can type the following
+commands in the terminal to push the two images of your application:</p>
+<p><code>docker push YOUR-USERNAME/pet-store-web:1.0</code></p>
+<p><code>docker push YOUR-USERNAME/pet-store-db:1.0</code></p>
+<p>Remember to replace YOUR-USERNAME with your actual username in the commands above.</p>
+<p>After the task is completed, verify that the images appear
+in <a href="https://hub.docker.com/repositories" target="_blank">your Docker registry</a>.</p>
+<div class="infobox curiosity">
+<p><strong>Good to know</strong></p>
+<p>Here we manually tagged and uploaded the two images.
+This method becomes quickly annoying when the application consists of
+more than two images.
+Another way to go about this task is:</p>
+<ul>
+<li>Specify the image names with your username in file <strong>docker-compose.yml</strong>.
+For instance, in my <strong>docker-compose.yml</strong> I would write:</li>
+</ul>
+<pre><code>services:
+  web:
+    build: web
+    image: quercinigia/pet-store-web:1.0
+  ...
+  db:
+    build: database
+    image: quercinigia/pet-store-db:1.0
+  ...</code></pre>
+<ul>
+<li>Build the application with the following command:</li>
+</ul>
+<p><code>docker-compose build</code></p>
+<ul>
+<li>Push the images of the application with the following command:</li>
+</ul>
+<p><code>docker-compose push</code></p>
+<p>This way, with just two commands we push to the registry all the images
+of the application, no matter how many they are.</p>
+</div>
+</div>
+</div>
+<div id="introduction-to-kubernetes" class="section level1">
+<h1><span class="header-section-number">3</span> Introduction to Kubernetes</h1>
+<p>Kubernetes is the most popular <strong>orchestrator</strong> to date.
+It is used to manage a multi-service application, usually deployed
+across multiple <strong>hosts</strong> in a <strong>cluster</strong>.</p>
+<p>While using Docker Compose, a <strong>service</strong> corresponds
+to a <strong>Docker image</strong> and
+a <strong>service instance</strong> to a <strong>Docker container</strong>.</p>
+<p>As opposed to that, in Kubernetes the computation unit is a <strong>pod</strong>, that is
+a <strong>collection of containers</strong>.
+In other words, we don’t reason in terms of containers anymore,
+but in terms of pods. Of course, a pod can also consist of just one container.</p>
+<div class="infobox curiosity">
+<p><strong>Good to know</strong></p>
+<p>In practice, we rarely have to manipulate pods directly in Kubernetes,
+as there are higher-level objects that manage them.
+We’ll use these objects in the next sections.</p>
+</div>
+<div id="activate-kubernetes" class="section level2">
+<h2><span class="header-section-number">3.1</span> Activate Kubernetes</h2>
+<details>
+<p><summary>Instructions for Docker Desktop (macOS and Windows)</summary></p>
+<p>You need to follow all the instructions documented
+<a href="https://docs.docker.com/desktop/kubernetes/" target="_blank">on this page</a></p>
+<p>Before moving on, don’t forget to type the following command to verify that Kubernetes is correctly activated</p>
+<p><code>kubectl get nodes</code></p>
+<p>Before moving on, don’t forget to type the following command to verify that Kubernetes is correctly activated</p>
+<p><code>kubectl get nodes</code></p>
+<p>You should see a node called <code>docker-desktop</code> whose status is set to READY.
+If the status is NOT READY, just wait few seconds before typing the command again.</p>
+</details>
+<details>
+<p><summary>Instructions for the Linux VM</summary></p>
+<p>In the Linux VM you’ll find <strong>Minikube</strong>, a single-node Kubernetes cluster
+in VirtualBox.
+Please follow <strong>all the instructions</strong>:</p>
+<ul>
+<li>Start the cluster, type the following command (everything in one line!)</li>
+</ul>
+<p><code>minikube start --extra-config=kubeadm.ignore-preflight-errors=NumCPU --force --cpus 1</code></p>
+<ul>
+<li>Verify that Kubernetes is correctly activated by typing the following command:</li>
+</ul>
+<p><code>kubectl get nodes</code></p>
+<p>You should see a node called <code>minikube</code> whose status is set to READY.
+If the status is NOT READY, just wait few seconds before typing the command again.</p>
+<ul>
+<li>Open a <strong>new terminal</strong> and type the command:</li>
+</ul>
+<p><code>minikube tunnel</code></p>
+<p>The command will start to produce some output.
+<strong>Leave that terminal open</strong> and go back to the previous terminal.</p>
+<div class="infobox curiosity">
+<p><strong>Tunnel</strong></p>
+<p>The Minikube tunnel is used to create a route to services deployed
+with type <code>LoadBalancer</code>. If you don’t activate the tunnel,
+you won’t be able to use these services in the exercises below.</p>
+</div>
+</details>
+</div>
+<div id="deploying-a-pod" class="section level2">
+<h2><span class="header-section-number">3.2</span> Deploying a pod</h2>
+<p>In order to deploy <a href="https://kubernetes.io/docs/concepts/workloads/pods/" target="_blank">a pod</a>,
+we first have to give its <strong>specification</strong>, basically its name
+and the containers that compose it with their settings.
+Similarly to Docker Compose, a pod is specified in a <strong>declarative way</strong> with a
+YAML configuration file.</p>
+<p>Consider the following specification.</p>
+<pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: web-pod
+  labels:
+    app: web-pod
+spec:
+  containers:
+  - name: web
+    image: nginx:alpine
+    ports:
+    - containerPort: 80</code></pre>
+<p>Here is an explanation of the properties in the specification.</p>
+<ul>
+<li><p><em>apiVersion</em>. Defines the versioned schema of this representation.</p></li>
+<li><p><em>kind</em>. The type of the resource that we intend to create.</p></li>
+<li><p><em>metadata</em>. The resource metadata. The list of
+all metadata is specified <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#objectmeta-v1-meta" target="_blank">here</a>.</p></li>
+<li><p><em>spec</em>. The specification of the desired behaviour of the pod.
+The list of the possible specifications can be found <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#podspec-v1-core" target="_blank">here</a>.</p></li>
+</ul>
+<p>Essentially, the previous specification defines a pod with a container that is launched from the
+image <code>nginx:alpine</code> (a Web server) and listens to ports 80 and 443.</p>
+<div class="infobox activitybox">
+<p><strong>Activity</strong></p>
+<ul>
+<li><p>Copy the previous specification to a file named <code>sample-pod.yaml</code> (or any other name
+of your liking).</p></li>
+<li><p>By using the command <code>cd</code> in the terminal, place yourself in the directory
+where the file <code>sample-pod.yaml</code> is stored.</p></li>
+<li><p>Deploy the pod by typing the following command:</p></li>
+</ul>
+<p><code>kubectl create -f sample-pod.yaml</code></p>
+<ul>
+<li>Verify that the pod is deployed by typing the following command:</li>
+</ul>
+<p><code>kubectl get pods</code></p>
+<p>The first time you run the last command, you might see that the pod is not
+ready yet. You need to wait for the image <code>nginx:alpine</code> to be pulled from DockerHub.
+Wait few seconds and try the command again until the pod is marked as running.</p>
+<p>You can also get more information on the running pod (e.g., its assigned IP address)
+by typing the following command:</p>
+<p><code>kubectl get pod -o wide web-pod</code></p>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-11" class="exercise"><strong>Exercise 3.1  </strong></span>
+Open a web browser and type <code>http://localhost:80</code>.</p>
+<ul>
+<li><p>What do you get? What if you try to use the IP of the pod instead of <code>locahost</code>?</p></li>
+<li>What should we define in order to fix the problem?</li>
+</ul>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<ul>
+<li><p>The connection is refused both when using <code>localhost</code> and
+the IP address of the pod.</p></li>
+<li><p>In order to connect to the service instance, we need to
+define a <strong>Service</strong> object in Kubernetes, that exposes an IP address
+that client applications can use.</p></li>
+</ul>
+</div>
+</details>
+<p>The following configuration
+defines a Service object of type <strong>LoadBalancer</strong>:</p>
+<pre><code>apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+      app: web-pod</code></pre>
+<div class="infobox curiosity">
+<p><strong>Good to know</strong></p>
+<p>A <strong>LoadBalancer</strong> service is a <strong>NodePort</strong> service (cf slide 64 in <a href="https://centralesupelec.edunao.com/pluginfile.php/136097/mod_resource/content/2/cm3-slides.pdf" target="_blank">Lecture 3</a>)
+that offers load balancing capabilities.
+It is intended to expose an IP address
+that client applications (external to the Kubernetes cluster) can use to access
+the service.</p>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-12" class="exercise"><strong>Exercise 3.2  </strong></span>
+What is the field <code>selector</code> in the definition of the service?
+(cf slide 57 in <a href="https://centralesupelec.edunao.com/pluginfile.php/136097/mod_resource/content/2/cm3-slides.pdf" target="_blank">Lecture 3</a>)</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>The selector is used internally by Kubernetes to identify the pods that
+are the instances of the service.
+If you look at the specification of the pod above, the field <code>metadata</code>
+contains a field <code>labels</code>.
+One of the labels is <code>app: web-pod</code> ;
+the selector matches this label.</p>
+</div>
+</details>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-13" class="exercise"><strong>Exercise 3.3  </strong></span>
+In the specification of the service, what <code>port</code> and <code>targetPort</code> mean?</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<ul>
+<li><p><code>port</code> specifies the port number where the service will be available.</p></li>
+<li><p><code>targetPort</code> specifies the port number opened at the pods that are instances of the service.</p></li>
+</ul>
+</div>
+</details>
+<div class="infobox activitybox">
+<p><strong>Activity</strong></p>
+<ul>
+<li><p>Copy and paste the service specification into a file named <code>sample-service.yaml</code> (or any other name of your liking).</p></li>
+<li><p>By using the command <code>cd</code> in the terminal, place yourself in the directory
+where the file <code>sample-service.yaml</code> is stored.</p></li>
+<li><p>Deploy the service by typing the following command:</p></li>
+</ul>
+<p><code>kubectl create -f sample-service.yaml</code></p>
+<ul>
+<li>Verify that the service is deployed by typing the following command:</li>
+</ul>
+<p><code>kubectl get services</code></p>
+<p>This command returns all services running in Kubernetes.
+For each service, you also get a name.
+In order to only target the service that you’ve just created, simply type
+the following command:</p>
+<p><code>kubectl get svc/nginx-service</code></p>
+<p>Your service’s name is <code>nginx-service</code> (as specified in file <code>sample-service.yml</code>);
+<code>svc</code> is only the namespace where all Kubernetes services are
+put.</p>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-14" class="exercise"><strong>Exercise 3.4  </strong></span>
+By looking at the output of the command <code>kubectl get svc/nginx-service</code>,
+which URL do you need to type in the Web browser in order to access the service?</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<ul>
+<li><p>The <code>CLUSTER-IP</code> is an IP address that is only visible <strong>within the cluster</strong>.
+In other words, only the services running within the cluster can connect to our
+<code>nginx-service</code> by using this IP address.</p></li>
+<li><p>What we need to use is the IP address specified under <code>EXTERNAL-IP</code>.</p></li>
+</ul>
+<details>
+<p><summary>If you’re using Docker Desktop</summary></p>
+<p><code>EXTERNAL-IP</code> is likely to be <code>localhost</code>
+or <code>127.0.0.1</code></p>
+</details>
+<details>
+<p><summary>If you’re using Minikube in the Linux VM</summary></p>
+<p><code>EXTERNAL-IP</code> will be whatever IP address assigned to the service.</p>
+</details>
+<ul>
+<li>As for the port number, under PORT(S) you should see something like 8080:30548
+(the second number is likely different, but it should be something in the range [30000-32767]).
+The port 30548 is opened on each node of the Kubernetes cluster.</li>
+</ul>
+<p>In practice, when we type <code>http://localhost:8080</code>, the load balancer replaces it
+with the IP address of a node in the cluster,
+followed by port number 30548.
+When the <code>kube-proxy</code> on that node receives this request,
+it forwards it to an instance of the service,
+even if that instance runs in another node
+(mechanism of slide 64 in <a href="https://centralesupelec.edunao.com/pluginfile.php/136097/mod_resource/content/2/cm3-slides.pdf" target="_blank">Lecture 3</a>).</p>
+</div>
+</details>
+<div class="infobox warning">
+<p><strong>Warning</strong></p>
+<p>Stop the pod and the service before moving on. Here are the commands to do so:</p>
+<p><code>kubectl delete po/web-pod</code></p>
+<p><code>kubectl delete svc/nginx-service</code></p>
+</div>
+</div>
+</div>
+<div id="kubernetes-deploying-an-application" class="section level1">
+<h1><span class="header-section-number">4</span> Kubernetes: deploying an application</h1>
+<p>In this section, we’re going to deploy our pet store in Kubernetes.
+As a reminder, our application consists of two services: <code>web</code> and <code>db</code>.</p>
+<p>In order to define an application in Kubernetes,
+we need to use two types of objects <strong>for each service</strong> of the application:</p>
+<ul>
+<li><p>A <strong>workload resource</strong> that gives the specification of the service, such as
+the pods that make up the service itself (images, network settings) and metadata, such as
+the desired number of instances.</p></li>
+<li><p>A <strong>Service</strong> object. As we have seen previously, a service object
+exposes an IP address that allows client applications,
+both inside and outside the Kubernetes cluster, to connect to the service.</p></li>
+</ul>
+<p>When we define an application in Kubernetes, we rarely,
+if ever, need to play directly with pods.
+Instead, we can resort to higher-level objects, called <strong>Controllers</strong>, for an easier
+definition of the <strong>desired state</strong> of the application itself.
+The type of the controller that we need to use depends on the nature of the service
+itself: <strong>stateless</strong> or <strong>stateful</strong> (slides 14-15 of <a href="https://centralesupelec.edunao.com/pluginfile.php/136097/mod_resource/content/2/cm3-slides.pdf" target="_blank">Lecture 3</a>.).</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-15" class="exercise"><strong>Exercise 4.1  </strong></span></p>
+<ul>
+<li><p>Is the service <code>web</code> of our application stateless or stateful?</p></li>
+<li>Is the service <code>db</code> of our application stateless of stateful?</li>
+</ul>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<ul>
+<li><strong>Stateful</strong> service: one that manages permanent data and is bound to that data.</li>
+<li><strong>Stateless</strong> service: one that is not bound to permanent data.</li>
+</ul>
+<p>The service <code>web</code> is <strong>stateless</strong> because it does not have to be tightly bound to the data.
+In other words, the service <code>web</code> uses the data that is stored in the backend database, but
+it can be scheduled on any node of the cluster independently of that data.</p>
+<p>The service <code>db</code> is <strong>stateful</strong> because it directly manages permanent data.</p>
+</div>
+</details>
+<div id="the-web-service-deployment" class="section level2">
+<h2><span class="header-section-number">4.1</span> The <code>web</code> service: deployment</h2>
+<p>For <strong>stateless application services</strong>, we can use
+a <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/" target="_blank"><strong>Deployment</strong></a> for the deployment of a set of identical pods
+that are launched across several nodes in the Kubernetes cluster.</p>
+<div class="infobox curiosity">
+<p><strong>Deployment and ReplicaSet</strong></p>
+<p>Deployments and ReplicaSets have been introduced
+in slides 51-52-53 of the <a href="https://centralesupelec.edunao.com/pluginfile.php/136097/mod_resource/content/2/cm3-slides.pdf" target="_blank">third lecture</a>.</p>
+</div>
+<p>We here define the specification of
+a Deployment corresponding to the service <code>web</code>.</p>
+<div class="scroll-vert">
+<pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: pets
+      service: web
+  template:
+    metadata:
+      labels:
+        app: pets
+        service: web
+    spec:
+      containers:
+      - image: quercinigia/pet-store-web:1.0
+        name: web
+        ports:
+        - containerPort: 3000
+          protocol: TCP</code></pre>
+</div>
+<p>Here is the explanation of the specification:</p>
+<ul>
+<li><p>A Deployment named <code>web</code> is created, as indicated by the field <code>metadata.name</code>.</p></li>
+<li><p>The Deployment creates three replicated pods, as indicated by the field
+<code>spec.replicas</code>.</p></li>
+<li><p>The Deployment considers that the pods with <strong>both</strong> labels <code>app: pets</code> and
+<code>service: web</code> are part of the deployment.
+This is indicated by the field <code>spec.selector.matchLabels</code>.
+This field is used to let the Deployment know how to find its pods.</p></li>
+<li><p>The configuration of the pods that are part of the Deployment is
+given in the field <code>spec.template</code> and its subfields.</p></li>
+<li><p>Each pod of the Deployment is given labels <code>app: pets</code> and <code>service: web</code>.
+This is indicated by the field <code>spec.template.metadata.labels</code>.
+Note that here we specify exactly the same values as in <code>spec.selector.matchLabels</code>.
+This field is used to give pods labels so that they can be identified and located in
+Kubernetes.</p></li>
+<li><p>Each pod has exactly one container, named <code>web</code>, run from the
+image <code>quercinigia/pet-store-web:1.0</code> stored in the DockerHub. The container listens on port 3000
+and uses the TCP protocol. This is specified in the field <code>spec.template.spec.containers</code>.</p></li>
+</ul>
+<div class="infobox activitybox">
+<p><strong>Activity</strong></p>
+<ul>
+<li><p>Copy and paste the previous specification to a new file <code>web-deployment.yaml</code>
+(or any name of your liking).
+Make sure that you <strong>replace</strong> the image <code>quercinigia/pet-store-web:1.0</code>
+with the one that you pushed to your DockerHub registry.</p></li>
+<li><p>Use the command <code>cd</code> in the terminal to position yourself in the directory
+where the file <code>web-deployment.yaml</code> is stored.</p></li>
+<li><p>Deploy this Deployment in Kubernetes by typing the following command:</p></li>
+</ul>
+<p><code>kubectl create -f web-deployment.yaml</code></p>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-16" class="exercise"><strong>Exercise 4.2  </strong></span>
+Type the following command:</p>
+<p><code>kubectl get all</code></p>
+<p>Which objects have been created following the creation of the
+Deployment?</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>We can clearly see three types of objects:</p>
+<ul>
+<li><p>Three pods, that correspond to the three replicas that we specified in the configuration.</p></li>
+<li><p>One deployment. Note that the 3/3 indicates that the deployment has
+3 identical pods, of which 3 are running.</p></li>
+<li><p>One ReplicaSet. The Deployment creates a ReplicaSet, that is the actual object that
+controls the three pods. The Deployment provides some additional services (i.e., updates)
+on top of a ReplicaSet.</p></li>
+</ul>
+</div>
+</details>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-17" class="exercise"><strong>Exercise 4.3  </strong></span>
+Get the name of one of the running pods and
+kill it by using the following command</p>
+<p><code>kubectl delete name-of-pod</code></p>
+<p>If the command hangs in the terminal, feel free to type Ctrl-C to
+get back control of the terminal.</p>
+<p>Type again following command:</p>
+<p><code>kubectl get all</code></p>
+<p>How many pods do you see? Is it surprising?</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>If we type the command right after deleting the pod, it is likely that we’ll see
+four pods, one that is <em>terminating</em> and another one that is <em>running</em>.
+Try to type the command until you see three running pods.</p>
+<p>This is not surprising.
+If we kill the pod, the orchestrator detects a
+deviation from the <strong>desired state</strong> (which is, we want three replicas) and
+reschedules immediately another pod.
+This is what we mean by a <strong>self-healing system</strong>. This is one of the major roles
+of an orchestrator.</p>
+</div>
+</details>
+</div>
+<div id="the-web-service-service" class="section level2">
+<h2><span class="header-section-number">4.2</span> The <code>web</code> service: service</h2>
+<p>Now we need to define a <strong>Service</strong> in order to expose the web service to the public.
+Here is the definition:</p>
+<pre><code>apiVersion: v1
+kind: Service
+metadata:
+  name: web
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    targetPort: 3000
+    protocol: TCP
+  selector:
+    app: pets
+    service: web</code></pre>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-18" class="exercise"><strong>Exercise 4.4  </strong></span>
+Describe the specification of this service.</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<ul>
+<li><p>We create a service named <code>web</code>. This indicated in the field
+<code>metadata.name</code>.</p></li>
+<li><p>The service has type <code>LoadBalancer</code>. This is indicated in the field
+<code>spec.type</code>.</p></li>
+<li><p>The service listens on port 8080 and uses the TCP protocol.
+Each service instance (i.e., pod) listens on port 3000.
+This is indicated in the field <code>spec.ports</code>.</p></li>
+<li><p>The instances of the service (i.e., the pods) are those with labels
+<code>app: pets</code> and <code>service: web</code>.
+This is indicated in the field <code>spec.selector</code>.</p></li>
+</ul>
+</div>
+</details>
+<div class="infobox activitybox">
+<p><strong>Activity</strong></p>
+<ul>
+<li><p>Copy and paste the previous specification to a new file <code>web-service.yaml</code>
+(or any name of your liking).</p></li>
+<li><p>Use the command <code>cd</code> in the terminal to position yourself in the directory
+where the file <code>web-service.yaml</code> is stored.</p></li>
+<li><p>Create the service with the following command:</p></li>
+</ul>
+<p><code>kubectl create -f web-service.yaml</code></p>
+<ul>
+<li>Verify that the service has been created with the following command:</li>
+</ul>
+<p><code>kubectl get services</code></p>
+<ul>
+<li>Locate the external IP (let’s call it EXTERNAL-IP) of the web service and type
+the URL <code>http://EXTERNAL-IP:8080</code> in your Web browser. You should
+see a Web page where the phrase <em>Pet store</em> appears.</li>
+</ul>
+</div>
+</div>
+<div id="the-db-service-statefulset" class="section level2">
+<h2><span class="header-section-number">4.3</span> The <code>db</code> service: StatefulSet</h2>
+<p>Kubernetes has defined a special type of ReplicaSet for stateful services that
+is called <a href="https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/" target="_blank"><strong>StatefulSet</strong></a>.</p>
+<p>Let’s define a StatefulSet to give the specification of
+the <code>db</code> service.</p>
+<div class="scroll-vert">
+<pre><code>apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db
+spec:
+  selector:
+    matchLabels:
+      app: pets
+      service: db
+  serviceName: db
+  template:
+    metadata:
+      labels:
+        app: pets
+        service: db
+    spec:
+      containers:
+      - image: quercinigia/pet-store-db:1.0
+        name: db
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: pets-data
+  volumeClaimTemplates:
+  - metadata:
+      name: pets-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Mi</code></pre>
+</div>
+<p>By now you shouldn’t have any problem understanding the meaning of the fields
+in this specification.
+The fields are also
+documented in the <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#statefulsetspec-v1-apps" target="_blank">official Kubernetes documentation</a>.
+The only novelty is the field <code>volumeClaimTemplates</code>.
+It describes additional constraints on the volumes defined in the specification, in this case the volume
+named <code>pets-data</code> (where PostgreSQL keeps the data). In particular, two claims are given:</p>
+<ul>
+<li><p>The access mode <code>ReadWriteOnce</code> means that the volume can be mounted
+as read-write by a single node in the Kubernetes cluster.
+Access modes are <a href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes" target="_blank">documented here</a>.</p></li>
+<li><p>We request at least 100MB of storage for the database.</p></li>
+</ul>
+<div class="infobox activitybox">
+<p><strong>Activity</strong></p>
+<ul>
+<li><p>Copy and paste the previous specification to a new file <code>db-stateful-set.yaml</code>
+(or any name of your liking).
+Make sure that you <strong>replace</strong> the image <code>quercinigia/pet-store-db:1.0</code>
+with the one that you pushed to your DockerHub registry.</p></li>
+<li><p>Use the command <code>cd</code> in the terminal to position yourself in the directory
+where the file <code>db-stateful-set.yaml</code> is stored.</p></li>
+<li><p>Deploy this StatefulSet in Kubernetes by typing the following command:</p></li>
+</ul>
+<p><code>kubectl create -f db-stateful-set.yaml</code></p>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-19" class="exercise"><strong>Exercise 4.5  </strong></span>
+Type the command:</p>
+<p><code>kubectl get all</code></p>
+<p>Which objects have been created when you deployed the StatefulSet?</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<ul>
+<li><p>A pod (likely to be called <code>pod/db-0</code>)</p></li>
+<li><p>A new StatefulSet that governs the pod.</p></li>
+</ul>
+<p>Note that the StatefulSet has only one pod, which is normal,
+since we didn’t specify a higher number of replicas.</p>
+</div>
+</details>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-20" class="exercise"><strong>Exercise 4.6  </strong></span>
+Open the Web browser and type the following URL:</p>
+<details>
+<p><summary>If you’re using Docker Desktop</summary></p>
+<p><code>http://localhost:8080/pet</code></p>
+</details>
+<details>
+<p><summary>If you’re using Minikube on the Linux VM</summary></p>
+<p><code>http://minikube-ip:8080/pet</code></p>
+<p>where you’ll replace <code>minikube-ip</code> with the external IP address associated with the
+<code>web</code> service.</p>
+</details>
+<p>Right after, type the command <code>kubectl get all</code>.
+What do you observe? Can you explain the reason?</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>We cannot access the application.
+If you type the command <code>kubectl get all</code> quickly, you should show that the
+three pods that are instances of the service <code>web</code> are in an error state.
+If you were too slow, you should see that the restart count of each pod has changed.
+This means that the pods have been restarted because of an error.</p>
+<p>What happens here is that we launched the database,
+but we didn’t create the Service that lets the clients
+access the database.</p>
+</div>
+</details>
+<p>In the output of the command <code>get kubectl all</code>, look at the names of the
+pods that are instances of the <code>web</code> service.
+<!-- in the TP you can even ask why all the three instances got an error-->
+Take the name of any these pods,
+and put it in place of NAME-OF-POD in the following command:</p>
+<p><code>kubectl logs NAME-OF-POD --previous</code></p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-21" class="exercise"><strong>Exercise 4.7  </strong></span>
+Does the output of the previous command confirm the explanation
+given in the previous question?</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>Yes, we can clearly read ENOTFOUND db db:5432.
+This means that Kubernetes cannot resolve the name <code>db</code> to an IP address.</p>
+</div>
+</details>
+</div>
+</div>
+<div id="the-db-service-service-object" class="section level1">
+<h1><span class="header-section-number">5</span> The <code>db</code> service: Service object</h1>
+<p>From the above observations, we understand that we need to define
+a service to expose the database to the clients.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-22" class="exercise"><strong>Exercise 5.1  </strong></span>
+Should the <code>db</code> service be accessible to client applications that are external to
+the Kubernetes cluster?</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>No, this component is the backend of the application. The only client
+that needs to access the database is the frontend, that is the
+<code>web</code> service, that runs inside the cluster.</p>
+</div>
+</details>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-23" class="exercise"><strong>Exercise 5.2  </strong></span>
+Given the answer to the previous question, what should the type of this service be?</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p><strong>ClusterIP</strong>; this is the type of a service that does not need to
+be exposed to the outside world.</p>
+</div>
+</details>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-24" class="exercise"><strong>Exercise 5.3  </strong></span></p>
+<p>Write the specification of the <code>db</code> service in a file
+named <code>db-service.yaml</code> (or any other name of your liking).</p>
+<p><strong>Caution.</strong> In the file <code>db-stateful-set.yaml</code> the field <code>spec.serviceName</code> indicates the name
+that the service must have.</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<pre><code>apiVersion: v1
+kind: Service
+metadata:
+  name: db
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5432
+    protocol: TCP
+  selector:
+    app: pets
+    service: db</code></pre>
+</div>
+</details>
+<div class="infobox activitybox">
+<p><strong>Activity</strong></p>
+<ul>
+<li>Deploy the service by typing the following command:</li>
+</ul>
+<p><code>kubectl create -f db-service.yaml</code></p>
+<ul>
+<li>Verify that the service has been created with the following command:</li>
+</ul>
+<p><code>kubectl get all</code></p>
+<ul>
+<li>Verify that you can reach the application at <code>http://localhost:8080/pet</code> (Minikube users:
+replace <code>localhost</code> with the external IP address associated to the <code>web</code> service!).
+<strong>It might happen</strong> that the database service is not ready yet, and so you’ll get
+a connection error. Just wait and retry later.</li>
+</ul>
+</div>
+<div id="shutting-down-the-application-1" class="section level2">
+<h2><span class="header-section-number">5.1</span> Shutting down the application</h2>
+<p>After you’re done with the application, you can shut it down with the following commands:</p>
+<p><code>kubectl delete svc/web</code></p>
+<p><code>kubectl delete svc/db</code></p>
+<p><code>kubectl delete deploy/web</code></p>
+<p><code>kubectl delete statefulset/db</code></p>
+<p>The order in which you type these commands doesn’t matter.</p>
+<p>If you type multiple times the command:</p>
+<p><code>kubectl get all</code></p>
+<p>you should see that the resources progressively disappear.</p>
+</div>
+<div id="conclusion" class="section level2">
+<h2><span class="header-section-number">5.2</span> Conclusion</h2>
+<p>In the previous exercises, we deployed an application with two services, for which we had to create
+four files and type as many commands.
+For larger applications this gets a bit annoying.
+We can write all the definitions in a single file (e.g., <code>pets.yaml</code>)
+where each specification is terminated by - - -.</p>
+<p>Here is an example, where we write the specification of the
+Service and Deployment associated with the service <code>web</code>.</p>
+<pre><code>apiVersion: v1
+kind: Service
+metadata:
+  name: web
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    targetPort: 3000
+    protocol: TCP
+  selector:
+    app: pets
+    service: web
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: pets
+      service: web
+  template:
+    metadata:
+      labels:
+        app: pets
+        service: web
+    spec:
+      containers:
+      - image: quercinigia/pet-store-web:1.0
+        name: web
+        ports:
+        - containerPort: 3000
+          protocol: TCP</code></pre>
+</div>
+</div>
+
+          </div>
+
+          
+
+
+
+          
+        </div>
+
+        
+      </article>
+
+      
+
+    </main>
+  </div>
+</div>
+
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.1/anchor.min.js" integrity="sha256-pB/deHc9CGfFpJRjC43imB29Rse8tak+5eXqntO94ck=" crossorigin="anonymous"></script>
+    <script>
+      anchors.add();
+    </script>
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.6f7ce8be710290b8c431bbc97f405d15.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

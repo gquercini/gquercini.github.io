@@ -5469,6 +5469,1021 @@ docker run --rm -it --name chat-client chat-client 192.168.1.8 8080
     </item>
     
     <item>
+      <title>Multi-service applications</title>
+      <link>/courses/cloud-computing/tutorials/tutorial-kube/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/cloud-computing/tutorials/tutorial-kube/</guid>
+      <description>
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;p&gt;In this tutorial you’ll learn:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;How to &lt;strong&gt;build&lt;/strong&gt; and &lt;strong&gt;deploy&lt;/strong&gt; a &lt;strong&gt;multi-service application&lt;/strong&gt; with &lt;strong&gt;Docker Compose&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;How to &lt;strong&gt;push an image&lt;/strong&gt; to &lt;strong&gt;DockerHub&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;How to &lt;strong&gt;deploy&lt;/strong&gt; a &lt;strong&gt;multi-service application&lt;/strong&gt; with &lt;strong&gt;Kubernetes&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;This tutorial is adapted from the examples presented in Chapters
+14 and 20 of the book &lt;a href=&#34;https://www.packtpub.com/product/learn-docker-fundamentals-of-docker-19-x-second-edition/9781838827472&#34; target=&#34;_blank&#34;&gt;G. Schenker, &lt;em&gt;Learn Docker - Fundamentals of Docker 19.x&lt;/em&gt; (March 2020)&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;docker-compose&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Docker Compose&lt;/h1&gt;
+&lt;p&gt;In this section, you’re going to build and deploy a multi-service application
+by using &lt;a href=&#34;https://docs.docker.com/compose/&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;Docker Compose&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Download &lt;a href=&#34;/courses/cloud-computing/tutorial-kube/pet-store.zip&#34;&gt;this archive file&lt;/a&gt; and unzip it into a folder on your
+own computer.
+The archive contains all the necessary files to build and run
+a web application consisting of two services:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;web&lt;/strong&gt;. This is the &lt;strong&gt;frontend&lt;/strong&gt; (the part the user interacts with)
+of the application.
+It consists of HTML and JavaScript code.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;db&lt;/strong&gt;. This is the &lt;strong&gt;backend&lt;/strong&gt; (the part hidden to the user).
+It is a &lt;a href=&#34;https://www.postgresql.org/&#34; target=&#34;_blank&#34;&gt;PostgreSQL&lt;/a&gt; (relational) database.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The structure of the application is shown in Figure &lt;a href=&#34;#fig:pet-store-struct&#34;&gt;1.1&lt;/a&gt;.
+The root directory of the application contains two subdirectories, one for each service
+(&lt;code&gt;database&lt;/code&gt; and &lt;code&gt;web&lt;/code&gt;).&lt;/p&gt;
+&lt;div class=&#34;figure&#34; style=&#34;text-align: center&#34;&gt;&lt;span id=&#34;fig:pet-store-struct&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/courses/cloud-computing/tutorial-kube/pet-store-files.pdf&#34; alt=&#34;Structure of the application&#34; width=&#34;100%&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 1.1: Structure of the application
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox curiosity&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Good to know&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The files with extension &lt;code&gt;.conf&lt;/code&gt; under the directory &lt;code&gt;database&lt;/code&gt; contain
+configuration parameters of the PostgreSQL database.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The file &lt;code&gt;init-db.sql&lt;/code&gt; under the directory &lt;code&gt;database&lt;/code&gt; contains the SQL queries
+to populate the database with some data (photos of cats).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The directory &lt;code&gt;web&lt;/code&gt; contains the HTML and JavaScript code of the web application.
+The file &lt;code&gt;package.json&lt;/code&gt; contains the dependencies to install.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;p&gt;Both directories contain a &lt;strong&gt;Dockerfile&lt;/strong&gt;.
+The one in directory &lt;code&gt;database&lt;/code&gt; is as follows:&lt;/p&gt;
+&lt;pre class=&#34;dockerfile&#34;&gt;&lt;code&gt;FROM postgres:10.2-alpine
+COPY init-db.sql /docker-entrypoint-initdb.d/
+ENV POSTGRES_USER dockeruser
+ENV POSTGRES_PASSWORD dockerpass
+ENV POSTGRES_DB pets&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The Dockerfile builds on an existing image called &lt;code&gt;postgres:10-2-alpine&lt;/code&gt;,
+that is &lt;a href=&#34;https://hub.docker.com/_/postgres&#34; target=&#34;_blank&#34;&gt;documented here&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.1  &lt;/strong&gt;&lt;/span&gt;
+Consider the following line in the Dockerfile:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;COPY init-db.sql /docker-entrypoint-initdb.d/&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;By looking at the documentation of the image &lt;code&gt;postgres:10-2-alpine&lt;/code&gt;,
+answer the two following questions:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Where is the directory &lt;code&gt;/docker-entrypoint-initdb.d/&lt;/code&gt;?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Why do we copy the file &lt;code&gt;init-db.sql&lt;/code&gt; to this directory?&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;The last three lines of the Dockerfile contain a keyword (&lt;code&gt;ENV&lt;/code&gt;)
+that we never came across before.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.2  &lt;/strong&gt;&lt;/span&gt;
+Look again at the documentation of the image &lt;code&gt;postgres:10-2-alpine&lt;/code&gt;
+and try to explain the meaning of the last three lines of the Dockerfile.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;The Dockerfile of the web application is as follows:&lt;/p&gt;
+&lt;pre class=&#34;dockerfile&#34;&gt;&lt;code&gt;FROM node:9.6-alpine
+RUN mkdir /app
+WORKDIR /app
+COPY package.json /app/
+RUN npm install
+COPY ./src /app/src
+EXPOSE 3000
+CMD node src/server.js&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The Dockerfile builds on the image &lt;code&gt;node:9.6-alpine&lt;/code&gt; that contains
+a Node.js environment, a JavaScript-based platform for server-side
+applications.
+The instructions in the Dockerfile look like the ones of the examples
+that we’ve seen in the first tutorial and in the lectures.&lt;/p&gt;
+&lt;div class=&#34;infobox curiosity&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Good to know&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The command &lt;code&gt;npm install&lt;/code&gt; installs all the dependencies specified
+in the file &lt;code&gt;package.json&lt;/code&gt;
+from the &lt;a href=&#34;https://docs.npmjs.com/about-npm&#34; target=&#34;_blank&#34;&gt;software registry npm&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The instruction &lt;code&gt;EXPOSE 3000&lt;/code&gt; informs that the container
+listens on port 3000 when it is executed from the image.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;From the &lt;a href=&#34;https://docs.docker.com/engine/reference/builder/#expose&#34; target=&#34;_blank&#34;&gt;Docker documentation&lt;/a&gt;
+we learn
+that the &lt;em&gt;“&lt;code&gt;EXPOSE&lt;/code&gt; instruction
+does not actually publish the port.
+It functions as a type of
+documentation between
+the person who builds the image
+and the person who runs the container, about which ports are intended to be published”&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;In order to actually publish the port, we’ll use the file
+&lt;code&gt;docker-compose.yml&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;describing-the-application&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.1&lt;/span&gt; Describing the application&lt;/h2&gt;
+&lt;p&gt;The application showcases a building block of a pet store.
+In the current version, the application lets users look at few pictures
+of cats.&lt;/p&gt;
+&lt;p&gt;The root directory of the application contains a file named
+&lt;code&gt;docker-compose.yml&lt;/code&gt; that contains the &lt;strong&gt;declarative configuration&lt;/strong&gt;
+of the application.
+The content of the file is as follows. It is a sequence of key-value pairs.&lt;/p&gt;
+&lt;div class=&#34;scroll-vert&#34;&gt;
+&lt;pre&gt;&lt;code&gt;version: &amp;quot;3.6&amp;quot;
+services:
+  web:
+    build: web
+    image: pet-store-web
+    networks:
+      - backend
+    ports:
+      - 5000:3000
+  db:
+    build: database
+    image: pet-store-db
+    networks:
+      - backend
+    volumes:
+      - pets-data:/var/lib/postgresql/data
+
+networks:
+  backend:
+
+volumes:
+  pets-data:&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;There are three main sections:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;services&lt;/code&gt;. Defines the services of the application. Here two services
+are defined: &lt;code&gt;web&lt;/code&gt; and &lt;code&gt;db&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;networks&lt;/code&gt;. Defines the networks used by the application.
+Here one network is defined: &lt;code&gt;backend&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;volumes&lt;/code&gt;. Defines the volumes used by the application.
+Here one volume is defined: &lt;code&gt;pets-data&lt;/code&gt;.
+The volume is attached to the directory &lt;code&gt;/var/lib/postgresql/data&lt;/code&gt;
+(that is in the container).&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.3  &lt;/strong&gt;&lt;/span&gt;
+What key informs &lt;code&gt;docker compose&lt;/code&gt; where to find the
+Dockerfile of the two services?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;When we’ll build the application from the file &lt;code&gt;docker-compose.yml&lt;/code&gt;,
+two images will be created, one for each service.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.4  &lt;/strong&gt;&lt;/span&gt;
+What will the name of the two images be?
+What key in the file &lt;code&gt;docker-compose.yml&lt;/code&gt; gives you this information?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;building-the-application&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.2&lt;/span&gt; Building the application&lt;/h2&gt;
+&lt;p&gt;We now build the application.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Open the command-line terminal and by using the command &lt;code&gt;cd&lt;/code&gt;
+position yourself in the root directory
+&lt;code&gt;pet-store&lt;/code&gt; of the application.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Execute the following command:&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;docker-compose build&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;When the build is complete, verify that the two images corresponding
+to the two services have been created (which docker command do you need here?).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;executing-the-application&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.3&lt;/span&gt; Executing the application&lt;/h2&gt;
+&lt;p&gt;We now execute the application with the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker-compose up -d&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox curiosity&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Good to know&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The option &lt;code&gt;-d&lt;/code&gt; in the previous command means that the application is
+executed &lt;strong&gt;in the background&lt;/strong&gt; or, in other words,
+the containers are run as &lt;strong&gt;daemons&lt;/strong&gt; (hence, the &lt;code&gt;-d&lt;/code&gt;).
+This means that any output of the application is not
+shown in the terminal.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.5  &lt;/strong&gt;&lt;/span&gt;
+Verify that the network and the volumes associated with the
+application have been correctly created.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.6  &lt;/strong&gt;&lt;/span&gt;
+How many containers do you expect to be associated to
+the application?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;You can verify the answer to the previous question by typing the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker-compose ps&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;This command is exactly equivalent to &lt;code&gt;docker container ls&lt;/code&gt;, except that
+it only shows the containers associated with the application
+that we’ve just executed.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.7  &lt;/strong&gt;&lt;/span&gt;
+In the output of the command &lt;code&gt;docker-compose ps&lt;/code&gt;, can you explain
+the meaning of the following?&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;0.0.0.0:5000-&amp;gt;3000/tcp&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.8  &lt;/strong&gt;&lt;/span&gt;
+Can you
+tell which URL you have to type in your web browser
+to access the application?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;If you want to see the cats, you need to append
+&lt;code&gt;/pet&lt;/code&gt; to the URL that you found in the previous question.
+This is determined in file &lt;code&gt;server.js&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;shutting-down-the-application&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.4&lt;/span&gt; Shutting down the application&lt;/h2&gt;
+&lt;p&gt;You can shut down the application by typing the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker-compose down&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.9  &lt;/strong&gt;&lt;/span&gt;
+Does shutting down the application remove the networks created
+for the application?
+What about the volumes?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;scaling-a-service&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.5&lt;/span&gt; Scaling a service&lt;/h2&gt;
+&lt;p&gt;When we launch the application, we can specify the
+number of instances of each service.
+This is useful when we expect our application to be solicited by many users;
+the workload will be automatically balanced across all the instances of the service.&lt;/p&gt;
+&lt;p&gt;Let’s launch our application with 3 instances of the service &lt;code&gt;web&lt;/code&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker-compose up --scale web=3 -d&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.10  &lt;/strong&gt;&lt;/span&gt;
+Running the previous command results in an error.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Can you explain why?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;What fix would you propose in file &lt;code&gt;docker-compose.yml&lt;/code&gt;?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;You need to shut down the application before relaunching it again.
+In fact, even if we got an error, an instance of the &lt;code&gt;db&lt;/code&gt; service and
+an instance of the service &lt;code&gt;web&lt;/code&gt; are still running.&lt;/p&gt;
+&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Modify the file &lt;code&gt;docker-compose.yml&lt;/code&gt; and relaunch the application.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Run the following command and verify that you actually have three running instances of the
+service &lt;code&gt;web&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;docker-compose ps&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Try to connect to the application by using the three port numbers indicated in the output
+of the previous command.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Don’t forget to shut down the application before you
+go on.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;pushing-an-application&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Pushing an application&lt;/h1&gt;
+&lt;p&gt;Once we have built an application, we might want to
+share it by pushing it to the DockerHub registry or any
+other container registry, be it private or public.&lt;/p&gt;
+&lt;div id=&#34;creating-an-account-on-dockerhub&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.1&lt;/span&gt; Creating an account on DockerHub&lt;/h2&gt;
+&lt;p&gt;You need to create an account on the &lt;a href=&#34;https://hub.docker.com/&#34; target=&#34;_blank&#34;&gt;DockerHub website&lt;/a&gt;
+in order to perform this activity.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;renaming-the-images&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.2&lt;/span&gt; Renaming the images&lt;/h2&gt;
+&lt;p&gt;In order to push your images to the registry, you need to rename them, so as the new name
+has the following structure:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;yourusername/image-name:image-tag&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;For instance, since my username is &lt;code&gt;quercinigia&lt;/code&gt;, I’ll rename
+the two images &lt;code&gt;pet-store-web&lt;/code&gt; and &lt;code&gt;pet-store-db&lt;/code&gt; with the
+&lt;code&gt;docker tag&lt;/code&gt; command as follows:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker tag pet-store-web quercinigia/pet-store-web:1.0&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker tag pet-store-db quercinigia/pet-store-db:1.0&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;I chosen 1.0 as a tag, but feel free to pick another one.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;logging-in&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.3&lt;/span&gt; Logging in&lt;/h2&gt;
+&lt;p&gt;You need to log in to your DockerHub account.&lt;/p&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Instructions for Docker Desktop (macOS and Windows)&lt;/summary&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;macOS users: to see how to log in &lt;a href=&#34;https://webtv.centralesupelec.fr/videos/log-in-docker-macos/&#34; target=&#34;_blank&#34;&gt;click here&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Windows users: to see how to log in &lt;a href=&#34;https://webtv.centralesupelec.fr/videos/log-in-docker-windows/&#34; target=&#34;_blank&#34;&gt;click here&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Instructions for the Linux VM&lt;/summary&gt;&lt;/p&gt;
+&lt;p&gt;Log in to DockerHub by typing the following command in the terminal
+(replace YOUR-USERNAME with your actual username).&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker login -u YOUR-USERNAME&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;You might get a warning that
+your password will be stored unencrypted.
+There are methods to prevent this from happening.
+These methods being out of the scope of this course,
+the interested reader can
+look them up &lt;a href=&#34;https://www.techrepublic.com/article/how-to-setup-secure-credential-storage-for-docker/&#34; target=&#34;_blank&#34;&gt;at this link&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;pushing-the-images&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.4&lt;/span&gt; Pushing the images&lt;/h2&gt;
+&lt;p&gt;Once you’re successfully logged in, you can type the following
+commands in the terminal to push the two images of your application:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker push YOUR-USERNAME/pet-store-web:1.0&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker push YOUR-USERNAME/pet-store-db:1.0&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Remember to replace YOUR-USERNAME with your actual username in the commands above.&lt;/p&gt;
+&lt;p&gt;After the task is completed, verify that the images appear
+in &lt;a href=&#34;https://hub.docker.com/repositories&#34; target=&#34;_blank&#34;&gt;your Docker registry&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox curiosity&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Good to know&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Here we manually tagged and uploaded the two images.
+This method becomes quickly annoying when the application consists of
+more than two images.
+Another way to go about this task is:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Specify the image names with your username in file &lt;strong&gt;docker-compose.yml&lt;/strong&gt;.
+For instance, in my &lt;strong&gt;docker-compose.yml&lt;/strong&gt; I would write:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;services:
+  web:
+    build: web
+    image: quercinigia/pet-store-web:1.0
+  ...
+  db:
+    build: database
+    image: quercinigia/pet-store-db:1.0
+  ...&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Build the application with the following command:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;docker-compose build&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Push the images of the application with the following command:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;docker-compose push&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;This way, with just two commands we push to the registry all the images
+of the application, no matter how many they are.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;introduction-to-kubernetes&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Introduction to Kubernetes&lt;/h1&gt;
+&lt;p&gt;Kubernetes is the most popular &lt;strong&gt;orchestrator&lt;/strong&gt; to date.
+It is used to manage a multi-service application, usually deployed
+across multiple &lt;strong&gt;hosts&lt;/strong&gt; in a &lt;strong&gt;cluster&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;While using Docker Compose, a &lt;strong&gt;service&lt;/strong&gt; corresponds
+to a &lt;strong&gt;Docker image&lt;/strong&gt; and
+a &lt;strong&gt;service instance&lt;/strong&gt; to a &lt;strong&gt;Docker container&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;As opposed to that, in Kubernetes the computation unit is a &lt;strong&gt;pod&lt;/strong&gt;, that is
+a &lt;strong&gt;collection of containers&lt;/strong&gt;.
+In other words, we don’t reason in terms of containers anymore,
+but in terms of pods. Of course, a pod can also consist of just one container.&lt;/p&gt;
+&lt;div class=&#34;infobox curiosity&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Good to know&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;In practice, we rarely have to manipulate pods directly in Kubernetes,
+as there are higher-level objects that manage them.
+We’ll use these objects in the next sections.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;activate-kubernetes&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.1&lt;/span&gt; Activate Kubernetes&lt;/h2&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Instructions for Docker Desktop (macOS and Windows)&lt;/summary&gt;&lt;/p&gt;
+&lt;p&gt;You need to follow all the instructions documented
+&lt;a href=&#34;https://docs.docker.com/desktop/kubernetes/&#34; target=&#34;_blank&#34;&gt;on this page&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Before moving on, don’t forget to type the following command to verify that Kubernetes is correctly activated&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl get nodes&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Before moving on, don’t forget to type the following command to verify that Kubernetes is correctly activated&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl get nodes&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;You should see a node called &lt;code&gt;docker-desktop&lt;/code&gt; whose status is set to READY.
+If the status is NOT READY, just wait few seconds before typing the command again.&lt;/p&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Instructions for the Linux VM&lt;/summary&gt;&lt;/p&gt;
+&lt;p&gt;In the Linux VM you’ll find &lt;strong&gt;Minikube&lt;/strong&gt;, a single-node Kubernetes cluster
+in VirtualBox.
+Please follow &lt;strong&gt;all the instructions&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Start the cluster, type the following command (everything in one line!)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;minikube start --extra-config=kubeadm.ignore-preflight-errors=NumCPU --force --cpus 1&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Verify that Kubernetes is correctly activated by typing the following command:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;kubectl get nodes&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;You should see a node called &lt;code&gt;minikube&lt;/code&gt; whose status is set to READY.
+If the status is NOT READY, just wait few seconds before typing the command again.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Open a &lt;strong&gt;new terminal&lt;/strong&gt; and type the command:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;minikube tunnel&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The command will start to produce some output.
+&lt;strong&gt;Leave that terminal open&lt;/strong&gt; and go back to the previous terminal.&lt;/p&gt;
+&lt;div class=&#34;infobox curiosity&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Tunnel&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The Minikube tunnel is used to create a route to services deployed
+with type &lt;code&gt;LoadBalancer&lt;/code&gt;. If you don’t activate the tunnel,
+you won’t be able to use these services in the exercises below.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;deploying-a-pod&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.2&lt;/span&gt; Deploying a pod&lt;/h2&gt;
+&lt;p&gt;In order to deploy &lt;a href=&#34;https://kubernetes.io/docs/concepts/workloads/pods/&#34; target=&#34;_blank&#34;&gt;a pod&lt;/a&gt;,
+we first have to give its &lt;strong&gt;specification&lt;/strong&gt;, basically its name
+and the containers that compose it with their settings.
+Similarly to Docker Compose, a pod is specified in a &lt;strong&gt;declarative way&lt;/strong&gt; with a
+YAML configuration file.&lt;/p&gt;
+&lt;p&gt;Consider the following specification.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;apiVersion: v1
+kind: Pod
+metadata:
+  name: web-pod
+  labels:
+    app: web-pod
+spec:
+  containers:
+  - name: web
+    image: nginx:alpine
+    ports:
+    - containerPort: 80&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Here is an explanation of the properties in the specification.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;em&gt;apiVersion&lt;/em&gt;. Defines the versioned schema of this representation.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;em&gt;kind&lt;/em&gt;. The type of the resource that we intend to create.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;em&gt;metadata&lt;/em&gt;. The resource metadata. The list of
+all metadata is specified &lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#objectmeta-v1-meta&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;em&gt;spec&lt;/em&gt;. The specification of the desired behaviour of the pod.
+The list of the possible specifications can be found &lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#podspec-v1-core&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Essentially, the previous specification defines a pod with a container that is launched from the
+image &lt;code&gt;nginx:alpine&lt;/code&gt; (a Web server) and listens to ports 80 and 443.&lt;/p&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Copy the previous specification to a file named &lt;code&gt;sample-pod.yaml&lt;/code&gt; (or any other name
+of your liking).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;By using the command &lt;code&gt;cd&lt;/code&gt; in the terminal, place yourself in the directory
+where the file &lt;code&gt;sample-pod.yaml&lt;/code&gt; is stored.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Deploy the pod by typing the following command:&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;kubectl create -f sample-pod.yaml&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Verify that the pod is deployed by typing the following command:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;kubectl get pods&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The first time you run the last command, you might see that the pod is not
+ready yet. You need to wait for the image &lt;code&gt;nginx:alpine&lt;/code&gt; to be pulled from DockerHub.
+Wait few seconds and try the command again until the pod is marked as running.&lt;/p&gt;
+&lt;p&gt;You can also get more information on the running pod (e.g., its assigned IP address)
+by typing the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl get pod -o wide web-pod&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-11&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;
+Open a web browser and type &lt;code&gt;http://localhost:80&lt;/code&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;What do you get? What if you try to use the IP of the pod instead of &lt;code&gt;locahost&lt;/code&gt;?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;What should we define in order to fix the problem?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;The following configuration
+defines a Service object of type &lt;strong&gt;LoadBalancer&lt;/strong&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+      app: web-pod&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;infobox curiosity&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Good to know&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;A &lt;strong&gt;LoadBalancer&lt;/strong&gt; service is a &lt;strong&gt;NodePort&lt;/strong&gt; service (cf slide 64 in &lt;a href=&#34;https://centralesupelec.edunao.com/pluginfile.php/136097/mod_resource/content/2/cm3-slides.pdf&#34; target=&#34;_blank&#34;&gt;Lecture 3&lt;/a&gt;)
+that offers load balancing capabilities.
+It is intended to expose an IP address
+that client applications (external to the Kubernetes cluster) can use to access
+the service.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-12&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.2  &lt;/strong&gt;&lt;/span&gt;
+What is the field &lt;code&gt;selector&lt;/code&gt; in the definition of the service?
+(cf slide 57 in &lt;a href=&#34;https://centralesupelec.edunao.com/pluginfile.php/136097/mod_resource/content/2/cm3-slides.pdf&#34; target=&#34;_blank&#34;&gt;Lecture 3&lt;/a&gt;)&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-13&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.3  &lt;/strong&gt;&lt;/span&gt;
+In the specification of the service, what &lt;code&gt;port&lt;/code&gt; and &lt;code&gt;targetPort&lt;/code&gt; mean?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Copy and paste the service specification into a file named &lt;code&gt;sample-service.yaml&lt;/code&gt; (or any other name of your liking).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;By using the command &lt;code&gt;cd&lt;/code&gt; in the terminal, place yourself in the directory
+where the file &lt;code&gt;sample-service.yaml&lt;/code&gt; is stored.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Deploy the service by typing the following command:&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;kubectl create -f sample-service.yaml&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Verify that the service is deployed by typing the following command:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;kubectl get services&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;This command returns all services running in Kubernetes.
+For each service, you also get a name.
+In order to only target the service that you’ve just created, simply type
+the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl get svc/nginx-service&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Your service’s name is &lt;code&gt;nginx-service&lt;/code&gt; (as specified in file &lt;code&gt;sample-service.yml&lt;/code&gt;);
+&lt;code&gt;svc&lt;/code&gt; is only the namespace where all Kubernetes services are
+put.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-14&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.4  &lt;/strong&gt;&lt;/span&gt;
+By looking at the output of the command &lt;code&gt;kubectl get svc/nginx-service&lt;/code&gt;,
+which URL do you need to type in the Web browser in order to access the service?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Stop the pod and the service before moving on. Here are the commands to do so:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl delete po/web-pod&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl delete svc/nginx-service&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;kubernetes-deploying-an-application&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Kubernetes: deploying an application&lt;/h1&gt;
+&lt;p&gt;In this section, we’re going to deploy our pet store in Kubernetes.
+As a reminder, our application consists of two services: &lt;code&gt;web&lt;/code&gt; and &lt;code&gt;db&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;In order to define an application in Kubernetes,
+we need to use two types of objects &lt;strong&gt;for each service&lt;/strong&gt; of the application:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;A &lt;strong&gt;workload resource&lt;/strong&gt; that gives the specification of the service, such as
+the pods that make up the service itself (images, network settings) and metadata, such as
+the desired number of instances.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;A &lt;strong&gt;Service&lt;/strong&gt; object. As we have seen previously, a service object
+exposes an IP address that allows client applications,
+both inside and outside the Kubernetes cluster, to connect to the service.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;When we define an application in Kubernetes, we rarely,
+if ever, need to play directly with pods.
+Instead, we can resort to higher-level objects, called &lt;strong&gt;Controllers&lt;/strong&gt;, for an easier
+definition of the &lt;strong&gt;desired state&lt;/strong&gt; of the application itself.
+The type of the controller that we need to use depends on the nature of the service
+itself: &lt;strong&gt;stateless&lt;/strong&gt; or &lt;strong&gt;stateful&lt;/strong&gt; (slides 14-15 of &lt;a href=&#34;https://centralesupelec.edunao.com/pluginfile.php/136097/mod_resource/content/2/cm3-slides.pdf&#34; target=&#34;_blank&#34;&gt;Lecture 3&lt;/a&gt;.).&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-15&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Is the service &lt;code&gt;web&lt;/code&gt; of our application stateless or stateful?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Is the service &lt;code&gt;db&lt;/code&gt; of our application stateless of stateful?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-web-service-deployment&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.1&lt;/span&gt; The &lt;code&gt;web&lt;/code&gt; service: deployment&lt;/h2&gt;
+&lt;p&gt;For &lt;strong&gt;stateless application services&lt;/strong&gt;, we can use
+a &lt;a href=&#34;https://kubernetes.io/docs/concepts/workloads/controllers/deployment/&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;Deployment&lt;/strong&gt;&lt;/a&gt; for the deployment of a set of identical pods
+that are launched across several nodes in the Kubernetes cluster.&lt;/p&gt;
+&lt;div class=&#34;infobox curiosity&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Deployment and ReplicaSet&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Deployments and ReplicaSets have been introduced
+in slides 51-52-53 of the &lt;a href=&#34;https://centralesupelec.edunao.com/pluginfile.php/136097/mod_resource/content/2/cm3-slides.pdf&#34; target=&#34;_blank&#34;&gt;third lecture&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;We here define the specification of
+a Deployment corresponding to the service &lt;code&gt;web&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;scroll-vert&#34;&gt;
+&lt;pre&gt;&lt;code&gt;apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: pets
+      service: web
+  template:
+    metadata:
+      labels:
+        app: pets
+        service: web
+    spec:
+      containers:
+      - image: quercinigia/pet-store-web:1.0
+        name: web
+        ports:
+        - containerPort: 3000
+          protocol: TCP&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;Here is the explanation of the specification:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;A Deployment named &lt;code&gt;web&lt;/code&gt; is created, as indicated by the field &lt;code&gt;metadata.name&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The Deployment creates three replicated pods, as indicated by the field
+&lt;code&gt;spec.replicas&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The Deployment considers that the pods with &lt;strong&gt;both&lt;/strong&gt; labels &lt;code&gt;app: pets&lt;/code&gt; and
+&lt;code&gt;service: web&lt;/code&gt; are part of the deployment.
+This is indicated by the field &lt;code&gt;spec.selector.matchLabels&lt;/code&gt;.
+This field is used to let the Deployment know how to find its pods.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The configuration of the pods that are part of the Deployment is
+given in the field &lt;code&gt;spec.template&lt;/code&gt; and its subfields.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Each pod of the Deployment is given labels &lt;code&gt;app: pets&lt;/code&gt; and &lt;code&gt;service: web&lt;/code&gt;.
+This is indicated by the field &lt;code&gt;spec.template.metadata.labels&lt;/code&gt;.
+Note that here we specify exactly the same values as in &lt;code&gt;spec.selector.matchLabels&lt;/code&gt;.
+This field is used to give pods labels so that they can be identified and located in
+Kubernetes.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Each pod has exactly one container, named &lt;code&gt;web&lt;/code&gt;, run from the
+image &lt;code&gt;quercinigia/pet-store-web:1.0&lt;/code&gt; stored in the DockerHub. The container listens on port 3000
+and uses the TCP protocol. This is specified in the field &lt;code&gt;spec.template.spec.containers&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Copy and paste the previous specification to a new file &lt;code&gt;web-deployment.yaml&lt;/code&gt;
+(or any name of your liking).
+Make sure that you &lt;strong&gt;replace&lt;/strong&gt; the image &lt;code&gt;quercinigia/pet-store-web:1.0&lt;/code&gt;
+with the one that you pushed to your DockerHub registry.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Use the command &lt;code&gt;cd&lt;/code&gt; in the terminal to position yourself in the directory
+where the file &lt;code&gt;web-deployment.yaml&lt;/code&gt; is stored.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Deploy this Deployment in Kubernetes by typing the following command:&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;kubectl create -f web-deployment.yaml&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-16&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.2  &lt;/strong&gt;&lt;/span&gt;
+Type the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl get all&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Which objects have been created following the creation of the
+Deployment?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-17&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.3  &lt;/strong&gt;&lt;/span&gt;
+Get the name of one of the running pods and
+kill it by using the following command&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl delete name-of-pod&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;If the command hangs in the terminal, feel free to type Ctrl-C to
+get back control of the terminal.&lt;/p&gt;
+&lt;p&gt;Type again following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl get all&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;How many pods do you see? Is it surprising?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-web-service-service&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.2&lt;/span&gt; The &lt;code&gt;web&lt;/code&gt; service: service&lt;/h2&gt;
+&lt;p&gt;Now we need to define a &lt;strong&gt;Service&lt;/strong&gt; in order to expose the web service to the public.
+Here is the definition:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;apiVersion: v1
+kind: Service
+metadata:
+  name: web
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    targetPort: 3000
+    protocol: TCP
+  selector:
+    app: pets
+    service: web&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-18&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.4  &lt;/strong&gt;&lt;/span&gt;
+Describe the specification of this service.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Copy and paste the previous specification to a new file &lt;code&gt;web-service.yaml&lt;/code&gt;
+(or any name of your liking).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Use the command &lt;code&gt;cd&lt;/code&gt; in the terminal to position yourself in the directory
+where the file &lt;code&gt;web-service.yaml&lt;/code&gt; is stored.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Create the service with the following command:&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;kubectl create -f web-service.yaml&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Verify that the service has been created with the following command:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;kubectl get services&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Locate the external IP (let’s call it EXTERNAL-IP) of the web service and type
+the URL &lt;code&gt;http://EXTERNAL-IP:8080&lt;/code&gt; in your Web browser. You should
+see a Web page where the phrase &lt;em&gt;Pet store&lt;/em&gt; appears.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-db-service-statefulset&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.3&lt;/span&gt; The &lt;code&gt;db&lt;/code&gt; service: StatefulSet&lt;/h2&gt;
+&lt;p&gt;Kubernetes has defined a special type of ReplicaSet for stateful services that
+is called &lt;a href=&#34;https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;StatefulSet&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Let’s define a StatefulSet to give the specification of
+the &lt;code&gt;db&lt;/code&gt; service.&lt;/p&gt;
+&lt;div class=&#34;scroll-vert&#34;&gt;
+&lt;pre&gt;&lt;code&gt;apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db
+spec:
+  selector:
+    matchLabels:
+      app: pets
+      service: db
+  serviceName: db
+  template:
+    metadata:
+      labels:
+        app: pets
+        service: db
+    spec:
+      containers:
+      - image: quercinigia/pet-store-db:1.0
+        name: db
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: pets-data
+  volumeClaimTemplates:
+  - metadata:
+      name: pets-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Mi&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;p&gt;By now you shouldn’t have any problem understanding the meaning of the fields
+in this specification.
+The fields are also
+documented in the &lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#statefulsetspec-v1-apps&#34; target=&#34;_blank&#34;&gt;official Kubernetes documentation&lt;/a&gt;.
+The only novelty is the field &lt;code&gt;volumeClaimTemplates&lt;/code&gt;.
+It describes additional constraints on the volumes defined in the specification, in this case the volume
+named &lt;code&gt;pets-data&lt;/code&gt; (where PostgreSQL keeps the data). In particular, two claims are given:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The access mode &lt;code&gt;ReadWriteOnce&lt;/code&gt; means that the volume can be mounted
+as read-write by a single node in the Kubernetes cluster.
+Access modes are &lt;a href=&#34;https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes&#34; target=&#34;_blank&#34;&gt;documented here&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;We request at least 100MB of storage for the database.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Copy and paste the previous specification to a new file &lt;code&gt;db-stateful-set.yaml&lt;/code&gt;
+(or any name of your liking).
+Make sure that you &lt;strong&gt;replace&lt;/strong&gt; the image &lt;code&gt;quercinigia/pet-store-db:1.0&lt;/code&gt;
+with the one that you pushed to your DockerHub registry.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Use the command &lt;code&gt;cd&lt;/code&gt; in the terminal to position yourself in the directory
+where the file &lt;code&gt;db-stateful-set.yaml&lt;/code&gt; is stored.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Deploy this StatefulSet in Kubernetes by typing the following command:&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;kubectl create -f db-stateful-set.yaml&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-19&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.5  &lt;/strong&gt;&lt;/span&gt;
+Type the command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl get all&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Which objects have been created when you deployed the StatefulSet?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-20&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.6  &lt;/strong&gt;&lt;/span&gt;
+Open the Web browser and type the following URL:&lt;/p&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;If you’re using Docker Desktop&lt;/summary&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;http://localhost:8080/pet&lt;/code&gt;&lt;/p&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;If you’re using Minikube on the Linux VM&lt;/summary&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;http://minikube-ip:8080/pet&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;where you’ll replace &lt;code&gt;minikube-ip&lt;/code&gt; with the external IP address associated with the
+&lt;code&gt;web&lt;/code&gt; service.&lt;/p&gt;
+&lt;/details&gt;
+&lt;p&gt;Right after, type the command &lt;code&gt;kubectl get all&lt;/code&gt;.
+What do you observe? Can you explain the reason?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;In the output of the command &lt;code&gt;get kubectl all&lt;/code&gt;, look at the names of the
+pods that are instances of the &lt;code&gt;web&lt;/code&gt; service.
+&lt;!-- in the TP you can even ask why all the three instances got an error--&gt;
+Take the name of any these pods,
+and put it in place of NAME-OF-POD in the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl logs NAME-OF-POD --previous&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-21&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.7  &lt;/strong&gt;&lt;/span&gt;
+Does the output of the previous command confirm the explanation
+given in the previous question?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-db-service-service-object&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;5&lt;/span&gt; The &lt;code&gt;db&lt;/code&gt; service: Service object&lt;/h1&gt;
+&lt;p&gt;From the above observations, we understand that we need to define
+a service to expose the database to the clients.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-22&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5.1  &lt;/strong&gt;&lt;/span&gt;
+Should the &lt;code&gt;db&lt;/code&gt; service be accessible to client applications that are external to
+the Kubernetes cluster?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-23&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5.2  &lt;/strong&gt;&lt;/span&gt;
+Given the answer to the previous question, what should the type of this service be?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-24&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5.3  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Write the specification of the &lt;code&gt;db&lt;/code&gt; service in a file
+named &lt;code&gt;db-service.yaml&lt;/code&gt; (or any other name of your liking).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Caution.&lt;/strong&gt; In the file &lt;code&gt;db-stateful-set.yaml&lt;/code&gt; the field &lt;code&gt;spec.serviceName&lt;/code&gt; indicates the name
+that the service must have.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Deploy the service by typing the following command:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;kubectl create -f db-service.yaml&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Verify that the service has been created with the following command:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;kubectl get all&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Verify that you can reach the application at &lt;code&gt;http://localhost:8080/pet&lt;/code&gt; (Minikube users:
+replace &lt;code&gt;localhost&lt;/code&gt; with the external IP address associated to the &lt;code&gt;web&lt;/code&gt; service!).
+&lt;strong&gt;It might happen&lt;/strong&gt; that the database service is not ready yet, and so you’ll get
+a connection error. Just wait and retry later.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;shutting-down-the-application-1&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;5.1&lt;/span&gt; Shutting down the application&lt;/h2&gt;
+&lt;p&gt;After you’re done with the application, you can shut it down with the following commands:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl delete svc/web&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl delete svc/db&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl delete deploy/web&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl delete statefulset/db&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The order in which you type these commands doesn’t matter.&lt;/p&gt;
+&lt;p&gt;If you type multiple times the command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl get all&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;you should see that the resources progressively disappear.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conclusion&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;5.2&lt;/span&gt; Conclusion&lt;/h2&gt;
+&lt;p&gt;In the previous exercises, we deployed an application with two services, for which we had to create
+four files and type as many commands.
+For larger applications this gets a bit annoying.
+We can write all the definitions in a single file (e.g., &lt;code&gt;pets.yaml&lt;/code&gt;)
+where each specification is terminated by - - -.&lt;/p&gt;
+&lt;p&gt;Here is an example, where we write the specification of the
+Service and Deployment associated with the service &lt;code&gt;web&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;apiVersion: v1
+kind: Service
+metadata:
+  name: web
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    targetPort: 3000
+    protocol: TCP
+  selector:
+    app: pets
+    service: web
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: pets
+      service: web
+  template:
+    metadata:
+      labels:
+        app: pets
+        service: web
+    spec:
+      containers:
+      - image: quercinigia/pet-store-web:1.0
+        name: web
+        ports:
+        - containerPort: 3000
+          protocol: TCP&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>MapReduce</title>
       <link>/courses/plp/tutorials/map-reduce/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
