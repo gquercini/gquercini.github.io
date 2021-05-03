@@ -1,0 +1,443 @@
+---
+title: "Multi-service applications in the Cloud"
+heading: Cloud computing — Lab assignment 1
+linktitle: tutorial-kybe
+output:
+  bookdown::pdf_book:
+    toc: false
+    includes:
+      in_header: ../latex-files/preamble.tex
+    number_sections: yes
+  blogdown::html_page:
+    number_sections: yes
+  html_document:
+    df_print: paged
+menu:
+  course:
+    name: 1. Docker & Kubernetes
+    parent: labs
+    identifier: kube-lab
+    weight: 2
+params:
+  solution: true
+summary: Text of the lab assignment on Docker + Kubernetes
+draft: no
+type: docs
+---
+
+
+<link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/cloud-computing.css">
+
+
+
+# A containerized chat room
+
+We developed a simple chat room in Python that you can download 
+[here](/courses/cloud-computing/kube-lab/chat-room.zip). 
+The code has been adapted from [this GitHub project](https://github.com/pricheal/python-client-server/){target="_blank"}.
+
+Participants use a *client* program to connect to the chat room;
+the chat room is managed by a *server* application  that receives the 
+client connections and forwards the messages between the users.
+The archive contains the following files:
+
+* *client.py*. Implementation of the chat room client.
+* *server.py*. Implementation of the chat room server.
+* *utils.py*. Library with utility functions used in both *client.py* and *server.py*.
+
+::: {.infobox .warning data-latex="{warning}"}
+**Warning**
+
+Only one instance of the server is running. 
+Several instances of the client can run at the same time.
+Client instances might not be running on the same host.
+
+In order to execute the server, we need to specify the port number as a parameter.
+
+
+
+:::
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise label="client-server-methodology"}
+Explain the methodology that you're going to follow to containerize the client and 
+the server by using Docker. In particular explain:
+
+1. How many images you're creating and why.
+
+2. What you need to build the images.
+
+3. How you're going to build the images.
+
+
+```
+
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+1. We need to create two images, one for the client and one for the server.
+We cannot just create one image, because the client and the server are two separate entities.
+
+2. We need to create two Dockerfiles, one for the client and one for the server.
+
+3. We can run the docker build command on the two Dockerfiles. Alternatively, 
+we can have two docker-compose files and build the images by using docker-compose.
+Careful: since client and server are two separate entities (they can be run on different machines, 
+they might not be run at the same time), having only one docker-compose file would not be 
+a wise decision.
+
+:::
+
+</details>"}`
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+Containerize the application by following the methodology that you outlined in Exercise \@ref(exr:client-server-methodology).
+```
+
+::: {.infobox .warning data-latex="{warning}"}
+**Warning**
+
+The size of the images should be kept as small as possible.
+Remember to include in the images only what you need to build and run the application.
+
+:::
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+For both the client and the server we need a Python environment. 
+We use the Python environment *slim* as a base image to minimize the size of the image. 
+Students who choose this base image are rewarded. 
+If they choose another (bigger) Python environment, that is fine, but they don't get 
+the totality of the points.
+If they use an OS as a base image (e.g., ubuntu), they get penalized.
+
+The Dockerfile for the client (let's call it *Dockerfile-client*)
+is as follows.
+
+\x60\x60\x60dockerfile
+FROM python:3.7-slim
+RUN mkdir -p /app
+WORKDIR /app
+COPY ./client.py ./utils.py /app/
+ENTRYPOINT [\"python\", \"client.py\"]
+\x60\x60\x60
+
+We build the image with the following command:
+
+\x60\x60
+docker build -t chat-client -f Dockerfile-client .
+\x60\x60
+
+The Dockerfile for the server (let's call it *Dockerfile-server*) 
+is as follows.
+
+\x60\x60\x60dockerfile
+FROM python:3.7-slim
+RUN mkdir -p /app
+WORKDIR /app
+COPY ./server.py ./utils.py /app/
+ENTRYPOINT [\"python\", \"server.py\"]
+\x60\x60\x60
+
+We build the image with the following command:
+
+\x60\x60
+docker build -t chat-server -f Dockerfile-server .
+\x60\x60
+
+:::
+
+</details>"}`
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+If you built more than one image:
+
+1. Do they have some common layers?
+
+2. If so, is it something that has an impact on the build time and how?
+
+```
+
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+
+The base image is the same for both images. 
+Assuming that we build the client first, this build will take longer if
+the python-slim image has not been downloaded yet from the registry.
+The layers 2 and 3 are identical, so when we build the server they're going 
+to be already there (this is indicated by the keywords CACHED when we build the server).
+It is important that here the students talk about the build cache mechanism.
+
+:::
+
+</details>"}`
+
+## Client and server on the same network
+
+We want to execute:
+
+* One instance of the server.
+
+* Two instances of the client.
+
+The server, as well as the clients, will 
+**run in Docker containers attached to the same network**.
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+```{exercise}
+
+We want to make sure that:
+
+1. The server and the clients can communicate with each other.
+
+2. Other Docker containers **cannot** communicate neither with the server nor with the clients.  
+
+How can you satisfy both requirements in Docker? Explain your solution 
+and justify it.
+
+```
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+If we create the three containers without specifying any network configuration, then
+the three containers will be attached to the default \x60\x60bridge\x60\x60 network.
+This way, we can satisfy the first requirement, but not the second (other containers attached
+to \x60\x60bridge\x60\x60 will be able to communicate with the clients and the server).
+
+We need to create a new network in Docker, let's call it \x60\x60chat-room\x60\x60 that 
+will be used exclusively for the server and the two clients.
+
+:::
+
+</details>"}`
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+```{exercise label=client-server-single-network}
+
+Execute the server and the two clients by using the network configuration that you
+explained in the previous exercise.
+
+* The server writes messages on the terminal. Remember to launch the container with the appropriate 
+option in order to actually see those messages.
+
+* Users need to interact with the client, that is: read and write messages. 
+Remember to launch the container with the appropriate option in order to actually see those messages.
+
+Write the **exact commands** that you typed for both configuring the network and 
+launching the server and the clients.
+
+```
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+First, we create the new network \x60\x60chat-room\x60\x60 by typing the following command:
+
+\x60\x60
+docker network create chat-room
+\x60\x60
+
+Next, we launch the server with the following command:
+
+\x60\x60
+docker container run --rm -t --name chat-server --network chat-room chat-server 60876
+\x60\x60
+
+The server takes in a port number as a parameter.
+If the students launch the server without specifying it, they'll get an error message
+that should lead them to understand what's missing.
+
+In another terminal, we type the following command to run the first client:
+
+\x60\x60
+docker container run --rm -it --name chat-client1 --network chat-room  chat-client chat-server 60876
+\x60\x60
+
+Note that we attach the client to the same network as the server. 
+When we launch the client, we need to pass as parameters the server host (here we can use the 
+container's name \x60\x60chat-server\x60\x60 of the server or its IP address) and the port number 
+(same as we specified when we launched the server).
+When we launch the client, we'll need to specify a username and then we can start typing messages in the chat room.
+
+Finally, we open another terminal to launch the second client with the following command:
+
+\x60\x60
+docker container run --rm -it --name chat-client2 --network chat-room  chat-client chat-server 60876
+\x60\x60
+
+The only thing that changes wrt the previous command is the name that we give the new container 
+(\x60\x60chat-client2\x60\x60).
+
+We can play with the chat to verify that the clients can exchange messages.
+
+:::
+
+</details>"}`
+
+::: {.infobox .warning data-latex="{warning}"}
+**Shutting down the application**
+
+Shut down both the clients and the server before you move on.
+
+* On the client-side, type ``#quit`` at any moment to exit the chat room.
+
+* Type Ctrl-C to stop the server.
+
+:::
+
+
+## Client and server on different networks
+
+We want to execute:
+
+* One instance of the server.
+
+* Two instances of the client.
+
+However, neither client is connected to the same network as the server.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Why isn't the solution that you gave 
+in Exercise \@ref(exr:client-server-single-network) working?
+
+What do you propose as a solution instead?
+
+**HINT.** You might want to look at [slide 77 of the second lecture](https://centralesupelec.edunao.com/pluginfile.php/135595/mod_resource/content/2/cm2-slides.pdf){target="_blank"}.
+
+```
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+The hostname \x60\x60chat-server\x60\x60 is not reachable from the clients, because they're not in the 
+same network as the server. 
+So, the only way out is to use the mechanism of port mapping.
+That is: we launch the server on the container port 60876
+but we also use the option \x60\x60-p\x60\x60 to map that port to any available port
+(say, 7070) on the **host computer**.
+This way, the clients can connect to the server by specifying the IP address
+of the host machine and 7070 as the port number.
+
+:::
+
+</details>"}`
+
+
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Execute the server and the two clients by making sure that neither client is connected to the 
+same network as the server.
+
+Write the **exact commands** that you typed 
+for both configuring the network and launching the server and the clients.
+
+
+```
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+As before, we can still connect the server to the network 
+\x60\x60chat-room\x60\x60.
+However, since we want our server to be reachable from outside that network,
+we need to publish a port on the host. 
+The option \x60\x60-p\x60\x60 in the following command maps the container 
+internal port 60876 to the port 7070 on the host computer.
+
+\x60\x60
+docker container run --rm -it --name chat-server --network chat-room -p 7070:60876 chat-server 60876
+\x60\x60
+
+Now, let's create a new network that we call \x60\x60net-clients\x60\x60 
+to which we'll be attaching the two clients:
+
+\x60\x60
+docker network create net-clients
+\x60\x60
+
+And we finally launch the two clients. As the server of the host, 
+we need to type the IP address assigned to the host.
+In my case, the IP address assigned to my host is 192.168.1.8
+
+\x60\x60
+docker container run --rm -it --name chat-client1 --network net-clients chat-client  192.168.1.8 7070
+\x60\x60
+
+The second client is launched as follows:
+
+\x60\x60
+docker container run --rm -it --name chat-client2 --network net-clients chat-client  192.168.1.8 7070
+\x60\x60
+
+
+:::
+
+</details>"}`
+
+
+<!-- exercise on docker-compose. Look at what Clara Gross did last year -->
+ddd ddd
