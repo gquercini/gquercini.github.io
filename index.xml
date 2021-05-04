@@ -118,7 +118,7 @@
 &lt;h1&gt;Tutorial 2&lt;/h1&gt;
 &lt;p&gt;&lt;strong&gt;Title&lt;/strong&gt;: Introduction to Spark programming&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Date and time&lt;/strong&gt;: Wednesday 5 May 2021&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Link&lt;/strong&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Link&lt;/strong&gt;: &lt;a href=&#34;https://colab.research.google.com/drive/18NN1O6tu3FJdpAmv8AAOBw2ON689_pwZ?usp=sharing&#34; target=&#34;_blank&#34;&gt;Click here&lt;/a&gt;&lt;/p&gt;
 &lt;!-- **Link**: [Click here](https://colab.research.google.com/drive/1qBLJrQZGum4A5m4RrofLq-KRXYug4HQM?usp=sharing)
 
 **Link to the data**: [Click here](/courses/plp/tutorials/data.tgz)
@@ -3182,13 +3182,14 @@ If Laura wants to move the directory &lt;em&gt;videos&lt;/em&gt; under &lt;em&gt
 &lt;h1&gt;Lecture 2&lt;/h1&gt;
 &lt;p&gt;&lt;strong&gt;Title&lt;/strong&gt;: Hadoop and its ecosystem: HDFS.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Date and time&lt;/strong&gt;: Wednesday 5 May 2021, 8:30 AM - 10 AM.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Slides&lt;/strong&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Slides&lt;/strong&gt;: Available &lt;a href=&#34;/courses/big-data-marseille/big-data-2.pdf&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;lecture-3&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Lecture 3&lt;/h1&gt;
 &lt;p&gt;&lt;strong&gt;Title&lt;/strong&gt;: Introduction to Apache Spark.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Date and time&lt;/strong&gt;: Wednesday 5 May 2021, 10 AM - 11:30 AM.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Slides&lt;/strong&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Slides&lt;/strong&gt;: Available &lt;a href=&#34;/courses/big-data-marseille/big-data-3.pdf&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Spark RDD programming demo&lt;/strong&gt;: Available &lt;a href=&#34;https://colab.research.google.com/drive/1jfCdVVMD_OrTubT0-URqu3SJvQ5mqMfh?usp=sharing&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;lecture-4&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Lecture 4&lt;/h1&gt;
@@ -6621,6 +6622,18 @@ Write a MapReduce algorithm that generates key-value pairs
 &lt;span class=&#34;math inline&#34;&gt;\((year, average\_temperature)\)&lt;/span&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;map: &lt;span class=&#34;math inline&#34;&gt;\((year, month, temperature) \rightarrow (year, temperature)\)&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;reduce: &lt;span class=&#34;math inline&#34;&gt;\((year, temps) \rightarrow\)&lt;/span&gt; &lt;span class=&#34;math inline&#34;&gt;\((year, sum(temps)/len(temps))\)&lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(temps\)&lt;/span&gt; is the list of all temperatures in the same &lt;span class=&#34;math inline&#34;&gt;\(year\)&lt;/span&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(sum(temps)\)&lt;/span&gt; sums all the elements in the list &lt;span class=&#34;math inline&#34;&gt;\(temps\)&lt;/span&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(len(temps)\)&lt;/span&gt; gives the length of the list &lt;span class=&#34;math inline&#34;&gt;\(temps\)&lt;/span&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;Suppose now that we have a large CSV file
 stored in a distributed file system (e.g., HDFS),
 containing a series of measurements in the format “Year, Month, Day, Minute, Second, Temperature”.
@@ -6635,6 +6648,16 @@ a MapReduce algorithm.&lt;/p&gt;
 What is the maximum number of measurements in a year?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Since we can have up to one measurement per second, the maximum number of
+measurements &lt;span class=&#34;math inline&#34;&gt;\(M_{max}\)&lt;/span&gt; for a certain year is given by the following formula:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+M_{max} = 365 \times 24 \times 60 \times 60 \approx 31.5 \times 10^6 
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -6644,6 +6667,17 @@ Considering the answer to the previous question, discuss the efficiency
 of the first implementation of the algorithm.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Since there might be up to 31 million values
+associated with a key, the bottleneck of the computation would be
+the shuffle operation, since we need to copy a high number of
+(key,value) pairs from the mappers to the reducers.&lt;/p&gt;
+&lt;p&gt;Also, a reducer might have to
+loop over a huge list of values in order to compute their average.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -6653,6 +6687,19 @@ Based on the answer to the previous question,
 propose a better implementation to handle the CSV file.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;map: &lt;span class=&#34;math inline&#34;&gt;\((year, mo, d, mi, sec, temperature) \rightarrow (year, temperature)\)&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;combine: &lt;span class=&#34;math inline&#34;&gt;\((year, temps) \rightarrow\)&lt;/span&gt; &lt;span class=&#34;math inline&#34;&gt;\((year, (sum(temps), len(temps)))\)&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;reduce: &lt;span class=&#34;math inline&#34;&gt;\((year, [(s_i, l_i),\ i=1\dots n]) \rightarrow\)&lt;/span&gt; &lt;span class=&#34;math inline&#34;&gt;\((year, \frac{\sum_{i=1}^n s_i}{\sum_{i=1}^n l_i})\)&lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(temps\)&lt;/span&gt; is the list of all temperatures in the same &lt;span class=&#34;math inline&#34;&gt;\(year\)&lt;/span&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(sum(temps)\)&lt;/span&gt; sums all the elements in the list &lt;span class=&#34;math inline&#34;&gt;\(temps\)&lt;/span&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(len(temps)\)&lt;/span&gt; gives the length of the list &lt;span class=&#34;math inline&#34;&gt;\(temps\)&lt;/span&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;computing-average-and-standard-deviation&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Computing average and standard deviation&lt;/h1&gt;
@@ -6679,6 +6726,16 @@ is more appropriate in a Map-Reduce algorithm?
 Why?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The second equation is more appropriate because it allows the computation
+of the sum of the elements and of the square of the elements step by step
+by using map and combine together.&lt;/p&gt;
+&lt;p&gt;Instead, if we use the first equation, we need first to compute the average and then use it
+to compute the variance.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -6688,6 +6745,23 @@ Propose a MapReduce implementation to compute the average and the standard
 deviation of the temperatures for each year.
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;map: &lt;span class=&#34;math inline&#34;&gt;\((year, mo, d, mi, sec, temperature) \rightarrow (year, temperature)\)&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;combine: &lt;span class=&#34;math inline&#34;&gt;\((year, T) \rightarrow\)&lt;/span&gt; &lt;span class=&#34;math inline&#34;&gt;\((year, (sum(T), sum(T^2), len(T)))\)&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;reduce: &lt;span class=&#34;math inline&#34;&gt;\((year, [(s_{i}, sq_{i}, l_{i}),\ i=1\dots n]) \rightarrow\)&lt;/span&gt; &lt;span class=&#34;math inline&#34;&gt;\((year, (\mu, \sigma))\)&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;where:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(T\)&lt;/span&gt; is the list of all temperatures in the same &lt;span class=&#34;math inline&#34;&gt;\(year\)&lt;/span&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(sum(T)\)&lt;/span&gt; sums all the elements in the list &lt;span class=&#34;math inline&#34;&gt;\(T\)&lt;/span&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(T^2 = [x^2 | x\in T]\)&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(len(T)\)&lt;/span&gt; gives the length of the list &lt;span class=&#34;math inline&#34;&gt;\(T\)&lt;/span&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(\mu = \sum_{i=1}^n s_{i}/ \sum_{i=1}^n l_{i}\)&lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(\sigma = \sqrt{ (\sum_{i=1}^n sq_{i}/ \sum_{i=1}^n l_{i}) - \mu^2 }\)&lt;/span&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;common-friends&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Common friends in a social network&lt;/h1&gt;
@@ -6721,6 +6795,20 @@ Propose a MapReduce implementation to find the common friends in a
 social network satisifying the given constraints.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;map: &lt;span class=&#34;math inline&#34;&gt;\((x, F) \rightarrow [((u, v), x)\ \forall (u, v) \in F\ |\ u &amp;lt; v ]\)&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;reduce: &lt;span class=&#34;math inline&#34;&gt;\([(u, v), LCF] \rightarrow [(u, v), LCF]\)&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;where:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(x\)&lt;/span&gt; is the first item in a line.&lt;/li&gt;
+&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(F\)&lt;/span&gt; is the list containing the items in a line except the first one (&lt;span class=&#34;math inline&#34;&gt;\(x\)&lt;/span&gt;’s friends).&lt;/li&gt;
+&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(LCF\)&lt;/span&gt; is the list of all individuals that are friends with both &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We note that the reduce function is the identity.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;creating-an-inverted-index&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Creating an inverted index&lt;/h1&gt;
@@ -6738,6 +6826,22 @@ Propose a MapReduce implementation to create an inverted index over a
 collection of documents.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The input to the map will be a key-value pair, where
+the key is the name of a file &lt;span class=&#34;math inline&#34;&gt;\(f\)&lt;/span&gt; and the value is the
+content &lt;span class=&#34;math inline&#34;&gt;\(C\)&lt;/span&gt; of the file.&lt;/p&gt;
+&lt;p&gt;map: &lt;span class=&#34;math inline&#34;&gt;\((f, C) \rightarrow [(w, f)\ \forall w \in C]\)&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;reduce: &lt;span class=&#34;math inline&#34;&gt;\((w, L) \rightarrow (w, L)\)&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;where &lt;span class=&#34;math inline&#34;&gt;\(L\)&lt;/span&gt; is the list of the files containing the word &lt;span class=&#34;math inline&#34;&gt;\(w\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;We note that the reduce function is the identity.&lt;/p&gt;
+&lt;p&gt;Note also that in the map function we can add instructions
+to preprocess the text. For example, we can eliminate some words
+that are not useful in the index (e.g., the stopwords) or remove
+special symbols.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
