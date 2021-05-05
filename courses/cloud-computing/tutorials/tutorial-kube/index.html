@@ -621,6 +621,11 @@
         <a href="/courses/cloud-computing/labs/cc-labs/">Overview</a>
       </li>
       
+      
+      <li class="labs">
+        <a href="/courses/cloud-computing/labs/kube-lab/">1. Docker &amp; Kubernetes</a>
+      </li>
+      
     </ul>
     </div>
     
@@ -694,6 +699,17 @@
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
+<div class="infobox warning">
+<p><strong>Warning</strong></p>
+<p><strong>If you use the Linux VM</strong>, you need to change the hardware configuration of the VM before
+booting it. You can also <a href="https://webtv.centralesupelec.fr/permalink/v12619ffbdbb7mpc6xbp/" target="_blank">watch this video</a>.
+Here are the necessary modifications:</p>
+<ul>
+<li><p>Increase the main memory to 4GB.</p></li>
+<li><p>Set the number of CPUs to 2.</p></li>
+</ul>
+<p>Without these modifications you’re not going to have a good experience with Kubernetes.</p>
+</div>
 <p>In this tutorial you’ll learn:</p>
 <ul>
 <li><p>How to <strong>build</strong> and <strong>deploy</strong> a <strong>multi-service application</strong> with <strong>Docker Compose</strong>.</p></li>
@@ -744,6 +760,7 @@ The file <code>package.json</code> contains the dependencies to install.</p></li
 The one in directory <code>database</code> is as follows:</p>
 <pre class="dockerfile"><code>FROM postgres:10.2-alpine
 COPY init-db.sql /docker-entrypoint-initdb.d/
+RUN chown postgres:postgres /docker-entrypoint-initdb.d/*.sql
 ENV POSTGRES_USER dockeruser
 ENV POSTGRES_PASSWORD dockerpass
 ENV POSTGRES_DB pets</code></pre>
@@ -1126,6 +1143,12 @@ We’ll use these objects in the next sections.</p>
 <p><code>kubectl get nodes</code></p>
 <p>You should see a node called <code>docker-desktop</code> whose status is set to READY.
 If the status is NOT READY, just wait few seconds before typing the command again.</p>
+<div class="infobox warning">
+<p><strong>Warning</strong></p>
+<p>This solution might not be working for you.
+In that case, disable Kubernetes in Docker Desktop and install
+minikube, by following <a href="https://minikube.sigs.k8s.io/docs/start/" target="_blank">these instructions</a>.</p>
+</div>
 </details>
 <details>
 <p><summary>Instructions for the Linux VM</summary></p>
@@ -1133,9 +1156,9 @@ If the status is NOT READY, just wait few seconds before typing the command agai
 in VirtualBox.
 Please follow <strong>all the instructions</strong>:</p>
 <ul>
-<li>Start the cluster, type the following command (everything in one line!)</li>
+<li>Start the cluster, type the following command:</li>
 </ul>
-<p><code>minikube start --extra-config=kubeadm.ignore-preflight-errors=NumCPU --force --cpus 1</code></p>
+<p><code>minikube start</code></p>
 <ul>
 <li>Verify that Kubernetes is correctly activated by typing the following command:</li>
 </ul>
@@ -1343,7 +1366,6 @@ in slides 51-52-53 of the <a href="https://centralesupelec.edunao.com/pluginfile
 </div>
 <p>We here define the specification of
 a Deployment corresponding to the service <code>web</code>.</p>
-<div class="scroll-vert">
 <pre><code>apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -1366,7 +1388,6 @@ spec:
         ports:
         - containerPort: 3000
           protocol: TCP</code></pre>
-</div>
 <p>Here is the explanation of the specification:</p>
 <ul>
 <li><p>A Deployment named <code>web</code> is created, as indicated by the field <code>metadata.name</code>.</p></li>

@@ -36,7 +36,7 @@
 &lt;p&gt;&lt;strong&gt;Supervisors&lt;/strong&gt;: Francesca Bugiotti, Gianluca Quercini, Arpad Rimmel, Idir Ait Sadoune, Marc-Antoine Weisser&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Date and time&lt;/strong&gt;: Thursday 6 May, 8:30 AM - 11:45 AM&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Room&lt;/strong&gt;: Remotely on Microsoft Teams&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Link&lt;/strong&gt;: Available soon&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Link&lt;/strong&gt;: &lt;a href=&#34;/courses/cloud-computing/tutorials/tutorial-kube&#34;&gt;Click here&lt;/a&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;tutorial-3&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Tutorial 3&lt;/h1&gt;
@@ -4266,6 +4266,17 @@ can translate names into IP addresses.&lt;/p&gt;
 
 &lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
 &lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;If you use the Linux VM&lt;/strong&gt;, you need to change the hardware configuration of the VM before
+booting it. You can also &lt;a href=&#34;https://webtv.centralesupelec.fr/permalink/v12619ffbdbb7mpc6xbp/&#34; target=&#34;_blank&#34;&gt;watch this video&lt;/a&gt;.
+Here are the necessary modifications:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Increase the main memory to 4GB.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Set the number of CPUs to 2.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Without these modifications you’re not going to have a good experience with Kubernetes.&lt;/p&gt;
+&lt;/div&gt;
 &lt;p&gt;In this tutorial you’ll learn:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;How to &lt;strong&gt;build&lt;/strong&gt; and &lt;strong&gt;deploy&lt;/strong&gt; a &lt;strong&gt;multi-service application&lt;/strong&gt; with &lt;strong&gt;Docker Compose&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
@@ -4316,6 +4327,7 @@ The file &lt;code&gt;package.json&lt;/code&gt; contains the dependencies to inst
 The one in directory &lt;code&gt;database&lt;/code&gt; is as follows:&lt;/p&gt;
 &lt;pre class=&#34;dockerfile&#34;&gt;&lt;code&gt;FROM postgres:10.2-alpine
 COPY init-db.sql /docker-entrypoint-initdb.d/
+RUN chown postgres:postgres /docker-entrypoint-initdb.d/*.sql
 ENV POSTGRES_USER dockeruser
 ENV POSTGRES_PASSWORD dockerpass
 ENV POSTGRES_DB pets&lt;/code&gt;&lt;/pre&gt;
@@ -4698,6 +4710,12 @@ We’ll use these objects in the next sections.&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;kubectl get nodes&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;You should see a node called &lt;code&gt;docker-desktop&lt;/code&gt; whose status is set to READY.
 If the status is NOT READY, just wait few seconds before typing the command again.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;This solution might not be working for you.
+In that case, disable Kubernetes in Docker Desktop and install
+minikube, by following &lt;a href=&#34;https://minikube.sigs.k8s.io/docs/start/&#34; target=&#34;_blank&#34;&gt;these instructions&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
 &lt;/details&gt;
 &lt;details&gt;
 &lt;p&gt;&lt;summary&gt;Instructions for the Linux VM&lt;/summary&gt;&lt;/p&gt;
@@ -4705,9 +4723,9 @@ If the status is NOT READY, just wait few seconds before typing the command agai
 in VirtualBox.
 Please follow &lt;strong&gt;all the instructions&lt;/strong&gt;:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Start the cluster, type the following command (everything in one line!)&lt;/li&gt;
+&lt;li&gt;Start the cluster, type the following command:&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;code&gt;minikube start --extra-config=kubeadm.ignore-preflight-errors=NumCPU --force --cpus 1&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;minikube start&lt;/code&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Verify that Kubernetes is correctly activated by typing the following command:&lt;/li&gt;
 &lt;/ul&gt;
@@ -4915,7 +4933,6 @@ in slides 51-52-53 of the &lt;a href=&#34;https://centralesupelec.edunao.com/plu
 &lt;/div&gt;
 &lt;p&gt;We here define the specification of
 a Deployment corresponding to the service &lt;code&gt;web&lt;/code&gt;.&lt;/p&gt;
-&lt;div class=&#34;scroll-vert&#34;&gt;
 &lt;pre&gt;&lt;code&gt;apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -4938,7 +4955,6 @@ spec:
         ports:
         - containerPort: 3000
           protocol: TCP&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
 &lt;p&gt;Here is the explanation of the specification:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;A Deployment named &lt;code&gt;web&lt;/code&gt; is created, as indicated by the field &lt;code&gt;metadata.name&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
@@ -5263,6 +5279,554 @@ spec:
         ports:
         - containerPort: 3000
           protocol: TCP&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Multi-service applications in the Cloud</title>
+      <link>/courses/cloud-computing/labs/kube-lab/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/cloud-computing/labs/kube-lab/</guid>
+      <description>
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;To all students&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Don’t start this project before Friday 7 May, the text is not finalized yet and some changes
+are still possible!!&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;a-containerized-chat-room&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; A containerized chat room&lt;/h1&gt;
+&lt;p&gt;We developed a simple chat room in Python that you can download
+&lt;a href=&#34;/courses/cloud-computing/kube-lab/chat-room.zip&#34;&gt;here&lt;/a&gt;.
+The code has been adapted from &lt;a href=&#34;https://github.com/pricheal/python-client-server/&#34; target=&#34;_blank&#34;&gt;this GitHub project&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Participants use a &lt;em&gt;client&lt;/em&gt; program to connect to the chat room;
+the chat room is managed by a &lt;em&gt;server&lt;/em&gt; application that receives the
+client connections and forwards the messages between the users.
+The archive contains the following files:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;client.py&lt;/em&gt;. Implementation of the chat room client.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;server.py&lt;/em&gt;. Implementation of the chat room server.&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;utils.py&lt;/em&gt;. Library with utility functions used in both &lt;em&gt;client.py&lt;/em&gt; and &lt;em&gt;server.py&lt;/em&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Only one instance of the server is running.
+Several instances of the client can run at the same time.
+Client instances might not be running on the same host.&lt;/p&gt;
+&lt;p&gt;In order to execute the server, we need to specify the port number as a parameter.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:client-server-methodology&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.1  &lt;/strong&gt;&lt;/span&gt;Explain the methodology that you’re going to follow to containerize the client and
+the server by using Docker. In particular explain:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;How many images you’re creating and why.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What you need to build the images.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;How you’re going to build the images.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.2  &lt;/strong&gt;&lt;/span&gt;Containerize the application by following the methodology that you outlined in Exercise &lt;a href=&#34;#exr:client-server-methodology&#34;&gt;1.1&lt;/a&gt;.
+&lt;/div&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The size of the images should be kept as small as possible.
+Remember to include in the images only what you need to build and run the application.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.3  &lt;/strong&gt;&lt;/span&gt;
+If you built more than one image:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Do they have some common layers?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;If so, is it something that has an impact on the build time and how?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;client-and-server-on-the-same-network&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.1&lt;/span&gt; Client and server on the same network&lt;/h2&gt;
+&lt;p&gt;We want to execute:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;One instance of the server.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Two instances of the client.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The server, as well as the clients, will
+&lt;strong&gt;run in Docker containers attached to the same network&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.4  &lt;/strong&gt;&lt;/span&gt;
+We want to make sure that:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;The server and the clients can communicate with each other.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Other Docker containers &lt;strong&gt;cannot&lt;/strong&gt; communicate neither with the server nor with the clients.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;How can you satisfy both requirements in Docker? Explain your solution
+and justify it.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:client-server-single-network&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.5  &lt;/strong&gt;&lt;/span&gt;
+Execute the server and the two clients by using the network configuration that you
+explained in the previous exercise.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The server writes messages on the terminal. Remember to launch the container with the appropriate
+option in order to actually see those messages.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Users need to interact with the client, that is: read and write messages.
+Remember to launch the container with the appropriate option in order to actually see those messages.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Write the &lt;strong&gt;exact commands&lt;/strong&gt; that you typed for both configuring the network and
+launching the server and the clients.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Shutting down the application&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Shut down both the clients and the server before you move on.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;On the client-side, type &lt;code&gt;#quit&lt;/code&gt; at any moment to exit the chat room.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Type Ctrl-C to stop the server.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;client-and-server-on-different-networks&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.2&lt;/span&gt; Client and server on different networks&lt;/h2&gt;
+&lt;p&gt;We want to execute:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;One instance of the server.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Two instances of the client.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;However, neither client is connected to the same network as the server.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.6  &lt;/strong&gt;&lt;/span&gt;
+Why isn’t the solution that you gave
+in Exercise &lt;a href=&#34;#exr:client-server-single-network&#34;&gt;1.5&lt;/a&gt; working?&lt;/p&gt;
+&lt;p&gt;What do you propose as a solution instead?&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;HINT.&lt;/strong&gt; You might want to look at &lt;a href=&#34;https://centralesupelec.edunao.com/pluginfile.php/135595/mod_resource/content/2/cm2-slides.pdf&#34; target=&#34;_blank&#34;&gt;slide 77 of the second lecture&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.7  &lt;/strong&gt;&lt;/span&gt;
+Execute the server and the two clients by making sure that neither client is connected to the
+same network as the server.&lt;/p&gt;
+&lt;p&gt;Write the &lt;strong&gt;exact commands&lt;/strong&gt; that you typed
+for both configuring the network and launching the server and the clients.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;!-- docker run -it --entrypoint sh quercinigia/webmeal this is to look into an image --&gt;
+&lt;!-- exercise on docker-compose. Look at what Clara Gross did last year --&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;multi-service-application-docker-compose&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Multi-service application: Docker Compose&lt;/h1&gt;
+&lt;p&gt;We intend to build and deploy the &lt;em&gt;TripMeal&lt;/em&gt; application
+by using &lt;strong&gt;Docker Compose&lt;/strong&gt;.
+You can download the application
+&lt;a href=&#34;/courses/cloud-computing/kube-lab/tripmeal.zip&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Credit&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The source code has been readapted from
+&lt;a href=&#34;https://github.com/DanielAndreasen/TripMeal&#34; target=&#34;_blank&#34;&gt;this GitHub repository&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;The downloaded file is an archive.
+Extracting the archive will create a folder named
+&lt;code&gt;tripmeal&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;
+Explain the structure of the content of the folder &lt;code&gt;tripmeal&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.2  &lt;/strong&gt;&lt;/span&gt;
+How many services has the application?
+Specify the technologies used to implement each service.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;The &lt;code&gt;Dockerfile&lt;/code&gt; in the directory &lt;code&gt;db&lt;/code&gt; is already implemented.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.3  &lt;/strong&gt;&lt;/span&gt;
+Write the &lt;code&gt;Dockerfile&lt;/code&gt; in the directory &lt;code&gt;web&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;In the project folder, you’ll find a file named &lt;code&gt;tripmeal.env&lt;/code&gt;.
+It contains the definition of &lt;strong&gt;environment variables&lt;/strong&gt; that
+are used in the application.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.4  &lt;/strong&gt;&lt;/span&gt;
+By reading the values of the environment variables, you can already
+know the values to assign to some of the keys in &lt;code&gt;docker-compose.yml&lt;/code&gt;.
+Can you tell which ones?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.5  &lt;/strong&gt;&lt;/span&gt;
+What do you need to create in file &lt;code&gt;docker-compose.yml&lt;/code&gt;
+to enable the communication between the different services?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;The database management system used by the application is MySQL.
+You can see it by reading the &lt;code&gt;Dockerfile&lt;/code&gt; in the directory &lt;code&gt;tripmeal/db&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-11&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.6  &lt;/strong&gt;&lt;/span&gt;
+Which base image is used to build a container for the database?
+Where is this base image stored?
+Can you find the documentation of this image in the Internet?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-12&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.7  &lt;/strong&gt;&lt;/span&gt;
+By looking at the documentation of the database base image,
+what do you need to do to store the data?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;You’re finally ready to complete the file &lt;code&gt;docker-compose.yml&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Remember that you need to pass the &lt;strong&gt;environment variables&lt;/strong&gt;
+to your application.&lt;/p&gt;
+&lt;p&gt;As a documentation of Docker Compose you can use:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The &lt;a href=&#34;/courses/cloud-computing/tutorials/tutorial-kube&#34; target=&#34;_blank&#34;&gt;examples that we’ve seen together&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The overview presented on the &lt;a href=&#34;https://docs.docker.com/compose/&#34; target=&#34;_blank&#34;&gt;official Docker website&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;You can also find the full specification of Compose &lt;a href=&#34;https://github.com/compose-spec/compose-spec/blob/master/spec.md&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-13&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.8  &lt;/strong&gt;&lt;/span&gt;
+Write the file &lt;code&gt;docker-compose.yml&lt;/code&gt;.
+Build, deploy and test your application.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Push all the images that you built in this section to
+your DockerHub registry.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;multi-service-application-kubernetes&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Multi-service application: Kubernetes&lt;/h1&gt;
+&lt;p&gt;We intend to deploy the TripMeal application on Kubernetes.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-14&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;
+For each service of the application TripMeal, specify which ones are stateless
+and which ones are stateful. Justify your answer.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-15&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.2  &lt;/strong&gt;&lt;/span&gt;
+For each service of the application TripMeal, specify
+which Kubernetes objects you need to create and justify why.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-16&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.3  &lt;/strong&gt;&lt;/span&gt;
+For each Kubernetes object:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Configure.&lt;/strong&gt; Write a Yaml configuration file. Remember that you need to pass the application the environment variables.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Create.&lt;/strong&gt; Create the object in Kubernetes. Which command are you using?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Analyze.&lt;/strong&gt; Execute the command &lt;code&gt;kubectl get all&lt;/code&gt; and explain in detail which objects appear in the output as the result of step 2.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Play with the application in order to verify that everything works as expected.
+Once you’re done, remember to take down the application by deleting the Kubernetes objects that
+you created.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Create a new file called &lt;code&gt;tripmeal.yml&lt;/code&gt; that contains the
+definition of all the Kubernetes objects, as we have shown
+in the &lt;a href=&#34;/courses/cloud-computing/tutorials/tutorial-kube#conclusion&#34; target=&#34;_blank&#34;&gt;conclusion of the tutorial 2&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;deploying-on-the-cloud&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Deploying on the cloud&lt;/h1&gt;
+&lt;p&gt;You’re now going to create a Kubernetes cluster on Microsoft Azure and deploy TripMeal on that cluster.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;In order to perform this activity, you need your a &lt;strong&gt;student subscription&lt;/strong&gt; on Microsoft Azure.
+If you haven’t activated it yet:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Connect to &lt;a href=&#34;https://azure.microsoft.com/en-us/free/students/&#34; target=&#34;_blank&#34;&gt;this webpage&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Click on &lt;code&gt;Start free&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Sign in by using your CentraleSupélec credentials.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Follow the instructions.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;p&gt;During this activity, you’ll need to answer some questions that encourage you to
+gain a deeper knowledge of the Azure platform and better understand the commands that you type.
+&lt;strong&gt;Feel free to read the documentation of Azure in order to answer the questions.&lt;/strong&gt;&lt;/p&gt;
+&lt;div id=&#34;installing-the-azure-cli&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.1&lt;/span&gt; Installing the Azure CLI&lt;/h2&gt;
+&lt;p&gt;In order to create the Kubernetes cluster and deploy the application,
+you need to install the Azure Command Line Interface (CLI).
+It’s a terminal where you’ll type the commands to create the resources
+on Azure.&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt;Windows users&lt;/summary&gt;
+Follow the instructions at &lt;a href=&#34;https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-windows?tabs=azure-cli&#34; target=&#34;_blank&#34;&gt;this Web page&lt;/a&gt;.
+&lt;/details&gt;
+&lt;details&gt;
+&lt;summary&gt;macOS users&lt;/summary&gt;
+Follow the instructions at &lt;a href=&#34;https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-macos&#34; target=&#34;_blank&#34;&gt;this Web page&lt;/a&gt;.
+&lt;/details&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Linux users&lt;/summary&gt;
+Open a terminal and type the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;When prompted for a password, just type ENTER and wait for the installation to finish.&lt;/p&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;login-to-azure-through-cli&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.2&lt;/span&gt; Login to Azure through CLI&lt;/h2&gt;
+&lt;p&gt;Whether you’re on Windows, macOS or Linux, you need to open a terminal.&lt;/p&gt;
+&lt;p&gt;In order to log in to your Azure account, type the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;az login&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;A Web page will open in your default Web browser, where you can type your username and
+password (your CentraleSupélec credentials).
+After authenticating your Azure account, you can go back to the terminal, where you should see
+some information about your account, such as:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;[
+  {
+    &amp;quot;cloudName&amp;quot;: &amp;quot;AzureCloud&amp;quot;,
+    &amp;quot;homeTenantId&amp;quot;: &amp;quot;&amp;lt;id&amp;gt;&amp;quot;,
+    &amp;quot;id&amp;quot;: &amp;quot;&amp;lt;id&amp;gt;&amp;quot;,
+    &amp;quot;isDefault&amp;quot;: true,
+    &amp;quot;managedByTenants&amp;quot;: [],
+    &amp;quot;name&amp;quot;: &amp;quot;Azure for Students&amp;quot;,
+    &amp;quot;state&amp;quot;: &amp;quot;Enabled&amp;quot;,
+    &amp;quot;tenantId&amp;quot;: &amp;quot;&amp;lt;id&amp;gt;&amp;quot;,
+    &amp;quot;user&amp;quot;: {
+      &amp;quot;name&amp;quot;: &amp;quot;&amp;lt;email-address&amp;gt;&amp;quot;,
+      &amp;quot;type&amp;quot;: &amp;quot;user&amp;quot;
+    }
+  }
+]&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;deploy-and-use-azure-container-registry&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.3&lt;/span&gt; Deploy and use Azure Container Registry&lt;/h2&gt;
+&lt;p&gt;When we run TripMeal on a local Kubernetes cluster, we assumed that our computer
+could have a direct access to the Internet and, therefore, to the DockerHub registry, where we
+could download the images of the TripMeal services.
+When we run a containerized application in production, we cannot make this assumption
+as the production servers have often no direct access to the Internet.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-17&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.1  &lt;/strong&gt;&lt;/span&gt;
+In your view, why is it not a good idea to have production servers directly
+connected to the Internet?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;We need to place the images in a container registry that is in the same context
+as our production servers.
+Since we’re going to run the application on Azure, we can use the
+Azure Container Registry (ACR).&lt;/p&gt;
+&lt;div id=&#34;registry-creation&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.3.1&lt;/span&gt; Registry creation&lt;/h3&gt;
+&lt;p&gt;First, we need to create a &lt;strong&gt;resource group&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-18&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.2  &lt;/strong&gt;&lt;/span&gt;
+What is a resource group in Azure and how is it useful?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;The command to create a new resource group is the following:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;az group create --name YOU-GROUP-NAME-HERE --location eastus&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-19&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.3  &lt;/strong&gt;&lt;/span&gt;
+In the previous command, what does the &lt;code&gt;location&lt;/code&gt; refer to?
+Briefly describe this notion (presented in &lt;a href=&#34;https://centralesupelec.edunao.com/pluginfile.php/135424/mod_resource/content/5/cm1-slides.pdf&#34; target=&#34;_blank&#34;&gt;Lecture 1&lt;/a&gt;)&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Next, we need to create a container registry with the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;az acr create --resource-group YOUR-GROUP-NAME-HERE --name YOUR-REGISTRY-NAME-HERE --sku Basic&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-20&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.4  &lt;/strong&gt;&lt;/span&gt;
+In the previous command, what does the &lt;code&gt;sku&lt;/code&gt; refer to?
+Feel free to look at the Azure website to find the answer.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;registry-login&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.3.2&lt;/span&gt; Registry login&lt;/h3&gt;
+&lt;p&gt;After creating the registry, we can log into it with the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;az acr login --name YOUR-REGISTRY-NAME-HERE&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;image-tagging&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.3.3&lt;/span&gt; Image tagging&lt;/h3&gt;
+&lt;p&gt;We’re almost ready to push the images that compose the application TripMeal to the registry.
+In order to do that, we need to tag (i.e., rename) our images so that their names are
+preceded by the login server name of the registry.&lt;/p&gt;
+&lt;p&gt;In order to get the name of the login server name (that we denote here as &lt;code&gt;acrloginserver&lt;/code&gt;) of your registry, you can type
+the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;az acr list --resource-group YOUR-RESOURCE-GROUP-NAME-HERE --query &amp;quot;[].{acrLoginServer:loginServer}&amp;quot; --output table&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Your &lt;code&gt;acrloginserver&lt;/code&gt; will be something like &lt;code&gt;xxx.azurecr.io&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-21&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.5  &lt;/strong&gt;&lt;/span&gt;
+Tag the images that correspond to the services of the TripMeal application so that
+their name is as follows: &lt;code&gt;acrloginserver/nameofimage:latest&lt;/code&gt;
+Which Docker tag are you going to use?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;pushing-the-images&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.3.4&lt;/span&gt; Pushing the images&lt;/h3&gt;
+&lt;p&gt;We can push the images with the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker push xxx.azurecr.io/imagename:latest&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Make sure to type this command for each images that you want to push.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;It might take few minutes before the images are completely pushed to the registry.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Finally, verify that the images are actually in the registry with the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;az acr repository list --name YOUR-REGISTRY-NAME-HERE --output table&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;deploy-a-kubernetes-cluster&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.4&lt;/span&gt; Deploy a Kubernetes cluster&lt;/h2&gt;
+&lt;p&gt;We know deploy a Kubernetes cluster on Azure.&lt;/p&gt;
+&lt;div id=&#34;cluster-creation&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.4.1&lt;/span&gt; Cluster creation&lt;/h3&gt;
+&lt;p&gt;We create the cluster with the following command:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;az aks create \
+    --resource-group YOUR-RESOURCE-GROUP-NAME-HERE \
+    --name YOUR-CLUSTER-NAME-HERE \
+    --node-count 2 \
+    --generate-ssh-keys \
+    --attach-acr YOUR-REGISTRY-NAME-HERE&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-22&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.6  &lt;/strong&gt;&lt;/span&gt;
+Can you tell the meaning of the options in the previous command?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;connect-to-the-cluster&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.4.2&lt;/span&gt; Connect to the cluster&lt;/h3&gt;
+&lt;p&gt;We can configure &lt;code&gt;kubectl&lt;/code&gt; to connect to the newly created cluster.
+You need to type the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;az aks get-credentials --resource-group YOUR-RESOURCE-GROUP-NAME-HERE --name YOUR-CLUSTER-NAME-HERE&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Now, your Kubernetes cluster should be visible locally.
+To verify it, type the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl config get-contexts&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Here &lt;em&gt;context&lt;/em&gt; refers to the Kubernetes clusters that &lt;em&gt;kubectl&lt;/em&gt; has access to.
+The Kubernetes cluster that you created on Azure should be visible in the output; an asterisk
+should appear in front of its name, indicating that it is the &lt;em&gt;current context&lt;/em&gt;
+(that is Kubernetes cluster being currently referenced by &lt;code&gt;kubectl&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;Type the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl get nodes&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;You should see that the Kubernetes cluster has two nodes.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;deploy-the-application&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.5&lt;/span&gt; Deploy the application&lt;/h2&gt;
+&lt;p&gt;We’re almost there! The images are in the registry, the Kubernetes cluster is up and running.
+The only missing piece of the puzzle is our application TripMeal.&lt;/p&gt;
+&lt;p&gt;First thing to do is to slightly modify the file &lt;code&gt;tripmeal.yml&lt;/code&gt; that you created at the end
+of the previous section.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-23&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.7  &lt;/strong&gt;&lt;/span&gt;
+Look at the names of the images in that file. How must these names change?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;It is the moment of truth!
+Deploy your application by typing the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl apply -f tripmeal.yml&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Look at Kubernetes objects created after this command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl get all&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Get the external IP address of the web service and try to connect to the application,
+in the same way you did in the previous section.
+If you can play with the application like you did in your local deployment it means that you reached
+the conclusion of the assignment! Bravo!&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-24&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.8  &lt;/strong&gt;&lt;/span&gt;
+The title of this exercise is &lt;em&gt;Cerise sur le gâteau&lt;/em&gt; (aka, this is optional!).&lt;/p&gt;
+&lt;p&gt;At this point, you can connect to TripMeal by using an IP address.
+It would be nice if you could use a URL, like in the real websites.
+Can you find a way to assign a URL to your web service?
+You need a bit of Googling here….&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 </description>
