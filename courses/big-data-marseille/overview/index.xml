@@ -36,7 +36,7 @@ Figure 1: Cluster architecture (image credit: &lt;a href=&#34;http://www.metz.su
 &lt;/div&gt;
 &lt;p&gt;In order to use the Spark cluster, you’ll need to go through the following fours steps:&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;Choose a username &lt;a href=&#34;https://centralesupelec.edunao.com/mod/choice/view.php?id=47207&#34; target=&#34;_blank&#34;&gt;on Edunao&lt;/a&gt;.
+&lt;li&gt;&lt;p&gt;Use your username in the spreadsheet communicated by the teacher before the tutorial.
 The password will be communicated by the teacher during the tutorial.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Open a SSH connection to the machine &lt;code&gt;phome.metz.supelec.fr&lt;/code&gt; from your local machine.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Open a SSH connection to the machine &lt;code&gt;slurm1&lt;/code&gt; from the machine &lt;code&gt;phome.metz.supelec.fr&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
@@ -89,7 +89,7 @@ will be communicated by the teacher during the tutorial.&lt;/strong&gt;)&lt;/p&g
 &lt;li&gt;&lt;p&gt;Use the cluster only in the evening in weekdays or during the weekends.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;In order to allocate the resources, &lt;strong&gt;use the following command&lt;/strong&gt; instead
 of the previous one:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;srun -p ks1 -N 1 --ntasks-per-node=4 --pty bash&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;p&gt;&lt;code&gt;srun -p ks2 -N 1 --ntasks-per-node=4 --pty bash&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -97,7 +97,7 @@ of the previous one:&lt;/p&gt;
 &lt;h1&gt;Source file edition&lt;/h1&gt;
 &lt;p&gt;The Python source files that you’ll be editing in this tutorial are
 stored in the remote machines under your home directory
-&lt;code&gt;/usr/users/cpuasi1/your-username&lt;/code&gt;.
+&lt;code&gt;/usr/users/cpuecm1/your-username&lt;/code&gt;.
 In order to edit them, you have two options:&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;Use a remote text editor, such as &lt;em&gt;vim&lt;/em&gt; or &lt;em&gt;nano&lt;/em&gt; (Linux users, I’m talking to you!).&lt;/li&gt;
@@ -133,13 +133,13 @@ files from/to the remote machine by a simple drag-and-drop!&lt;/p&gt;
 &lt;h1&gt;Creating your working directory in HDFS&lt;/h1&gt;
 &lt;p&gt;In this section, you’ll be walked through the procedure to create a directory
 in HDFS that you’ll use as your working directory in the lab sessions.&lt;/p&gt;
-&lt;p&gt;You user account is: &lt;code&gt;cpuasi1_X&lt;/code&gt;, where X is between 1 and
-28.&lt;/p&gt;
+&lt;p&gt;You user account is: &lt;code&gt;cpuecm1_X&lt;/code&gt;, where X is between 1 and
+10.&lt;/p&gt;
 &lt;p&gt;In order to create your working directory in HDFS, type the following command in the terminal:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;hdfs dfs -mkdir hdfs://sar01:9000/cpuasi1/cpuasi1_X&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;You can verify that the directory is there by listing the content of the folder hdfs://sar01:9000/cpuasi1/
+&lt;p&gt;&lt;code&gt;hdfs dfs -mkdir hdfs://sar01:9000/cpuecm1/cpuecm1_X&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;You can verify that the directory is there by listing the content of the folder hdfs://sar01:9000/cpuecm1/
 with the following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;hdfs dfs -ls hdfs://sar01:9000/cpuasi1/&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;hdfs dfs -ls hdfs://sar01:9000/cpuecm1/&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;preliminary-exercise&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Preliminary exercise&lt;/h1&gt;
@@ -165,18 +165,18 @@ local machine, as explained in the section above.&lt;/p&gt;&lt;/li&gt;
 &lt;p&gt;This will create an RDD named &lt;code&gt;text_file&lt;/code&gt; with the content of the specified file.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Similarly, locate the following instruction:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;counts.saveAsTextFile(&amp;quot;hdfs://...&amp;quot;)&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;and replace it with the following instruction (&lt;strong&gt;replace &lt;code&gt;cpuasi1_X&lt;/code&gt; with your username!&lt;/strong&gt;):&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;counts.saveAsTextFile(&amp;quot;hdfs://sar01:9000/cpuasi1/cpuasi1_X/sherlock.out&amp;quot;)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;and replace it with the following instruction (&lt;strong&gt;replace &lt;code&gt;cpuecm1_X&lt;/code&gt; with your username!&lt;/strong&gt;):&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;counts.saveAsTextFile(&amp;quot;hdfs://sar01:9000/cpuecm1/cpuecm1_X/sherlock.out&amp;quot;)&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;This will create an output directory &lt;em&gt;sherlock.out&lt;/em&gt; that will contain the files with the output of the program.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Run the Python script &lt;code&gt;wc.py&lt;/code&gt; with the following command:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;spark-submit --master spark://sar01:7077 wc.py&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;When the execution is over, the output will be available under the directory
 &lt;code&gt;sherlock.out&lt;/code&gt;. To verify it, run the following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;hdfs dfs -ls -h hdfs://sar01:9000/cpuasi1/cpuasi1_X/sherlock.out&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;As usual, remember to replace &lt;code&gt;cpuasi1_X&lt;/code&gt; with your username.&lt;/p&gt;&lt;/li&gt;
+&lt;p&gt;&lt;code&gt;hdfs dfs -ls -h hdfs://sar01:9000/cpuecm1/cpuecm1_X/sherlock.out&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;As usual, remember to replace &lt;code&gt;cpuecm1_X&lt;/code&gt; with your username.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;In order to see the result, run the following command:&lt;/p&gt;
 &lt;div align=&#34;left&#34;&gt;
-&lt;code&gt;hdfs dfs -cat hdfs://sar01:9000/cpuasi1/cpuasi1_X/sherlock.out/*&lt;/code&gt;
+&lt;code&gt;hdfs dfs -cat hdfs://sar01:9000/cpuecm1/cpuecm1_X/sherlock.out/*&lt;/code&gt;
 &lt;/div&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
@@ -186,7 +186,7 @@ you’d get an error.
 If you really want to overwrite the output file, you first need to remove it
 explicitly by typing the following command:&lt;/p&gt;
 &lt;div align=&#34;left&#34;&gt;
-&lt;p&gt;&lt;code&gt;hdfs dfs -rm -r hdfs://sar01:9000/cpuasi1/cpuasi1_X/sherlock.out&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;hdfs dfs -rm -r hdfs://sar01:9000/cpuecm1/cpuecm1_X/sherlock.out&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
