@@ -145,7 +145,7 @@
 &lt;h1&gt;Tutorial 4&lt;/h1&gt;
 &lt;p&gt;&lt;strong&gt;Title&lt;/strong&gt;: Apache Structured Streaming&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Date and time&lt;/strong&gt;: Wednesday 12 May 2021&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Link&lt;/strong&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Link&lt;/strong&gt;: &lt;a href=&#34;/courses/big-data-marseille/tutorials/spark-streaming&#34; target=&#34;_blank&#34;&gt;Click here&lt;/a&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;lab-assignment-2&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Lab assignment 2&lt;/h1&gt;
@@ -4189,6 +4189,11 @@ generated. This timestamp is the &lt;strong&gt;event time&lt;/strong&gt;.&lt;/p&
 &lt;p&gt;After generating a word, the data source saves the word and its timestamp into
 a CSV file in a directory on HDFS.
 For convenience, we’ll refer to this directory as the &lt;strong&gt;source directory&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Create the source directory under your home directory
+&lt;code&gt;hdfs://sar01:9000/cpuecm1/cpuecm1_X&lt;/code&gt; &lt;strong&gt;in HDFS&lt;/strong&gt;.&lt;/p&gt;
+&lt;/div&gt;
 &lt;p&gt;At any given moment, the source will contain zero to many CSV files,
 where each file only contains exactly one line in the format
 &lt;code&gt;word,timestamp&lt;/code&gt; (no whitespace before nor after the comma).&lt;/p&gt;
@@ -4224,22 +4229,20 @@ on a timeline.&lt;/p&gt;
 &lt;div class=&#34;infobox activitybox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;Create the source directory under your home directory
-&lt;code&gt;hdfs://sar01:9000/cpuecm1/cpuecm1_X&lt;/code&gt; &lt;strong&gt;in HDFS&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Copy to your home directory
+&lt;li&gt;Copy to your home directory
 in the local filesystem
-the data generator that you find at the following path&lt;/p&gt;&lt;/li&gt;
+the data generator that you find at the following path&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;&lt;code&gt;/usr/users/cpu-prof/cpu_quercini/structured-streaming/tempws_gen.py&lt;/code&gt;.&lt;/p&gt;
-&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;/usr/users/cpu-prof/cpu_quercini/structured-streaming/tempws_gen.py&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;&lt;p&gt;Start your Spark program. When running the first time, you might get some errors. Correct your code accordingly.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;In another terminal, run the Python script &lt;code&gt;tempws_gen.py&lt;/code&gt;. Use the
 following command to learn how to run this program:&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;&lt;code&gt;python3 tempws_gen.py --help&lt;/code&gt;&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;python3 tempws_gen.py --help&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;For this exercise, do not introduce any delay
 (keep the default values of the parameters &lt;code&gt;--delay&lt;/code&gt;, &lt;code&gt;--mindelay&lt;/code&gt;, &lt;code&gt;--maxdelay&lt;/code&gt;).&lt;/p&gt;
-&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;&lt;p&gt;After launching the data generator, you should
 see some output in the terminal where you launched the Spark program.
 &lt;strong&gt;Wait for the script &lt;code&gt;tempws_gen.py&lt;/code&gt; to terminate the data generation&lt;/strong&gt;.
@@ -4255,13 +4258,14 @@ checkpoint location and the source directory.&lt;/p&gt;&lt;/li&gt;
 a file &lt;code&gt;gen_words.csv&lt;/code&gt; in your home directory.
 This file contains the list of all words generated with the relative timestamps.
 &lt;strong&gt;Download the file to your computer&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Download the visualization tool &lt;code&gt;/usr/users/cpu-prof/cpu_quercini/structured-streaming/timeline_visualization.py&lt;/code&gt;
-to your computer.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Download the visualization tool that you find at the following path:&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;/usr/users/cpu-prof/cpu_quercini/structured-streaming/timeline_visualization.py&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;to your computer.&lt;/p&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Visualization tool&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Use the following command to learn how to run the visualization tool:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;python timeline_visualization.py --help&lt;/code&gt;&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;python timeline_visualization.py --help&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;The visualization tool displays a vertical blue bar at each trigger.
 To this purpose, you’ll need to pass the tool the timestamps associated to the first
 and last trigger and the interval (in seconds) between two consecutive triggers.&lt;/p&gt;
@@ -4273,7 +4277,7 @@ to look at the timestamp associated to the first and last micro-batch.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.2  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-11&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.2  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;&lt;p&gt;Analyze the output of your Spark program and the timeline of the generated words.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;Describe how the counts are updated by the Spark program.&lt;/li&gt;
