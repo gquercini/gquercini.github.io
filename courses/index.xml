@@ -2700,7 +2700,347 @@ the watermarking mechanism works on this example.&lt;/li&gt;
 
 &lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
 &lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
-&lt;p&gt;streaming&lt;/p&gt;
+&lt;!-- ############ IMPORTANT: CHANGE THESE VALUES BEFORE ANY LAB ############ --&gt;
+&lt;!-- The link to the Edunao page where the students submit their work --&gt;
+&lt;!-- The submission deadline --&gt;
+&lt;!-- ############ END OF MODIFICATIONS ############ --&gt;
+&lt;div id=&#34;introduction&#34; class=&#34;section level1 unnumbered&#34;&gt;
+&lt;h1&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;The goal of this lab assignment is to learn how to analyze streams of data with the Spark Structured Streaming API.
+&lt;a href=&#34;/courses/plp/overview/cluster-connection&#34; target=&#34;_blank&#34;&gt;Refer to this documentation&lt;/a&gt; to learn how to connect and
+interact with the cluster.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Documentation&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;In order to answer the questions and do the exercises, you might want to refer to the following
+documentation:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The &lt;a href=&#34;https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html&#34; target=&#34;_blank&#34;&gt;Structured Streaming programing guide&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The &lt;a href=&#34;https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql.html&#34; target=&#34;_blank&#34;&gt;Spark SQL API reference&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;!-- ############ IMPORTANT: CHANGE THESE VALUES BEFORE ANY LAB ############ --&gt;
+&lt;!-- The group to which users in the cluster belong--&gt;
+&lt;!-- User accounts are numbered from the lower to the upper limit--&gt;
+&lt;!-- ############ END OF MODIFICATIONS ############ --&gt;
+&lt;/div&gt;
+&lt;div id=&#34;warming-up&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Warming up&lt;/h1&gt;
+&lt;p&gt;Consider the following program.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;from pyspark.sql import SparkSession
+from pyspark.sql.types import *
+import pyspark.sql.functions as F
+
+port_number = COMPLETE HERE
+checkpoint_location = COMPLETE HERE
+
+spark = (SparkSession.builder.appName(&amp;quot;Structured Streaming - exo1&amp;quot;).getOrCreate())
+
+lines = (spark\
+        .readStream.format(&amp;quot;socket&amp;quot;)\
+        .option(&amp;quot;host&amp;quot;, &amp;quot;localhost&amp;quot;)\
+        .option(&amp;quot;port&amp;quot;, port_number)\
+        .load())
+
+streamingQuery = lines.writeStream\
+                .option(&amp;quot;checkpointLocation&amp;quot;, checkpoint_location)\
+                .format(&amp;quot;console&amp;quot;).start()
+
+streamingQuery.awaitTermination()&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Where does this program get its input from?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What object type does the variable &lt;code&gt;lines&lt;/code&gt; contain?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Where does this program write its output?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What is the output of this program?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What is the option &lt;code&gt;checkpointLocation&lt;/code&gt; intended for?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What does the instruction &lt;code&gt;streamingQuery.awaitTermination()&lt;/code&gt;?&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;The input is a socket, where a program generates some data.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;lines is a &lt;strong&gt;dataframe&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;To the console.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Just copies the input to the output.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;It is where the Spark program writes the progress of the streaming query.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The instructions means that the program will block on this instruction. The program won’t stop until there is
+data to process.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;p&gt;You can now verify your answers to the previous questions by &lt;strong&gt;executing the program&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Connect to the cluster, if you haven’t done so yet. &lt;a href=&#34;/courses/plp/overview/cluster-connection&#34; target=&#34;_blank&#34;&gt;Refer to this documentation&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;After running the command &lt;code&gt;srun ...&lt;/code&gt;, you should be connected to a machine on the cluster Kyle.
+Note the name of this machine (you should see it at the terminal prompt).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Create a checkpoint directory for the first exercise (e.g., &lt;code&gt;checkpoint_exo1&lt;/code&gt;) under your home directory
+&lt;code&gt;hdfs://sar01:9000/cpuecm1/cpuecm1_X&lt;/code&gt; &lt;strong&gt;in HDFS&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Copy and paste the code into a Python file (e.g., &lt;code&gt;exo1.py&lt;/code&gt;) that you’ll save into your home directory &lt;strong&gt;in the local filesystem&lt;/strong&gt;
+of the cluster machine.
+&lt;ul&gt;
+&lt;li&gt;Change the value of the variable &lt;code&gt;checkpoint_location&lt;/code&gt; so that it points to the directory that you created at point 3.&lt;/li&gt;
+&lt;li&gt;Change the value of the variable &lt;code&gt;port_number&lt;/code&gt; to any value in the range [49152, 65535].&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Open a new terminal window, connect to &lt;code&gt;phome.metz.supelec.fr&lt;/code&gt; and then to the same machine that you noted at point 2.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In the new terminal, start a &lt;strong&gt;netcat server&lt;/strong&gt; listening on the port number that you selected at point 4. Use the following command:&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;nc -lk port_number&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;7&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Run the Python code with the command &lt;code&gt;spark-submit&lt;/code&gt;. Wait until Spark does not display any more messages on screen.
+&lt;ul&gt;
+&lt;li&gt;In case the program stops for an error, read the box “What to do in case of errors” below.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;In the netcat terminal, write few lines of text. Look at the terminal where the Spark program is running and observe the output.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;What to do in case of errors&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;If any error arises, &lt;strong&gt;before&lt;/strong&gt; running the &lt;code&gt;spark-submit&lt;/code&gt; again it would be better to remove
+all files from the checkpoint directory.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Stop the program&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;When you’re done with your experiments, you can stop the Spark program by simply
+typing CTRL-C in the terminal where Spark is running.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Don’t stop the netcat server, you’ll need it in the next exercise.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Remove all files&lt;/strong&gt; from the checkpoint location.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;triggering-policy&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Triggering policy&lt;/h1&gt;
+&lt;p&gt;In a Structured Streaming program we can choose a &lt;strong&gt;triggering policy&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;What is a triggering policy?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What is the triggering policy in the previous program?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Modify the code of the previous program in order to set the
+&lt;code&gt;Fixed interval micro-batch&lt;/code&gt; triggering policy.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Run the program. How is the behaviour of this program different from before?&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;It is a policy that dictates the timing of streaming data processing.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;No triggering policy is specified, so the default is chosen.
+In practice, as soon as the previous micro-batch finishes processing, the next one is read in.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Here is the code. We need to specify a `&lt;code&gt;trigger&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;streamingQuery = lines.writeStream
+            .trigger(processingTime = &amp;quot;15 seconds&amp;quot;)
+            .format(&amp;quot;console&amp;quot;).start()&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;The new data is checked at the specified interval.
+It is possible that within the specified interval (15 seconds), we write
+many lines, so the program will get multiple lines in a micro-batch (unlike before, when
+the processing is triggered as soon as there is data available).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;checkpoint-location-and-output-mode&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Checkpoint location and output mode&lt;/h1&gt;
+&lt;p&gt;We’re now going to see the impact of the checkpoint location and the output modes on a streaming query.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;What is an output mode and what are the available options?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;What is the output mode of the previous program?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;The output mode tells Spark how the output is presented.
+There are several options: append (only the new rows added to the Result Table since the last trigger are visible in the output),
+complete (the whole Result Table is visible after each trigger) and update (only the rows that were updated since the last trigger are visible in the
+output).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;In the previous program we didn’t specify any output mode, so the default mode (append) is selected.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;p&gt;We’re now going to write a new streaming query.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.2  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Create a new checkpoint location in HDFS.
+You may also keep the same directory as before; in this case, make sure you &lt;strong&gt;remove all files&lt;/strong&gt; from that
+directory.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Write a new program that reads a streaming text from a TCP socket and
+counts the number of occurrences of each word.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Which output mode are you going to choose and why?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Run the program. Write few lines on the netcat server and observe the output.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Stop the program and run it again with no modifications. Write few lines in the netcat terminal and observe the output.
+What can you say about the word counts?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Stop the program and remove the files in the checkpoint location. Run the program again and write few lines
+on the netcat terminal. What can you say about the word counts?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Play with the different output modes and observe how the output changes.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The new program is as follows:&lt;/p&gt;
+&lt;pre class=&#34;{python}&#34;&gt;&lt;code&gt;lines = (spark\
+        .readStream.format(&amp;quot;socket&amp;quot;)\
+        .option(&amp;quot;host&amp;quot;, &amp;quot;localhost&amp;quot;)\
+        .option(&amp;quot;port&amp;quot;, port_number)\
+        .load())
+
+lines = lines.select(F.explode(F.split(lines.value, &amp;quot; &amp;quot;))\
+                     .alias(&amp;quot;word&amp;quot;))\
+                     .groupBy(&amp;quot;word&amp;quot;).count()
+
+
+streamingQuery = lines.writeStream\
+            .trigger(processingTime = &amp;quot;15 seconds&amp;quot;)\
+            .option(&amp;quot;checkpointLocation&amp;quot;, checkpoint_location)\
+            .outputMode(&amp;quot;update&amp;quot;)\
+            .format(&amp;quot;console&amp;quot;)\
+            .start()
+
+streamingQuery.awaitTermination()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The append mode doesn’t work, because aggregating function might modify previous lines of the ResultTable.
+So, the only options left are update and complete. We choose update to just have the values that changed since the last trigger.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;window-operations-on-event-time&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Window operations on event time&lt;/h1&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Netcat and checkpoint&lt;/strong&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;You can stop the netcat server now.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Remember to create a new checkpoint location for this exercise.
+Alternatively, you can also use the same directory as in the previous exercises, but
+you should remove all its files.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;p&gt;We’re now going to find out how to perform aggregations over a sliding event-time window.&lt;/p&gt;
+&lt;p&gt;A given data source generates some words for a certain time interval.
+Each word is accompanied with a timestamp that indicates the exact moment when the word is
+generated. This timestamp is the &lt;strong&gt;event time&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;After generating a word, the data source saves the word and its timestamp into
+a CSV file in a directory on HDFS.
+For convenience, we’ll refer to this directory as the &lt;strong&gt;source directory&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;At any given moment, the source will contain zero to many CSV files,
+where each file only contains exactly one line in the format
+&lt;code&gt;word,timestamp&lt;/code&gt; (no whitespace before nor after the comma).&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Write a Spark program that:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Reads the stream of data from the source directory.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Counts the number of occurrences of each word within 10 minute windows that slide every 5 minutes.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Print the output counts to the console. Use triggers of 5 seconds.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;We now test the new Spark program.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Data source and timeline visualization&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;We provide two Python programs for this exercise: a data generator and
+a tool for visualizing words in a timeline. Instructions to get and run
+these two programs are given in the activity below.&lt;/p&gt;
+&lt;p&gt;The &lt;strong&gt;data generator&lt;/strong&gt; is our data source.
+It generates two words every second for a certain
+amount of time.
+Each word is saved in a separate CSV file in source directory.
+It also saves the list of all generated
+words to a summary CSV file.&lt;/p&gt;
+&lt;p&gt;The &lt;strong&gt;visualization tool&lt;/strong&gt; takes as its input the summary CSV file
+written by the data generator and visualizes the words
+on a timeline.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Create the source directory under your home directory
+&lt;code&gt;hdfs://sar01:9000/cpuecm1/cpuecm1_X&lt;/code&gt; &lt;strong&gt;in HDFS&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Copy to your home directory
+in the local filesystem
+the data generator that you find at the following path&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;/usr/users/cpu-prof/cpu_quercini/structured-streaming/tempws_gen.py&lt;/code&gt;.&lt;/p&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Start your Spark program. When running the first time, you might get some errors. Correct your code accordingly.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In another terminal, run the Python script &lt;code&gt;tempws_gen.py&lt;/code&gt;. Use the
+following command to learn how to run this program:&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;python3 tempws_gen.py --help&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;For this exercise, do not introduce any delay
+(keep the default values of the parameters &lt;code&gt;--delay&lt;/code&gt;, &lt;code&gt;--mindelay&lt;/code&gt;, &lt;code&gt;--maxdelay&lt;/code&gt;).&lt;/p&gt;
+&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;After launching the data generator, you should
+see some output in the terminal where you launched the Spark program.
+&lt;strong&gt;Wait for the script &lt;code&gt;tempws_gen.py&lt;/code&gt; to terminate the data generation&lt;/strong&gt;.
+The output might be a bit overwhelming. Scroll up to identify the results
+on each micro-batch.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;If you need to rerun the Spark program and the data generator, make sure you delete all the files in the
+checkpoint location and the source directory.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;p&gt;We now want to analyze the output of the program.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The script &lt;code&gt;tempws_gen.py&lt;/code&gt; has generated
+a file &lt;code&gt;gen_words.csv&lt;/code&gt; in your home directory.
+This file contains the list of all words generated with the relative timestamps.
+&lt;strong&gt;Download the file to your computer&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Download the visualization tool &lt;code&gt;/usr/users/cpu-prof/cpu_quercini/structured-streaming/timeline_visualization.py&lt;/code&gt;
+to your computer.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Visualization tool&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Use the following command to learn how to run the visualization tool:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;python timeline_visualization.py --help&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The visualization tool displays a vertical blue bar at each trigger.
+To this purpose, you’ll need to pass the tool the timestamps associated to the first
+and last trigger and the interval (in seconds) between two consecutive triggers.&lt;/p&gt;
+&lt;p&gt;You can get the timestamps associated to the first and last trigger by analyzing the output of Spark.
+More specifically, for each micro-batch, Spark outputs the progress details of the streaming query; you’ll need
+to look at the timestamp associated to the first and last micro-batch.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.2  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Analyze the output of your Spark program and the timeline of the generated words.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Describe how the counts are updated by the Spark program.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
 </description>
     </item>
     
