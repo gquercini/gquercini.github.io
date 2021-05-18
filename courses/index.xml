@@ -518,7 +518,7 @@ You can use the template available at &lt;code&gt;~vialle/DCE-Spark/template_inv
 &lt;p&gt;&lt;strong&gt;Lecturer&lt;/strong&gt;: Francesca Bugiotti (CentraleSupélec)&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Date and time&lt;/strong&gt;: Tuesday 18 May, 8:30 AM - 11:45 AM&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Room&lt;/strong&gt;: Remotely on Microsoft Teams&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Slides&lt;/strong&gt;: Available soon&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Slides&lt;/strong&gt;: Available &lt;a href=&#34;https://centralesupelec.edunao.com/pluginfile.php/139190/mod_resource/content/1/cours_hadoop_spark_2021.pdf&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;lecture-6&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Lecture 6&lt;/h1&gt;
@@ -2761,6 +2761,20 @@ streamingQuery.awaitTermination()&lt;/code&gt;&lt;/pre&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;The input is a socket, where a program generates some data.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;lines is a &lt;strong&gt;dataframe&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;To the console.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Just copies the input to the output.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;It is where the Spark program writes the progress of the streaming query.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The instructions means that the program will block on this instruction. The program won’t stop until there is
+data to process.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;You can now verify your answers to the previous questions by &lt;strong&gt;executing the program&lt;/strong&gt;.&lt;/p&gt;
 &lt;div class=&#34;infobox activitybox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
@@ -2820,6 +2834,26 @@ typing CTRL-C in the terminal where Spark is running.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;It is a policy that dictates the timing of streaming data processing.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;No triggering policy is specified, so the default is chosen.
+In practice, as soon as the previous micro-batch finishes processing, the next one is read in.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Here is the code. We need to specify a `&lt;code&gt;trigger&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;streamingQuery = lines.writeStream
+            .trigger(processingTime = &amp;quot;15 seconds&amp;quot;)
+            .format(&amp;quot;console&amp;quot;).start()&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;The new data is checked at the specified interval.
+It is possible that within the specified interval (15 seconds), we write
+many lines, so the program will get multiple lines in a micro-batch (unlike before, when
+the processing is triggered as soon as there is data available).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;checkpoint-location-and-output-mode&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Checkpoint location and output mode&lt;/h1&gt;
@@ -2835,6 +2869,18 @@ typing CTRL-C in the terminal where Spark is running.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;The output mode tells Spark how the output is presented.
+There are several options: append (only the new rows added to the Result Table since the last trigger are visible in the output),
+complete (the whole Result Table is visible after each trigger) and update (only the rows that were updated since the last trigger are visible in the
+output).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;In the previous program we didn’t specify any output mode, so the default mode (append) is selected.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;We’re now going to write a new streaming query.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
@@ -2857,6 +2903,33 @@ on the netcat terminal. What can you say about the word counts?&lt;/p&gt;&lt;/li
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The new program is as follows:&lt;/p&gt;
+&lt;pre class=&#34;{python}&#34;&gt;&lt;code&gt;lines = (spark\
+        .readStream.format(&amp;quot;socket&amp;quot;)\
+        .option(&amp;quot;host&amp;quot;, &amp;quot;localhost&amp;quot;)\
+        .option(&amp;quot;port&amp;quot;, port_number)\
+        .load())
+
+lines = lines.select(F.explode(F.split(lines.value, &amp;quot; &amp;quot;))\
+                     .alias(&amp;quot;word&amp;quot;))\
+                     .groupBy(&amp;quot;word&amp;quot;).count()
+
+
+streamingQuery = lines.writeStream\
+            .trigger(processingTime = &amp;quot;15 seconds&amp;quot;)\
+            .option(&amp;quot;checkpointLocation&amp;quot;, checkpoint_location)\
+            .outputMode(&amp;quot;update&amp;quot;)\
+            .format(&amp;quot;console&amp;quot;)\
+            .start()
+
+streamingQuery.awaitTermination()&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The append mode doesn’t work, because aggregating function might modify previous lines of the ResultTable.
+So, the only options left are update and complete. We choose update to just have the values that changed since the last trigger.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;window-operations-on-event-time&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Window operations on event time&lt;/h1&gt;
@@ -2897,6 +2970,32 @@ where each file only contains exactly one line in the format
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The new program is as follows:&lt;/p&gt;
+&lt;pre class=&#34;{python}&#34;&gt;&lt;code&gt;
+source_directory = hdfs://....
+
+words = (spark
+        .readStream.format(&amp;quot;csv&amp;quot;)
+        .schema(&amp;quot;word STRING, timestamp TIMESTAMP&amp;quot;)
+        .load(source_directory))
+
+
+windowedCount = words.groupBy(F.window(words.timestamp, 
+                &amp;quot;10 seconds&amp;quot;, &amp;quot;5 seconds&amp;quot;, startTime=0), words.word).count()
+
+windowedQuery = windowedCount.withColumn(&amp;quot;trigger_timestamp&amp;quot;, F.expr(&amp;quot;get_current_timestamp()&amp;quot;)).writeStream\
+            .trigger(processingTime=&amp;quot;5 seconds&amp;quot;)\
+            .outputMode(&amp;quot;update&amp;quot;)\
+            .format(&amp;quot;console&amp;quot;)\
+            .option(&amp;quot;truncate&amp;quot;, False)\
+            .start()
+
+streamingQuery.awaitTermination()&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;We now test the new Spark program.&lt;/p&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Data source and timeline visualization&lt;/strong&gt;&lt;/p&gt;
@@ -2971,6 +3070,17 @@ to look at the timestamp associated to the first and last micro-batch.&lt;/p&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Unlike the previous exercise, here the number of occurrences of each word is counted based on a
+time window of 10 seconds that slides every 5 seconds.
+Each word is associated with an &lt;strong&gt;event time&lt;/strong&gt; that is used to compute the number of occurrences.
+The time window starts from the first trigger, say at 12:00.
+If a word arrives at 12:07, the count associated to this word are updated in two
+time windows, 12:00 - 12:10 and 12:05 - 12:15.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
