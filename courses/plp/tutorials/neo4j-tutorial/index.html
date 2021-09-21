@@ -685,134 +685,145 @@
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<div id="setting-up-the-work-environment." class="section level1">
-<h1><span class="header-section-number">1</span> Setting up the work environment.</h1>
-<ul>
-<li><p>Download <a href="https://neo4j.com/download/" target="_blank">Neo4j Desktop</a>
-and install it on your computer.</p></li>
-<li><p>Create a new project by clicking on the button “New”
-that you’ll find on the top left side of the window.</p></li>
-<li><p>Click on “Add Database”, then “Create a Local Database”.</p></li>
-<li><p>Give the database a name (e.g., <em>MovieLens</em>) and set
-a password that you can easily remember; then click on “Create”.
-Choose version 4.1.1 for the database.</p></li>
-<li><p>Click on “Start” and wait for the database to become active.</p></li>
-<li><p>Click on the button “Open”. The <em>Neo4j Browser</em> will pop up.</p></li>
-</ul>
-<p>In the next section, you’ll have to type a sequence of commands to
-import the data.
-You’ll write the commands in the text field on top of the
-<em>Neo4j Browser</em> (where you find the prompt <em>neo4j$</em>).</p>
-<div id="import-the-data." class="section level2">
-<h2><span class="header-section-number">1.1</span> Import the data.</h2>
-<p>The dataset consists of
-data obtained from <em>MovieLens</em>,
-a recommender system
-whose users give movies a rate
-between 1 and 5,
-based on whether they dislike or love them.
-MovieLens uses the rates to recommend
-movies that its users might like.
-The dataset is modeled as a <strong>directed graph</strong> and
-consists of 100,004 rates on 9,125 movies
-across 671 users between January 9th, 1995 and October 16, 2016.
-The dataset also contains the names of
-the directors and the actors of each movie.</p>
-<ol style="list-style-type: decimal">
-<li>Import the <strong>nodes</strong> corresponding to the
-<strong>movies</strong> (label <strong>Movie</strong>) by
-using the following command (it took 31 seconds on my computer):</li>
-</ol>
+<!--
+
+# Setting up the work environment.
+
+* Download [Neo4j Desktop](https://neo4j.com/download/){target="_blank"} 
+and install it on your computer.
+
+* Create a new project by clicking on the button "New" 
+that you'll find on the top left side of the window.
+
+* Click on "Add Database", then "Create a Local Database".
+
+* Give the database a name (e.g., *MovieLens*) and set 
+a password that you can easily remember; then click on "Create".
+Choose version 4.1.1 for the database.
+
+
+
+* Click on "Start" and wait for the database to become active.
+
+* Click on the button "Open". The *Neo4j Browser* will pop up.
+
+In the next section, you'll have to type a sequence of commands to 
+import the data. 
+You'll write the commands in the text field on top of the 
+*Neo4j Browser* (where you find the prompt *neo4j\$*).
+
+## Import the data.
+
+The dataset consists of 
+data obtained from *MovieLens*, 
+a recommender system 
+whose users give movies a rate 
+between 1 and 5, 
+based on whether they dislike or love them. 
+MovieLens uses the rates to recommend 
+movies that its users might like. 
+The dataset is modeled as a **directed graph** and 
+consists of 100,004 rates on 9,125 movies 
+across 671 users between January 9th, 1995 and October 16, 2016. 
+The dataset also contains the names of 
+the directors and the actors of each movie.
+
+1. Import the **nodes** corresponding to the 
+**movies** (label **Movie**) by 
+using the following command (it took 31 seconds on my computer):
+
 <pre>
 :auto USING PERIODIC COMMIT 1000
 LOAD CSV WITH HEADERS FROM 'https://gquercini.github.io/courses/plp/tutorials/neo4j/movies.csv' as row
 MERGE (m:Movie {movie_id: toInteger(row.movie_id), title_en:row.movie_title_en, title_fr:row.movie_title_fr, year: toInteger(row.movie_year)})
 RETURN count(m)
 </pre>
-<ol start="2" style="list-style-type: decimal">
-<li>Create an <strong>index</strong> on the property <em>movie_id</em> of
-the nodes with label <strong>Movie</strong> with the following command:</li>
-</ol>
+
+2. Create an **index** on the property *movie_id* of 
+the nodes with label **Movie** with the following command:
+
 <pre>
 create index movie_idx for (m:Movie) on (m.movie_id)
 </pre>
-<ol start="3" style="list-style-type: decimal">
-<li>Import the <strong>nodes</strong> corresponding to the
-<strong>actors</strong> (label <strong>Actor</strong>) by
-using the following command (it took 62 seconds on my computer):</li>
-</ol>
+
+3. Import the **nodes** corresponding to the 
+**actors** (label **Actor**) by 
+using the following command (it took 62 seconds on my computer):
+
 <pre>
 :auto USING PERIODIC COMMIT 1000
 LOAD CSV WITH HEADERS FROM 'https://gquercini.github.io/courses/plp/tutorials/neo4j/actors.csv' as row
 MERGE (a:Actor {actor_id: toInteger(row.actor_id), name:row.actor_name})
 RETURN count(a)
 </pre>
-<ol start="4" style="list-style-type: decimal">
-<li>Create an <strong>index</strong> on the property <em>actor_id</em> of
-the nodes with label <strong>Actor</strong> with the following command:</li>
-</ol>
+
+4. Create an **index** on the property *actor_id* of 
+the nodes with label **Actor** with the following command:
+
 <pre>
 create index actor_idx for (a:Actor) on (a.actor_id)
 </pre>
-<ol start="5" style="list-style-type: decimal">
-<li>Import the <strong>nodes</strong> corresponding to the
-<strong>directors</strong> (label <strong>Director</strong>) by
-using the following command (it took 4 seconds on my computer):</li>
-</ol>
+
+5. Import the **nodes** corresponding to the 
+**directors** (label **Director**) by 
+using the following command (it took 4 seconds on my computer):
+
 <pre>
 :auto USING PERIODIC COMMIT 1000
 LOAD CSV WITH HEADERS FROM 'https://gquercini.github.io/courses/plp/tutorials/neo4j/directors.csv' as row
 MERGE (d:Director {director_id: toInteger(row.director_id), name:row.director_name})
 RETURN count(d)
 </pre>
-<ol start="6" style="list-style-type: decimal">
-<li>Create an <strong>index</strong> on the property <em>director_id</em> of
-the nodes with label <strong>Director</strong> with the following command:</li>
-</ol>
+
+6. Create an **index** on the property *director_id* of 
+the nodes with label **Director** with the following command:
+
 <pre>
 create index director_idx for (d:Director) on (d.director_id)
 </pre>
-<ol start="7" style="list-style-type: decimal">
-<li>Import the <strong>nodes</strong> corresponding to the
-<strong>genres</strong> (label <strong>Genre</strong>) by
-using the following command (it took 197 ms on my computer):</li>
-</ol>
+
+
+7. Import the **nodes** corresponding to the 
+**genres** (label **Genre**) by 
+using the following command (it took 197 ms on my computer):
+
 <pre>
 :auto USING PERIODIC COMMIT 1000
 LOAD CSV WITH HEADERS FROM 'https://gquercini.github.io/courses/plp/tutorials/neo4j/genres.csv' as row
 MERGE (g:Genre {genre_id: toInteger(row.genre_id), name:row.genre_name})
 RETURN count(g)
 </pre>
-<ol start="8" style="list-style-type: decimal">
-<li>Create an <strong>index</strong> on the property <em>genre_id</em> of
-the nodes with label <strong>Genre</strong> with the following command:</li>
-</ol>
+
+8. Create an **index** on the property *genre_id* of 
+the nodes with label **Genre** with the following command:
+
 <pre>
 create index genre_idx for (g:Genre) on (g.genre_id)
 </pre>
-<ol start="9" style="list-style-type: decimal">
-<li>Import the <strong>nodes</strong> corresponding to the
-<strong>users</strong> (label <strong>User</strong>) by
-using the following command (it took 347 seconds on my computer):</li>
-</ol>
+
+
+9. Import the **nodes** corresponding to the 
+**users** (label **User**) by 
+using the following command (it took 347 seconds on my computer):
+
 <pre>
 :auto USING PERIODIC COMMIT 1000
 LOAD CSV WITH HEADERS FROM 'https://gquercini.github.io/courses/plp/tutorials/neo4j/users.csv' as row
 MERGE (u:User {user_id: toInteger(row.user_id), name:row.user_nickname})
 RETURN count(u)
 </pre>
-<ol start="10" style="list-style-type: decimal">
-<li>Create an <strong>index</strong> on the property <em>user_id</em> of
-the nodes with label <strong>User</strong> with the following command:</li>
-</ol>
+
+10. Create an **index** on the property *user_id* of 
+the nodes with label **User** with the following command:
+
 <pre>
 create index user_idx for (u:User) on (u.user_id)
 </pre>
-<ol start="11" style="list-style-type: decimal">
-<li>Import the links of type <strong>ACTED_IN</strong>
-between actors and movies with the following
-command (it took 2.5 seconds on my computer):</li>
-</ol>
+
+11. Import the links of type **ACTED_IN** 
+between actors and movies with the following 
+command (it took 2.5 seconds on my computer):
+
 <pre>
 :auto USING PERIODIC COMMIT 1000
 LOAD CSV WITH HEADERS FROM 'https://gquercini.github.io/courses/plp/tutorials/neo4j/movies_actors.csv' as row
@@ -821,11 +832,11 @@ MATCH (a:Actor {actor_id: toInteger(row.actor_id)})
 MERGE (a)-[r:ACTED_IN]->(m)
 RETURN count(r)
 </pre>
-<ol start="12" style="list-style-type: decimal">
-<li>Import the links of type <strong>DIRECTED</strong>
-between directors and movies with the following
-command (it took 688 ms on my computer):</li>
-</ol>
+
+12. Import the links of type **DIRECTED** 
+between directors and movies with the following 
+command (it took 688 ms on my computer):
+
 <pre>
 :auto USING PERIODIC COMMIT 1000
 LOAD CSV WITH HEADERS FROM 'https://gquercini.github.io/courses/plp/tutorials/neo4j/movies_directors.csv' as row
@@ -834,11 +845,11 @@ MATCH (d:Director {director_id: toInteger(row.director_id)})
 MERGE (d)-[r:DIRECTED]->(m)
 RETURN count(r)
 </pre>
-<ol start="13" style="list-style-type: decimal">
-<li>Import the links of type <strong>HAS_GENRE</strong>
-between movies and genres with the following
-command (it took 1 second on my computer):</li>
-</ol>
+
+13. Import the links of type **HAS_GENRE** 
+between movies and genres with the following 
+command (it took 1 second on my computer):
+
 <pre>
 :auto USING PERIODIC COMMIT 1000
 LOAD CSV WITH HEADERS FROM 'https://gquercini.github.io/courses/plp/tutorials/neo4j/movies_genres.csv' as row
@@ -847,11 +858,11 @@ MATCH (g:Genre {genre_id: toInteger(row.genre_id)})
 MERGE (m)-[r:HAS_GENRE]->(g)
 RETURN count(r)
 </pre>
-<ol start="14" style="list-style-type: decimal">
-<li>Import the links of type <strong>RATED</strong>
-between users and movies with the following
-command (it took 5.9 seconds on my computer):</li>
-</ol>
+
+14. Import the links of type **RATED** 
+between users and movies with the following 
+command (it took 5.9 seconds on my computer):
+
 <pre>
 :auto USING PERIODIC COMMIT 1000
 LOAD CSV WITH HEADERS FROM 'https://gquercini.github.io/courses/plp/tutorials/neo4j/user_rates.csv' as row
@@ -860,262 +871,316 @@ MATCH (u:User {user_id: toInteger(row.user_id)})
 MERGE (u)-[r:RATED {rate:toFloat(row.rate)}]->(m)
 RETURN count(r)
 </pre>
-</div>
-</div>
-<div id="exploratory-queries" class="section level1">
-<h1><span class="header-section-number">2</span> Exploratory queries</h1>
-<p>If you looked at the commands used to import the data,
-you might already have an idea as to the structure of
-the graph.
-You can get a glimpse on the node labels,
-the relationship types and the property keys by clicking on the
-button circled in the following figure:</p>
-<p><img src="/courses/plp/tutorials/neo4j/neo4j-db-button.png" width="100%" style="display: block; margin: auto;" /></p>
-<div class="infobox exercisebox">
-<strong>Exercise</strong>
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 2.1  </strong></span>
-Write and execute the following query:</p>
+# Exploratory queries
+
+If you looked at the commands used to import the data, 
+you might already have an idea as to the structure of 
+the graph. 
+You can get a glimpse on the node labels, 
+the relationship types and the property keys by clicking on the 
+button circled in the following figure:
+
+<img src="/courses/plp/tutorials/neo4j/neo4j-db-button.png" width="100%" style="display: block; margin: auto;" />
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-1"><strong>(\#exr:unnamed-chunk-1) </strong></span>
+Write and execute the following query:
+
 <pre>
 MATCH (m:Movie {title_en:"Toy Story"}) 
 RETURN m;
 </pre>
-<p>What do you obtain? What are the properties associated
-to a node with label <em>Movie</em>?
-Click once on the node to display its properties.</p>
-</div>
-</div>
-<div class="infobox exercisebox">
-<strong>Exercise</strong>
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 2.2  </strong></span>
+What do you obtain? What are the properties associated 
+to a node with label *Movie*? 
+Click once on the node to display its properties.
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-2"><strong>(\#exr:unnamed-chunk-2) </strong></span>
 Double-click on the node displayed as the result of the previous query.
-Analyze the neighbouring nodes (their labels and properties)
-and the incident links (direction, type and properties).
-You can move around the node by dragging it in the window.</p>
-</div>
-</div>
-</div>
-<div id="queries" class="section level1">
-<h1><span class="header-section-number">3</span> Queries</h1>
-<div class="infobox exercisebox">
-<strong>Exercise</strong>
+Analyze the neighbouring nodes (their labels and properties) 
+and  the incident links (direction, type and properties).
+You can move around the node by dragging it in the window.
+</div>\EndKnitrBlock{exercise}
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3.1  </strong></span>
-Write and execute the following queries:</p>
-<p>Q1. The genres of the movies in the database.</p>
-<p>Q2. The number of movies in the database.</p>
-<p>Q3. The title of the movies released in 2015.</p>
-<p>Q4. The number of directors by movie. Sort in decreasing order.</p>
-<p>Q5. The names of the directors and the title of the movies that they
-directed and in which they also played.</p>
-<p>Q6. The genres of the movies in which Tom Hanks played.</p>
-Q7. The title and the rate of all the movies that
+:::
+
+
+
+# Queries
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-3"><strong>(\#exr:unnamed-chunk-3) </strong></span>
+Write and execute the following queries:
+
+Q1. The genres of the movies in the database.
+
+Q2. The number of movies in the database.
+
+Q3. The title of the movies released in 2015.
+
+Q4. The number of directors by movie. Sort in decreasing order.
+
+Q5. The names of the directors and the title of the movies that they 
+directed and in which they also played.
+
+Q6. The genres of the movies in which Tom Hanks played.
+
+Q7. The title and the rate of all the movies that 
 the user with identifier 3 rated.
-Sort by rate in decreasing order.
-</div>
-</div>
-<div id="query-chaining" class="section level2">
-<h2><span class="header-section-number">3.1</span> Query chaining</h2>
-<p>Cypher allows the specification of
-complex queries composed of
-several queries that are concatenated
-with the clause <strong>WITH</strong>.
-We are now going to see an example to
-obtain the titles of the movies
-that have been rated by at least 100 users.</p>
-<p>At a first glance, the following query looks like a good solution:</p>
+Sort by rate in decreasing order.</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+## Query chaining
+
+Cypher allows the specification of 
+complex queries composed of 
+several queries that are concatenated 
+with the clause **WITH**. 
+We are now going to see an example to 
+obtain the titles of the movies 
+that have been rated by at least 100 users.
+
+At a first glance, the following query looks like a good solution:
+
 <pre>
 MATCH (n:Movie)<-[:RATED]-(u:User) WHERE count(u) >= 100
 RETURN n.title_en
 LIMIT 5;
 </pre>
-<p>However, executing this query returns the following error:</p>
+
+However, executing this query returns the following error:
+
 <pre>
 Invalid use of aggregating function count(...) in this context (line 1, column 42 (offset: 41))
 "MATCH (n:Movie)<-[:RATED]-(u:User) WHERE count(u) >= 100"
 </pre>
-<p>Similarly to SQL, we cannot use aggregating functions in the clause WHERE.</p>
-<p>A correct formulation of the query requires the use of the clause WITH
+
+Similarly to SQL, we cannot use aggregating functions in the clause WHERE.
+
+A correct formulation of the query requires the use of the clause WITH
 to concatenate two queries: the first will count the number of rates
-for each movie:</p>
+for each movie:
+
 <pre>
 MATCH (n:Movie)<-[:RATED]-(u:User) 
 RETURN n, count(u) as nb_rates
 </pre>
-<p>The second will take in the output of the first and will
-filter all the movies where nb_rates &lt; 100.
-In order to chain the two queries, we’ll replace the
-RETURN clause in the first query with a WITH clause, as follows:</p>
+
+The second will take in the output of the first and will
+filter all the movies where nb_rates < 100. 
+In order to chain the two queries, we'll replace the 
+RETURN clause in the first query with a WITH clause, as follows:
+
 <pre>
 MATCH (n:Movie)<-[:RATED]-(u:User) 
 WITH n, count(u) as nb_rates
 WHERE nb_rates >= 100
 RETURN n.title_en
 </pre>
-<div class="infobox exercisebox">
-<strong>Exercise</strong>
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 3.2  </strong></span>
-Write and execute a query to obtain the five movies
-that obtained the best average rate among the movies
-that have been rated by at least 100 users.</p>
-</div>
-</div>
-</div>
-</div>
-<div id="movie-recommendation" class="section level1">
-<h1><span class="header-section-number">4</span> Movie recommendation</h1>
-<p>We are now going to see how Neo4j
-can be effectively used in a real application
-by implementing queries that form the basis of a
-simple <strong>movie recommendation system</strong>.
-This system is based on the notion of <strong>collaborative filtering</strong>.</p>
-<p>This consists in recommending a user <span class="math inline">\(u\)</span> some films
-that s/he hasn’t rated yet and other
-users with similar preferences have loved.
-In our context, we say that a user loves
-a movie if s/he rated the movie at least 3.</p>
-<p>This concept is explained in the following figure.</p>
-<p><img src="/courses/plp/tutorials/neo4j/collaborative-filtering.png" width="100%" style="display: block; margin: auto;" /></p>
-<p>The user <span class="math inline">\(u\)</span> loves 6 movies,
-3 of which are also loved by the user <span class="math inline">\(v\)</span> (the black nodes);
-it is reasonable to think that <span class="math inline">\(u\)</span>
-may also love the two movies that <span class="math inline">\(v\)</span> loved and <span class="math inline">\(u\)</span> hasn’t rated yet.</p>
-<p>The principle of collaborative filtering is
-based on the computation of a <strong>similarity score</strong>
-between two users.
-Several similarity scores are possible in this context;
-here, we are going to use the <strong>Jaccard coefficient</strong>.
-Let <span class="math inline">\(L(u)\)</span> and <span class="math inline">\(L(v)\)</span> be the
-sets of movies that <span class="math inline">\(u\)</span> and <span class="math inline">\(v\)</span> love
-respectively;
-the similarity score <span class="math inline">\(J(u,v)\)</span> between <span class="math inline">\(u\)</span> and <span class="math inline">\(v\)</span> is given by:</p>
-<p><span class="math display">\[
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-4"><strong>(\#exr:unnamed-chunk-4) </strong></span>
+Write and execute a query to obtain  the five movies 
+that obtained the best average rate among the movies 
+that have been rated by at least 100 users.
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+# Movie recommendation
+
+We are now going to see how Neo4j 
+can be effectively used in a real application 
+by implementing queries that form the basis of a 
+simple **movie recommendation system**. 
+This system is based on the notion of **collaborative filtering**. 
+
+This consists in recommending a user $u$ some films 
+that s/he hasn’t rated yet and other 
+users with similar preferences have loved. 
+In our context, we say that a user loves 
+a movie if s/he rated the movie at least 3.
+
+This concept is explained in the following figure.
+
+<img src="/courses/plp/tutorials/neo4j/collaborative-filtering.png" width="100%" style="display: block; margin: auto;" />
+
+The user $u$ loves 6 movies, 
+3 of which are also loved by the user $v$ (the black nodes); 
+it is reasonable to think that $u$ 
+may also love the two movies that $v$ loved and $u$ hasn’t rated yet.
+
+The principle of collaborative filtering is 
+based on the computation of a **similarity score** 
+between two users. 
+Several similarity scores are possible in this context; 
+here, we are going to use the **Jaccard coefficient**. 
+Let $L(u)$ and $L(v)$ be the 
+sets of movies that $u$ and $v$ love
+respectively; 
+the similarity score $J(u,v)$ between $u$ and $v$ is given by:
+
+$$
 J(u, v) = \frac{|L(u) \cap L(v)|}{|L(u) \cup L(v)|}
-\]</span></p>
-<p>In order to recommend movies to
-a target user <span class="math inline">\(v\)</span>,
-the recommender system computes the
-similarity score between <span class="math inline">\(v\)</span> and all
-the other users of the system and
-proposes to <span class="math inline">\(v\)</span> the movies
-that s/he hasn’t rated yet and that the <span class="math inline">\(k\)</span> most similar users loved.</p>
-<p>We are now going to incrementally write a query to recommend some movies to the target user 3.
-The first step consists in determining the value <span class="math inline">\(|L(v)|\)</span>.</p>
-<div class="infobox exercisebox">
-<strong>Exercise</strong>
+$$
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 4.1  </strong></span>
-Write and execute the query to obtain
-the number of movies that the user 3 loved.
-This query must return the target user
-and the number of movies that s/he loves.</p>
-</div>
-</div>
-<p>Next, we are going to determine the value <span class="math inline">\(|L(u)|\)</span>,
-for all users <span class="math inline">\(u\)</span> except <span class="math inline">\(v\)</span>.</p>
-<div class="infobox exercisebox">
-<strong>Exercise</strong>
+In order to recommend movies to 
+a target user $v$, 
+the recommender system computes the 
+similarity score between $v$ and all 
+the other users of the system and 
+proposes to $v$ the movies 
+that s/he hasn’t rated yet and that the $k$ most similar users loved.
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 4.2  </strong></span>
-Write and execute the query
-to obtain the number of movies that each user <span class="math inline">\(u\)</span> loves,
+We are now going to incrementally write a query to recommend some movies to the target user 3.
+The first step consists in determining the value $|L(v)|$.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-5"><strong>(\#exr:unnamed-chunk-5) </strong></span>
+Write and execute the query to obtain 
+the number of movies that the user 3 loved. 
+This query must return the target user 
+and the number of movies that s/he loves.
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+
+Next, we are going to determine the value $|L(u)|$, 
+for all users $u$ except $v$.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-6"><strong>(\#exr:unnamed-chunk-6) </strong></span>
+Write and execute the query 
+to obtain the number of movies that each user $u$ loves, 
 except the target user 3.
-This query must return each user <span class="math inline">\(u\)</span> and the number
-of movies that s/he loves.</p>
-</div>
-</div>
-<p>We put the two queries together with the clause WITH.</p>
-<div class="infobox exercisebox">
-<strong>Exercise</strong>
+This query must return each user $u$ and the number 
+of movies that s/he loves.
+</div>\EndKnitrBlock{exercise}
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 4.3  </strong></span>
+:::
+
+
+
+We put the two queries together with the clause WITH.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-7"><strong>(\#exr:unnamed-chunk-7) </strong></span>
 Compose the two previous queries with the clause WITH.
-This query must return
-the target user 3,
-the number of movies that s/he loves,
-the other users <span class="math inline">\(u\)</span> and the number of movies
-that they love.</p>
-</div>
-</div>
-<p>Now, we need to
-determine the value <span class="math inline">\(L(u)\cup L(v)\)</span>,
-for each user <span class="math inline">\(u\)</span>, and compute the similarity score with the
-Jaccard coefficient.</p>
-<div class="infobox exercisebox">
-<strong>Exercise</strong>
+This query must return 
+the target user 3, 
+the number of movies that s/he loves, 
+the other users $u$ and the number of movies 
+that they love.
+</div>\EndKnitrBlock{exercise}
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 4.4  </strong></span>
-Append (by using WITH)
-to the query written in the previous exercise
-a query that obtains
-the number of movies
-that any user <span class="math inline">\(u\)</span> loved
-and that the target user 3 loved too,
+:::
+
+
+
+Now, we need to 
+determine the value $L(u)\cup L(v)$, 
+for each user $u$, and compute the similarity score with the 
+Jaccard coefficient. 
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-8"><strong>(\#exr:unnamed-chunk-8) </strong></span>
+Append (by using WITH) 
+to the query written in the previous exercise 
+a query that obtains 
+the number of movies 
+that any user $u$ loved 
+and that the target user 3 loved too, 
 and computes the similarity score
-between the target user 3 and <span class="math inline">\(u\)</span>.
-This query must return the five most similar
-users to the target user and the similarity scores.</p>
+between the target user 3 and $u$. 
+This query must return the five most similar 
+users to the target user and the similarity scores.
+
 <details>
 <summary>Hint</summary>
-Multiply the numerator of the equation
+Multiply the numerator of the equation 
 by 1.0, otherwise Cypher will compute an integer division.
 </details>
-</div>
-</div>
-<p>The last step consists in recommending some movies to the target user.
-From the previous query,
-take the identifier of the user <span class="math inline">\(w\)</span> with
-the highest similarity to the target user.
-You are going to use this identifier directly in the new query.</p>
-<div class="infobox exercisebox">
-<strong>Exercise</strong>
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-9" class="exercise"><strong>Exercise 4.5  </strong></span>
-Write and execute
-the query to obtain the list of
-the movies that the user <span class="math inline">\(w\)</span> loved
-and that the target user hasn’t rated yet. Sort this list by decreasing rate.</p>
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+The last step consists in recommending some movies to the target user.
+From the previous query, 
+take the identifier of the user $w$ with 
+the highest similarity to the target user. 
+You are going to use this identifier directly in the new query.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-9"><strong>(\#exr:unnamed-chunk-9) </strong></span>
+Write and execute 
+the query to obtain the list of 
+the movies that the user $w$ loved 
+and that the target user hasn't rated yet. Sort this list by decreasing rate.
+
 <details>
-<p><summary>Hint</summary></p>
-<ul>
-<li>First, write a query
-to obtain the list of the movies
-that the target user rated.
-In the MATCH clause,
-use the variable <span class="math inline">\(m\)</span> to indicate a movie that the target user rated.
-Conclude the query with:</li>
-</ul>
+<summary>Hint</summary>
+
+*  First, write a query 
+to obtain the list of the movies 
+that the target user rated. 
+In the MATCH clause, 
+use the variable $m$ to indicate a movie that the target user rated. 
+Conclude the query with:
+
 <pre>
 RETURN collect(m.title_en) AS movies
 </pre>
-<p>The function <em>collect</em> creates a list called <em>movies</em>.</p>
-<ul>
-<li>Replace RETURN with WITH in the previous query and add a
-second query to select the titles of the movies
-<span class="math inline">\(m\)</span> that the user <span class="math inline">\(w\)</span> loved and the target user
-did not rate.
-In order to exclude the films that the target user
-did not rate, use the following predicate:</li>
-</ul>
+
+The function *collect* creates a list called *movies*.
+
+* Replace RETURN with WITH in the previous query and add a 
+second query to select the titles of the movies 
+$m$ that the user $w$ loved and the target user 
+did not rate. 
+In order to exclude the films that the target user 
+did not rate, use the following predicate:
+
 <pre>
 none(x in movies where x=m.title_en)
 </pre>
-<p>in the WHERE clause.</p>
+
+in the WHERE clause.
+
 </details>
-</div>
-</div>
-</div>
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+-->
 
           </div>
 

@@ -685,109 +685,160 @@
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<div id="introduction" class="section level1">
-<h1>Introduction</h1>
-<p>In this lab assignment you’ll run queries in MongoDB.</p>
-<div class="infobox warning">
-<p><strong>Assignment submission</strong></p>
-<p>This lab assignment will be <strong>evaluated</strong>.</p>
-<p>In order to finalize the submission of the assignment,
-submit a report in PDF by using <a href="https://centralesupelec.edunao.com/mod/assign/view.php?id=43066" target="_blank">this link</a>.</p>
-<p>The report must not be longer than 4 pages. In the report:</p>
-<ul>
-<li><p>Indicate your first and family name.</p></li>
-<li><p>Describe briefly the MongoDB query language and the aggregation framework.</p></li>
-<li><p>Write the queries but not the results of the queries.</p></li>
-</ul>
-<p>The submission deadline is <strong>Thursday, January 28, 2021 8:00 AM</strong>.</p>
-</div>
-</div>
-<div id="setting-up-the-work-environment." class="section level1">
-<h1>Setting up the work environment.</h1>
-<ul>
-<li><p>Start the <strong>MongoDB server</strong>. Refer
-to the <a href="/courses/plp/overview/installation-mongodb">documentation</a>
-to find out how to start the server depending on your operating system.</p></li>
-<li><p>Launch <strong>MongoDB compass</strong>. You should have installed it
-with the MongoDB server.</p></li>
-<li><p>From within MongoDB compass, connect to the local MongoDB server.</p></li>
-</ul>
-</div>
-<div id="creating-the-database" class="section level1">
-<h1>Creating the database</h1>
-<ul>
-<li><p>Download the data by <a href="/courses/plp/tutorials/mongodb-data.zip">clicking here</a>.</p></li>
-<li><p>In MongoDB Compass, click on the button “Create database”.</p></li>
-<li><p>Give the database a name (e.g., <em>cinema</em>) and create a collection
-named <em>movies</em>.</p></li>
-<li><p>Click on the button <em>Add data</em> and select <em>Import file</em>.</p></li>
-<li><p>Select JSON as a file format and select the file <em>movies.json</em>.</p></li>
-<li><p>Click on “Import”; 88 documents should be imported into the database.</p></li>
-</ul>
-<div class="infobox warning">
-<p><strong>Troubleshooting</strong></p>
-<p>In case you experience problems while importing the JSON file, you might want to
-try to import the file <em>movies.csv</em>.</p>
-</div>
-</div>
-<div id="querying-the-data-with-find" class="section level1">
-<h1>Querying the data with <em>find</em></h1>
-<p>At the bottom of the MongoDB window, you should find a link
-to open the MongoDB shell (MongoSH Beta).</p>
-<p>After opening the shell, write the following command to
-switch to database <em>cinema</em>:</p>
-<pre><code>use cinema</code></pre>
-<p>To verify that you’re actually connected to the database <em>cinema</em>,
-type the following query:</p>
-<pre><code>db.movies.findOne()</code></pre>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+<!--
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1  </strong></span>
-By using the MongoDB shell, execute the following queries.</p>
-<p>Q1. The release year of the movie “Le parrain III”.</p>
-<p>Q2. The title of the movies released between 1980 and 1990.</p>
-<p>Q3. Same query as b. with the titles must be sorted by alphabetical order.</p>
-<p>Q4. The titles of the french movies.</p>
-<p>Q5. The title of the “crime” or “drama” movies.</p>
-<p>Q6. The names and birth dates of the directors of french movies.</p>
-<p>Q7. The title of the movies in which Sofia Coppola played.</p>
-<p>Q8. The title and the genre of the movies of which Hitchcock is director.</p>
-</div>
-</div>
-</div>
-<div id="querying-the-data-with-the-aggregation-framework" class="section level1">
-<h1>Querying the data with the aggregation framework</h1>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+# Introduction 
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 2  </strong></span>
-By using the MongoDB shell, execute the following queries
-by using <strong>aggregation pipelines</strong>.</p>
-<p>Q1. The number of movies by country. Show by decresing number.</p>
-<p>Q2. The name of the actor in the role “Mary Corleone” in the movie “Le parrain III”.</p>
-<p>Q3. The number of actors by movie. Sort by decreasing number.</p>
-<p>Q4. The average number of actors in a film.</p>
-</div>
-</div>
-</div>
-<div id="join-in-mongodb" class="section level1">
-<h1>Join in MongoDB</h1>
-<p>In the database <em>cinema</em>, create a new collection called <em>movies_boffice</em>.
-Import the documents in file <em>moviesBoxOffice.json</em> into this collection.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+In this lab assignment you'll run queries in MongoDB.
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3  </strong></span>
-By using the operator <em>$lookup</em> on the collections
-<em>movies</em> and <em>movies_boffice</em>, find the box office of the
-movie “Le parrain III”.</p>
-</div>
-</div>
-</div>
+::: {.infobox .warning data-latex="{warning}"}
+**Assignment submission**
+
+This lab assignment will be **evaluated**.
+
+In order to finalize the submission of the assignment, 
+submit a report in PDF by using [this link](https://centralesupelec.edunao.com/mod/assign/view.php?id=43066){target="_blank"}.
+
+The report must not be longer than 4 pages. In the report:
+
+* Indicate your first and family name.
+
+* Describe briefly the MongoDB query language and the aggregation framework.
+
+* Write the queries but not the results of the queries.
+
+The submission deadline is **Thursday, January 28, 2021 8:00 AM**.
+
+:::
+
+
+
+
+# Setting up the work environment.
+
+* Start the **MongoDB server**. Refer 
+to the [documentation](/courses/plp/overview/installation-mongodb) 
+to find out how to start the server depending on your operating system.
+
+* Launch **MongoDB compass**. You should have installed it 
+with the MongoDB server.
+
+* From within MongoDB compass, connect to the local MongoDB server.
+
+# Creating the database
+
+* Download the data by [clicking here](/courses/plp/tutorials/mongodb-data.zip).
+
+* In MongoDB Compass, click on the button "Create database".
+
+* Give the database a name (e.g., *cinema*) and create a collection 
+named *movies*.
+
+* Click on the button *Add data* and select *Import file*.
+
+* Select JSON as a file format and select the file *movies.json*.
+
+* Click on "Import"; 88 documents should be imported into the database.
+
+::: {.infobox .warning data-latex="{warning}"}
+**Troubleshooting**
+
+In case you experience problems while importing the JSON file, you might want to 
+try to import the file *movies.csv*.
+
+:::
+
+# Querying the data with *find*
+
+At the bottom of the MongoDB window, you should find a link 
+to open the MongoDB shell (MongoSH Beta).
+
+After opening the shell, write the following command to 
+switch to database *cinema*:
+
+```
+use cinema
+```
+
+To verify that you're actually connected to the database *cinema*, 
+type the following query:
+
+```
+db.movies.findOne()
+```
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-1"><strong>(\#exr:unnamed-chunk-1) </strong></span>
+By using the MongoDB shell, execute the following queries.
+
+Q1. The release year of the movie "Le parrain III".
+
+Q2. The title of the movies released between  1980 and 1990.
+
+Q3. Same query as b. with the titles must be sorted by alphabetical order.
+
+Q4. The titles of the french movies.
+
+Q5. The title of the  "crime" or  "drama" movies.
+
+Q6. The names and birth dates of the  directors of french movies.
+
+Q7. The title of the movies in which Sofia Coppola played.
+
+Q8. The title and the genre of the movies of which Hitchcock is director.
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+# Querying the data with the aggregation framework
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-2"><strong>(\#exr:unnamed-chunk-2) </strong></span>
+By using the MongoDB shell, execute the following queries 
+by using **aggregation pipelines**.
+
+Q1. The number of movies by country. Show by decresing number.
+
+Q2. The name of the actor in the role "Mary Corleone" in the movie "Le parrain III".
+
+Q3. The number of actors by movie. Sort by decreasing number.
+
+Q4. The average number of actors in a film.
+
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+# Join in MongoDB
+
+In the database *cinema*, create a new collection called *movies_boffice*.
+Import the documents in file *moviesBoxOffice.json* into this collection.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-3"><strong>(\#exr:unnamed-chunk-3) </strong></span>
+By using the operator *$lookup* on the collections 
+*movies* and *movies_boffice*, find the box office of the 
+movie "Le parrain III".
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+-->
 
           </div>
 

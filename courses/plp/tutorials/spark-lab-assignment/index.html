@@ -689,129 +689,174 @@
 <!-- The link to the Edunao page where the students submit their work -->
 <!-- The submission deadline -->
 <!-- ############ END OF MODIFICATIONS ############ -->
-<div id="introduction" class="section level1">
-<h1>Introduction</h1>
-<p>The goal of this Spark lab assignment is to write Spark programs and run them on a cluster.
-<a href="/courses/plp/overview/cluster-connection" target="_blank">Refer to this documentation</a> to learn how to connect and
-interact with the cluster.</p>
-<div class="infobox warning">
-<p><strong>Assignment submission</strong></p>
-<p>This lab assignment will be <strong>evaluated</strong>.</p>
-<p>In order to finalize the submission of the assignment,
-complete <a href="https://centralesupelec.edunao.com/mod/quiz/view.php?id=47098" target="_blank">this form available on Edunao</a>.</p>
-<p>The submission deadline is <strong>Tuesday, March 9, 2021 8:00 AM</strong>.</p>
-</div>
-</div>
-<div id="common-friends-in-a-social-network" class="section level1">
-<h1>Common friends in a social network</h1>
-<p>Consider a social network described by a graph encoded in a text file.
+<!--
+
+# Introduction 
+
+
+The goal of this Spark lab assignment is to write Spark programs and run them on a cluster.
+[Refer to this documentation](/courses/plp/overview/cluster-connection){target="_blank"} to learn how to connect and 
+interact with the cluster.
+
+
+
+
+::: {.infobox .warning data-latex="{warning}"}
+**Assignment submission**
+
+This lab assignment will be **evaluated**.
+
+In order to finalize the submission of the assignment, 
+complete [this form available on Edunao](https://centralesupelec.edunao.com/mod/quiz/view.php?id=47098){target="_blank"}.
+
+The submission deadline is **Tuesday, March 9, 2021 8:00 AM**.
+
+:::
+
+
+# Common friends in a social network
+
+Consider a social network described by a graph encoded in a text file.
 Each line of the file is a list of identifiers separated by commas.
-For instance, the line <span class="math inline">\(A,B,C,D\)</span> means that <span class="math inline">\(A\)</span> is friend with <span class="math inline">\(B\)</span>, <span class="math inline">\(C\)</span> and <span class="math inline">\(D\)</span>.
-An excerpt of the file looks like as follows:</p>
-<pre><code>A,B,C,D
+For instance, the line $A,B,C,D$ means that $A$ is friend with $B$, $C$ and $D$. 
+An excerpt of the file looks like as follows:
+
+```
+A,B,C,D
 B,A,D
 C,A,D
 D,A,B,C
-...</code></pre>
-<p>We suppose that the friendship relation is symmetric: <span class="math inline">\((A, B)\)</span> implies
-<span class="math inline">\((B, A)\)</span>.</p>
-<p><strong>We want to obtain the list of the common friends for each pair of individuals</strong>:</p>
-<pre><code>(A, B), [D]
+...
+```
+
+We suppose that the friendship relation is symmetric: $(A, B)$ implies
+$(B, A)$.
+
+**We want to obtain the list of the common friends for each pair of individuals**: 
+
+```
+(A, B), [D]
 (A, C), [D] 
 (A, D), [B, C] 
 (B, C), [D] 
 (B, D), [A] 
-(C, D), [A]</code></pre>
-<p>As an additional constraint, we want to represent a couple only once and avoid
-to represent the symmetric couple.
-In other words, if we output <span class="math inline">\((A, B)\)</span>, we don’t want to output <span class="math inline">\((B, A)\)</span>.</p>
-<p>We use the following input files available in folder <code>hdfs://sar01:9000/data/sn/</code>:</p>
-<ul>
-<li><p><code>sn_tiny.csv</code>. Small social network, that you can use to test your implementation.</p></li>
-<li><p><code>sn_10k_100k.csv</code>. Social network with <span class="math inline">\(10^4\)</span> individuals and <span class="math inline">\(10^5\)</span> links.</p></li>
-<li><p><code>sn_100k_100k.csv</code>. Social network with <span class="math inline">\(10^5\)</span> individuals and <span class="math inline">\(10^5\)</span> links.</p></li>
-<li><p><code>sn_1k_100k.csv</code>. Social network with <span class="math inline">\(10^3\)</span> individuals and <span class="math inline">\(10^5\)</span> links.</p></li>
-<li><p><code>sn_1m_1m.csv</code>. Social network with <span class="math inline">\(10^6\)</span> individuals and <span class="math inline">\(10^6\)</span> links.</p></li>
-</ul>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+(C, D), [A]
+```
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1  </strong></span>
+As an additional constraint, we want to represent a couple only once and avoid 
+to represent the symmetric couple. 
+In other words, if we output $(A, B)$, we don't want to output $(B, A)$.
+
+
+We use the following input files available in folder ``hdfs://sar01:9000/data/sn/``:
+
+* ``sn_tiny.csv``. Small social network, that you can use to test your implementation.
+
+* ``sn_10k_100k.csv``. Social network with $10^4$ individuals and $10^5$ links. 
+
+* ``sn_100k_100k.csv``. Social network with $10^5$ individuals and $10^5$ links. 
+
+* ``sn_1k_100k.csv``. Social network with $10^3$ individuals and $10^5$ links. 
+
+* ``sn_1m_1m.csv``. Social network with $10^6$ individuals and $10^6$ links. 
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-1"><strong>(\#exr:unnamed-chunk-1) </strong></span>
 Write an implementation in Spark.
-<strong>Test your implementation on file <code>sn_tiny.csv</code>.</strong></p>
-</div>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+**Test your implementation on file ``sn_tiny.csv``.**
+</div>\EndKnitrBlock{exercise}
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 2  </strong></span>
-Run your implementation on the other files and write down the execution times.
-Comment on the execution times considering the file sizes, the number of nodes and links
-and the number of pairs <span class="math inline">\(((A, B), X)\)</span> generated by the algorithm.</p>
-</div>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+:::
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3  </strong></span>
-Execute your implementation on the file <code>sn_1m_1m.csv</code> by varying the
-number of cores used by the Spark executors.
-You can specify the total number of cores with the option <code>--total-executor-cores</code>
-of the command <code>spark-submit</code> (you can also refer <a href="https://spark.apache.org/docs/latest/submitting-applications.html" target="_blank">to the Spark documentation</a>).</p>
-<ul>
-<li>What is the impact of the number of cores on the execution time? Make a graph and comment.</li>
-</ul>
-</div>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 4  </strong></span></p>
-<ol style="list-style-type: decimal">
-<li><p>By using a MapReduce-style algorithm, write a Spark program to compute the minimum, maximum and average degree of
-a node in a given graph.</p></li>
-<li><p>Compute the minimum, maximum and average degree on all the given input files.</p></li>
-<li><p>Do these values confirm or invalidate the considerations that you made on the execution times of the
-algorithm in the first exercise? Justify your answer.</p></li>
-</ol>
-</div>
-</div>
-</div>
-<div id="creating-an-inverted-index" class="section level1">
-<h1>Creating an inverted index</h1>
-<p>In folder <code>hdfs://sar01:9000/data/bbc/</code> you’ll find a collection of 50
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-2"><strong>(\#exr:unnamed-chunk-2) </strong></span>
+Run your implementation on the other files and write down the execution times. 
+Comment on the execution times considering the file sizes, the number of nodes and links 
+and the number of pairs $((A, B), X)$ generated by the algorithm.
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-3"><strong>(\#exr:unnamed-chunk-3) </strong></span>
+Execute your implementation on the file ``sn_1m_1m.csv`` by varying the 
+number of cores used by the Spark executors. 
+You can specify the total number of cores with the option ``--total-executor-cores``
+of the command ``spark-submit`` (you can also refer [to the Spark documentation](https://spark.apache.org/docs/latest/submitting-applications.html){target="_blank"}).
+
+* What is the impact of the number of cores on the execution time? Make a graph and comment.
+
+
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-4"><strong>(\#exr:unnamed-chunk-4) </strong></span>
+
+1. By using a MapReduce-style algorithm, write a Spark program to compute the minimum, maximum and average degree of 
+a node in a given graph.
+
+2. Compute the minimum, maximum and average degree on all the given input files.
+
+3. Do these values confirm or invalidate the considerations that you made on the execution times of the 
+algorithm in the first exercise? Justify your answer.
+
+
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+# Creating an inverted index
+
+
+In folder ``hdfs://sar01:9000/data/bbc/`` you'll find a collection of 50 
 articles obtained from the BBC website (2004-2005) organized into five subfolders:
-<em>business</em>, <em>entertainment</em>, <em>politics</em>, <em>sport</em> and <em>technology</em>.</p>
-<p>We want to create an <strong>inverted index</strong>, which associates each word with the list of the
-files in which the word occurs.
-More specifically, for each word, the inverted index will have a list of the
-names of the files (path relative to the folder <code>/data/bbc</code>) that contain the word.</p>
-<p>The inverted index:</p>
-<ul>
-<li><p>must not contain the same word twice;</p></li>
-<li><p>must not contain any stopwords (the list of stopwords is provided in the
-<code>hdfs://sar01:9000/data/stopwords.txt</code> file);</p></li>
-</ul>
-<p>Moreover:</p>
-<ul>
-<li><p>Words in the inverted index must only contain letters.</p></li>
-<li><p>Words in the inverted index must be lowercase.</p></li>
-</ul>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+*business*, *entertainment*, *politics*, *sport* and *technology*. 
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 5  </strong></span>
-Write a Spark program to create an inverted index and execute it on the
+We want to create an **inverted index**, which associates each word with the list of the 
+files in which the word occurs. 
+More specifically, for each word, the inverted index will have a list of the 
+names of the files (path relative to the folder ``/data/bbc``) that contain the word.  
+
+The inverted index:
+
+* must not contain the same word twice; 
+
+* must not contain any stopwords (the list of stopwords is provided in the 
+``hdfs://sar01:9000/data/stopwords.txt`` file); 
+
+Moreover:
+
+* Words in the inverted index must only contain letters.
+
+* Words in the inverted index must be lowercase.
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-5"><strong>(\#exr:unnamed-chunk-5) </strong></span>
+Write a Spark program to create an inverted index and execute it on the 
 input folder.
-You can use the template available at <code>~vialle/DCE-Spark/template_inverted_index.py</code>.</p>
-</div>
-</div>
-</div>
+You can use the template available at ``~vialle/DCE-Spark/template_inverted_index.py``.
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+-->
 
           </div>
 
