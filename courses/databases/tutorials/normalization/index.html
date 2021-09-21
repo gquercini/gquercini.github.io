@@ -686,6 +686,37 @@
 Derive a minimal set <span class="math inline">\(\mathcal{G}\)</span> of functional dependencies that is equivalent to <span class="math inline">\(\mathcal{F}\)</span>.</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>Based on the definition of a set of minimal functional dependencies (slide 18 in Lecture 2),
+we can rewrite the functional dependencies so that the right side consists of only one attribute.
+<span class="math inline">\(D \rightarrow B, C\)</span> is equivalent to <span class="math inline">\(D \rightarrow B\)</span> and <span class="math inline">\(D \rightarrow C\)</span>.</p>
+<ul>
+<li><p><span class="math inline">\(A, B \rightarrow C\)</span></p></li>
+<li><p><span class="math inline">\(D \rightarrow B\)</span></p></li>
+<li><p><span class="math inline">\(D \rightarrow C\)</span></p></li>
+<li><p><span class="math inline">\(A \rightarrow B\)</span></p></li>
+</ul>
+<p>All functional dependencies except the first one is trivially left-irreducible (the determinant consists of
+only one column).
+The first has two attributes in the determinant, therefore we need to check whether we
+can eliminate one of the two columns and still preserve an equivalent set of functional dependencies.</p>
+<p>We try to apply Armstrong’s axioms to compute the closure of this set of functional dependencies.</p>
+<p>We have <span class="math inline">\(A \rightarrow B\)</span>. By <strong>augmentation</strong> we obtain:</p>
+<p><span class="math display">\[A \rightarrow A, B\]</span></p>
+<p>We have <span class="math inline">\(A, B \rightarrow C\)</span>. By <strong>transitivity</strong> we obtain:</p>
+<p><span class="math display">\[A \rightarrow C\]</span></p>
+<p>Therefore, the column <span class="math inline">\(B\)</span> in <span class="math inline">\(A, B \rightarrow C\)</span> is not useful and we can drop it.</p>
+<p>The set <span class="math inline">\(\mathcal{G}\)</span> consists of the following FDs:</p>
+<ul>
+<li><p><span class="math inline">\(A \rightarrow C\)</span></p></li>
+<li><p><span class="math inline">\(D \rightarrow B\)</span></p></li>
+<li><p><span class="math inline">\(D \rightarrow C\)</span></p></li>
+<li><p><span class="math inline">\(A \rightarrow B\)</span></p></li>
+</ul>
+</div>
+</details>
 </div>
 <div id="candidate-keys-and-normal-forms-1" class="section level1">
 <h1><span class="header-section-number">2</span> Candidate keys and normal forms (1)</h1>
@@ -709,6 +740,27 @@ insurance\_number \rightarrow insurance\_expiration\_date
 <span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 2.1  </strong></span>Derive a minimal set <span class="math inline">\(\mathcal{G}\)</span> of functional dependencies that is equivalent to <span class="math inline">\(\mathcal{F}\)</span>.
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>First, we need to rewrite the FDs in canonical form.</p>
+<ol style="list-style-type: decimal">
+<li><span class="math inline">\(ssn \rightarrow first\_name\)</span></li>
+<li><span class="math inline">\(ssn \rightarrow last\_name\)</span></li>
+<li><span class="math inline">\(ssn \rightarrow phone\_number\)</span></li>
+<li><span class="math inline">\(ssn \rightarrow insurance\_number\)</span></li>
+<li><span class="math inline">\(ssn \rightarrow insurance\_expiration\_date\)</span></li>
+<li><span class="math inline">\(insurance\_number \rightarrow insurance\_expiration\_date\)</span></li>
+</ol>
+<p>The determinant of each FD is composed of only one column, therefore
+it is already irreducible.
+It is easy to see that all FDs with <TT>ssn</TT> as a determinant must be
+kept (otherwise we lose some information).</p>
+<p>By transitivity from 4. and 6. we obtain:</p>
+<p><span class="math display">\[ssn \rightarrow insurance\_expiration\_date\]</span></p>
+<p>Therefore, <span class="math inline">\(\mathcal{G}\)</span> is obtained from <span class="math inline">\(\mathcal{F}\)</span> by removing 5.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -716,6 +768,15 @@ insurance\_number \rightarrow insurance\_expiration\_date
 <span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 2.2  </strong></span>Given <span class="math inline">\(\mathcal{G}\)</span>, identify the candidate keys in the table <TT>Patient</TT>.
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>From the functional dependencies in <span class="math inline">\(\mathcal{F}\)</span>, it’s easy to see that
+that the only column that implies all the others
+is <TT>ssn</TT>. Therefore, {<TT>ssn</TT>} is the only candidate key in
+this table.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -723,6 +784,19 @@ insurance\_number \rightarrow insurance\_expiration\_date
 <span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 2.3  </strong></span>Specify the normal form of the table <TT>Patient</TT>. Justify your answer.
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<ul>
+<li><p>It is immediate to verify that the table is 1NF.</p></li>
+<li><p>The table is 2NF because there is only one candidate key, which is composed of
+only one column.</p></li>
+<li><p>The table is not in 3NF. Indeed, there is a functional dependency
+between two non-prime columns:</p></li>
+</ul>
+<p><span class="math display">\[insurance\_number \rightarrow insurance\_expiration\_date\]</span></p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -731,6 +805,20 @@ insurance\_number \rightarrow insurance\_expiration\_date
 table <TT>Patient</TT>?
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>We need to split the data relative to the patient from the
+data relative to the insurance.
+Therefore, we propose the following two tables:</p>
+<pre>
+<TT>Patient</TT> (<u>ssn</u>, first_name, last_name, phone_number, insurance_number)
+<TT>Insurance</TT> (<u>insurance_number</u>, insurance_expiration_date)
+</pre>
+<p>Note that the column <em>insurance_number</em> in table <TT>Patient</TT> is foreign key to
+the column <em>insurance_number</em> in table <TT>Insurance</TT>.</p>
+</div>
+</details>
 </div>
 <div id="candidate-keys-and-normal-forms-2" class="section level1">
 <h1><span class="header-section-number">3</span> Candidate keys and normal forms (2)</h1>
@@ -751,6 +839,25 @@ The following set <span class="math inline">\(\mathcal{F}\)</span> of functional
 Specify the candidate keys of the table <span class="math inline">\(R\)</span>.</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>First, let’s try sets composed of only one column: <span class="math inline">\(\{A\}\)</span>, <span class="math inline">\(\{B\}\)</span>,
+<span class="math inline">\(\{C\}\)</span>, <span class="math inline">\(\{D\}\)</span> and <span class="math inline">\(\{E\}\)</span>.</p>
+<p>We have the following: (<span class="math inline">\(\{X\}^+_{\mathcal{F}}\)</span> indicates the set of all columns implied by <span class="math inline">\(X\)</span>).</p>
+<ul>
+<li><p><span class="math inline">\(\{A\}^+_{\mathcal{F}} = \{A\}\)</span></p></li>
+<li><p><span class="math inline">\(\{B\}^+_{\mathcal{F}} = \{B\}\)</span></p></li>
+<li><p><span class="math inline">\(\{C\}^+_{\mathcal{F}} = \{A, B, C, D, E\}\)</span></p></li>
+<li><p><span class="math inline">\(\{D\}^+_{\mathcal{F}} = \{D, E\}\)</span></p></li>
+<li><p><span class="math inline">\(\{E\}^+_{\mathcal{F}} = \{E\}\)</span></p></li>
+</ul>
+<p>Therefore, <span class="math inline">\(\{C\}\)</span> is a candidate key because it implies all the other columns.</p>
+<p>From the functional dependency 1., we obtain that <span class="math inline">\(\{A, B\}\)</span> implies <span class="math inline">\(C\)</span>; therefore,
+by transitivity they imply all the other columns.</p>
+<p>In conclusion, we have two candidate keys: <span class="math inline">\(\{C\}\)</span> and <span class="math inline">\(\{A, B\}\)</span>.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -763,6 +870,17 @@ We assume that <span class="math inline">\(R\)</span> is in 1NF.</p>
 </ul>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<ul>
+<li><p><span class="math inline">\(R\)</span> is in 2NF. In fact, all non-prime columns depend
+entirely on both candidate keys.</p></li>
+<li><p><span class="math inline">\(R\)</span> is not in 3NF. In fact, the functional dependency <span class="math inline">\(D \rightarrow E\)</span> is
+between two non-prime columns.</p></li>
+</ul>
+</div>
+</details>
 </div>
 <div id="candidate-keys-and-normal-forms-3" class="section level1">
 <h1><span class="header-section-number">4</span> Candidate keys and normal forms (3)</h1>
@@ -782,6 +900,25 @@ The following set <span class="math inline">\(\mathcal{F}\)</span> of functional
 Specify the candidate keys of the table <span class="math inline">\(R\)</span>.</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>The following hold:</p>
+<ul>
+<li><p><span class="math inline">\(\{A\}^+_{\mathcal{F}} = \{A, C\}\)</span></p></li>
+<li><p><span class="math inline">\(\{B\}^+_{\mathcal{F}} = \{B\}\)</span></p></li>
+<li><p><span class="math inline">\(\{C\}^+_{\mathcal{F}} = \{C\}\)</span></p></li>
+<li><p><span class="math inline">\(\{D\}^+_{\mathcal{F}} = \{D\}\)</span></p></li>
+<li><p><span class="math inline">\(\{E\}^+_{\mathcal{F}} = \{E\}\)</span></p></li>
+</ul>
+<p>It is clear that the only possible candidate key could be {A, B}; let’s verify it
+by computing the closure of {A, B} under <span class="math inline">\(\mathcal{F}\)</span>:</p>
+<ul>
+<li><span class="math inline">\(\{A, B\}^+_{\mathcal{F}} = \{A, B, C, D, E\}\)</span></li>
+</ul>
+<p>Indeed, {A, B} is the candidate key.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -794,6 +931,17 @@ We assume that <span class="math inline">\(R\)</span> is in 1NF.</p>
 </ul>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<ul>
+<li><p><span class="math inline">\(R\)</span> is not in 2NF. In fact, the non-prime column <span class="math inline">\(C\)</span> is functionally dependent on
+only one part of the candidate key.</p></li>
+<li><p><span class="math inline">\(R\)</span> is not in 3NF, because it doesn’t fulfill the first condition, that is
+being in 2NF.</p></li>
+</ul>
+</div>
+</details>
 </div>
 
           </div>
