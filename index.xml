@@ -75,7 +75,7 @@
 &lt;h1&gt;Tutorial 3&lt;/h1&gt;
 &lt;p&gt;&lt;strong&gt;Title&lt;/strong&gt;: SQL queries&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Date and time&lt;/strong&gt;: Tuesday, 28 September 2021, 10:30 AM - 12 PM&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Link&lt;/strong&gt;: &lt;a href=&#34;/courses/databases/tutorials/sql&#34;&gt;Click here&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Link&lt;/strong&gt;: &lt;a href=&#34;/courses/databases/tutorials/sqlite&#34;&gt;Click here&lt;/a&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;tutorial-4&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Tutorial 4&lt;/h1&gt;
@@ -1554,7 +1554,7 @@ explicitly by typing the following command:&lt;/p&gt;
 &lt;h1&gt;Lecture 3&lt;/h1&gt;
 &lt;p&gt;&lt;strong&gt;Title&lt;/strong&gt;: Relational databases: SQL.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Date and time&lt;/strong&gt;: Tuesday, 28 September 2021, 9:00 AM - 12 AM.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Slides&lt;/strong&gt;: available soon&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Slides&lt;/strong&gt;: &lt;a href=&#34;https://centralesupelec.edunao.com/pluginfile.php/166151/course/section/29928/lecture-3-db-dsba.pdf&#34; target=&#34;_blank&#34;&gt;Click here&lt;/a&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div id=&#34;lecture-4&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Lecture 4&lt;/h1&gt;
@@ -9556,81 +9556,89 @@ as input files (small files).
     </item>
     
     <item>
-      <title>SQL queries</title>
-      <link>/courses/databases/tutorials/sql/</link>
+      <title>Learning SQL queries</title>
+      <link>/courses/databases/tutorials/sqlite/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/courses/databases/tutorials/sql/</guid>
+      <guid>/courses/databases/tutorials/sqlite/</guid>
       <description>
 
 
 &lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
 &lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
-&lt;p&gt;In this tutorial you’ll learn:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;How to write &lt;strong&gt;SQL queries&lt;/strong&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;Prerequisites:&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Having attended &lt;a href=&#34;/courses/cloud-computing/lectures/lectures&#34;&gt;Lecture 3&lt;/a&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div id=&#34;database-of-a-social-network-platform&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Database of a social network platform&lt;/h1&gt;
-&lt;p&gt;We consider the following collection of relational tables:&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;UserAccount&lt;/TT&gt; (&lt;u&gt;nickname&lt;/u&gt;, first_name, last_name, city, country)&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Post&lt;/TT&gt; (&lt;u&gt;post_id&lt;/u&gt;, content, date, time, lat, long, nickname)&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;EmailAddress&lt;/TT&gt; (&lt;u&gt;email_address&lt;/u&gt;, nickname)&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Relationship&lt;/TT&gt; (&lt;u&gt;nickname_src&lt;/u&gt;, &lt;u&gt;nickname_dst&lt;/u&gt;, type, date)&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Tag&lt;/TT&gt; (&lt;u&gt;post_id&lt;/u&gt;, &lt;u&gt;nickname&lt;/u&gt;)&lt;/p&gt;
+&lt;p&gt;First, download DB Browser for SQLite &lt;a href=&#34;https://sqlitebrowser.org/&#34; target=&#34;_blank&#34;&gt;at this link&lt;/a&gt;.&lt;/p&gt;
+&lt;div id=&#34;obtain-the-data&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Obtain the data&lt;/h1&gt;
+&lt;p&gt;We consider the database of DVD rental store containing data on films, actors,
+customers and the transactions of the store.&lt;/p&gt;
+&lt;p&gt;You can obtain the data &lt;a href=&#34;/courses/databases/tutorial-4/sakila_new.db&#34;&gt;at this link&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The following figure shows the &lt;strong&gt;physical schema&lt;/strong&gt; of the database.&lt;/p&gt;
+&lt;div class=&#34;figure&#34; style=&#34;text-align: center&#34;&gt;&lt;span id=&#34;fig:cnm&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/courses/databases/tutorial-4/sakila_new.png&#34; alt=&#34;The physical schema of the database&#34; width=&#34;100%&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 1.1: The physical schema of the database
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;You should now open the database with &lt;strong&gt;DB Browser for SQLite&lt;/strong&gt;.
+To this extent, open &lt;strong&gt;DB Browser for SQLite&lt;/strong&gt;, click on &lt;em&gt;Open database&lt;/em&gt;
+and select the downloaded file.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Foreign key alert&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;By default, SQLite doesn’t check foreign key constraints.
+Open the preferences of DB Browser for SQLite and make sure
+the checkbox &lt;em&gt;Foreign keys&lt;/em&gt; in the tab &lt;em&gt;Database&lt;/em&gt; is checked.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;foreign-key-constraints&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Foreign key constraints&lt;/h1&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.1  &lt;/strong&gt;&lt;/span&gt;
-Write the following queries in SQL:&lt;/p&gt;
-&lt;p&gt;Q1. Count the number of posts by nickname. Sort by number of posts in descending order.&lt;/p&gt;
-&lt;p&gt;Q2. Get the identifier and the content of all the posts of the user with nickname &lt;em&gt;nick_BLANCO&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;Q3. Get the number of user accounts by country. Order by number of countries in descending order.&lt;/p&gt;
-&lt;p&gt;Q4. Get the identifier of the posts where the user with nickname &lt;em&gt;nick_ANIS&lt;/em&gt; is tagged.&lt;/p&gt;
-&lt;p&gt;Q5. Get the content of all the posts where the user with nickname &lt;em&gt;nick_ANIS&lt;/em&gt; is tagged.&lt;/p&gt;
-&lt;p&gt;Q6. Get the email addresses of the user with nickname &lt;em&gt;nick_BLANCO&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;Q7. Get the nicknames of the friends of the user with nickname &lt;em&gt;nick_BLANCO&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;Q8. Get the the first and last names of the friends of the user with nickname &lt;em&gt;nick_BLANCO&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;Q9. For each user, get the number of followers by country. Rank the countries by the number of followers in descending order.&lt;/p&gt;
-&lt;p&gt;Q10. Get the first and family name of the users tagged by the user with nickname &lt;em&gt;nick_CAMERON&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;Q11. Get the nickname, first and last name of the common friends of the users with nickname &lt;em&gt;nick_CAMERON&lt;/em&gt; and
-&lt;em&gt;nick_ANIS&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;Q12. Rank the users by the number of their followers.
-The user with the most followers must appear at the top of the list.&lt;/p&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;
+Try to delete the film with &lt;em&gt;film_id&lt;/em&gt;=1 from
+the table &lt;TT&gt;Film&lt;/TT&gt;.
+What happens?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;database-of-a-banking-system&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Database of a banking system&lt;/h1&gt;
-&lt;p&gt;We consider the following collection of relational tables:&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Bank&lt;/TT&gt; (&lt;u&gt;code_bank&lt;/u&gt;, name, street_number, street_name, postal_code)&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Branch&lt;/TT&gt; (&lt;u&gt;branch_id&lt;/u&gt;, street_number, street_name, postal_code, code_bank)&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Account&lt;/TT&gt; (&lt;u&gt;acct_nbr&lt;/u&gt;, acct_type, balance, branch_id, ssn)&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Loan&lt;/TT&gt; (&lt;u&gt;loan_nbr&lt;/u&gt;, loan_type, amount, branch_id, ssn)&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Customer&lt;/TT&gt; (&lt;u&gt;ssn&lt;/u&gt;, first_name, last_name, telephone, street_number,
-street_name, postal_code)&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Address&lt;/TT&gt; (&lt;u&gt;postal_code&lt;/u&gt;, city, country)&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.2  &lt;/strong&gt;&lt;/span&gt;
+Write a query to get &lt;em&gt;film_id&lt;/em&gt;,
+&lt;em&gt;actor_id&lt;/em&gt; and &lt;em&gt;title&lt;/em&gt; from
+the table &lt;TT&gt;film&lt;/TT&gt;
+joined with &lt;TT&gt;film_actor&lt;/TT&gt;
+for the film “ACE GOLDFINGER”.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.3  &lt;/strong&gt;&lt;/span&gt;
+Modify the identifier of the film ACE GOLDFINGER
+in table &lt;TT&gt;Film&lt;/TT&gt;.
+Write the query of the previous exercise.
+What happens?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;queries&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Queries&lt;/h1&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;
 Write the following queries in SQL:&lt;/p&gt;
-&lt;p&gt;Q1. Get the name, street name, street number and postal code of all the banks in the database.&lt;/p&gt;
-&lt;p&gt;Q2. Get the city and country of all banks in the database.&lt;/p&gt;
-&lt;p&gt;Q3. Count the number of accounts by customer.&lt;/p&gt;
-&lt;p&gt;Q4. Get the amount of money owned by the customer.&lt;/p&gt;
-&lt;p&gt;Q5. Return the average amount of money loaned by any bank for a mortgage.&lt;/p&gt;
-&lt;p&gt;Q6. Get the amount of money loaned by each bank.&lt;/p&gt;
-&lt;p&gt;Q7. Get the social security number, the first and last name of all customers of the bank with name “Bank of America”.&lt;/p&gt;
-&lt;p&gt;Q8. Get all the data (including the full address) on the customers that have a checking account with a negative balance.&lt;/p&gt;
-&lt;p&gt;Q9. Get the SSN of all customers that have no loan at the “Bank of America”.&lt;/p&gt;
-&lt;p&gt;Q10. Get the name of the bank that has the most branches.&lt;/p&gt;
-&lt;p&gt;Q11. Get the SSN of all customers having an account in more than one bank.&lt;/p&gt;
+&lt;p&gt;Q1. Return the first and last names of all the actors.&lt;/p&gt;
+&lt;p&gt;Q2. Return the title and the language of each film.&lt;/p&gt;
+&lt;p&gt;Q3. Return the first and the last name of the manager of the store with code 2.&lt;/p&gt;
+&lt;p&gt;Q4. Return the first and last names of all the actors who performed in the movie ‘ANGELS LIFE’.&lt;/p&gt;
+&lt;p&gt;Q5. Return the number of films where each actor performed. Sort the results in descending order.&lt;/p&gt;
+&lt;p&gt;Q6. Return the film categories that contain between 25 and 55 films.&lt;/p&gt;
+&lt;p&gt;Q7. Return the first and family name of the customers who have rented more than five family movies.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
