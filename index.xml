@@ -1525,6 +1525,298 @@ explicitly by typing the following command:&lt;/p&gt;
     </item>
     
     <item>
+      <title>Description</title>
+      <link>/courses/databases/exam/project/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/databases/exam/project/</guid>
+      <description>
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Introduction&lt;/h1&gt;
+&lt;p&gt;The goal of this project is
+to assess your knowledge of the main
+notions presented in classroom.&lt;/p&gt;
+&lt;p&gt;The project must be implemented by students &lt;strong&gt;working in groups&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Creating the groups&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://centralesupelec.edunao.com/mod/choicegroup/view.php?id=59337&#34; target=&#34;_blank&#34;&gt;Click here&lt;/a&gt;
+to create your group.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;This project consists in designing a relational database
+for the given application context,
+importing the data of a given dataset into a SQLite database and querying the data in SQL.&lt;/p&gt;
+&lt;p&gt;The deadline to submit the work is &lt;strong&gt;Friday December 3rd, 11:59 PM&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Submit your project&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The submission site is &lt;a href=&#34;https://centralesupelec.edunao.com/mod/assign/view.php?id=70706&#34; target=&#34;_blank&#34;&gt;available at this link&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;Please note that:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;You must be member of a group to submit your work.&lt;/li&gt;
+&lt;li&gt;Only one submission per group is possible. Two members of the same
+group cannot submit two different versions.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You must submit &lt;strong&gt;three files&lt;/strong&gt;, please follow these instructions:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;A &lt;strong&gt;report in PDF&lt;/strong&gt; containing the answers to
+all the questions and exercises, &lt;strong&gt;except the SQL queries&lt;/strong&gt; (max 10 pages).
+&lt;strong&gt;Please name the file &lt;em&gt;groupXX_report.pdf&lt;/em&gt;&lt;/strong&gt;, where XX is your group number.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;A file containing the SQLite database that you generated.
+&lt;strong&gt;Please name the file &lt;em&gt;groupXX_db.txt&lt;/em&gt;&lt;/strong&gt;.
+In order to create this file, select File &lt;span class=&#34;math inline&#34;&gt;\(\rightarrow\)&lt;/span&gt; Export &lt;span class=&#34;math inline&#34;&gt;\(\rightarrow\)&lt;/span&gt;
+Database to SQL file. Make sure that in the options field the “Export everything” option
+is selected. &lt;strong&gt;You’ll need to save the file with the extension .sql.
+Once the file is saved, you’ll rename it to .txt.&lt;/strong&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;A file with all the SQL queries.
+&lt;strong&gt;Please name the file &lt;em&gt;groupXX_queries.txt&lt;/em&gt;&lt;/strong&gt;.
+Separate each query in the file by a &lt;strong&gt;blank line&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Example:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT *
+FROM Airport 
+
+SELECT *
+FROM Hotel &lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;application-context&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Application context&lt;/h1&gt;
+&lt;p&gt;We intend to manage the data of a travel reservation system
+with clients all over the world.
+Upon registration, customers are automatically given a numeric identifier
+and they are asked to indicate their first and family names, their gender,
+date of birth, a phone number, an email address and their country of residence.&lt;/p&gt;
+&lt;p&gt;Any customer can book a trip that includes
+the reservation of &lt;strong&gt;one or more flights&lt;/strong&gt; and, possibly, &lt;strong&gt;one or more hotels&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Example&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Alice wants to fly from Paris,
+France to New York City (NYC), USA
+and she intends to stay in NYC for 10 days.
+Her trip includes two flights: an outbound flight
+from Paris to NYC and an inbound flight from NYC to Paris; and an hotel in NYC.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;A flight is operated by an airline company,
+of which the system keeps its name (e.g., British Airways),
+the country where the airline is incorporated and, when available,
+its IATA code (e.g., BA, a two-letter code identifying the airline),
+its ICAO code (e.g., BAW, a three-letter code identifying the airline)
+and alternate name or alias (e.g., British).&lt;/p&gt;
+&lt;p&gt;A flight connects two airports,
+each having a name (e.g., London Heathrow Airport), and,
+possibly, a IATA (e.g., LHR) and ICAO code (e.g., EGLL);
+an airport serves a specific location (e.g., London, UK) and its precise position
+is given by its geographic coordinates (latitude and longitude).&lt;/p&gt;
+&lt;p&gt;A flight connecting two airports at specific departure and arrival times
+is identified by a flight number.
+Two flights operated by two different airline companies cannot have the same flight number,
+but the same flight number can denote two flights operated
+by the same airline company on different days.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Example&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Emirates flight EK074 leaves Paris,
+France at 10 AM and arrives at Dubai, UAE at 7:40 PM (regardless of the departure day).&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;For each flight booked by a customer,
+the system keeps the seat number,
+the travel class (e.g., economy or business),
+the price and the date of the flight.
+Usually, airlines include details on the type of aircraft
+they plan to use on their flight schedules;
+these details include the name of the aircraft (e.g., Boeing 787-8) and,
+when available, the IATA code (e.g., 788, a unique three-letter identifier for the aircraft)
+and the ICAO code (e.g., B788, a unique four-letter identifier for the aircraft).&lt;/p&gt;
+&lt;p&gt;The system maintains a list of hotels,
+with their names, addresses and an average review score,
+which is a real number denoting the average grade assigned to
+the hotel by its customers.
+Customers can write a review for an hotel;
+in which case the system stores the text of the review,
+the date and its author.
+When a customer books an hotel, the system keeps the price paid,
+the check-in and check-out dates and whether the breakfast is included.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-dataset&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;The dataset&lt;/h1&gt;
+&lt;p&gt;You can download the dataset by clicking &lt;a href=&#34;/courses/databases/dataset.zip&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;.
+The dataset consists of 7 CSV files:
+&lt;em&gt;aircrafts.csv&lt;/em&gt;, &lt;em&gt;airlines.csv&lt;/em&gt;, &lt;em&gt;airports.csv&lt;/em&gt;,
+&lt;em&gt;hotels.csv&lt;/em&gt;, &lt;em&gt;customers.csv&lt;/em&gt;,
+&lt;em&gt;hotel_bookings.csv&lt;/em&gt;, &lt;em&gt;flight_bookings.csv&lt;/em&gt;.
+The separator character in each file is the tab character (‘’).&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Notice&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Take some time to look at the content
+of the files to understand the structure that your tables will have.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;creation-of-a-relational-database&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Creation of a relational database&lt;/h1&gt;
+&lt;p&gt;You’ll now proceed to the definition of a relational database for our travel reservation system.
+First, you need to define the &lt;strong&gt;conceptual schema&lt;/strong&gt;
+and then you’ll define the tables that compose the database.&lt;/p&gt;
+&lt;div id=&#34;the-conceptual-schema&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;The conceptual schema&lt;/h2&gt;
+&lt;p&gt;Before defining the logical schema of the database, &lt;strong&gt;answer the following questions&lt;/strong&gt;:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
+&lt;li&gt;&lt;p&gt;Can you use the name of the hotel as a primary key? Justify your answer.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Can you use the flight number as a primary key to identify a flight?
+Justify your answer and, in case of a negative answer, propose a solution.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Knowing that it is unlikely that two reviews have the same textual content,
+would you use it as a primary key? Justify your answer.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Knowing that the IATA code uniquely identifies an airport,
+would you choose it as a primary key for the entity Airport? Justify your answer.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1  &lt;/strong&gt;&lt;/span&gt;
+Propose an Entity-Relationship diagram describing the conceptual
+model of a relational database for the given application context.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Specify all the attributes for each entity and relation.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;For each entity, underline the attributes composing the primary key.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;For each relation, clearly indicate the minimum and maximum cardinality.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;normalization&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Normalization&lt;/h2&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2  &lt;/strong&gt;&lt;/span&gt;
+Translate the logical schema into a collection of tables. For each table:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Indicate its name and the names of the columns (but not their types).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Underline the columns that are part of the primary key.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Indicate the entity in the ER diagram to which the table corresponds.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;To make sure you choose the right data types for the columns,
+you can also check the values in the dataset.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Which &lt;strong&gt;normal form&lt;/strong&gt; are your tables in?&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3  &lt;/strong&gt;&lt;/span&gt;
+For each table:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Indicate a &lt;strong&gt;minimal set of functional dependencies&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Indicate the normal form that the table satisfies. Justify your answer.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;Normalize&lt;/strong&gt; your tables.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4  &lt;/strong&gt;&lt;/span&gt;
+Normalize each table up to the &lt;strong&gt;Boyce-Codd Normal Form (BCNF)&lt;/strong&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-physical-schema&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;The physical schema&lt;/h2&gt;
+&lt;p&gt;You can now define the &lt;strong&gt;physical schema&lt;/strong&gt; of your database.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5  &lt;/strong&gt;&lt;/span&gt;
+Write the SQL code to create the tables. For each table:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Indicate the &lt;strong&gt;primary key&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Indicate the &lt;strong&gt;foreign keys&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Indicate NOT NULL and UNIQUE constraints, if needed.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;database-creation-and-data-import&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Database creation and data import&lt;/h2&gt;
+&lt;p&gt;In order to create a database in SQLite,
+use DB Browser for SQLite:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Open the program and click on &lt;strong&gt;New Database&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The program will ask you to specify a name for
+the database file and the folder where you want to store it.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The program will display a pop-up window where you can create the tables. Alternatively, you can directly
+execute the SQL code that you wrote before to create your tables.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 6  &lt;/strong&gt;&lt;/span&gt;
+Create a SQLite database with the tables that you defined in
+the previous exercise.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;In order to import the data into a table, you can
+select File &lt;span class=&#34;math inline&#34;&gt;\(\rightarrow\)&lt;/span&gt; Import &lt;span class=&#34;math inline&#34;&gt;\(\rightarrow\)&lt;/span&gt; Table from CSV file.
+The given CSV file might not correspond exactly to the tables that
+you created, so you’ll need to edit them a bit in order to fit
+the schema of your tables.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;running-queries&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Running queries&lt;/h2&gt;
+&lt;p&gt;Write the following queries in SQL.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 7  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Get the average ticket price on Air France flights.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Count the number of customers by country.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Select the names of the airports in Paris, France.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Select the name of the cities (city and country name) with the most airports.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Select the name of the airline companies that use an Airbus A300.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Select the identifier, first and family names of all customers who flew to Sydney, Australia.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Select the identifier, name, city and country of the busiest airport (the one with more outbound and inbound flights).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Select the average price in the economy class.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Select the average price in the business class.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Select the name, city and country of the destination airport of french customers.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Select the destination cities (specify city and country name) preferred by women.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Select the destination cities (specify city and country name) preferred by men.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Count the number of customers by country flying to Paris.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Count the number of hotels by city.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Determine the amount of money spent by Tatiana REZE in flights.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;indexes&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Indexes&lt;/h2&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 8  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Write a query to get all the information of a customer with a given family name.
+Run the query multiple times and note the average running time of the query.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Create an index on the column containing the family name of a customer.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Rerun the same query multiple times and note the average running times of the query.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Do you observe any difference? Can you explain what is going on here?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Lectures</title>
       <link>/courses/databases/lectures/lectures/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
