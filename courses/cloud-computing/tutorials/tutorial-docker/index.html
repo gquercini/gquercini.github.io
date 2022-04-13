@@ -708,11 +708,36 @@
 </ul>
 <p>Prerequisites:</p>
 <ul>
-<li>Having installed Docker on your computer.
-See the <a href="/courses/cloud-computing/overview/installing-docker" target="_blank">installation guide</a>.</li>
+<li>Having installed Docker on your computer or having imported the Linux virtual machine either with VirtualBox or with Multipass.</li>
+</ul>
+<details>
+<p><summary>Using a virtual machine with Multipass? Click here for more info</summary></p>
+<div class="infobox warning">
+<p><strong>Multipass commands</strong></p>
+<ul>
+<li><p>To start the virtual machine, type <code>multipass start cloudvm</code>.</p></li>
+<li><p>The folder <code>/home/ubuntu/labs</code> in the virtual machine is mounted (i.e., linked) to the folder
+on YOUR computer (let’s call it <code>LAB</code>) where you’ll store all your lab material.
+You specified this folder when you installed the virtual machine.</p></li>
+<li><p>If you don’t remember the path to the folder linked to <code>/home/ubuntu/labs</code>, type the
+command <code>multipass info cloudvm</code>.</p></li>
+<li><p>To open a terminal into the virtual machine, type <code>multipass shell cloudvm</code>.</p></li>
+<li><p>When the terminal opens, the current working directory is <code>/home/ubuntu</code>.</p></li>
+<li><p>Type <code>cd labs</code> to move to the folder where you’ll find your lab material.</p></li>
+<li><p>You’ll use the virtual machine terminal only to type the Docker commands.
+You can use all the tools installed on your machine to create and manage the files
+in the directory <code>LAB</code> directly from your computer.</p></li>
+<li><p>Once the lab is over, type <code>exit</code> to leave the virtual machine terminal. This will lead you back
+to the terminal of your computer.</p></li>
+<li><p>In the terminal of your computer, type <code>multipass stop cloudvm</code> to stop the virtual machine.
+This will NOT destroy your files! It just stops the virtual machine from needlessly using the resources of your computer.</p></li>
+</ul>
+</div>
+</details>
+<ul>
 <li>Being familiar with the notions of containers, images,
 volumes and networks in Docker.
-See the <a href="/courses/cloud-computing/references/docker-primer" target="_blank">Docker primer</a>
+See the <a href="https://centralesupelec.edunao.com/pluginfile.php/219281/mod_resource/content/3/cccs-lecture02-en.pdf" target="_blank">Lecture 2</a>
 for an introduction.</li>
 <li>Being familiar with the <a href="/courses/cloud-computing/references/linux-introduction" target="_blank">basic notions of Linux</a>.</li>
 <li>Don’t hesitate to look at the <a href="/courses/cloud-computing/references/docker-cheat-sheet" target="_blank">Docker cheat sheet</a>
@@ -1032,6 +1057,40 @@ download
 </div>
 </div>
 </div>
+<details>
+<p><summary>Want to copy the donwloaded file from the container to your computer?</summary></p>
+<p>To copy the file <code>presentation</code> to your working directory, type the following command in
+the host terminal:</p>
+<pre><code>  docker cp &lt;containerId&gt;:/presentation .</code></pre>
+<p>In the previous command, replace <code>&lt;containerId&gt;</code> with the identifier of your container. You can obtain
+the identifier of the container from the output of the command <code>docker container ls -a</code>.</p>
+</details>
+<div class="infobox warning">
+<p><strong>Where are the containers and image files stored?</strong></p>
+<details>
+<p><summary>If you use MacOS or Windows</summary></p>
+<p>The files managed by Docker are not stored directly in your computer, but
+in the Linux virtual machine installed and operated by Docker Desktop (remember, Docker always need Linux to be executed).</p>
+<p>Therefore, you need to open a terminal inside that Linux virtual machine by typing the following command:</p>
+<pre><code>docker run -it --rm --privileged --pid=host justincormack/nsenter1</code></pre>
+<p>Once the terminal is opened, you can follow the instructions given below for Linux users.</p>
+</details>
+<details>
+<p><summary>If you use Docker on Linux</summary></p>
+<ul>
+<li><p>All files managed by Docker are stored under folder <code>/var/lib/docker</code>.</p></li>
+<li><p>To access that folder, you need to be root (i.e., administrator). Type the command <code>sudo su</code>.</p></li>
+<li><p>If you type <code>ls /var/lib/docker</code> you can look at the folders stored under this directory. You’ll see that there are
+folders corresponding to the different objects managed by Docker (containers, images, volumes and networks).</p></li>
+<li><p>To locate the files of a specific container, you first need to get the <strong>container identifier</strong> by typing <code>docker container ls -a</code>.</p></li>
+<li><p>Type the command <code>docker inspect &lt;container-id&gt;</code> (replace <code>&lt;container-id&gt;</code> with the identifier of the container that you intend to inspect).</p></li>
+<li><p>Locate the field <code>UpperDir</code>. The value of this field is the path to the directory (let’s call it <code>CONTAINER_DIR</code>) that contains the upper layer of the container (the writable layer).
+It should be a path that ends by <code>/diff</code>.</p></li>
+<li><p>If you type <code>cd CONTAINER_DIR</code> (replace <code>CONTAINER_DIR</code> with the value of the field <code>UpperDir</code>) you can finally see the files stored in
+your container.</p></li>
+</ul>
+</details>
+</div>
 <p>In <em>my-alpine</em> guest terminal type <code>exit</code>.
 This closes the guest terminal and, as a result, stops the
 container.</p>
@@ -1085,11 +1144,11 @@ images are transferred over the Internet.</p>
 Ubuntu provides a powerful command-line package manager called
 <strong>Advanced Package Tool</strong> (APT).
 First, you need to run the following command:</p>
-<p><code>apt-get update</code></p>
+<p><code>apt update</code></p>
 <p>which fetches the available packages from a list of sources
 available in file <code>/etc/apt/sources.list</code>.</p>
 <p>Then, you can install <code>wget</code> by running the following command:</p>
-<p><code>apt-get install -y wget</code></p>
+<p><code>apt install -y wget</code></p>
 <p>In order to obtain all the figures from a
 Web page, type the following command:</p>
 <pre class="shell"><code>wget -nd -H -p -P /my-figures -A jpg,jpeg,png,gif -e robots=off -w 0.5 https://www.centralesupelec.fr/fr/presentation</code></pre>
@@ -1471,7 +1530,7 @@ on the host; if your computer runs Windows or MacOS,
 you’ll not find that folder on your computer.
 Instead, it will be available in the virtual machine
 that Docker use on MacOS and Windows.</p>
-<p><strong>Do you want to see the directory? (Instructions for MacOS)</strong></p>
+<p><strong>Do you want to see the directory? (Instructions for Windows and MacOS)</strong></p>
 <p>One way to look into the hidden VM is to run
 the following containerized application:</p>
 <p><code>docker run -it --rm --privileged --pid=host justincormack/nsenter1</code></p>
@@ -1549,6 +1608,19 @@ Which folder would you look in?
 <p>In order to let containers communicate and, therefore, co-operate,
 Docker defines a simple networking model known as
 the <a href="/courses/cloud-computing/references/docker-primer#single-host-networking" target="_blank"><strong>container network model</strong></a></p>
+<details>
+<p><summary>If you use a Linux virtual machine with Multipass</summary>
+In this section, you’ll need to open several terminals in the virtual machine.
+You can do it easily by using <code>byobu</code>, an advanced window manager already available in your virtual machine.</p>
+<ul>
+<li><p>Just type <code>byobu</code> to launch the window manager.</p></li>
+<li><p>If you want to open a new terminal, just press F2.</p></li>
+<li><p>If you want to switch from a terminal to another, just press F3 (to move to previous terminal) or F4
+(to move to next terminal).</p></li>
+<li><p>If you want to close a terminal, just type <code>exit</code>.</p></li>
+<li><p>When you close all terminals, <code>byobu</code> will stop executing.</p></li>
+</ul>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 

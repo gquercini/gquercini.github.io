@@ -4521,11 +4521,36 @@ For each table, underline the primary keys and specify the foreign keys.
 &lt;/ul&gt;
 &lt;p&gt;Prerequisites:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Having installed Docker on your computer.
-See the &lt;a href=&#34;/courses/cloud-computing/overview/installing-docker&#34; target=&#34;_blank&#34;&gt;installation guide&lt;/a&gt;.&lt;/li&gt;
+&lt;li&gt;Having installed Docker on your computer or having imported the Linux virtual machine either with VirtualBox or with Multipass.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Using a virtual machine with Multipass? Click here for more info&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Multipass commands&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;To start the virtual machine, type &lt;code&gt;multipass start cloudvm&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The folder &lt;code&gt;/home/ubuntu/labs&lt;/code&gt; in the virtual machine is mounted (i.e., linked) to the folder
+on YOUR computer (let’s call it &lt;code&gt;LAB&lt;/code&gt;) where you’ll store all your lab material.
+You specified this folder when you installed the virtual machine.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;If you don’t remember the path to the folder linked to &lt;code&gt;/home/ubuntu/labs&lt;/code&gt;, type the
+command &lt;code&gt;multipass info cloudvm&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;To open a terminal into the virtual machine, type &lt;code&gt;multipass shell cloudvm&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;When the terminal opens, the current working directory is &lt;code&gt;/home/ubuntu&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Type &lt;code&gt;cd labs&lt;/code&gt; to move to the folder where you’ll find your lab material.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;You’ll use the virtual machine terminal only to type the Docker commands.
+You can use all the tools installed on your machine to create and manage the files
+in the directory &lt;code&gt;LAB&lt;/code&gt; directly from your computer.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Once the lab is over, type &lt;code&gt;exit&lt;/code&gt; to leave the virtual machine terminal. This will lead you back
+to the terminal of your computer.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In the terminal of your computer, type &lt;code&gt;multipass stop cloudvm&lt;/code&gt; to stop the virtual machine.
+This will NOT destroy your files! It just stops the virtual machine from needlessly using the resources of your computer.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;ul&gt;
 &lt;li&gt;Being familiar with the notions of containers, images,
 volumes and networks in Docker.
-See the &lt;a href=&#34;/courses/cloud-computing/references/docker-primer&#34; target=&#34;_blank&#34;&gt;Docker primer&lt;/a&gt;
+See the &lt;a href=&#34;https://centralesupelec.edunao.com/pluginfile.php/219281/mod_resource/content/3/cccs-lecture02-en.pdf&#34; target=&#34;_blank&#34;&gt;Lecture 2&lt;/a&gt;
 for an introduction.&lt;/li&gt;
 &lt;li&gt;Being familiar with the &lt;a href=&#34;/courses/cloud-computing/references/linux-introduction&#34; target=&#34;_blank&#34;&gt;basic notions of Linux&lt;/a&gt;.&lt;/li&gt;
 &lt;li&gt;Don’t hesitate to look at the &lt;a href=&#34;/courses/cloud-computing/references/docker-cheat-sheet&#34; target=&#34;_blank&#34;&gt;Docker cheat sheet&lt;/a&gt;
@@ -4845,6 +4870,40 @@ download
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Want to copy the donwloaded file from the container to your computer?&lt;/summary&gt;&lt;/p&gt;
+&lt;p&gt;To copy the file &lt;code&gt;presentation&lt;/code&gt; to your working directory, type the following command in
+the host terminal:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;  docker cp &amp;lt;containerId&amp;gt;:/presentation .&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In the previous command, replace &lt;code&gt;&amp;lt;containerId&amp;gt;&lt;/code&gt; with the identifier of your container. You can obtain
+the identifier of the container from the output of the command &lt;code&gt;docker container ls -a&lt;/code&gt;.&lt;/p&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Where are the containers and image files stored?&lt;/strong&gt;&lt;/p&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;If you use MacOS or Windows&lt;/summary&gt;&lt;/p&gt;
+&lt;p&gt;The files managed by Docker are not stored directly in your computer, but
+in the Linux virtual machine installed and operated by Docker Desktop (remember, Docker always need Linux to be executed).&lt;/p&gt;
+&lt;p&gt;Therefore, you need to open a terminal inside that Linux virtual machine by typing the following command:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;docker run -it --rm --privileged --pid=host justincormack/nsenter1&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Once the terminal is opened, you can follow the instructions given below for Linux users.&lt;/p&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;If you use Docker on Linux&lt;/summary&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;All files managed by Docker are stored under folder &lt;code&gt;/var/lib/docker&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;To access that folder, you need to be root (i.e., administrator). Type the command &lt;code&gt;sudo su&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;If you type &lt;code&gt;ls /var/lib/docker&lt;/code&gt; you can look at the folders stored under this directory. You’ll see that there are
+folders corresponding to the different objects managed by Docker (containers, images, volumes and networks).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;To locate the files of a specific container, you first need to get the &lt;strong&gt;container identifier&lt;/strong&gt; by typing &lt;code&gt;docker container ls -a&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Type the command &lt;code&gt;docker inspect &amp;lt;container-id&amp;gt;&lt;/code&gt; (replace &lt;code&gt;&amp;lt;container-id&amp;gt;&lt;/code&gt; with the identifier of the container that you intend to inspect).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Locate the field &lt;code&gt;UpperDir&lt;/code&gt;. The value of this field is the path to the directory (let’s call it &lt;code&gt;CONTAINER_DIR&lt;/code&gt;) that contains the upper layer of the container (the writable layer).
+It should be a path that ends by &lt;code&gt;/diff&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;If you type &lt;code&gt;cd CONTAINER_DIR&lt;/code&gt; (replace &lt;code&gt;CONTAINER_DIR&lt;/code&gt; with the value of the field &lt;code&gt;UpperDir&lt;/code&gt;) you can finally see the files stored in
+your container.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+&lt;/div&gt;
 &lt;p&gt;In &lt;em&gt;my-alpine&lt;/em&gt; guest terminal type &lt;code&gt;exit&lt;/code&gt;.
 This closes the guest terminal and, as a result, stops the
 container.&lt;/p&gt;
@@ -4898,11 +4957,11 @@ images are transferred over the Internet.&lt;/p&gt;
 Ubuntu provides a powerful command-line package manager called
 &lt;strong&gt;Advanced Package Tool&lt;/strong&gt; (APT).
 First, you need to run the following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;apt-get update&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;apt update&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;which fetches the available packages from a list of sources
 available in file &lt;code&gt;/etc/apt/sources.list&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;Then, you can install &lt;code&gt;wget&lt;/code&gt; by running the following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;apt-get install -y wget&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;apt install -y wget&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;In order to obtain all the figures from a
 Web page, type the following command:&lt;/p&gt;
 &lt;pre class=&#34;shell&#34;&gt;&lt;code&gt;wget -nd -H -p -P /my-figures -A jpg,jpeg,png,gif -e robots=off -w 0.5 https://www.centralesupelec.fr/fr/presentation&lt;/code&gt;&lt;/pre&gt;
@@ -5284,7 +5343,7 @@ on the host; if your computer runs Windows or MacOS,
 you’ll not find that folder on your computer.
 Instead, it will be available in the virtual machine
 that Docker use on MacOS and Windows.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Do you want to see the directory? (Instructions for MacOS)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Do you want to see the directory? (Instructions for Windows and MacOS)&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;One way to look into the hidden VM is to run
 the following containerized application:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;docker run -it --rm --privileged --pid=host justincormack/nsenter1&lt;/code&gt;&lt;/p&gt;
@@ -5362,6 +5421,19 @@ Which folder would you look in?
 &lt;p&gt;In order to let containers communicate and, therefore, co-operate,
 Docker defines a simple networking model known as
 the &lt;a href=&#34;/courses/cloud-computing/references/docker-primer#single-host-networking&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;container network model&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;If you use a Linux virtual machine with Multipass&lt;/summary&gt;
+In this section, you’ll need to open several terminals in the virtual machine.
+You can do it easily by using &lt;code&gt;byobu&lt;/code&gt;, an advanced window manager already available in your virtual machine.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Just type &lt;code&gt;byobu&lt;/code&gt; to launch the window manager.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;If you want to open a new terminal, just press F2.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;If you want to switch from a terminal to another, just press F3 (to move to previous terminal) or F4
+(to move to next terminal).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;If you want to close a terminal, just type &lt;code&gt;exit&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;When you close all terminals, &lt;code&gt;byobu&lt;/code&gt; will stop executing.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
