@@ -7687,6 +7687,22 @@ answer the two following questions:&lt;/p&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The directory already exists in the base image.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;By looking at the documentation, we learn that
+we can put any initialization script in this directory.
+In other words, at the startup the database will execute the
+SQL queries in file &lt;code&gt;init-db.sql&lt;/code&gt; so that the database
+is populated with new data.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;From the documentation, we also learn that the script is not executed
+if the data directory is not empty. This means that already existing databases
+will not be touched.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;The last three lines of the Dockerfile contain a keyword (&lt;code&gt;ENV&lt;/code&gt;)
 that we never came across before.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -7698,6 +7714,22 @@ Look again at the documentation of the image &lt;code&gt;postgres:10-2-alpine&lt
 and try to explain the meaning of the last three lines of the Dockerfile.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;These lines set the value of three &lt;strong&gt;environment variables&lt;/strong&gt;, useful
+to pass some parameters to the database.
+From the documentation we learn that:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;POSTGRES_USER&lt;/code&gt; is the name of the database user. If not set,
+the default is the user &lt;code&gt;postgres&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;POSTGRES_PASSWORD&lt;/code&gt; is the password associated with the
+user. This is the only mandatory variable.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;POSTGRES_DB&lt;/code&gt; is the name given to the database.
+If not specified, the database name would be the same as the username.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;The Dockerfile of the web application is as follows:&lt;/p&gt;
 &lt;pre class=&#34;dockerfile&#34;&gt;&lt;code&gt;FROM node:9.6-alpine
 RUN mkdir /app
@@ -7783,6 +7815,16 @@ What key informs &lt;code&gt;docker compose&lt;/code&gt; where to find the
 Dockerfile of the two services?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The value of the key &lt;code&gt;build&lt;/code&gt; is the name of the directory that contains
+the Dockefile. For the service &lt;code&gt;web&lt;/code&gt;, this is the directory
+&lt;code&gt;web&lt;/code&gt;; for the service &lt;code&gt;db&lt;/code&gt;, it is the directory &lt;code&gt;database&lt;/code&gt;.
+All paths are relative to the position of the file &lt;code&gt;docker-compose.yml&lt;/code&gt;
+itself.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;When we’ll build the application from the file &lt;code&gt;docker-compose.yml&lt;/code&gt;,
 two images will be created, one for each service.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -7794,6 +7836,17 @@ What will the name of the two images be?
 What key in the file &lt;code&gt;docker-compose.yml&lt;/code&gt; gives you this information?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The name of the image corresponding to the service &lt;code&gt;web&lt;/code&gt;
+will be &lt;code&gt;pet-store-web&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The name of the image corresponding to the service &lt;code&gt;db&lt;/code&gt;
+will be &lt;code&gt;pet-store-db&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;This information is given by the key &lt;code&gt;image&lt;/code&gt;
+in the file &lt;code&gt;docker-compose.yml&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;building-the-application&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.2&lt;/span&gt; Building the application&lt;/h2&gt;
@@ -7810,6 +7863,12 @@ position yourself in the root directory
 &lt;li&gt;&lt;p&gt;When the build is complete, verify that the two images corresponding
 to the two services have been created (which docker command do you need here?).&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;docker images&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;executing-the-application&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.3&lt;/span&gt; Executing the application&lt;/h2&gt;
@@ -7854,6 +7913,16 @@ Verify that the network and the volumes associated with the
 application have been correctly created.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Type the commands:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker volume ls&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;and&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker network ls&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;to verify respectively that the volumes and the networks have been created&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -7863,6 +7932,19 @@ How many containers do you expect to be associated to
 the application?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Each &lt;strong&gt;image&lt;/strong&gt; corresponds to a &lt;strong&gt;service&lt;/strong&gt;.
+Here we have two.
+Each &lt;strong&gt;container&lt;/strong&gt; corresponds to a &lt;strong&gt;service instance&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;We didn’t specify any parameter when we launched the application,
+so by default one instance of each service is executed.&lt;/p&gt;
+&lt;p&gt;So, we expect to have &lt;strong&gt;two containers&lt;/strong&gt; associated to the application:
+one container for the service &lt;code&gt;web&lt;/code&gt; and one for the
+service &lt;code&gt;db&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;You can verify the answer to the previous question by typing the following command:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;docker-compose ps&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;This command is exactly equivalent to &lt;code&gt;docker container ls&lt;/code&gt;, except that
@@ -7878,6 +7960,21 @@ the meaning of the following?&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;0.0.0.0:5000-&amp;gt;3000/tcp&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The notation 5000-&amp;gt;3000 means that the port
+5000 of the host computer is &lt;strong&gt;mapped&lt;/strong&gt;
+to the port 3000 of the container.
+This mechanism is explained in
+&lt;a href=&#34;https://centralesupelec.edunao.com/pluginfile.php/219281/mod_resource/content/4/cccs-lecture02-en.pdf&#34; target=&#34;blank&#34;&gt;slide 64 of the lecture on Docker&lt;/a&gt;.
+More specifically,
+when a client application connects to the port 5000 of the host computer,
+the connection is redirected to the port 3000 of the container.&lt;/p&gt;
+&lt;p&gt;The IP address 0.0.0.0 means that we can connect to the container by
+using any IP address on the host computer.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -7905,6 +8002,17 @@ terminal window on your computer and follow these instructions:&lt;/p&gt;
 &lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;code&gt;http://localhost:5000&lt;/code&gt; or &lt;code&gt;http://127.0.0.1:5000/&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;In the network settings of you computer, you can also
+get the IP address associated by the DHCP server of your&lt;br /&gt;
+local network and use that address to connect to the application
+from another device &lt;strong&gt;connected to the same network&lt;/strong&gt;
+(for instance, your mobile phone).&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;If you want to see the cats, you need to append
@@ -7926,6 +8034,22 @@ for the application?
 What about the volumes?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Just type the command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker network ls&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;and you’ll see that the network &lt;code&gt;backend&lt;/code&gt; is not there anymore.&lt;/p&gt;
+&lt;p&gt;Type the command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker volume ls&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;and you’ll see that the volume &lt;code&gt;pet-store_pets-data&lt;/code&gt; is still there.&lt;/p&gt;
+&lt;p&gt;By default volumes are not removed, to avoid the risk of permanently deleting
+data that might still be useful later.
+If you wish to remove the volumes when shutting down the application,
+you can type:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker-compose down -v&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;scaling-a-service&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.5&lt;/span&gt; Scaling a service&lt;/h2&gt;
@@ -7947,6 +8071,18 @@ Running the previous command results in an error.&lt;/p&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;We’re trying to bind three instances to the port 5000 on the host computer. This is not
+possible.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In the section &lt;code&gt;ports&lt;/code&gt; of file
+&lt;code&gt;docker-compose.yml&lt;/code&gt; we need to remove 5000 and we only leave 3000. This way, each time we run a container, a random port will be chosen on the host computer to bind it
+with port 3000 of the container.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;You need to shut down the application before relaunching it again.
@@ -8190,6 +8326,18 @@ Open a web browser and type &lt;code&gt;http://localhost:80&lt;/code&gt;.&lt;/p&
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The connection is refused both when using &lt;code&gt;localhost&lt;/code&gt; and
+the IP address of the pod.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In order to connect to the service instance, we need to
+define a &lt;strong&gt;Service&lt;/strong&gt; object in Kubernetes, that exposes an IP address
+that client applications can use.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;The following configuration
 defines a Service object of type &lt;strong&gt;LoadBalancer&lt;/strong&gt;:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;apiVersion: v1
@@ -8222,6 +8370,17 @@ What is the field &lt;code&gt;selector&lt;/code&gt; in the definition of the ser
 (cf slide 56-57 in &lt;a href=&#34;https://centralesupelec.edunao.com/pluginfile.php/219286/mod_resource/content/4/cccs-lecture03-en.pdf&#34; target=&#34;_blank&#34;&gt;Lecture 3&lt;/a&gt;)&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The selector is used internally by Kubernetes to identify the pods that
+are the instances of the service.
+If you look at the specification of the pod above, the field &lt;code&gt;metadata&lt;/code&gt;
+contains a field &lt;code&gt;labels&lt;/code&gt;.
+One of the labels is &lt;code&gt;app: web-pod&lt;/code&gt; ;
+the selector matches this label.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -8230,6 +8389,15 @@ What is the field &lt;code&gt;selector&lt;/code&gt; in the definition of the ser
 In the specification of the service, what &lt;code&gt;port&lt;/code&gt; and &lt;code&gt;targetPort&lt;/code&gt; mean?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;port&lt;/code&gt; specifies the port number where the service will be available.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;targetPort&lt;/code&gt; specifies the port number opened at the pods that are instances of the service.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox activitybox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -8261,6 +8429,38 @@ By looking at the output of the command &lt;code&gt;kubectl get svc/nginx-servic
 which URL do you need to type in the Web browser in order to access the service?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The &lt;code&gt;CLUSTER-IP&lt;/code&gt; is an IP address that is only visible &lt;strong&gt;within the cluster&lt;/strong&gt;.
+In other words, only the services running within the cluster can connect to our
+&lt;code&gt;nginx-service&lt;/code&gt; by using this IP address.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What we need to use is the IP address specified under &lt;code&gt;EXTERNAL-IP&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;If you’re using Docker Desktop&lt;/summary&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;EXTERNAL-IP&lt;/code&gt; is likely to be &lt;code&gt;localhost&lt;/code&gt;
+or &lt;code&gt;127.0.0.1&lt;/code&gt;&lt;/p&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;If you’re using Minikube in the Linux VM&lt;/summary&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;EXTERNAL-IP&lt;/code&gt; will be whatever IP address assigned to the service.&lt;/p&gt;
+&lt;/details&gt;
+&lt;ul&gt;
+&lt;li&gt;As for the port number, under PORT(S) you should see something like 8080:30548
+(the second number is likely different, but it should be something in the range [30000-32767]).
+The port 30548 is opened on each node of the Kubernetes cluster.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In practice, when we type &lt;code&gt;http://localhost:8080&lt;/code&gt;, the load balancer replaces it
+with the IP address of a node in the cluster,
+followed by port number 30548.
+When the &lt;code&gt;kube-proxy&lt;/code&gt; on that node receives this request,
+it forwards it to an instance of the service,
+even if that instance runs in another node
+(mechanism of slide 64 in &lt;a href=&#34;https://centralesupelec.edunao.com/pluginfile.php/219286/mod_resource/content/4/cccs-lecture03-en.pdf&#34; target=&#34;_blank&#34;&gt;Lecture 3&lt;/a&gt;).&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Stop the pod and the service before moving on. Here are the commands to do so:&lt;/p&gt;
@@ -8300,6 +8500,19 @@ itself: &lt;strong&gt;stateless&lt;/strong&gt; or &lt;strong&gt;stateful&lt;/str
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Stateful&lt;/strong&gt; service: one that manages permanent data and is bound to that data.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Stateless&lt;/strong&gt; service: one that is not bound to permanent data.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The service &lt;code&gt;web&lt;/code&gt; is &lt;strong&gt;stateless&lt;/strong&gt; because it does not have to be tightly bound to the data.
+In other words, the service &lt;code&gt;web&lt;/code&gt; uses the data that is stored in the backend database, but
+it can be scheduled on any node of the cluster independently of that data.&lt;/p&gt;
+&lt;p&gt;The service &lt;code&gt;db&lt;/code&gt; is &lt;strong&gt;stateful&lt;/strong&gt; because it directly manages permanent data.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div id=&#34;the-web-service-deployment&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.1&lt;/span&gt; The &lt;code&gt;web&lt;/code&gt; service: deployment&lt;/h2&gt;
 &lt;p&gt;For &lt;strong&gt;stateless application services&lt;/strong&gt;, we can use
@@ -8378,6 +8591,20 @@ Type the following command:&lt;/p&gt;
 Deployment?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;We can clearly see three types of objects:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Three pods, that correspond to the three replicas that we specified in the configuration.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;One deployment. Note that the 3/3 indicates that the deployment has
+3 identical pods, of which 3 are running.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;One ReplicaSet. The Deployment creates a ReplicaSet, that is the actual object that
+controls the three pods. The Deployment provides some additional services (i.e., updates)
+on top of a ReplicaSet.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -8393,6 +8620,20 @@ get back control of the terminal.&lt;/p&gt;
 &lt;p&gt;How many pods do you see? Is it surprising?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;If we type the command right after deleting the pod, it is likely that we’ll see
+four pods, one that is &lt;em&gt;terminating&lt;/em&gt; and another one that is &lt;em&gt;running&lt;/em&gt;.
+Try to type the command until you see three running pods.&lt;/p&gt;
+&lt;p&gt;This is not surprising.
+If we kill the pod, the orchestrator detects a
+deviation from the &lt;strong&gt;desired state&lt;/strong&gt; (which is, we want three replicas) and
+reschedules immediately another pod.
+This is what we mean by a &lt;strong&gt;self-healing system&lt;/strong&gt;. This is one of the major roles
+of an orchestrator.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;the-web-service-service&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.2&lt;/span&gt; The &lt;code&gt;web&lt;/code&gt; service: service&lt;/h2&gt;
@@ -8419,6 +8660,23 @@ spec:
 Describe the specification of this service.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;We create a service named &lt;code&gt;web&lt;/code&gt;. This indicated in the field
+&lt;code&gt;metadata.name&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The service has type &lt;code&gt;LoadBalancer&lt;/code&gt;. This is indicated in the field
+&lt;code&gt;spec.type&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The service listens on port 8080 and uses the TCP protocol.
+Each service instance (i.e., pod) listens on port 3000.
+This is indicated in the field &lt;code&gt;spec.ports&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The instances of the service (i.e., the pods) are those with labels
+&lt;code&gt;app: pets&lt;/code&gt; and &lt;code&gt;service: web&lt;/code&gt;.
+This is indicated in the field &lt;code&gt;spec.selector&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox activitybox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -8515,6 +8773,17 @@ Type the command:&lt;/p&gt;
 &lt;p&gt;Which objects have been created when you deployed the StatefulSet?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;A pod (likely to be called &lt;code&gt;pod/db-0&lt;/code&gt;)&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;A new StatefulSet that governs the pod.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Note that the StatefulSet has only one pod, which is normal,
+since we didn’t specify a higher number of replicas.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -8535,6 +8804,19 @@ Open the Web browser and type the following URL:&lt;/p&gt;
 What do you observe? Can you explain the reason?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;We cannot access the application.
+If you type the command &lt;code&gt;kubectl get all&lt;/code&gt; quickly, you should show that the
+three pods that are instances of the service &lt;code&gt;web&lt;/code&gt; are in an error state.
+If you were too slow, you should see that the restart count of each pod has changed.
+This means that the pods have been restarted because of an error.&lt;/p&gt;
+&lt;p&gt;What happens here is that we launched the database,
+but we didn’t create the Service that lets the clients
+access the database.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;In the output of the command &lt;code&gt;get kubectl all&lt;/code&gt;, look at the names of the
 pods that are instances of the &lt;code&gt;web&lt;/code&gt; service.
 &lt;!-- in the TP you can even ask why all the three instances got an error--&gt;
@@ -8550,6 +8832,13 @@ Does the output of the previous command confirm the explanation
 given in the previous question?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Yes, we can clearly read ENOTFOUND db db:5432.
+This means that Kubernetes cannot resolve the name &lt;code&gt;db&lt;/code&gt; to an IP address.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;the-db-service-service-object&#34; class=&#34;section level1&#34;&gt;
@@ -8565,6 +8854,14 @@ Should the &lt;code&gt;db&lt;/code&gt; service be accessible to client applicati
 the Kubernetes cluster?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;No, this component is the backend of the application. The only client
+that needs to access the database is the frontend, that is the
+&lt;code&gt;web&lt;/code&gt; service, that runs inside the cluster.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -8573,6 +8870,13 @@ the Kubernetes cluster?&lt;/p&gt;
 Given the answer to the previous question, what should the type of this service be?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;strong&gt;ClusterIP&lt;/strong&gt;; this is the type of a service that does not need to
+be exposed to the outside world.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -8584,6 +8888,23 @@ named &lt;code&gt;db-service.yaml&lt;/code&gt; (or any other name of your liking
 that the service must have.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;pre&gt;&lt;code&gt;apiVersion: v1
+kind: Service
+metadata:
+  name: db
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5432
+    protocol: TCP
+  selector:
+    app: pets
+    service: db&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox activitybox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
