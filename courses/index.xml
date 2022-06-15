@@ -2204,6 +2204,313 @@ For each table, underline the primary keys and specify the foreign keys.
     </item>
     
     <item>
+      <title>SQL</title>
+      <link>/courses/gadexed/tutorials/sql/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/gadexed/tutorials/sql/</guid>
+      <description>
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;p&gt;In this tutorial you’ll learn:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The key integrity constraints in a relational database.&lt;/li&gt;
+&lt;li&gt;Basic SQL queries.&lt;/li&gt;
+&lt;li&gt;Advanced SQL queries.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div id=&#34;installing-postgresql&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Installing PostgreSQL&lt;/h1&gt;
+&lt;p&gt;In this tutorial you’ll be using &lt;strong&gt;PostgreSQL&lt;/strong&gt; as a
+relational database management system (RDBMS).&lt;/p&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Instructions for Windows users&lt;/summary&gt;&lt;/p&gt;
+&lt;p&gt;You can download the latest version of PostgreSQL (14.3)
+&lt;a href=&#34;https://www.enterprisedb.com/downloads/postgres-postgresql-downloads&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;from this page&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The installer contains:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The PostgreSQL server.&lt;/li&gt;
+&lt;li&gt;pgAdmin, a graphical administration tool.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You’ll find &lt;strong&gt;detailed installation instructions&lt;/strong&gt; &lt;a href=&#34;https://www.enterprisedb.com/docs/supported-open-source/postgresql/installer/02_installing_postgresql_with_the_graphical_installation_wizard/01_invoking_the_graphical_installer/&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;on this page&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Instructions for macOS users&lt;/summary&gt;&lt;/p&gt;
+&lt;p&gt;The best way to get PostgreSQL is to download and install &lt;strong&gt;Postgres.app&lt;/strong&gt;.
+You’ll find more details &lt;a href=&#34;https://postgresapp.com/&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;on this page&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;In addition, you need to &lt;a href=&#34;https://www.pgadmin.org/download/&#34; target=&#34;blank&#34;&gt;&lt;strong&gt;install pgAdmin&lt;/strong&gt;&lt;/a&gt;,
+ad administration tool that lets you interact with your database through a
+graphical interface.&lt;/p&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;starting-postgresql-and-pgadmin&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Starting PostgreSQL and pgAdmin&lt;/h1&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Instructions for Windows users&lt;/summary&gt;&lt;/p&gt;
+&lt;p&gt;Once the installation is completed, a PostgreSQL server should be
+automatically started.&lt;/p&gt;
+&lt;p&gt;You’ll open a connection to the server through the following steps:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Execute pgAdmin.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;On the left-side menu, right-click on &lt;em&gt;Servers&lt;/em&gt; and select &lt;em&gt;Create server&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In the &lt;em&gt;General&lt;/em&gt; tab, give the server a name of your choice.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In the &lt;em&gt;Connection&lt;/em&gt; tab, write &lt;em&gt;localhost&lt;/em&gt; as &lt;em&gt;host&lt;/em&gt;.
+Don’t change the values of the other options.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;What if I get the &lt;em&gt;Unable to connect to server&lt;/em&gt; error?&lt;/summary&gt;&lt;/p&gt;
+&lt;p&gt;You might want to have a look at the list of the services running on your computer to verify
+whether the PostgreSQL server is actually running.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://www.dell.com/support/kbdoc/it-it/000126393/how-to-use-windows-services-to-start-or-stop-services&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;This page&lt;/strong&gt;&lt;/a&gt;
+explains you how to open the panel with the list of services.
+You should locate PostgreSQL in this panel. If the service is not running, you’ll
+need to manually start it.&lt;/p&gt;
+&lt;/details&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Instructions for MacOS users&lt;/summary&gt;&lt;/p&gt;
+&lt;p&gt;You’ll open a connection to the server through the following steps:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Execute pgAdmin.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;On the left-side menu, right-click on &lt;em&gt;Servers&lt;/em&gt; and select &lt;em&gt;Create server&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In the &lt;em&gt;General&lt;/em&gt; tab, give the server a name of your choice.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In the &lt;em&gt;Connection&lt;/em&gt; tab, write &lt;em&gt;localhost&lt;/em&gt; as &lt;em&gt;host&lt;/em&gt;.
+Don’t change the values of the other options.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;obtain-the-data&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Obtain the data&lt;/h1&gt;
+&lt;p&gt;We consider the database of a DVD rental store containing data on films, actors,
+customers and the transactions of the store.&lt;/p&gt;
+&lt;p&gt;This database goes by the name &lt;strong&gt;Sakila&lt;/strong&gt;&lt;br /&gt;
+and was developed by Mike Hillyer, a former member of the MySQL team.&lt;/p&gt;
+&lt;p&gt;The tables of the database are &lt;a href=&#34;https://dev.mysql.com/doc/sakila/en/sakila-structure-tables.html&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;documented on this page&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Sakila has been ported from MySQL to PostgreSQL under the name &lt;strong&gt;pagila&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;In order to import the data into PostgreSQL, follow the steps below:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;From the pgAdmin interface, create a new database (right-click on &lt;em&gt;Databases&lt;/em&gt;, select &lt;em&gt;Create database&lt;/em&gt;).
+You can call the new database &lt;strong&gt;pagila&lt;/strong&gt; (or any name you want).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Download the &lt;a href=&#34;/courses/databases/tutorial-4/pagila-insert-data.sql&#34;&gt;&lt;strong&gt;dump file pagila-insert-data.sql&lt;/strong&gt;&lt;/a&gt;
+This file contains all the SQL statements necessary to create the tables of the database
+and populate them with some data.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Right-click on the new database, select &lt;em&gt;Query tool&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Click on the second (from the left) small icon on the top menu of the query tool to open a new file.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Through the interface, locate &lt;em&gt;pagila-schema.sql&lt;/em&gt; and open it.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Hit on the F5 button or click on the &lt;em&gt;play&lt;/em&gt; icon on the top menu of the query tool to execute the script.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The previous steps should have created the schema of the database&lt;br /&gt;
+and inserted the data.&lt;/p&gt;
+&lt;p&gt;You can see the list of tables
+by selecting (on the left menu) &lt;em&gt;Schemas&lt;/em&gt;, &lt;em&gt;public&lt;/em&gt;, &lt;em&gt;Tables&lt;/em&gt; (15 tables should appear).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Open a new query tool&lt;/strong&gt; to do the exercises.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;integrity-constraints&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Integrity constraints&lt;/h1&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1  &lt;/strong&gt;&lt;/span&gt;
+Execute the following statement:&lt;/p&gt;
+&lt;pre&gt;
+insert into film_actor values(1, 25)
+&lt;/pre&gt;
+&lt;p&gt;What is this statement supposed to do?
+What is the reaction of the DBMS?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2  &lt;/strong&gt;&lt;/span&gt;
+Write the statement to delete the film with
+&lt;em&gt;film_id&lt;/em&gt;=1 from
+the table &lt;TT&gt;Film&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;Execute the command. What happens?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3  &lt;/strong&gt;&lt;/span&gt;
+Look at the definition of the foreign key constraints
+in table &lt;TT&gt;film_actor&lt;/TT&gt; (right-click on the table,
+select &lt;em&gt;Constraints&lt;/em&gt;, &lt;em&gt;foreign key&lt;/em&gt;).&lt;/p&gt;
+&lt;p&gt;Is the definition of the foreign key constraint
+to table &lt;TT&gt;film&lt;/TT&gt; coherent with the behavior observed
+in the previous exercise?&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;NB&lt;/strong&gt; In order to see the options of a foreign key, click on the
+edit button on the left of the constraint. Then look at the
+tab &lt;em&gt;Action&lt;/em&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4  &lt;/strong&gt;&lt;/span&gt;
+Execute the following query:&lt;/p&gt;
+&lt;pre&gt;
+SELECT f.film_id as film_id_in_table_film, 
+       fa.film_id AS film_id_in_table_film_actor, 
+       fa.actor_id as actor_id, f.title as title
+FROM film f JOIN film_actor fa ON f.film_id = fa.film_id
+WHERE  f.title=&#39;ACE GOLDFINGER&#39;
+&lt;/pre&gt;
+&lt;p&gt;What does the query? Note down the identifier of the film in both tables
+&lt;TT&gt;film&lt;/TT&gt; and &lt;TT&gt;film_actor&lt;/TT&gt;.
+(columns &lt;TT&gt;film_id_in_table_film&lt;/TT&gt; and &lt;TT&gt;film_id_in_table_film_actor&lt;/TT&gt;).&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5  &lt;/strong&gt;&lt;/span&gt;
+Write and execute a statement to set the value 10000 to the identifier of the
+film ACE GOLDFINGER in table &lt;TT&gt;Film&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;After the modification, execute the query of the previous exercise.
+What changed? Explain in details what happened.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 6  &lt;/strong&gt;&lt;/span&gt;
+Execute the following statement:&lt;/p&gt;
+&lt;pre&gt;
+UPDATE film_actor
+SET film_id=2
+WHERE film_id=10000
+&lt;/pre&gt;
+&lt;p&gt;What does? What happens? Explain.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;basic-queries&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Basic queries&lt;/h1&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 7  &lt;/strong&gt;&lt;/span&gt;
+Write the following SQL queries:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Return all the information on all customers.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Return the first and last name of all customers.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Return the first and last name of all customers of the store with identifier 1.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;sorting-and-paginating&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Sorting and paginating&lt;/h1&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 8  &lt;/strong&gt;&lt;/span&gt;
+Write the following SQL queries:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Return the last and first name of all customers. Sort by last name in ascending order.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Same as in 1., but only return the first 100 customers.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Return the last and first name of all customers of the store with identifier 1.
+Sort by last name in ascending order and by first name in descending order.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;aggregating-queries&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Aggregating queries&lt;/h1&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 9  &lt;/strong&gt;&lt;/span&gt;
+Write the following SQL queries:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Count the number of films in the database (expected result: 1000).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;How many distinct actor last names are there?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Compute the total amount of payments across all rentals (expected result: 67416.51).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Compute the average, minimum and maximum duration of rental across all films
+(expected result: 4.9850000000000000, 3, 7).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Return the number of actors for each film.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Return the number of copies of each film in each store (table &lt;TT&gt;inventory&lt;/TT&gt;).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Same as 6., but only returns the pairs (film, store) if the number of copies is
+greater than or equal to 3.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;join-queries&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Join queries&lt;/h1&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 10  &lt;/strong&gt;&lt;/span&gt;
+Write the following SQL queries:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Return the first and last name of the manager of the store with identifier 1 (expected result: Mike Hillyer).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Return the first and last name of the actors in the film ACE GOLDFINGER.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Return first and last name of each actor and the number of films in which they played a role.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Same as in 3., but order by number of films in descending order.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Same as in 4., but only return actors who played a role in at least 10 films.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Return the identifier, the first and family name of the customers who have rented between 10 and 20
+movies in the category &lt;em&gt;Family&lt;/em&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;miscellaneous-queries&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Miscellaneous queries&lt;/h1&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-11&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 11  &lt;/strong&gt;&lt;/span&gt;
+Write the following SQL queries:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Which last names are &lt;strong&gt;not&lt;/strong&gt; repeated in table &lt;em&gt;actor&lt;/em&gt;?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Is a copy of the movie ACADEMY DINOSAUR available for rent from store 1?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Return the title and the release year of all films in one of the following categories:
+&lt;em&gt;Family&lt;/em&gt;, &lt;em&gt;Animation&lt;/em&gt;, &lt;em&gt;Documentary&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;details&gt;
+&lt;summary&gt;Tip&lt;/summary&gt;
+You can use the &lt;a href=&#34;https://www.w3schools.com/sql/sql_in.asp&#34; target=&#34;_blank&#34;&gt;operator IN&lt;/a&gt;
+&lt;/details&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Find all customers (id, last name, first name) whose last name starts with the letter L.
+&lt;details&gt;
+&lt;summary&gt;Tip&lt;/summary&gt;
+You can use the &lt;a href=&#34;https://www.w3schools.com/sql/sql_like.asp&#34; target=&#34;_blank&#34;&gt;operator LIKE&lt;/a&gt;
+&lt;/details&gt;&lt;/li&gt;
+&lt;li&gt;Return the total paid by each customer. For each customer, display a single
+column containing first and last name and another column with the total amount paid.
+Order the result alphabetically by last name&lt;/li&gt;
+&lt;/ol&gt;
+&lt;details&gt;
+&lt;summary&gt;Tip&lt;/summary&gt;
+You can use the &lt;a href=&#34;https://www.w3schools.com/sql/func_sqlserver_concat.asp&#34; target=&#34;_blank&#34;&gt;operator CONCAT&lt;/a&gt;
+&lt;/details&gt;
+&lt;ol start=&#34;6&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Return the total revenue from the rentals across the stores in each country.
+Order by descending revenue.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;The first and last name of the actor that played in the most films.
+If two or more actors are tied, the query must return the names of all of them.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>MongoDB</title>
       <link>/courses/bdia/tutorials/mongodb-tutorial/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -11005,11 +11312,14 @@ are rows in other tables that reference that movie.&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
 &lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.2  &lt;/strong&gt;&lt;/span&gt;
-Write a query to get &lt;em&gt;film_id&lt;/em&gt;,
-&lt;em&gt;actor_id&lt;/em&gt; and &lt;em&gt;title&lt;/em&gt; from
-the table &lt;TT&gt;film&lt;/TT&gt;
-joined with &lt;TT&gt;film_actor&lt;/TT&gt;
-for the film “ACE GOLDFINGER”.&lt;/p&gt;
+Execute the following query:&lt;/p&gt;
+&lt;pre&gt;
+SELECT f.film_id as film_id_in_table_film, fa.film_id AS film_id_in_table_film_actor, fa.actor_id as actor_id, f.title as title
+FROM film f JOIN film_actor fa ON f.film_id = fa.film_id
+WHERE  f.title=&#39;ACE GOLDFINGER&#39;
+&lt;/pre&gt;
+&lt;p&gt;What does the query? Note down the identifier of the film in both tables
+(columns &lt;TT&gt;film_id_in_table_film&lt;/TT&gt; and &lt;TT&gt;film_id_in_table_film_actor&lt;/TT&gt;).&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;details&gt;
