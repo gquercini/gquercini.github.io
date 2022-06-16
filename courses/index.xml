@@ -1878,6 +1878,111 @@ third-party drivers can be used by installing the corresponding plugins.&lt;/p&g
     </item>
     
     <item>
+      <title>Data warehousing</title>
+      <link>/courses/gadexed/tutorials/data-warehouse/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/gadexed/tutorials/data-warehouse/</guid>
+      <description>
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;p&gt;In this tutorial you will learn basic modeling strategies for a data warehouse.&lt;/p&gt;
+&lt;div id=&#34;use-case-scenario&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Use case scenario&lt;/h1&gt;
+&lt;p&gt;We intend to set up a data warehouse for the Sakila database that we used in Tutorial 3.&lt;/p&gt;
+&lt;p&gt;We suppose that a DVD rental store chain (let’s call it Sakila)
+maintains several operational database systems
+at their different stores, and the management intends to have a single
+point of truth, in order to check business trends. Hence, the idea of
+setting up a data warehouse.&lt;/p&gt;
+&lt;p&gt;In order to model a schema for the Sakila data warehouse, we need to identify
+dimensions and facts.
+To this extent, we first identify the business questions that the Sakila
+management wants to be answered.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1  &lt;/strong&gt;&lt;/span&gt;
+List some of the business questions that the Sakila management
+would like to answer.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;We recall here the conceptual model of the Sakila database.&lt;/p&gt;
+&lt;div class=&#34;figure&#34; style=&#34;text-align: center&#34;&gt;&lt;span id=&#34;fig:cnm&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/courses/databases/tutorial-4/sakila-3nf.png&#34; alt=&#34;The conceptual schema of the Sakila database&#34; width=&#34;100%&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 1: The conceptual schema of the Sakila database
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2  &lt;/strong&gt;&lt;/span&gt;
+Based on the business questions identified in the first exercise,
+can you tell what the fact and the dimension tables are?&lt;/p&gt;
+&lt;p&gt;Recall that the fact table should contain measures and the dimension tables
+should contain the context of the facts.
+The dimension table should answer the following questions about a fact: who, what,
+when, where.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;dimensional-modeling&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Dimensional modeling&lt;/h1&gt;
+&lt;p&gt;Now that we identified the fact and the dimension tables, we incrementally draw the
+star diagram for the Sakila data warehouse.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3  &lt;/strong&gt;&lt;/span&gt;
+Draw a first sketch of the star diagram.
+Do not specify any attributes in the tables.
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4  &lt;/strong&gt;&lt;/span&gt;
+Identify the primary key of the fact table.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5  &lt;/strong&gt;&lt;/span&gt;
+For each dimension table, there is a corresponding table in
+the operational database.&lt;/p&gt;
+&lt;p&gt;Discuss which attributes you will to the dimension tables.&lt;/p&gt;
+&lt;p&gt;In particular, consider the following points:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Are you going to add to a dimension table the attribute that is part of the
+primary key in the corresponding operational table?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Are you going to add to a dimension table attributes that are not
+part of the corresponding table?&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 6  &lt;/strong&gt;&lt;/span&gt;
+In our schema, the fact table is &lt;strong&gt;factless&lt;/strong&gt;: it only contains a primary key is no
+measurements.&lt;/p&gt;
+&lt;p&gt;Which measurements would you introduce?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Normalization theory</title>
       <link>/courses/gadexed/tutorials/normalization/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -2281,10 +2386,16 @@ Don’t change the values of the other options.&lt;/p&gt;&lt;/li&gt;
 &lt;/div&gt;
 &lt;div id=&#34;obtain-the-data&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Obtain the data&lt;/h1&gt;
-&lt;p&gt;We consider the database of a DVD rental store containing data on films, actors,
+&lt;p&gt;We consider the database of a DVD rental store chain containing data on films, actors,
 customers and the transactions of the store.&lt;/p&gt;
 &lt;p&gt;This database goes by the name &lt;strong&gt;Sakila&lt;/strong&gt;&lt;br /&gt;
 and was developed by Mike Hillyer, a former member of the MySQL team.&lt;/p&gt;
+&lt;div class=&#34;figure&#34; style=&#34;text-align: center&#34;&gt;&lt;span id=&#34;fig:cnm&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/courses/databases/tutorial-4/sakila-3nf.png&#34; alt=&#34;The conceptual schema of the Sakila database&#34; width=&#34;100%&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 1: The conceptual schema of the Sakila database
+&lt;/p&gt;
+&lt;/div&gt;
 &lt;p&gt;The tables of the database are &lt;a href=&#34;https://dev.mysql.com/doc/sakila/en/sakila-structure-tables.html&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;documented on this page&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;Sakila has been ported from MySQL to PostgreSQL under the name &lt;strong&gt;pagila&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;In order to import the data into PostgreSQL, follow the steps below:&lt;/p&gt;

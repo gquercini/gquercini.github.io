@@ -28,10 +28,10 @@
   
     
   
-  <meta name="description" content="Normalization theory exercises">
+  <meta name="description" content="Data modeling for data warehousing">
 
   
-  <link rel="alternate" hreflang="en-us" href="/courses/gadexed/tutorials/normalization/">
+  <link rel="alternate" hreflang="en-us" href="/courses/gadexed/tutorials/data-warehouse/">
 
   
 
@@ -219,7 +219,7 @@
   <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_2.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_2.png">
 
-  <link rel="canonical" href="/courses/gadexed/tutorials/normalization/">
+  <link rel="canonical" href="/courses/gadexed/tutorials/data-warehouse/">
 
   
   
@@ -233,9 +233,9 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Gianluca Quercini">
-  <meta property="og:url" content="/courses/gadexed/tutorials/normalization/">
-  <meta property="og:title" content="Normalization theory | Gianluca Quercini">
-  <meta property="og:description" content="Normalization theory exercises"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:url" content="/courses/gadexed/tutorials/data-warehouse/">
+  <meta property="og:title" content="Data warehousing | Gianluca Quercini">
+  <meta property="og:description" content="Data modeling for data warehousing"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
   
     
@@ -258,7 +258,7 @@
 
 
 
-  <title>Normalization theory | Gianluca Quercini</title>
+  <title>Data warehousing | Gianluca Quercini</title>
 
 </head>
 
@@ -549,8 +549,8 @@
         <a href="/courses/gadexed/tutorials/rel-data-modeling/">1. Relational data modeling</a>
       </li>
       
-      <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
-      <li class="active tutorials">
+      
+      <li class="tutorials">
         <a href="/courses/gadexed/tutorials/normalization/">2. Normalization theory</a>
       </li>
       
@@ -559,8 +559,8 @@
         <a href="/courses/gadexed/tutorials/sql/">3. SQL</a>
       </li>
       
-      
-      <li class="tutorials">
+      <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
+      <li class="active tutorials">
         <a href="/courses/gadexed/tutorials/data-warehouse/">4. Data warehousing</a>
       </li>
       
@@ -583,8 +583,8 @@
       <article class="article">
 
         <div class="docs-article-container">
-          <div class="heading">Gestion et analyse des données — Tutorial 2</div>
-          <h1>Normalization theory</h1>
+          <div class="heading">Gestion et analyse des données — Tutorial 4</div>
+          <h1>Data warehousing</h1>
           <hr>
           <div class="logo">
             <p><img src="/img/cs-logo.png" width="20%" style="display: block; margin: auto;" /></p>
@@ -596,60 +596,60 @@
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<p>In this tutorial you’ll learn:</p>
-<ul>
-<li>How to obtain a <strong>non-redundant set of functional dependencies</strong>.</li>
-<li>How to determine the <strong>candidate keys</strong> of a table given its functional dependencies.</li>
-<li>How to determine the <strong>normal form</strong> of a table.</li>
-</ul>
-<div id="question-1" class="section level1">
-<h1>Question 1</h1>
-<p>We consider a relational table <span class="math inline">\(R\)</span> with four columns <span class="math inline">\(A\)</span>, <span class="math inline">\(B\)</span>, <span class="math inline">\(C\)</span> and <span class="math inline">\(D\)</span>.
-Let <span class="math inline">\(\mathcal{F}\)</span> be the following set of functional dependencies:</p>
-<ol style="list-style-type: decimal">
-<li><p><span class="math inline">\(AB \rightarrow C\)</span></p></li>
-<li><p><span class="math inline">\(D \rightarrow BC\)</span></p></li>
-<li><p><span class="math inline">\(A \rightarrow B\)</span></p></li>
-</ol>
+<p>In this tutorial you will learn basic modeling strategies for a data warehouse.</p>
+<div id="use-case-scenario" class="section level1">
+<h1>Use case scenario</h1>
+<p>We intend to set up a data warehouse for the Sakila database that we used in Tutorial 3.</p>
+<p>We suppose that a DVD rental store chain (let’s call it Sakila)
+maintains several operational database systems
+at their different stores, and the management intends to have a single
+point of truth, in order to check business trends. Hence, the idea of
+setting up a data warehouse.</p>
+<p>In order to model a schema for the Sakila data warehouse, we need to identify
+dimensions and facts.
+To this extent, we first identify the business questions that the Sakila
+management wants to be answered.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1  </strong></span>
-Derive a minimal set <span class="math inline">\(\mathcal{G}\)</span> of functional dependencies that is equivalent to <span class="math inline">\(\mathcal{F}\)</span>.</p>
+List some of the business questions that the Sakila management
+would like to answer.</p>
 </div>
 </div>
+<p>We recall here the conceptual model of the Sakila database.</p>
+<div class="figure" style="text-align: center"><span id="fig:cnm"></span>
+<img src="/courses/databases/tutorial-4/sakila-3nf.png" alt="The conceptual schema of the Sakila database" width="100%" />
+<p class="caption">
+Figure 1: The conceptual schema of the Sakila database
+</p>
 </div>
-<div id="question-2" class="section level1">
-<h1>Question 2</h1>
-<p>Let <span class="math inline">\(R\)</span> be a relational table with five columns <span class="math inline">\((A, B, C, D, E)\)</span>.
-The following set <span class="math inline">\(\mathcal{F}\)</span> of functional dependencies hold:</p>
-<ol style="list-style-type: decimal">
-<li><span class="math inline">\(AB \rightarrow C\)</span></li>
-<li><span class="math inline">\(C \rightarrow A\)</span></li>
-<li><span class="math inline">\(C \rightarrow B\)</span></li>
-<li><span class="math inline">\(C \rightarrow D\)</span></li>
-<li><span class="math inline">\(D \rightarrow E\)</span></li>
-</ol>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 2  </strong></span>
-Specify the candidate keys of the table <span class="math inline">\(R\)</span>.</p>
+Based on the business questions identified in the first exercise,
+can you tell what the fact and the dimension tables are?</p>
+<p>Recall that the fact table should contain measures and the dimension tables
+should contain the context of the facts.
+The dimension table should answer the following questions about a fact: who, what,
+when, where.</p>
 </div>
 </div>
+</div>
+<div id="dimensional-modeling" class="section level1">
+<h1>Dimensional modeling</h1>
+<p>Now that we identified the fact and the dimension tables, we incrementally draw the
+star diagram for the Sakila data warehouse.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3  </strong></span>
-We assume that <span class="math inline">\(R\)</span> is in 1NF.</p>
-<ul>
-<li><p>Is table <span class="math inline">\(R\)</span> in 2NF? Justify your answer.</p></li>
-<li><p>Is table <span class="math inline">\(R\)</span> in 3NF? Justify your answer.</p></li>
-<li>Is table <span class="math inline">\(R\)</span> in BCNF? Justify your answer.</li>
-</ul>
+<span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3  </strong></span>
+Draw a first sketch of the star diagram.
+Do not specify any attributes in the tables.
 </div>
 </div>
 <div class="infobox exercisebox">
@@ -657,47 +657,23 @@ We assume that <span class="math inline">\(R\)</span> is in 1NF.</p>
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 4  </strong></span>
-If the table <span class="math inline">\(R\)</span> from the previous exercise is not in BCNF,
-how would you change the schema so that BCNF is satisfied?
-For each table, specify the primary key and the foreign keys
-linking the tables to each other.</p>
+Identify the primary key of the fact table.</p>
 </div>
 </div>
-</div>
-<div id="question-3" class="section level1">
-<h1>Question 3</h1>
-<p>Let <span class="math inline">\(R\)</span> be a relational table with four columns
-<span class="math inline">\((A, B, C, D)\)</span>. <span class="math inline">\(\{A, B\}\)</span> is the only candidate key.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 5  </strong></span>
-Identify a minimal set of functional dependencies.
-Justify your answer.</p>
-</div>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 6  </strong></span>
-Add <span class="math inline">\(B \rightarrow D\)</span> to the set of functional dependencies that you identified
-in the previous exercise.
-Modify the minimal set of functional dependencies accordingly.
-Justify your answer.</p>
-</div>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 7  </strong></span>
-We assume that <span class="math inline">\(R\)</span> is in 1NF.</p>
+For each dimension table, there is a corresponding table in
+the operational database.</p>
+<p>Discuss which attributes you will to the dimension tables.</p>
+<p>In particular, consider the following points:</p>
 <ul>
-<li><p>Is table <span class="math inline">\(R\)</span> in 2NF? Justify your answer.</p></li>
-<li><p>Is table <span class="math inline">\(R\)</span> in 3NF? Justify your answer.</p></li>
-<li>Is table <span class="math inline">\(R\)</span> in BCNF? Justify your answer.</li>
+<li><p>Are you going to add to a dimension table the attribute that is part of the
+primary key in the corresponding operational table?</p></li>
+<li><p>Are you going to add to a dimension table attributes that are not
+part of the corresponding table?</p></li>
 </ul>
 </div>
 </div>
@@ -705,49 +681,10 @@ We assume that <span class="math inline">\(R\)</span> is in 1NF.</p>
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 8  </strong></span>
-Normalize <span class="math inline">\(R\)</span> to the BCNF form.
-Justify your choices.</p>
-</div>
-</div>
-</div>
-<div id="question-4" class="section level1">
-<h1>Question 4</h1>
-<p>We consider the following table:</p>
-<pre><code>Patient (ssn, first_name, last_name, phone_number, insurance_number, 
-         insurance_expiration_date)</code></pre>
-<p>where the following set <span class="math inline">\(\mathcal{F}\)</span> of functional dependencies holds:</p>
-<pre><code>ssn -&gt; first_name, last_name, phone_number, insurance_number, 
-       insurance_expiration_date 
-
-insurance_number -&gt; insurance_expiration_date</code></pre>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<span id="exr:unnamed-chunk-9" class="exercise"><strong>Exercise 9  </strong></span>Derive a minimal set <span class="math inline">\(\mathcal{G}\)</span> of functional dependencies that is equivalent to <span class="math inline">\(\mathcal{F}\)</span>.
-</div>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<span id="exr:unnamed-chunk-10" class="exercise"><strong>Exercise 10  </strong></span>Given <span class="math inline">\(\mathcal{G}\)</span>, identify the candidate keys in the table <TT>Patient</TT>.
-</div>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<span id="exr:unnamed-chunk-11" class="exercise"><strong>Exercise 11  </strong></span>Specify the normal form of the table <TT>Patient</TT>. Justify your answer.
-</div>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<span id="exr:unnamed-chunk-12" class="exercise"><strong>Exercise 12  </strong></span>How would you normalize
-table <TT>Patient</TT> to BCNF? Justify your answer.
+<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 6  </strong></span>
+In our schema, the fact table is <strong>factless</strong>: it only contains a primary key is no
+measurements.</p>
+<p>Which measurements would you introduce?</p>
 </div>
 </div>
 </div>
