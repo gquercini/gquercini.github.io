@@ -28,10 +28,10 @@
   
     
   
-  <meta name="description" content="Data modeling for data warehousing">
+  <meta name="description" content="Data modeling in MongoDB">
 
   
-  <link rel="alternate" hreflang="en-us" href="/courses/gadexed/tutorials/data-warehouse/">
+  <link rel="alternate" hreflang="en-us" href="/courses/gadexed/tutorials/mongodb-data-modeling/">
 
   
 
@@ -219,7 +219,7 @@
   <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_2.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_2.png">
 
-  <link rel="canonical" href="/courses/gadexed/tutorials/data-warehouse/">
+  <link rel="canonical" href="/courses/gadexed/tutorials/mongodb-data-modeling/">
 
   
   
@@ -233,9 +233,9 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Gianluca Quercini">
-  <meta property="og:url" content="/courses/gadexed/tutorials/data-warehouse/">
-  <meta property="og:title" content="Data warehousing | Gianluca Quercini">
-  <meta property="og:description" content="Data modeling for data warehousing"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:url" content="/courses/gadexed/tutorials/mongodb-data-modeling/">
+  <meta property="og:title" content="Data modeling in MongoDB | Gianluca Quercini">
+  <meta property="og:description" content="Data modeling in MongoDB"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
   
     
@@ -258,7 +258,7 @@
 
 
 
-  <title>Data warehousing | Gianluca Quercini</title>
+  <title>Data modeling in MongoDB | Gianluca Quercini</title>
 
 </head>
 
@@ -559,13 +559,13 @@
         <a href="/courses/gadexed/tutorials/sql/">3. SQL</a>
       </li>
       
-      <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
-      <li class="active tutorials">
+      
+      <li class="tutorials">
         <a href="/courses/gadexed/tutorials/data-warehouse/">4. Data warehousing</a>
       </li>
       
-      
-      <li class="tutorials">
+      <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
+      <li class="active tutorials">
         <a href="/courses/gadexed/tutorials/mongodb-data-modeling/">5. Data modeling in MongoDB</a>
       </li>
       
@@ -588,8 +588,8 @@
       <article class="article">
 
         <div class="docs-article-container">
-          <div class="heading">Gestion et analyse des données — Tutorial 4</div>
-          <h1>Data warehousing</h1>
+          <div class="heading">Gestion et analyse des données — Tutorial 5</div>
+          <h1>Data modeling in MongoDB</h1>
           <hr>
           <div class="logo">
             <p><img src="/img/cs-logo.png" width="20%" style="display: block; margin: auto;" /></p>
@@ -601,29 +601,26 @@
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<p>In this tutorial you will learn basic modeling strategies for a data warehouse.</p>
 <div id="use-case-scenario" class="section level1">
 <h1>Use case scenario</h1>
-<p>We intend to set up a data warehouse for the Sakila database that we used in Tutorial 3.</p>
-<p>We suppose that a DVD rental store chain (let’s call it Sakila)
-maintains several operational database systems
-at their different stores, and the management intends to have a single
-point of truth, in order to check business trends. Hence, the idea of
-setting up a data warehouse.</p>
-<p>In order to model a schema for the Sakila data warehouse, we need to identify
-dimensions and facts.
-To this extent, we first identify the business questions that the Sakila
-management wants to be answered.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1  </strong></span>
-List some of the business questions that the Sakila management
-would like to answer.</p>
+<p>The Sakila database is serving an increasing number of queries from staff
+around the world.
+A single monolithic database is not sufficient anymore to serve all
+the requests and the company is thinking of distributing the database across
+several servers (horizontal scalability).
+However, a relational database does not handle horizontal scalability very well, due
+to the fact that the data is scattered across numerous table, as mandated by the normalization
+process.
+Hence, the Sakila team is turning to you to help them migrate the database from PostgreSQL to
+MongoDB.</p>
+<p>For the migration to happen, it is necessary to conceive a suitable data model.
+From the first discussions with the Sakila management,
+you quickly understand that one of the main use of the database is to
+manage (add, update and read) rental information.</p>
 </div>
-</div>
-<p>We recall here the conceptual model of the Sakila database.</p>
+<div id="analysis-of-the-existing-model" class="section level1">
+<h1>Analysis of the existing model</h1>
+<p>The existing data model is recalled in the following figure.</p>
 <div class="figure" style="text-align: center"><span id="fig:cnm"></span>
 <img src="/courses/databases/tutorial-4/sakila-3nf.png" alt="The conceptual schema of the Sakila database" width="100%" />
 <p class="caption">
@@ -634,27 +631,49 @@ Figure 1: The conceptual schema of the Sakila database
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 2  </strong></span>
-Based on the business questions identified in the first exercise,
-can you tell what the fact and the dimension tables are?</p>
-<p>Recall that the fact table should contain measures and the dimension tables
-should contain the context of the facts.
-The dimension table should answer the following questions about a fact: who, what,
-when, where.</p>
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1  </strong></span>
+Determine the cardinality (one-to-one, one-to-many, many-to-many)
+of each of the relationships
+in which the entity <TT>Rental</TT> is involved.</p>
+<p><strong>N.B.</strong> Don’t hesitate to look at the attributes of each entity
+in the existing PostgreSQL database.</p>
 </div>
 </div>
-</div>
-<div id="dimensional-modeling" class="section level1">
-<h1>Dimensional modeling</h1>
-<p>Now that we identified the fact and the dimension tables, we incrementally draw the
-star diagram for the Sakila data warehouse.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3  </strong></span>
-Draw a first sketch of the star diagram.
-Do not specify any attributes in the tables.
+<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 2  </strong></span>
+Look at the tables <TT>Rental</TT> and <TT>Customer</TT> in the PostgreSQL
+Sakila database.</p>
+<p><strong>Estimate the size of a row in bytes in both tables.</strong></p>
+<p>The following considerations will help you in the task.</p>
+<ul>
+<li><p>The storage size of a numeric data type is clearly indicated in <a href="https://www.postgresql.org/docs/8.1/datatype.html#DATATYPE-NUMERIC" target="_blank"><strong>the PostgreSQL documentation</strong></a>.</p></li>
+<li><p>The storage size of date/time types is clearly indicated in <a href="https://www.postgresql.org/docs/8.1/datatype-datetime.html" target="_blank"><strong>the PostgreSQL documentation</strong></a></p></li>
+<li><p>The columns with type <TT>text</TT> hold UTF-8 characters. We assume that each character is 1 byte long (although some characters might need more than 1 byte).</p></li>
+<li><p>The columns with type <TT>boolean</TT> needs 1 byte storage.</p></li>
+<li><p>We assume that an email address is 25 characters long on average.</p></li>
+<li><p>We assume that a last name is 7 characters long on average.</p></li>
+<li><p>We assume that a first name is 6 characters long on average.</p></li>
+<li><p>In both tables we ignore the columns <TT>last_update</TT> and <TT>create_date</TT>.</p></li>
+<li>In table <TT>Customer</TT> we ignore the column <TT>active</TT>.</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="considerations-for-the-new-model" class="section level1">
+<h1>Considerations for the new model</h1>
+<p>We need to take some decisions as to the new data model.
+The considerations that we made in the previous exercises
+will lead us to the right decisions.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3  </strong></span></p>
+<p>How would you model the entities <TT>Rental</TT>
+and <TT>Payment</TT> given the cardinalities that you identified in the previous section?</p>
 </div>
 </div>
 <div class="infobox exercisebox">
@@ -662,7 +681,11 @@ Do not specify any attributes in the tables.
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 4  </strong></span>
-Identify the primary key of the fact table.</p>
+Suppose that we create a collection <TT>Customer</TT>
+and we embed in each customer document the list of rentals
+for that customer.</p>
+<p>How many rentals can we store at most for a given customer, knowing
+that the size of a document cannot exceed 16 MB?</p>
 </div>
 </div>
 <div class="infobox exercisebox">
@@ -670,15 +693,20 @@ Identify the primary key of the fact table.</p>
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 5  </strong></span>
-For each dimension table, there is a corresponding table in
-the operational database.</p>
-<p>Discuss which attributes you will to the dimension tables.</p>
-<p>In particular, consider the following points:</p>
+In our current database we have:</p>
 <ul>
-<li><p>Are you going to add to a dimension table the attribute that is part of the
-primary key in the corresponding operational table?</p></li>
-<li><p>Are you going to add to a dimension table attributes that are not
-part of the corresponding table?</p></li>
+<li><p>599 customers.</p></li>
+<li><p>16044 rentals.</p></li>
+<li><p>On average, each customer has around 27 rentals.</p></li>
+</ul>
+<p>Compute the size in byte of the two following collections:</p>
+<ul>
+<li><p>Collection <TT>Customer</TT>, where each document contains the
+information about a customer and an embedded list with the information
+on all the rentals made by the customer.</p></li>
+<li>Collection <TT>Rental</TT>, where each document contains the information
+about a rental and an embedded document with the information on the customer
+that made the rental.</li>
 </ul>
 </div>
 </div>
@@ -687,9 +715,68 @@ part of the corresponding table?</p></li>
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 6  </strong></span>
-In our schema, the fact table is <strong>factless</strong>: it only contains a primary key is no
-measurements.</p>
-<p>Which measurements would you introduce?</p>
+Discuss advantages and disadvantages of the two following options:</p>
+<ol style="list-style-type: decimal">
+<li><p>A collection <TT>Customer</TT> with a document for each customer
+holding the list of all the rentals of the customer.</p></li>
+<li>A collection <TT>Rental</TT> with a document for each rental
+holding the data on the relative customer.</li>
+</ol>
+</div>
+</div>
+<p>It seems that one of the two solutions has a higher storage demands
+than the other, and therefore the odds seems to be stacked against that solution.</p>
+<p>However….</p>
+<p>We still have to consider two more entities that are
+linked to the rentals: staff and inventory.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 7  </strong></span>
+Discuss how you can fit staff and inventory in each of the solutions
+presented in the previous exercise.
+Discuss advantages and disadvantages of each option that you present.</p>
+</div>
+</div>
+<p>From the previous exercise, we have a clearer idea as to the best solution
+to our case.
+We take a closer look at the storage requirements of the adopted solution.
+Consider that:</p>
+<ul>
+<li><p>The size in byte of a document storing the information of a staff member is around 84000 bytes
+(we also store a profile picture).</p></li>
+<li><p>The size in byte of a document storing the information of an inventory item is 16 bytes.</p></li>
+</ul>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 8  </strong></span>
+If we denote by <span class="math inline">\(N_{rental}\)</span> the number of rentals, what is the size in bytes of the
+whole database for the adopted solution?</p>
+</div>
+</div>
+<p>Although the size that we determined in the previous exercise, may not sound
+impressive, we still have to store other information
+(films, actors….).
+If we could save a bit of space, we would be happy.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-9" class="exercise"><strong>Exercise 9  </strong></span>
+Discuss how you could save some space in the adopted solution.</p>
+<p><strong>HINT.</strong> Do you really need to denormalize all data?</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-10" class="exercise"><strong>Exercise 10  </strong></span>
+Propose a solution for all the entities involved and
+estimate the saving in terms of storage requirements.</p>
 </div>
 </div>
 </div>

@@ -3117,6 +3117,198 @@ measurements.&lt;/p&gt;
     </item>
     
     <item>
+      <title>Data modeling in MongoDB</title>
+      <link>/courses/gadexed/tutorials/mongodb-data-modeling/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/gadexed/tutorials/mongodb-data-modeling/</guid>
+      <description>
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;div id=&#34;use-case-scenario&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Use case scenario&lt;/h1&gt;
+&lt;p&gt;The Sakila database is serving an increasing number of queries from staff
+around the world.
+A single monolithic database is not sufficient anymore to serve all
+the requests and the company is thinking of distributing the database across
+several servers (horizontal scalability).
+However, a relational database does not handle horizontal scalability very well, due
+to the fact that the data is scattered across numerous table, as mandated by the normalization
+process.
+Hence, the Sakila team is turning to you to help them migrate the database from PostgreSQL to
+MongoDB.&lt;/p&gt;
+&lt;p&gt;For the migration to happen, it is necessary to conceive a suitable data model.
+From the first discussions with the Sakila management,
+you quickly understand that one of the main use of the database is to
+manage (add, update and read) rental information.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;analysis-of-the-existing-model&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Analysis of the existing model&lt;/h1&gt;
+&lt;p&gt;The existing data model is recalled in the following figure.&lt;/p&gt;
+&lt;div class=&#34;figure&#34; style=&#34;text-align: center&#34;&gt;&lt;span id=&#34;fig:cnm&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/courses/databases/tutorial-4/sakila-3nf.png&#34; alt=&#34;The conceptual schema of the Sakila database&#34; width=&#34;100%&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 1: The conceptual schema of the Sakila database
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1  &lt;/strong&gt;&lt;/span&gt;
+Determine the cardinality (one-to-one, one-to-many, many-to-many)
+of each of the relationships
+in which the entity &lt;TT&gt;Rental&lt;/TT&gt; is involved.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;N.B.&lt;/strong&gt; Don’t hesitate to look at the attributes of each entity
+in the existing PostgreSQL database.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2  &lt;/strong&gt;&lt;/span&gt;
+Look at the tables &lt;TT&gt;Rental&lt;/TT&gt; and &lt;TT&gt;Customer&lt;/TT&gt; in the PostgreSQL
+Sakila database.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Estimate the size of a row in bytes in both tables.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The following considerations will help you in the task.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The storage size of a numeric data type is clearly indicated in &lt;a href=&#34;https://www.postgresql.org/docs/8.1/datatype.html#DATATYPE-NUMERIC&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;the PostgreSQL documentation&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The storage size of date/time types is clearly indicated in &lt;a href=&#34;https://www.postgresql.org/docs/8.1/datatype-datetime.html&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;the PostgreSQL documentation&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The columns with type &lt;TT&gt;text&lt;/TT&gt; hold UTF-8 characters. We assume that each character is 1 byte long (although some characters might need more than 1 byte).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The columns with type &lt;TT&gt;boolean&lt;/TT&gt; needs 1 byte storage.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;We assume that an email address is 25 characters long on average.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;We assume that a last name is 7 characters long on average.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;We assume that a first name is 6 characters long on average.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In both tables we ignore the columns &lt;TT&gt;last_update&lt;/TT&gt; and &lt;TT&gt;create_date&lt;/TT&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;In table &lt;TT&gt;Customer&lt;/TT&gt; we ignore the column &lt;TT&gt;active&lt;/TT&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;considerations-for-the-new-model&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Considerations for the new model&lt;/h1&gt;
+&lt;p&gt;We need to take some decisions as to the new data model.
+The considerations that we made in the previous exercises
+will lead us to the right decisions.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;How would you model the entities &lt;TT&gt;Rental&lt;/TT&gt;
+and &lt;TT&gt;Payment&lt;/TT&gt; given the cardinalities that you identified in the previous section?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4  &lt;/strong&gt;&lt;/span&gt;
+Suppose that we create a collection &lt;TT&gt;Customer&lt;/TT&gt;
+and we embed in each customer document the list of rentals
+for that customer.&lt;/p&gt;
+&lt;p&gt;How many rentals can we store at most for a given customer, knowing
+that the size of a document cannot exceed 16 MB?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5  &lt;/strong&gt;&lt;/span&gt;
+In our current database we have:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;599 customers.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;16044 rentals.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;On average, each customer has around 27 rentals.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Compute the size in byte of the two following collections:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Collection &lt;TT&gt;Customer&lt;/TT&gt;, where each document contains the
+information about a customer and an embedded list with the information
+on all the rentals made by the customer.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Collection &lt;TT&gt;Rental&lt;/TT&gt;, where each document contains the information
+about a rental and an embedded document with the information on the customer
+that made the rental.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 6  &lt;/strong&gt;&lt;/span&gt;
+Discuss advantages and disadvantages of the two following options:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;A collection &lt;TT&gt;Customer&lt;/TT&gt; with a document for each customer
+holding the list of all the rentals of the customer.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;A collection &lt;TT&gt;Rental&lt;/TT&gt; with a document for each rental
+holding the data on the relative customer.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;It seems that one of the two solutions has a higher storage demands
+than the other, and therefore the odds seems to be stacked against that solution.&lt;/p&gt;
+&lt;p&gt;However….&lt;/p&gt;
+&lt;p&gt;We still have to consider two more entities that are
+linked to the rentals: staff and inventory.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 7  &lt;/strong&gt;&lt;/span&gt;
+Discuss how you can fit staff and inventory in each of the solutions
+presented in the previous exercise.
+Discuss advantages and disadvantages of each option that you present.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;From the previous exercise, we have a clearer idea as to the best solution
+to our case.
+We take a closer look at the storage requirements of the adopted solution.
+Consider that:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The size in byte of a document storing the information of a staff member is around 84000 bytes
+(we also store a profile picture).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The size in byte of a document storing the information of an inventory item is 16 bytes.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 8  &lt;/strong&gt;&lt;/span&gt;
+If we denote by &lt;span class=&#34;math inline&#34;&gt;\(N_{rental}\)&lt;/span&gt; the number of rentals, what is the size in bytes of the
+whole database for the adopted solution?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Although the size that we determined in the previous exercise, may not sound
+impressive, we still have to store other information
+(films, actors….).
+If we could save a bit of space, we would be happy.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 9  &lt;/strong&gt;&lt;/span&gt;
+Discuss how you could save some space in the adopted solution.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;HINT.&lt;/strong&gt; Do you really need to denormalize all data?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 10  &lt;/strong&gt;&lt;/span&gt;
+Propose a solution for all the entities involved and
+estimate the saving in terms of storage requirements.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Normalization theory</title>
       <link>/courses/gadexed/tutorials/normalization/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
