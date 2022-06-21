@@ -623,6 +623,24 @@ List some of the business questions that the Sakila management
 would like to answer.</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>Different sets of questions are possible. Here are some examples.</p>
+<ol style="list-style-type: decimal">
+<li>Which store generates the most revenue?</li>
+<li>Which customers have rented the most in the past year? (maybe to award fidelity points).</li>
+<li>Which customers have rented the least in the past year? (maybe to offer some discounts to encourage
+the customer to rent again).</li>
+<li>Which staffer has processed the most of the rentals in the past year? (staffer of the year).</li>
+<li>Which staffer has processed the least of the rentals in the past year? (maybe a layoff in sight?).</li>
+<li>Which month has the highest revenue? By country, by store?</li>
+<li>Which country generates the least revenue? (is there any concurrent out there that might be soon a threat
+in other countries too?)</li>
+<li>Which categories of films are most popular?</li>
+</ol>
+</div>
+</details>
 <p>We recall here the conceptual model of the Sakila database.</p>
 <div class="figure" style="text-align: center"><span id="fig:cnm"></span>
 <img src="/courses/databases/tutorial-4/sakila-3nf.png" alt="The conceptual schema of the Sakila database" width="100%" />
@@ -643,6 +661,24 @@ The dimension table should answer the following questions about a fact: who, wha
 when, where.</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>From the questions that we identified in the previous exercise,
+it is clear that we intend to use the data warehouse to
+answer questions about the <strong>rentals</strong>.</p>
+<p>Therefore, our fact table will be <TT>fact_rental</TT>.</p>
+<p>As for the dimensions:</p>
+<ul>
+<li><p>Question 1. suggests the use of the dimension store (where).</p></li>
+<li><p>Questions 2., 3. suggest the use of the dimension customer (who).</p></li>
+<li><p>Questions 4., 5. suggest the use of the dimension staff (who).</p></li>
+<li><p>Question 8. suggests the use of the dimension film (what).</p></li>
+</ul>
+<p>All questions suggests the use of a time dimension (when).</p>
+<p>The time dimension is virtually always present in a data warehouse.</p>
+</div>
+</details>
 </div>
 <div id="dimensional-modeling" class="section level1">
 <h1>Dimensional modeling</h1>
@@ -657,6 +693,12 @@ Draw a first sketch of the star diagram.
 Do not specify any attributes in the tables.
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p><img src="/courses/databases/tutorial-4/sakila-dw-sketch.png" alt="First sketch of the Sakila data warehouse"></p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -665,6 +707,23 @@ Do not specify any attributes in the tables.
 Identify the primary key of the fact table.</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>The primary key of the fact table is composed of
+all the attributes that refer to the dimensions.
+So, we write an attribute for each dimension:</p>
+<ul>
+<li><p><TT>staff_pk</TT>, foreign key to the dimension <TT>dim_staff</TT>.</p></li>
+<li><p><TT>film_pk</TT>, foreign key to the dimension <TT>dim_film</TT>.</p></li>
+<li><p><TT>period_pk</TT>, foreign key to the dimension <TT>dim_period</TT>.</p></li>
+<li><p><TT>store_pk</TT>, foreign key to the dimension <TT>dim_store</TT>.</p></li>
+<li><p><TT>customer_pk</TT>, foreign key to the dimension <TT>dim_customer</TT>.</p></li>
+</ul>
+<p>Here is the new schema.</p>
+<p><img src="/courses/databases/tutorial-4/sakila-dw-sketch-keys.png" alt="First sketch of the Sakila data warehouse with PKs"></p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -682,6 +741,37 @@ part of the corresponding table?</p></li>
 </ul>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<ul>
+<li>Each dimension table already has a primary key. However, this is the surrogate
+key that identifies each entity in the dimension table.
+The business key that is in the corresponding operational table is still
+a valuable attribute to add.</li>
+</ul>
+<p>So, for example, in the table dim_film we’ll add the attribute film_id that is the
+primary key in the operational table <TT>film</TT>.</p>
+<ul>
+<li>In each dimension table, we typically add all the attributes that are in the
+corresponding operational table. However, we also add attributes that
+are in the linked tables, if they’re necessary to our analysis.
+For example, in the operational database the category of a film is<br />
+in a separate table <TT>film_category</TT> (as a result of the normalization process).</li>
+</ul>
+<p>If we decide to integrate these dimensions and keep a normalized schema,
+we obtain a <strong>snowflake schema</strong>.</p>
+<p><img src="/courses/databases/tutorial-4/sakila-dw-snowflake.png" alt="Snowflake schema of Sakila data warehouse"></p>
+<p>However, in a data warehouse we tend to denormalize the dimension tables, to avoid
+to incur the cost of joining tables.</p>
+<p><img src="/courses/databases/tutorial-4/sakila-dw-sketch-dim-full.png" alt="Sakila data warehouse with attributes in the dimension tables"></p>
+<p>One last remark on the attribute <TT>film_categories</TT> in table <TT>dim_film</TT>.
+The value of this attribute is a list.
+One might want to avoid this by using a <strong>one-hot encoding</strong>.
+In other words, if the set of all possible categories is small, we can have one boolean attribute
+for each category; a <em>True</em> value would indicate that the film is in the corresponding category.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -692,6 +782,17 @@ measurements.</p>
 <p>Which measurements would you introduce?</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>It all depends on the queries that we intend to ask.
+In the queries that we identified at the beginning of the tutorial,
+we were interested in the revenue generated by the rentals.
+Also, we might want to keep track of the number of rentals of
+a given film by a given customer in the given period, and the number of returns.</p>
+<p><img src="/courses/databases/tutorial-4/sakila-dw-final.png" alt="Final schema of the Sakila data warehouse"></p>
+</div>
+</details>
 </div>
 
           </div>
