@@ -574,6 +574,11 @@
         <a href="/courses/gadexed/tutorials/mongodb-queries/">6. Queries in MongoDB</a>
       </li>
       
+      
+      <li class="tutorials">
+        <a href="/courses/gadexed/tutorials/neo4j/">7. Neo4j</a>
+      </li>
+      
     </ul>
     </div>
     
@@ -644,6 +649,22 @@ in which the entity <TT>Rental</TT> is involved.</p>
 in the existing PostgreSQL database.</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>The entity <TT>Rental</TT> has a relationship with the following tables;</p>
+<ul>
+<li><p><TT>Inventory</TT>. A rental refers to a single inventory (essentially, a copy of a DVD).
+An inventory might be part of several rentals. This is a <strong>one-to-many relationship</strong>.</p></li>
+<li><p><TT>Staff</TT>. A rental is taken care of by a single staff member,
+A staff member might take care of several rentals. This is a <strong>one-to-many relationship</strong>.</p></li>
+<li><p><TT>Customer</TT>. A rental is made by a single customer. A customer might make
+several rentals. This is a <strong>one-to-many relationship</strong>.</p></li>
+<li><p><TT>Payment</TT>. A payment is relative to a single rental. A rental is associated with a single
+payment. This is a <strong>one-to-one relationship</strong>.</p></li>
+</ul>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -666,6 +687,32 @@ Sakila database.</p>
 </ul>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>For the table <TT>Rental</TT> we have:</p>
+<ul>
+<li><p>Column <TT>rental_id</TT>, <TT>integer</TT>, <strong>4 bytes</strong>.</p></li>
+<li><p>Column <TT>rental_date</TT>, <TT>timestamp with time zone</TT>, <strong>8 bytes</strong>.</p></li>
+<li><p>Column <TT>inventory_id</TT>, <TT>integer</TT>, <strong>4 bytes</strong>.</p></li>
+<li><p>Column <TT>customer_id</TT>, <TT>smallint</TT>, <strong>2 bytes</strong>.</p></li>
+<li><p>Column <TT>return_date</TT>, <TT>timestamp with time zone</TT>, <strong>8 bytes</strong>.</p></li>
+<li><p>Column <TT>staff_id</TT>, <TT>smallint</TT>, <strong>2 bytes</strong>.</p></li>
+</ul>
+<p>In total, a row in table <TT>Rental</TT> needs <strong>28 bytes</strong> of storage.</p>
+<p>For the table <TT>Customer</TT> we have:</p>
+<ul>
+<li><p>Column <TT>customer_id</TT>, <TT>integer</TT>, <strong>4 bytes</strong>.</p></li>
+<li><p>Column <TT>store_id</TT>, <TT>smallint</TT>, <strong>2 bytes</strong>.</p></li>
+<li><p>Column <TT>first_name</TT>, <TT>text</TT>, <strong>6 bytes</strong> (average).</p></li>
+<li><p>Column <TT>last_name</TT>, <TT>text</TT>, <strong>7 bytes</strong> (average).</p></li>
+<li><p>Column <TT>email</TT>, <TT>text</TT>, <strong>25 bytes</strong> (average).</p></li>
+<li><p>Column <TT>address_id</TT>, <TT>smallint</TT>, <strong>2 bytes</strong>.</p></li>
+<li><p>Column <TT>activebool</TT>, <TT>boolean</TT>, <strong>1 byte</strong>.</p></li>
+</ul>
+<p>In total, a row in table <TT>Customer</TT> needs <strong>47 bytes</strong> of storage.</p>
+</div>
+</details>
 </div>
 <div id="considerations-for-the-new-model" class="section level1">
 <h1>Considerations for the new model</h1>
@@ -681,6 +728,28 @@ will lead us to the right decisions.</p>
 and <TT>Payment</TT>, given the cardinalities that you identified in the previous section?</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>The relationship between the two given entities is <strong>one-to-one</strong>.
+Therefore, we can use a denormalized schema in MongoDB.</p>
+<p>That is, we can create one single collection to store the information about the
+two entities.</p>
+<p>We have two options:</p>
+<ul>
+<li><p>We create a collection <TT>Payment</TT>, where each document contains
+the attributes of a payment and an embedded document with the details of the rental
+the payment refers to.</p></li>
+<li><p>We create a collection <TT>Rental</TT>, where each document contains
+the attributes of a rental and an embedded document with the details of the payment
+for the rental.</p></li>
+</ul>
+<p>Although both options are perfectly valid, we prefer the second one, as
+rentals are our first-class citizens in our database.</p>
+<p>We can also consider the attributes of a payment as attributes of a rental, without
+creating an embedded document for the payment.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -693,6 +762,20 @@ for that customer.</p>
 that the size of a document cannot exceed 16 MB?</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>We’ve seen before that each rental needs 28 bytes of space.
+To make the computation easier, we round this size up to 32
+bytes (a power of two).
+Considering that 16 MB = <span class="math inline">\(16 \times 2^{20}\)</span>, the maximum number of
+rentals that we can store for a given customer is given by:</p>
+<p><span class="math display">\[
+\frac{16 \times 2^{20}}{32} = 2^{-1} \times 2^{20} = 2^{19}
+\]</span></p>
+<p>This gives around 600,000 rentals.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -715,6 +798,21 @@ that made the rental.</li>
 </ul>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>We previously found out that for each customer we need 47 bytes
+and for each rental we need 28 bytes.</p>
+<p>A document that holds the data about a customer and the list of all the
+rentals of the customer will need <span class="math inline">\(47 + 27 \times 28 = 830\)</span> bytes.</p>
+<p>Hence, the total size of the <TT>Customer</TT> collection is
+<span class="math inline">\(803 \times 599 = 480977\)</span> bytes, that is 470 KB.</p>
+<p>A document that holds the data about a rental and its customer
+needs $ 28 + 47 = 75 $ bytes.</p>
+<p>Hence, the total size of the <TT>Rental</TT> collection is
+<span class="math inline">\(75 \times 16044 = 1203300\)</span> bytes, that is 1,1 MB.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -729,6 +827,40 @@ holding the data on the relative customer.</li>
 </ol>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>Advantages of solution 1.:</p>
+<ul>
+<li><p>There is no redundancy. In fact, a rental is relative to at most one customer, therefore
+the data on a rental is not duplicated across different documents.</p></li>
+<li><p>As a result, the size of the collection is smaller than the collection in solution 2.</p></li>
+<li><p>For each customer, we retrieve the information on all his/her rentals with only one read operation</p></li>
+</ul>
+<p>Disadvantages of solution 1.:</p>
+<ul>
+<li><p>There is a limit (albeit an acceptable one) on the number of rentals that we can store
+for each customer.</p></li>
+<li><p>We lose a “rental-centric” view of our data. As a result, if any other document in another
+collection (e.g., staff) refers to a rental, all the information about a rental
+must be denormalized in that document.</p></li>
+</ul>
+<p>Advantages of solution 2.</p>
+<ul>
+<li><p>A “rental-centric” view of our data. Aggregating information from different rentals
+does not require digging rentals out of several lists.</p></li>
+<li><p>The size of each document is small and will never exceed the 16 MB limit.</p></li>
+<li><p>As a result, reading a document from the collection takes less time and memory than
+reading a document from the collection in solution 1.</p></li>
+</ul>
+<p>Disadvantages of solution 2.</p>
+<ul>
+<li><p>There is a lot of redundancy. The information about a customer are replicated
+each time the customer makes a rental.</p></li>
+<li><p>As a result, the size of the collection is much higher than in solution 1.</p></li>
+</ul>
+</div>
+</details>
 <p>It seems that one of the two solutions has a higher storage demands
 than the other, and therefore the odds seems to be stacked against that solution.</p>
 <p>However….</p>
@@ -744,6 +876,41 @@ presented in the previous exercise.
 Discuss advantages and disadvantages of each option that you present.</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p><strong>Solution 1</strong></p>
+<p>We need to somehow link staff and inventory to the relative rental.
+We have three options:</p>
+<ul>
+<li><p>We embed staff and inventory into each rental document, which, let’s recall it, is
+already embedded in an array. This creates redundancy, as a staff member or an inventory item
+can appear in more than one rental.</p></li>
+<li><p>We create three separate collections (<TT>Customer</TT>, <TT>Staff</TT> and <TT>Inventory</TT>)
+and in each we embed an array with the list of the relative rentals.
+The problem is that the data on the rentals are now replicated three times.
+This solution is particularly bad, because rentals are frequently written.
+When we create a rental, we need to write three documents; when a customer
+returns an item, we need to update the return date in three documents.</p></li>
+<li><p>We create four collections (<TT>Customer</TT>, <TT>Staff</TT>, <TT>Inventory</TT> and
+<TT>Rentals</TT>); for each customer, staff and inventory we keep a list of rentals,
+each item being the identifier that refers to the appropriate rental.
+We fall back to the normalized schema of the PostgreSQL database.
+Then, it isn’t clear how this normalized schema will help horizontally scale the database.</p></li>
+</ul>
+<p><strong>Solution 2</strong></p>
+<p>We have only one collection <TT>Rental</TT>; in each document, we
+have an attribute customer, whose value is an embedded document with all the information
+about a customer, an attribute staff, whose value is an embedded document
+with all information about a staff member, and an attribute inventory, whose value is
+an embedded document with all information about an inventory item.</p>
+<p>This solution has higher storage requirements than the options presented in solution 1,
+but it has the clear advantage of being a denormalized schema,
+where we control every facet of a rental (customer, staff, inventory).
+Moreover, when we create a rental, we only write one document ; when we
+update the return date of a rental, we only update one document.</p>
+</div>
+</details>
 <p>From the previous exercise, we have a clearer idea as to the best solution
 to our case.
 We take a closer look at the storage requirements of the adopted solution.
@@ -762,6 +929,19 @@ If we denote by <span class="math inline">\(N_{rental}\)</span> the number of re
 whole database for the adopted solution?</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>Let’s recall that the size in bytes of a document storing the information on a customer is 47 bytes.</p>
+<p>The size of the only collection <TT>Rental</TT> (hence, of the whole database) is:</p>
+<p><span class="math display">\[
+N_{rentals} \times (47 + 84000 + 16) = N_{rentals} \times 84063
+\]</span></p>
+<p>With 10,000 rentals, the size of the database is 800 MB.
+With 100,000 rentals, the size of the database is 7 GB.
+With 1,000,000 rentals, the size of the database is 78 GB.</p>
+</div>
+</details>
 <p>Although the size that we determined in the previous exercise, may not sound
 impressive, we still have to store other information
 (films, actors….).
@@ -775,6 +955,23 @@ Discuss how you could save some space in the adopted solution.</p>
 <p><strong>HINT.</strong> Do you really need to denormalize all data?</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>While modeling data for a MongoDB database, the choice
+between a normalized and a denormalized schema
+does not need to be a black and white one.</p>
+<p>We can have a denormalized schema, where we embed in the same documents
+information that are queried together, while storing in a separate collection
+the information that are rarely queried.</p>
+<p>For instance, the profile picture of a staff member might not be
+an important piece of information while we’re trying to analyze
+which staff members are the more productive ones.</p>
+<p>So, we might add another collection <TT>Staff</TT> where each
+document only contains attributes that are not in embedded documents in the collection
+<TT>Rental</TT>.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -784,6 +981,59 @@ Propose a solution for all the entities involved and
 estimate the saving in terms of storage requirements.</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>Here is a solution with three different collections.
+The information on inventory are completely denormalized into the
+collection <TT>Rental</TT>. For customers and staff members we only keep
+the necessary information and we normalize the information that are less
+likely to be queried while analyzing the rentals.</p>
+<p><img src="/courses/databases/tutorial-5/mongodb-sakila-first-solution.png" alt="First schema MongoDB"></p>
+<p>Let’s try to estimate the savings in terms of storage.
+In a document of the collection <TT>Rental</TT>, we have the following attributes:</p>
+<ul>
+<li><p>rental_id: 4 bytes.</p></li>
+<li><p>rental_date and return_date: 16 bytes.</p></li>
+<li><p>inventory_id: 4 bytes</p></li>
+<li><p>film_id and store_id: 4 bytes</p></li>
+<li><p>customer_id: 4 bytes</p></li>
+<li><p>customer first and last names: 13 bytes.</p></li>
+<li><p>country: 9 bytes (on average a country name has 9 characters).</p></li>
+<li><p>staff_id: 4 bytes</p></li>
+<li><p>staff first and last name: 13 bytes.</p></li>
+</ul>
+<p>In total a document in our collection <TT>Rental</TT> will have 71 bytes
+(a huge improvement wrt the 84000 bytes of our first solution).</p>
+<p>Of course, the size of a document in the <TT>Staff</TT> collection will be
+around 84000 bytes (we still store the profile picture).
+However, the number of staff members <span class="math inline">\(N_{staff}\)</span> is much lower
+than the number of rentals <span class="math inline">\(N_{rentals}\)</span>.</p>
+<p>It is easy to verify that the size of a document of the collection <TT>Customer</TT>
+is 34 bytes (same information as before except first and last name).
+Again, the number of customers <span class="math inline">\(N_{customers}\)</span> is much lower than
+<span class="math inline">\(N_{rentals}\)</span>.</p>
+<p>We assume that each customer has on average 30 rentals and for 100 customers we
+have 1 staff member.
+We have that:</p>
+<ul>
+<li><p>$N_{customer} = N_{rental}/30 $</p></li>
+<li><p>$N_{staff} = N_{customer}/100 = N_{rental}/3000 $</p></li>
+</ul>
+<p>So, the size of the database will be given by:</p>
+<p><span class="math display">\[
+71\times N_{rentals} + 84000 \times N_{rentals}/3000 + 34 \times N_{rentals}/30 = 100 \times N_{rental}
+\]</span></p>
+<p>If we want to compare against the first solution:</p>
+<ul>
+<li>With 10,000 rentals, the size of the database is 976 KB (instead of 800 MB).
+With 100,000 rentals, the size of the database is 9,5 MB (instead of 7 GB).
+With 1,000,000 rentals, the size of the database is 95 MB (instead of 78 GB).</li>
+</ul>
+<p>As you can see, a big improvement! And we have a denormalized schema that
+lets us take advantage of the horizontal scalability of MongoDB.</p>
+</div>
+</details>
 </div>
 <div id="the-new-model" class="section level1">
 <h1>The new model</h1>
@@ -797,6 +1047,37 @@ Consider the model that we obtained at the end of the previous section.
 Which data can you further denormalize?</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p><strong>Collection <TT>Staff</TT></strong></p>
+<ul>
+<li><p>The attribute <TT>address_id</TT> refers to a full address. We can fully
+denormalize this information into the documents of the collection.</p></li>
+<li><p>The attribute <TT>store_id</TT> refers to the store where the staff member works.
+The <TT>Store</TT> table in the original PostgreSQL database does not have
+too many columns. Therefore, it might be reasonable to fully denormalize these data.
+However, information on the stores are also linked to customers and to inventory items.
+If we need to update, say, the manager of a store, we would need to update
+three different documents.
+Hence, we prefer to create a collection <TT>Store</TT> and keep in the documents of the
+collection <TT>Staff</TT> only the city and country of a store (and its identifier of course).</p></li>
+</ul>
+<p><strong>Attribute <TT>Inventory</TT></strong> in collection <TT>Customer</TT></p>
+<ul>
+<li><p>Same considerations for the attribute <TT>store_id</TT>.</p></li>
+<li><p>The attribute <TT>film_id</TT> is the reference to the film the inventory item is relative to.
+The table <TT>Film</TT> in the original PostgreSQL database contains 14 columns.
+This high number of attributes advises us against a full denormalization, considering that
+a film can be relative to multiple inventory items.
+We might only keep the film title and the film categories. The rest of the attributes are kept in documents
+of a separate collection <TT>Film</TT>.</p></li>
+</ul>
+<p><strong>Collection <TT>Customer</TT></strong></p>
+<p>Same considerations for the attributes <TT>store_id</TT> and <TT>address_id</TT>.</p>
+<p><img src="/courses/databases/tutorial-5/mongodb-sakila-first-model-further-denormalized.png" alt="Sakila MongoDB data model further normalized"></p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -806,6 +1087,12 @@ Complete the diagram obtained in the previous exercise so as to obtain
 a full data model for the Sakila database.</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p><img src="/courses/databases/tutorial-5/mongodb-sakila-complete.png" alt="Sakila MongoDB full data model"></p>
+</div>
+</details>
 </div>
 
           </div>

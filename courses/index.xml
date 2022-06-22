@@ -2131,6 +2131,22 @@ in which the entity &lt;TT&gt;Rental&lt;/TT&gt; is involved.&lt;/p&gt;
 in the existing PostgreSQL database.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The entity &lt;TT&gt;Rental&lt;/TT&gt; has a relationship with the following tables;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;TT&gt;Inventory&lt;/TT&gt;. A rental refers to a single inventory (essentially, a copy of a DVD).
+An inventory might be part of several rentals. This is a &lt;strong&gt;one-to-many relationship&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;TT&gt;Staff&lt;/TT&gt;. A rental is taken care of by a single staff member,
+A staff member might take care of several rentals. This is a &lt;strong&gt;one-to-many relationship&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;TT&gt;Customer&lt;/TT&gt;. A rental is made by a single customer. A customer might make
+several rentals. This is a &lt;strong&gt;one-to-many relationship&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;TT&gt;Payment&lt;/TT&gt;. A payment is relative to a single rental. A rental is associated with a single
+payment. This is a &lt;strong&gt;one-to-one relationship&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -2153,6 +2169,32 @@ Sakila database.&lt;/p&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;For the table &lt;TT&gt;Rental&lt;/TT&gt; we have:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Column &lt;TT&gt;rental_id&lt;/TT&gt;, &lt;TT&gt;integer&lt;/TT&gt;, &lt;strong&gt;4 bytes&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Column &lt;TT&gt;rental_date&lt;/TT&gt;, &lt;TT&gt;timestamp with time zone&lt;/TT&gt;, &lt;strong&gt;8 bytes&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Column &lt;TT&gt;inventory_id&lt;/TT&gt;, &lt;TT&gt;integer&lt;/TT&gt;, &lt;strong&gt;4 bytes&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Column &lt;TT&gt;customer_id&lt;/TT&gt;, &lt;TT&gt;smallint&lt;/TT&gt;, &lt;strong&gt;2 bytes&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Column &lt;TT&gt;return_date&lt;/TT&gt;, &lt;TT&gt;timestamp with time zone&lt;/TT&gt;, &lt;strong&gt;8 bytes&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Column &lt;TT&gt;staff_id&lt;/TT&gt;, &lt;TT&gt;smallint&lt;/TT&gt;, &lt;strong&gt;2 bytes&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In total, a row in table &lt;TT&gt;Rental&lt;/TT&gt; needs &lt;strong&gt;28 bytes&lt;/strong&gt; of storage.&lt;/p&gt;
+&lt;p&gt;For the table &lt;TT&gt;Customer&lt;/TT&gt; we have:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Column &lt;TT&gt;customer_id&lt;/TT&gt;, &lt;TT&gt;integer&lt;/TT&gt;, &lt;strong&gt;4 bytes&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Column &lt;TT&gt;store_id&lt;/TT&gt;, &lt;TT&gt;smallint&lt;/TT&gt;, &lt;strong&gt;2 bytes&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Column &lt;TT&gt;first_name&lt;/TT&gt;, &lt;TT&gt;text&lt;/TT&gt;, &lt;strong&gt;6 bytes&lt;/strong&gt; (average).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Column &lt;TT&gt;last_name&lt;/TT&gt;, &lt;TT&gt;text&lt;/TT&gt;, &lt;strong&gt;7 bytes&lt;/strong&gt; (average).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Column &lt;TT&gt;email&lt;/TT&gt;, &lt;TT&gt;text&lt;/TT&gt;, &lt;strong&gt;25 bytes&lt;/strong&gt; (average).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Column &lt;TT&gt;address_id&lt;/TT&gt;, &lt;TT&gt;smallint&lt;/TT&gt;, &lt;strong&gt;2 bytes&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Column &lt;TT&gt;activebool&lt;/TT&gt;, &lt;TT&gt;boolean&lt;/TT&gt;, &lt;strong&gt;1 byte&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In total, a row in table &lt;TT&gt;Customer&lt;/TT&gt; needs &lt;strong&gt;47 bytes&lt;/strong&gt; of storage.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;considerations-for-the-new-model&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Considerations for the new model&lt;/h1&gt;
@@ -2168,6 +2210,28 @@ will lead us to the right decisions.&lt;/p&gt;
 and &lt;TT&gt;Payment&lt;/TT&gt;, given the cardinalities that you identified in the previous section?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The relationship between the two given entities is &lt;strong&gt;one-to-one&lt;/strong&gt;.
+Therefore, we can use a denormalized schema in MongoDB.&lt;/p&gt;
+&lt;p&gt;That is, we can create one single collection to store the information about the
+two entities.&lt;/p&gt;
+&lt;p&gt;We have two options:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;We create a collection &lt;TT&gt;Payment&lt;/TT&gt;, where each document contains
+the attributes of a payment and an embedded document with the details of the rental
+the payment refers to.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;We create a collection &lt;TT&gt;Rental&lt;/TT&gt;, where each document contains
+the attributes of a rental and an embedded document with the details of the payment
+for the rental.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Although both options are perfectly valid, we prefer the second one, as
+rentals are our first-class citizens in our database.&lt;/p&gt;
+&lt;p&gt;We can also consider the attributes of a payment as attributes of a rental, without
+creating an embedded document for the payment.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -2180,6 +2244,20 @@ for that customer.&lt;/p&gt;
 that the size of a document cannot exceed 16 MB?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;We’ve seen before that each rental needs 28 bytes of space.
+To make the computation easier, we round this size up to 32
+bytes (a power of two).
+Considering that 16 MB = &lt;span class=&#34;math inline&#34;&gt;\(16 \times 2^{20}\)&lt;/span&gt;, the maximum number of
+rentals that we can store for a given customer is given by:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+\frac{16 \times 2^{20}}{32} = 2^{-1} \times 2^{20} = 2^{19}
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;This gives around 600,000 rentals.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -2202,6 +2280,21 @@ that made the rental.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;We previously found out that for each customer we need 47 bytes
+and for each rental we need 28 bytes.&lt;/p&gt;
+&lt;p&gt;A document that holds the data about a customer and the list of all the
+rentals of the customer will need &lt;span class=&#34;math inline&#34;&gt;\(47 + 27 \times 28 = 830\)&lt;/span&gt; bytes.&lt;/p&gt;
+&lt;p&gt;Hence, the total size of the &lt;TT&gt;Customer&lt;/TT&gt; collection is
+&lt;span class=&#34;math inline&#34;&gt;\(803 \times 599 = 480977\)&lt;/span&gt; bytes, that is 470 KB.&lt;/p&gt;
+&lt;p&gt;A document that holds the data about a rental and its customer
+needs $ 28 + 47 = 75 $ bytes.&lt;/p&gt;
+&lt;p&gt;Hence, the total size of the &lt;TT&gt;Rental&lt;/TT&gt; collection is
+&lt;span class=&#34;math inline&#34;&gt;\(75 \times 16044 = 1203300\)&lt;/span&gt; bytes, that is 1,1 MB.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -2216,6 +2309,40 @@ holding the data on the relative customer.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Advantages of solution 1.:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;There is no redundancy. In fact, a rental is relative to at most one customer, therefore
+the data on a rental is not duplicated across different documents.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;As a result, the size of the collection is smaller than the collection in solution 2.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;For each customer, we retrieve the information on all his/her rentals with only one read operation&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Disadvantages of solution 1.:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;There is a limit (albeit an acceptable one) on the number of rentals that we can store
+for each customer.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;We lose a “rental-centric” view of our data. As a result, if any other document in another
+collection (e.g., staff) refers to a rental, all the information about a rental
+must be denormalized in that document.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Advantages of solution 2.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;A “rental-centric” view of our data. Aggregating information from different rentals
+does not require digging rentals out of several lists.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The size of each document is small and will never exceed the 16 MB limit.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;As a result, reading a document from the collection takes less time and memory than
+reading a document from the collection in solution 1.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Disadvantages of solution 2.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;There is a lot of redundancy. The information about a customer are replicated
+each time the customer makes a rental.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;As a result, the size of the collection is much higher than in solution 1.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;It seems that one of the two solutions has a higher storage demands
 than the other, and therefore the odds seems to be stacked against that solution.&lt;/p&gt;
 &lt;p&gt;However….&lt;/p&gt;
@@ -2231,6 +2358,41 @@ presented in the previous exercise.
 Discuss advantages and disadvantages of each option that you present.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Solution 1&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;We need to somehow link staff and inventory to the relative rental.
+We have three options:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;We embed staff and inventory into each rental document, which, let’s recall it, is
+already embedded in an array. This creates redundancy, as a staff member or an inventory item
+can appear in more than one rental.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;We create three separate collections (&lt;TT&gt;Customer&lt;/TT&gt;, &lt;TT&gt;Staff&lt;/TT&gt; and &lt;TT&gt;Inventory&lt;/TT&gt;)
+and in each we embed an array with the list of the relative rentals.
+The problem is that the data on the rentals are now replicated three times.
+This solution is particularly bad, because rentals are frequently written.
+When we create a rental, we need to write three documents; when a customer
+returns an item, we need to update the return date in three documents.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;We create four collections (&lt;TT&gt;Customer&lt;/TT&gt;, &lt;TT&gt;Staff&lt;/TT&gt;, &lt;TT&gt;Inventory&lt;/TT&gt; and
+&lt;TT&gt;Rentals&lt;/TT&gt;); for each customer, staff and inventory we keep a list of rentals,
+each item being the identifier that refers to the appropriate rental.
+We fall back to the normalized schema of the PostgreSQL database.
+Then, it isn’t clear how this normalized schema will help horizontally scale the database.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Solution 2&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;We have only one collection &lt;TT&gt;Rental&lt;/TT&gt;; in each document, we
+have an attribute customer, whose value is an embedded document with all the information
+about a customer, an attribute staff, whose value is an embedded document
+with all information about a staff member, and an attribute inventory, whose value is
+an embedded document with all information about an inventory item.&lt;/p&gt;
+&lt;p&gt;This solution has higher storage requirements than the options presented in solution 1,
+but it has the clear advantage of being a denormalized schema,
+where we control every facet of a rental (customer, staff, inventory).
+Moreover, when we create a rental, we only write one document ; when we
+update the return date of a rental, we only update one document.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;From the previous exercise, we have a clearer idea as to the best solution
 to our case.
 We take a closer look at the storage requirements of the adopted solution.
@@ -2249,6 +2411,19 @@ If we denote by &lt;span class=&#34;math inline&#34;&gt;\(N_{rental}\)&lt;/span&
 whole database for the adopted solution?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Let’s recall that the size in bytes of a document storing the information on a customer is 47 bytes.&lt;/p&gt;
+&lt;p&gt;The size of the only collection &lt;TT&gt;Rental&lt;/TT&gt; (hence, of the whole database) is:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+N_{rentals} \times (47 + 84000 + 16) = N_{rentals} \times 84063
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;With 10,000 rentals, the size of the database is 800 MB.
+With 100,000 rentals, the size of the database is 7 GB.
+With 1,000,000 rentals, the size of the database is 78 GB.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;Although the size that we determined in the previous exercise, may not sound
 impressive, we still have to store other information
 (films, actors….).
@@ -2262,6 +2437,23 @@ Discuss how you could save some space in the adopted solution.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;HINT.&lt;/strong&gt; Do you really need to denormalize all data?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;While modeling data for a MongoDB database, the choice
+between a normalized and a denormalized schema
+does not need to be a black and white one.&lt;/p&gt;
+&lt;p&gt;We can have a denormalized schema, where we embed in the same documents
+information that are queried together, while storing in a separate collection
+the information that are rarely queried.&lt;/p&gt;
+&lt;p&gt;For instance, the profile picture of a staff member might not be
+an important piece of information while we’re trying to analyze
+which staff members are the more productive ones.&lt;/p&gt;
+&lt;p&gt;So, we might add another collection &lt;TT&gt;Staff&lt;/TT&gt; where each
+document only contains attributes that are not in embedded documents in the collection
+&lt;TT&gt;Rental&lt;/TT&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -2271,6 +2463,59 @@ Propose a solution for all the entities involved and
 estimate the saving in terms of storage requirements.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Here is a solution with three different collections.
+The information on inventory are completely denormalized into the
+collection &lt;TT&gt;Rental&lt;/TT&gt;. For customers and staff members we only keep
+the necessary information and we normalize the information that are less
+likely to be queried while analyzing the rentals.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-5/mongodb-sakila-first-solution.png&#34; alt=&#34;First schema MongoDB&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Let’s try to estimate the savings in terms of storage.
+In a document of the collection &lt;TT&gt;Rental&lt;/TT&gt;, we have the following attributes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;rental_id: 4 bytes.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;rental_date and return_date: 16 bytes.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;inventory_id: 4 bytes&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;film_id and store_id: 4 bytes&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;customer_id: 4 bytes&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;customer first and last names: 13 bytes.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;country: 9 bytes (on average a country name has 9 characters).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;staff_id: 4 bytes&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;staff first and last name: 13 bytes.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In total a document in our collection &lt;TT&gt;Rental&lt;/TT&gt; will have 71 bytes
+(a huge improvement wrt the 84000 bytes of our first solution).&lt;/p&gt;
+&lt;p&gt;Of course, the size of a document in the &lt;TT&gt;Staff&lt;/TT&gt; collection will be
+around 84000 bytes (we still store the profile picture).
+However, the number of staff members &lt;span class=&#34;math inline&#34;&gt;\(N_{staff}\)&lt;/span&gt; is much lower
+than the number of rentals &lt;span class=&#34;math inline&#34;&gt;\(N_{rentals}\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;It is easy to verify that the size of a document of the collection &lt;TT&gt;Customer&lt;/TT&gt;
+is 34 bytes (same information as before except first and last name).
+Again, the number of customers &lt;span class=&#34;math inline&#34;&gt;\(N_{customers}\)&lt;/span&gt; is much lower than
+&lt;span class=&#34;math inline&#34;&gt;\(N_{rentals}\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;We assume that each customer has on average 30 rentals and for 100 customers we
+have 1 staff member.
+We have that:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;$N_{customer} = N_{rental}/30 $&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;$N_{staff} = N_{customer}/100 = N_{rental}/3000 $&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;So, the size of the database will be given by:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+71\times N_{rentals} + 84000 \times N_{rentals}/3000 + 34 \times N_{rentals}/30 = 100 \times N_{rental}
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;If we want to compare against the first solution:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;With 10,000 rentals, the size of the database is 976 KB (instead of 800 MB).
+With 100,000 rentals, the size of the database is 9,5 MB (instead of 7 GB).
+With 1,000,000 rentals, the size of the database is 95 MB (instead of 78 GB).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;As you can see, a big improvement! And we have a denormalized schema that
+lets us take advantage of the horizontal scalability of MongoDB.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;the-new-model&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;The new model&lt;/h1&gt;
@@ -2284,6 +2529,37 @@ Consider the model that we obtained at the end of the previous section.
 Which data can you further denormalize?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Collection &lt;TT&gt;Staff&lt;/TT&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The attribute &lt;TT&gt;address_id&lt;/TT&gt; refers to a full address. We can fully
+denormalize this information into the documents of the collection.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The attribute &lt;TT&gt;store_id&lt;/TT&gt; refers to the store where the staff member works.
+The &lt;TT&gt;Store&lt;/TT&gt; table in the original PostgreSQL database does not have
+too many columns. Therefore, it might be reasonable to fully denormalize these data.
+However, information on the stores are also linked to customers and to inventory items.
+If we need to update, say, the manager of a store, we would need to update
+three different documents.
+Hence, we prefer to create a collection &lt;TT&gt;Store&lt;/TT&gt; and keep in the documents of the
+collection &lt;TT&gt;Staff&lt;/TT&gt; only the city and country of a store (and its identifier of course).&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Attribute &lt;TT&gt;Inventory&lt;/TT&gt;&lt;/strong&gt; in collection &lt;TT&gt;Customer&lt;/TT&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Same considerations for the attribute &lt;TT&gt;store_id&lt;/TT&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The attribute &lt;TT&gt;film_id&lt;/TT&gt; is the reference to the film the inventory item is relative to.
+The table &lt;TT&gt;Film&lt;/TT&gt; in the original PostgreSQL database contains 14 columns.
+This high number of attributes advises us against a full denormalization, considering that
+a film can be relative to multiple inventory items.
+We might only keep the film title and the film categories. The rest of the attributes are kept in documents
+of a separate collection &lt;TT&gt;Film&lt;/TT&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Collection &lt;TT&gt;Customer&lt;/TT&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Same considerations for the attributes &lt;TT&gt;store_id&lt;/TT&gt; and &lt;TT&gt;address_id&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-5/mongodb-sakila-first-model-further-denormalized.png&#34; alt=&#34;Sakila MongoDB data model further normalized&#34;&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -2293,6 +2569,12 @@ Complete the diagram obtained in the previous exercise so as to obtain
 a full data model for the Sakila database.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-5/mongodb-sakila-complete.png&#34; alt=&#34;Sakila MongoDB full data model&#34;&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
@@ -2384,6 +2666,450 @@ Write the following queries in MongoDB using the aggregation framework:&lt;/p&gt
 &lt;li&gt;&lt;p&gt;Return the language of the film with title “ACE GOLDFINGER”.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Return all the information about the staff member who took care of rental 2.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Neo4j</title>
+      <link>/courses/gadexed/tutorials/neo4j/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/gadexed/tutorials/neo4j/</guid>
+      <description>
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;div id=&#34;setting-up-the-work-environment.&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Setting up the work environment.&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Download &lt;a href=&#34;https://neo4j.com/download/&#34; target=&#34;_blank&#34;&gt;Neo4j Desktop&lt;/a&gt;
+and install it on your computer.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Create a new project by clicking on the button “New”
+that you’ll find on the top left side of the window.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Click on “Add Database”, then “Create a Local Database”.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Give the database a name (e.g., &lt;em&gt;MovieLens&lt;/em&gt;) and set
+a password that you can easily remember; then click on “Create”.
+Choose version 4.4.8 for the database.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Click on “Start” and wait for the database to become active.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Click on the button “Open”. The &lt;em&gt;Neo4j Browser&lt;/em&gt; will pop up.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In the next section, you’ll have to type a sequence of commands to
+import the data.
+You’ll write the commands in the text field on top of the
+&lt;em&gt;Neo4j Browser&lt;/em&gt; (where you find the prompt &lt;em&gt;neo4j$&lt;/em&gt;).&lt;/p&gt;
+&lt;div id=&#34;import-the-data.&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Import the data.&lt;/h2&gt;
+&lt;p&gt;The dataset consists of
+data obtained from &lt;em&gt;MovieLens&lt;/em&gt;,
+a recommender system
+whose users give movies a rate
+between 1 and 5,
+based on whether they dislike or love them.
+MovieLens uses the rates to recommend
+movies that its users might like.
+The dataset is modeled as a &lt;strong&gt;directed graph&lt;/strong&gt; and
+consists of 100,004 rates on 9,125 movies
+across 671 users between January 9th, 1995 and October 16, 2016.
+The dataset also contains the names of
+the directors and the actors of each movie.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Import the &lt;strong&gt;nodes&lt;/strong&gt; corresponding to the
+&lt;strong&gt;movies&lt;/strong&gt; (label &lt;strong&gt;Movie&lt;/strong&gt;) by
+using the following command (it took 31 seconds on my computer):&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+:auto USING PERIODIC COMMIT 1000
+LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/movies.csv&#39; as row
+MERGE (m:Movie {movie_id: toInteger(row.movie_id), title_en:row.movie_title_en, title_fr:row.movie_title_fr, year: toInteger(row.movie_year)})
+RETURN count(m)
+&lt;/pre&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Create an &lt;strong&gt;index&lt;/strong&gt; on the property &lt;em&gt;movie_id&lt;/em&gt; of
+the nodes with label &lt;strong&gt;Movie&lt;/strong&gt; with the following command:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+create index movie_idx for (m:Movie) on (m.movie_id)
+&lt;/pre&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Import the &lt;strong&gt;nodes&lt;/strong&gt; corresponding to the
+&lt;strong&gt;actors&lt;/strong&gt; (label &lt;strong&gt;Actor&lt;/strong&gt;) by
+using the following command (it took 62 seconds on my computer):&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+:auto USING PERIODIC COMMIT 1000
+LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/actors.csv&#39; as row
+MERGE (a:Actor {actor_id: toInteger(row.actor_id), name:row.actor_name})
+RETURN count(a)
+&lt;/pre&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Create an &lt;strong&gt;index&lt;/strong&gt; on the property &lt;em&gt;actor_id&lt;/em&gt; of
+the nodes with label &lt;strong&gt;Actor&lt;/strong&gt; with the following command:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+create index actor_idx for (a:Actor) on (a.actor_id)
+&lt;/pre&gt;
+&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Import the &lt;strong&gt;nodes&lt;/strong&gt; corresponding to the
+&lt;strong&gt;directors&lt;/strong&gt; (label &lt;strong&gt;Director&lt;/strong&gt;) by
+using the following command (it took 4 seconds on my computer):&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+:auto USING PERIODIC COMMIT 1000
+LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/directors.csv&#39; as row
+MERGE (d:Director {director_id: toInteger(row.director_id), name:row.director_name})
+RETURN count(d)
+&lt;/pre&gt;
+&lt;ol start=&#34;6&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Create an &lt;strong&gt;index&lt;/strong&gt; on the property &lt;em&gt;director_id&lt;/em&gt; of
+the nodes with label &lt;strong&gt;Director&lt;/strong&gt; with the following command:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+create index director_idx for (d:Director) on (d.director_id)
+&lt;/pre&gt;
+&lt;ol start=&#34;7&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Import the &lt;strong&gt;nodes&lt;/strong&gt; corresponding to the
+&lt;strong&gt;genres&lt;/strong&gt; (label &lt;strong&gt;Genre&lt;/strong&gt;) by
+using the following command (it took 197 ms on my computer):&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+:auto USING PERIODIC COMMIT 1000
+LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/genres.csv&#39; as row
+MERGE (g:Genre {genre_id: toInteger(row.genre_id), name:row.genre_name})
+RETURN count(g)
+&lt;/pre&gt;
+&lt;ol start=&#34;8&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Create an &lt;strong&gt;index&lt;/strong&gt; on the property &lt;em&gt;genre_id&lt;/em&gt; of
+the nodes with label &lt;strong&gt;Genre&lt;/strong&gt; with the following command:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+create index genre_idx for (g:Genre) on (g.genre_id)
+&lt;/pre&gt;
+&lt;ol start=&#34;9&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Import the &lt;strong&gt;nodes&lt;/strong&gt; corresponding to the
+&lt;strong&gt;users&lt;/strong&gt; (label &lt;strong&gt;User&lt;/strong&gt;) by
+using the following command (it took 347 seconds on my computer):&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+:auto USING PERIODIC COMMIT 1000
+LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/users.csv&#39; as row
+MERGE (u:User {user_id: toInteger(row.user_id), name:row.user_nickname})
+RETURN count(u)
+&lt;/pre&gt;
+&lt;ol start=&#34;10&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Create an &lt;strong&gt;index&lt;/strong&gt; on the property &lt;em&gt;user_id&lt;/em&gt; of
+the nodes with label &lt;strong&gt;User&lt;/strong&gt; with the following command:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+create index user_idx for (u:User) on (u.user_id)
+&lt;/pre&gt;
+&lt;ol start=&#34;11&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Import the links of type &lt;strong&gt;ACTED_IN&lt;/strong&gt;
+between actors and movies with the following
+command (it took 2.5 seconds on my computer):&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+:auto USING PERIODIC COMMIT 1000
+LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/movies_actors.csv&#39; as row
+MATCH (m:Movie {movie_id: toInteger(row.movie_id)})
+MATCH (a:Actor {actor_id: toInteger(row.actor_id)})
+MERGE (a)-[r:ACTED_IN]-&gt;(m)
+RETURN count(r)
+&lt;/pre&gt;
+&lt;ol start=&#34;12&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Import the links of type &lt;strong&gt;DIRECTED&lt;/strong&gt;
+between directors and movies with the following
+command (it took 688 ms on my computer):&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+:auto USING PERIODIC COMMIT 1000
+LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/movies_directors.csv&#39; as row
+MATCH (m:Movie {movie_id: toInteger(row.movie_id)})
+MATCH (d:Director {director_id: toInteger(row.director_id)})
+MERGE (d)-[r:DIRECTED]-&gt;(m)
+RETURN count(r)
+&lt;/pre&gt;
+&lt;ol start=&#34;13&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Import the links of type &lt;strong&gt;HAS_GENRE&lt;/strong&gt;
+between movies and genres with the following
+command (it took 1 second on my computer):&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+:auto USING PERIODIC COMMIT 1000
+LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/movies_genres.csv&#39; as row
+MATCH (m:Movie {movie_id: toInteger(row.movie_id)})
+MATCH (g:Genre {genre_id: toInteger(row.genre_id)})
+MERGE (m)-[r:HAS_GENRE]-&gt;(g)
+RETURN count(r)
+&lt;/pre&gt;
+&lt;ol start=&#34;14&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Import the links of type &lt;strong&gt;RATED&lt;/strong&gt;
+between users and movies with the following
+command (it took 5.9 seconds on my computer):&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+:auto USING PERIODIC COMMIT 1000
+LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/user_rates.csv&#39; as row
+MATCH (m:Movie {movie_id: toInteger(row.movie_id)})
+MATCH (u:User {user_id: toInteger(row.user_id)})
+MERGE (u)-[r:RATED {rate:toFloat(row.rate)}]-&gt;(m)
+RETURN count(r)
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;exploratory-queries&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Exploratory queries&lt;/h1&gt;
+&lt;p&gt;If you looked at the commands used to import the data,
+you might already have an idea as to the structure of
+the graph.
+You can get a glimpse on the node labels,
+the relationship types and the property keys by clicking on the
+button circled in the following figure:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/plp/tutorials/neo4j/neo4j-db-button.png&#34; width=&#34;100%&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercise&lt;/strong&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1  &lt;/strong&gt;&lt;/span&gt;
+Write and execute the following query:&lt;/p&gt;
+&lt;pre&gt;
+MATCH (m:Movie {title_en:&#34;Toy Story&#34;}) 
+RETURN m;
+&lt;/pre&gt;
+&lt;p&gt;What do you obtain? What are the properties associated
+to a node with label &lt;em&gt;Movie&lt;/em&gt;?
+Click once on the node to display its properties.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercise&lt;/strong&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2  &lt;/strong&gt;&lt;/span&gt;
+Double-click on the node displayed as the result of the previous query.
+Analyze the neighbouring nodes (their labels and properties)
+and the incident links (direction, type and properties).
+You can move around the node by dragging it in the window.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;queries&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Queries&lt;/h1&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercise&lt;/strong&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3  &lt;/strong&gt;&lt;/span&gt;
+Write and execute the following queries:&lt;/p&gt;
+&lt;p&gt;Q1. The genres of the movies in the database.&lt;/p&gt;
+&lt;p&gt;Q2. The number of movies in the database.&lt;/p&gt;
+&lt;p&gt;Q3. The title of the movies released in 2015.&lt;/p&gt;
+&lt;p&gt;Q4. The number of directors by movie. Sort in decreasing order.&lt;/p&gt;
+&lt;p&gt;Q5. The names of the directors and the title of the movies that they
+directed and in which they also played.&lt;/p&gt;
+&lt;p&gt;Q6. The genres of the movies in which Tom Hanks played.&lt;/p&gt;
+Q7. The title and the rate of all the movies that
+the user with identifier 3 rated.
+Sort by rate in decreasing order.
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;query-chaining&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Query chaining&lt;/h2&gt;
+&lt;p&gt;Cypher allows the specification of
+complex queries composed of
+several queries that are concatenated
+with the clause &lt;strong&gt;WITH&lt;/strong&gt;.
+We are now going to see an example to
+obtain the titles of the movies
+that have been rated by at least 100 users.&lt;/p&gt;
+&lt;p&gt;At a first glance, the following query looks like a good solution:&lt;/p&gt;
+&lt;pre&gt;
+MATCH (n:Movie)&lt;-[:RATED]-(u:User) WHERE count(u) &gt;= 100
+RETURN n.title_en
+LIMIT 5;
+&lt;/pre&gt;
+&lt;p&gt;However, executing this query returns the following error:&lt;/p&gt;
+&lt;pre&gt;
+Invalid use of aggregating function count(...) in this context (line 1, column 42 (offset: 41))
+&#34;MATCH (n:Movie)&lt;-[:RATED]-(u:User) WHERE count(u) &gt;= 100&#34;
+&lt;/pre&gt;
+&lt;p&gt;Similarly to SQL, we cannot use aggregating functions in the clause WHERE.&lt;/p&gt;
+&lt;p&gt;A correct formulation of the query requires the use of the clause WITH
+to concatenate two queries: the first will count the number of rates
+for each movie:&lt;/p&gt;
+&lt;pre&gt;
+MATCH (n:Movie)&lt;-[:RATED]-(u:User) 
+RETURN n, count(u) as nb_rates
+&lt;/pre&gt;
+&lt;p&gt;The second will take in the output of the first and will
+filter all the movies where nb_rates &amp;lt; 100.
+In order to chain the two queries, we’ll replace the
+RETURN clause in the first query with a WITH clause, as follows:&lt;/p&gt;
+&lt;pre&gt;
+MATCH (n:Movie)&lt;-[:RATED]-(u:User) 
+WITH n, count(u) as nb_rates
+WHERE nb_rates &gt;= 100
+RETURN n.title_en
+&lt;/pre&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercise&lt;/strong&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4  &lt;/strong&gt;&lt;/span&gt;
+Write and execute a query to obtain the five movies
+that obtained the best average rate among the movies
+that have been rated by at least 100 users.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;movie-recommendation&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Movie recommendation&lt;/h1&gt;
+&lt;p&gt;We are now going to see how Neo4j
+can be effectively used in a real application
+by implementing queries that form the basis of a
+simple &lt;strong&gt;movie recommendation system&lt;/strong&gt;.
+This system is based on the notion of &lt;strong&gt;collaborative filtering&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;This consists in recommending a user &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; some films
+that s/he hasn’t rated yet and other
+users with similar preferences have loved.
+In our context, we say that a user loves
+a movie if s/he rated the movie at least 3.&lt;/p&gt;
+&lt;p&gt;This concept is explained in the following figure.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/plp/tutorials/neo4j/collaborative-filtering.png&#34; width=&#34;100%&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The user &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; loves 6 movies,
+3 of which are also loved by the user &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt; (the black nodes);
+it is reasonable to think that &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt;
+may also love the two movies that &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt; loved and &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; hasn’t rated yet.&lt;/p&gt;
+&lt;p&gt;The principle of collaborative filtering is
+based on the computation of a &lt;strong&gt;similarity score&lt;/strong&gt;
+between two users.
+Several similarity scores are possible in this context;
+here, we are going to use the &lt;strong&gt;Jaccard coefficient&lt;/strong&gt;.
+Let &lt;span class=&#34;math inline&#34;&gt;\(L(u)\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(L(v)\)&lt;/span&gt; be the
+sets of movies that &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt; love
+respectively;
+the similarity score &lt;span class=&#34;math inline&#34;&gt;\(J(u,v)\)&lt;/span&gt; between &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt; is given by:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+J(u, v) = \frac{|L(u) \cap L(v)|}{|L(u) \cup L(v)|}
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;In order to recommend movies to
+a target user &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt;,
+the recommender system computes the
+similarity score between &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt; and all
+the other users of the system and
+proposes to &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt; the movies
+that s/he hasn’t rated yet and that the &lt;span class=&#34;math inline&#34;&gt;\(k\)&lt;/span&gt; most similar users loved.&lt;/p&gt;
+&lt;p&gt;We are now going to incrementally write a query to recommend some movies to the target user 3.
+The first step consists in determining the value &lt;span class=&#34;math inline&#34;&gt;\(|L(v)|\)&lt;/span&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercise&lt;/strong&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5  &lt;/strong&gt;&lt;/span&gt;
+Write and execute the query to obtain
+the number of movies that the user 3 loved.
+This query must return the target user
+and the number of movies that s/he loves.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Next, we are going to determine the value &lt;span class=&#34;math inline&#34;&gt;\(|L(u)|\)&lt;/span&gt;,
+for all users &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; except &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercise&lt;/strong&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 6  &lt;/strong&gt;&lt;/span&gt;
+Write and execute the query
+to obtain the number of movies that each user &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; loves,
+except the target user 3.
+This query must return each user &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; and the number
+of movies that s/he loves.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;We put the two queries together with the clause WITH.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercise&lt;/strong&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 7  &lt;/strong&gt;&lt;/span&gt;
+Compose the two previous queries with the clause WITH.
+This query must return
+the target user 3,
+the number of movies that s/he loves,
+the other users &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; and the number of movies
+that they love.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Now, we need to
+determine the value &lt;span class=&#34;math inline&#34;&gt;\(L(u)\cup L(v)\)&lt;/span&gt;,
+for each user &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt;, and compute the similarity score with the
+Jaccard coefficient.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercise&lt;/strong&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 8  &lt;/strong&gt;&lt;/span&gt;
+Append (by using WITH)
+to the query written in the previous exercise
+a query that obtains
+the number of movies
+that any user &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; loved
+and that the target user 3 loved too,
+and computes the similarity score
+between the target user 3 and &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt;.
+This query must return the five most similar
+users to the target user and the similarity scores.&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt;Hint&lt;/summary&gt;
+Multiply the numerator of the equation
+by 1.0, otherwise Cypher will compute an integer division.
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;The last step consists in recommending some movies to the target user.
+From the previous query,
+take the identifier of the user &lt;span class=&#34;math inline&#34;&gt;\(w\)&lt;/span&gt; with
+the highest similarity to the target user.
+You are going to use this identifier directly in the new query.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercise&lt;/strong&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 9  &lt;/strong&gt;&lt;/span&gt;
+Write and execute
+the query to obtain the list of
+the movies that the user &lt;span class=&#34;math inline&#34;&gt;\(w\)&lt;/span&gt; loved
+and that the target user hasn’t rated yet. Sort this list by decreasing rate.&lt;/p&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Hint&lt;/summary&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;First, write a query
+to obtain the list of the movies
+that the target user rated.
+In the MATCH clause,
+use the variable &lt;span class=&#34;math inline&#34;&gt;\(m\)&lt;/span&gt; to indicate a movie that the target user rated.
+Conclude the query with:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;
+RETURN collect(m.title_en) AS movies
+&lt;/pre&gt;
+&lt;p&gt;The function &lt;em&gt;collect&lt;/em&gt; creates a list called &lt;em&gt;movies&lt;/em&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Replace RETURN with WITH in the previous query and add a
+second query to select the titles of the movies
+&lt;span class=&#34;math inline&#34;&gt;\(m\)&lt;/span&gt; that the user &lt;span class=&#34;math inline&#34;&gt;\(w\)&lt;/span&gt; loved and the target user
+did not rate.
+In order to exclude the films that the target user
+did not rate, use the following predicate:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;
+none(x in movies where x=m.title_en)
+&lt;/pre&gt;
+&lt;p&gt;in the WHERE clause.&lt;/p&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -11162,145 +11888,134 @@ in the WHERE clause.
 
 &lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
 &lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
-&lt;!--
-
-# Setting up the work environment.
-
-* Download [Neo4j Desktop](https://neo4j.com/download/){target=&#34;_blank&#34;} 
-and install it on your computer.
-
-* Create a new project by clicking on the button &#34;New&#34; 
-that you&#39;ll find on the top left side of the window.
-
-* Click on &#34;Add Database&#34;, then &#34;Create a Local Database&#34;.
-
-* Give the database a name (e.g., *MovieLens*) and set 
-a password that you can easily remember; then click on &#34;Create&#34;.
-Choose version 4.1.1 for the database.
-
-
-
-* Click on &#34;Start&#34; and wait for the database to become active.
-
-* Click on the button &#34;Open&#34;. The *Neo4j Browser* will pop up.
-
-In the next section, you&#39;ll have to type a sequence of commands to 
-import the data. 
-You&#39;ll write the commands in the text field on top of the 
-*Neo4j Browser* (where you find the prompt *neo4j\$*).
-
-## Import the data.
-
-The dataset consists of 
-data obtained from *MovieLens*, 
-a recommender system 
-whose users give movies a rate 
-between 1 and 5, 
-based on whether they dislike or love them. 
-MovieLens uses the rates to recommend 
-movies that its users might like. 
-The dataset is modeled as a **directed graph** and 
-consists of 100,004 rates on 9,125 movies 
-across 671 users between January 9th, 1995 and October 16, 2016. 
-The dataset also contains the names of 
-the directors and the actors of each movie.
-
-1. Import the **nodes** corresponding to the 
-**movies** (label **Movie**) by 
-using the following command (it took 31 seconds on my computer):
-
+&lt;div id=&#34;setting-up-the-work-environment.&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Setting up the work environment.&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Download &lt;a href=&#34;https://neo4j.com/download/&#34; target=&#34;_blank&#34;&gt;Neo4j Desktop&lt;/a&gt;
+and install it on your computer.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Create a new project by clicking on the button “New”
+that you’ll find on the top left side of the window.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Click on “Add Database”, then “Create a Local Database”.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Give the database a name (e.g., &lt;em&gt;MovieLens&lt;/em&gt;) and set
+a password that you can easily remember; then click on “Create”.
+Choose version 4.1.1 for the database.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Click on “Start” and wait for the database to become active.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Click on the button “Open”. The &lt;em&gt;Neo4j Browser&lt;/em&gt; will pop up.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In the next section, you’ll have to type a sequence of commands to
+import the data.
+You’ll write the commands in the text field on top of the
+&lt;em&gt;Neo4j Browser&lt;/em&gt; (where you find the prompt &lt;em&gt;neo4j$&lt;/em&gt;).&lt;/p&gt;
+&lt;div id=&#34;import-the-data.&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.1&lt;/span&gt; Import the data.&lt;/h2&gt;
+&lt;p&gt;The dataset consists of
+data obtained from &lt;em&gt;MovieLens&lt;/em&gt;,
+a recommender system
+whose users give movies a rate
+between 1 and 5,
+based on whether they dislike or love them.
+MovieLens uses the rates to recommend
+movies that its users might like.
+The dataset is modeled as a &lt;strong&gt;directed graph&lt;/strong&gt; and
+consists of 100,004 rates on 9,125 movies
+across 671 users between January 9th, 1995 and October 16, 2016.
+The dataset also contains the names of
+the directors and the actors of each movie.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Import the &lt;strong&gt;nodes&lt;/strong&gt; corresponding to the
+&lt;strong&gt;movies&lt;/strong&gt; (label &lt;strong&gt;Movie&lt;/strong&gt;) by
+using the following command (it took 31 seconds on my computer):&lt;/li&gt;
+&lt;/ol&gt;
 &lt;pre&gt;
 :auto USING PERIODIC COMMIT 1000
 LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/movies.csv&#39; as row
 MERGE (m:Movie {movie_id: toInteger(row.movie_id), title_en:row.movie_title_en, title_fr:row.movie_title_fr, year: toInteger(row.movie_year)})
 RETURN count(m)
 &lt;/pre&gt;
-
-2. Create an **index** on the property *movie_id* of 
-the nodes with label **Movie** with the following command:
-
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Create an &lt;strong&gt;index&lt;/strong&gt; on the property &lt;em&gt;movie_id&lt;/em&gt; of
+the nodes with label &lt;strong&gt;Movie&lt;/strong&gt; with the following command:&lt;/li&gt;
+&lt;/ol&gt;
 &lt;pre&gt;
 create index movie_idx for (m:Movie) on (m.movie_id)
 &lt;/pre&gt;
-
-3. Import the **nodes** corresponding to the 
-**actors** (label **Actor**) by 
-using the following command (it took 62 seconds on my computer):
-
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Import the &lt;strong&gt;nodes&lt;/strong&gt; corresponding to the
+&lt;strong&gt;actors&lt;/strong&gt; (label &lt;strong&gt;Actor&lt;/strong&gt;) by
+using the following command (it took 62 seconds on my computer):&lt;/li&gt;
+&lt;/ol&gt;
 &lt;pre&gt;
 :auto USING PERIODIC COMMIT 1000
 LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/actors.csv&#39; as row
 MERGE (a:Actor {actor_id: toInteger(row.actor_id), name:row.actor_name})
 RETURN count(a)
 &lt;/pre&gt;
-
-4. Create an **index** on the property *actor_id* of 
-the nodes with label **Actor** with the following command:
-
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Create an &lt;strong&gt;index&lt;/strong&gt; on the property &lt;em&gt;actor_id&lt;/em&gt; of
+the nodes with label &lt;strong&gt;Actor&lt;/strong&gt; with the following command:&lt;/li&gt;
+&lt;/ol&gt;
 &lt;pre&gt;
 create index actor_idx for (a:Actor) on (a.actor_id)
 &lt;/pre&gt;
-
-5. Import the **nodes** corresponding to the 
-**directors** (label **Director**) by 
-using the following command (it took 4 seconds on my computer):
-
+&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Import the &lt;strong&gt;nodes&lt;/strong&gt; corresponding to the
+&lt;strong&gt;directors&lt;/strong&gt; (label &lt;strong&gt;Director&lt;/strong&gt;) by
+using the following command (it took 4 seconds on my computer):&lt;/li&gt;
+&lt;/ol&gt;
 &lt;pre&gt;
 :auto USING PERIODIC COMMIT 1000
 LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/directors.csv&#39; as row
 MERGE (d:Director {director_id: toInteger(row.director_id), name:row.director_name})
 RETURN count(d)
 &lt;/pre&gt;
-
-6. Create an **index** on the property *director_id* of 
-the nodes with label **Director** with the following command:
-
+&lt;ol start=&#34;6&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Create an &lt;strong&gt;index&lt;/strong&gt; on the property &lt;em&gt;director_id&lt;/em&gt; of
+the nodes with label &lt;strong&gt;Director&lt;/strong&gt; with the following command:&lt;/li&gt;
+&lt;/ol&gt;
 &lt;pre&gt;
 create index director_idx for (d:Director) on (d.director_id)
 &lt;/pre&gt;
-
-
-7. Import the **nodes** corresponding to the 
-**genres** (label **Genre**) by 
-using the following command (it took 197 ms on my computer):
-
+&lt;ol start=&#34;7&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Import the &lt;strong&gt;nodes&lt;/strong&gt; corresponding to the
+&lt;strong&gt;genres&lt;/strong&gt; (label &lt;strong&gt;Genre&lt;/strong&gt;) by
+using the following command (it took 197 ms on my computer):&lt;/li&gt;
+&lt;/ol&gt;
 &lt;pre&gt;
 :auto USING PERIODIC COMMIT 1000
 LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/genres.csv&#39; as row
 MERGE (g:Genre {genre_id: toInteger(row.genre_id), name:row.genre_name})
 RETURN count(g)
 &lt;/pre&gt;
-
-8. Create an **index** on the property *genre_id* of 
-the nodes with label **Genre** with the following command:
-
+&lt;ol start=&#34;8&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Create an &lt;strong&gt;index&lt;/strong&gt; on the property &lt;em&gt;genre_id&lt;/em&gt; of
+the nodes with label &lt;strong&gt;Genre&lt;/strong&gt; with the following command:&lt;/li&gt;
+&lt;/ol&gt;
 &lt;pre&gt;
 create index genre_idx for (g:Genre) on (g.genre_id)
 &lt;/pre&gt;
-
-
-9. Import the **nodes** corresponding to the 
-**users** (label **User**) by 
-using the following command (it took 347 seconds on my computer):
-
+&lt;ol start=&#34;9&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Import the &lt;strong&gt;nodes&lt;/strong&gt; corresponding to the
+&lt;strong&gt;users&lt;/strong&gt; (label &lt;strong&gt;User&lt;/strong&gt;) by
+using the following command (it took 347 seconds on my computer):&lt;/li&gt;
+&lt;/ol&gt;
 &lt;pre&gt;
 :auto USING PERIODIC COMMIT 1000
 LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/users.csv&#39; as row
 MERGE (u:User {user_id: toInteger(row.user_id), name:row.user_nickname})
 RETURN count(u)
 &lt;/pre&gt;
-
-10. Create an **index** on the property *user_id* of 
-the nodes with label **User** with the following command:
-
+&lt;ol start=&#34;10&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Create an &lt;strong&gt;index&lt;/strong&gt; on the property &lt;em&gt;user_id&lt;/em&gt; of
+the nodes with label &lt;strong&gt;User&lt;/strong&gt; with the following command:&lt;/li&gt;
+&lt;/ol&gt;
 &lt;pre&gt;
 create index user_idx for (u:User) on (u.user_id)
 &lt;/pre&gt;
-
-11. Import the links of type **ACTED_IN** 
-between actors and movies with the following 
-command (it took 2.5 seconds on my computer):
-
+&lt;ol start=&#34;11&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Import the links of type &lt;strong&gt;ACTED_IN&lt;/strong&gt;
+between actors and movies with the following
+command (it took 2.5 seconds on my computer):&lt;/li&gt;
+&lt;/ol&gt;
 &lt;pre&gt;
 :auto USING PERIODIC COMMIT 1000
 LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/movies_actors.csv&#39; as row
@@ -11309,11 +12024,11 @@ MATCH (a:Actor {actor_id: toInteger(row.actor_id)})
 MERGE (a)-[r:ACTED_IN]-&gt;(m)
 RETURN count(r)
 &lt;/pre&gt;
-
-12. Import the links of type **DIRECTED** 
-between directors and movies with the following 
-command (it took 688 ms on my computer):
-
+&lt;ol start=&#34;12&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Import the links of type &lt;strong&gt;DIRECTED&lt;/strong&gt;
+between directors and movies with the following
+command (it took 688 ms on my computer):&lt;/li&gt;
+&lt;/ol&gt;
 &lt;pre&gt;
 :auto USING PERIODIC COMMIT 1000
 LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/movies_directors.csv&#39; as row
@@ -11322,11 +12037,11 @@ MATCH (d:Director {director_id: toInteger(row.director_id)})
 MERGE (d)-[r:DIRECTED]-&gt;(m)
 RETURN count(r)
 &lt;/pre&gt;
-
-13. Import the links of type **HAS_GENRE** 
-between movies and genres with the following 
-command (it took 1 second on my computer):
-
+&lt;ol start=&#34;13&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Import the links of type &lt;strong&gt;HAS_GENRE&lt;/strong&gt;
+between movies and genres with the following
+command (it took 1 second on my computer):&lt;/li&gt;
+&lt;/ol&gt;
 &lt;pre&gt;
 :auto USING PERIODIC COMMIT 1000
 LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/movies_genres.csv&#39; as row
@@ -11335,11 +12050,11 @@ MATCH (g:Genre {genre_id: toInteger(row.genre_id)})
 MERGE (m)-[r:HAS_GENRE]-&gt;(g)
 RETURN count(r)
 &lt;/pre&gt;
-
-14. Import the links of type **RATED** 
-between users and movies with the following 
-command (it took 5.9 seconds on my computer):
-
+&lt;ol start=&#34;14&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Import the links of type &lt;strong&gt;RATED&lt;/strong&gt;
+between users and movies with the following
+command (it took 5.9 seconds on my computer):&lt;/li&gt;
+&lt;/ol&gt;
 &lt;pre&gt;
 :auto USING PERIODIC COMMIT 1000
 LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/user_rates.csv&#39; as row
@@ -11348,316 +12063,262 @@ MATCH (u:User {user_id: toInteger(row.user_id)})
 MERGE (u)-[r:RATED {rate:toFloat(row.rate)}]-&gt;(m)
 RETURN count(r)
 &lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;exploratory-queries&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Exploratory queries&lt;/h1&gt;
+&lt;p&gt;If you looked at the commands used to import the data,
+you might already have an idea as to the structure of
+the graph.
+You can get a glimpse on the node labels,
+the relationship types and the property keys by clicking on the
+button circled in the following figure:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/plp/tutorials/neo4j/neo4j-db-button.png&#34; width=&#34;100%&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercise&lt;/strong&gt;
 
-# Exploratory queries
-
-If you looked at the commands used to import the data, 
-you might already have an idea as to the structure of 
-the graph. 
-You can get a glimpse on the node labels, 
-the relationship types and the property keys by clicking on the 
-button circled in the following figure:
-
-&lt;img src=&#34;/courses/plp/tutorials/neo4j/neo4j-db-button.png&#34; width=&#34;100%&#34; style=&#34;display: block; margin: auto;&#34; /&gt;
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-1&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-1) &lt;/strong&gt;&lt;/span&gt;
-Write and execute the following query:
-
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;
+Write and execute the following query:&lt;/p&gt;
 &lt;pre&gt;
 MATCH (m:Movie {title_en:&#34;Toy Story&#34;}) 
 RETURN m;
 &lt;/pre&gt;
+&lt;p&gt;What do you obtain? What are the properties associated
+to a node with label &lt;em&gt;Movie&lt;/em&gt;?
+Click once on the node to display its properties.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercise&lt;/strong&gt;
 
-What do you obtain? What are the properties associated 
-to a node with label *Movie*? 
-Click once on the node to display its properties.
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
-
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-2&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-2) &lt;/strong&gt;&lt;/span&gt;
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.2  &lt;/strong&gt;&lt;/span&gt;
 Double-click on the node displayed as the result of the previous query.
-Analyze the neighbouring nodes (their labels and properties) 
-and  the incident links (direction, type and properties).
-You can move around the node by dragging it in the window.
-&lt;/div&gt;\EndKnitrBlock{exercise}
+Analyze the neighbouring nodes (their labels and properties)
+and the incident links (direction, type and properties).
+You can move around the node by dragging it in the window.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;queries&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Queries&lt;/h1&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercise&lt;/strong&gt;
 
-:::
-
-
-
-# Queries
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-3&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-3) &lt;/strong&gt;&lt;/span&gt;
-Write and execute the following queries:
-
-Q1. The genres of the movies in the database.
-
-Q2. The number of movies in the database.
-
-Q3. The title of the movies released in 2015.
-
-Q4. The number of directors by movie. Sort in decreasing order.
-
-Q5. The names of the directors and the title of the movies that they 
-directed and in which they also played.
-
-Q6. The genres of the movies in which Tom Hanks played.
-
-Q7. The title and the rate of all the movies that 
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;
+Write and execute the following queries:&lt;/p&gt;
+&lt;p&gt;Q1. The genres of the movies in the database.&lt;/p&gt;
+&lt;p&gt;Q2. The number of movies in the database.&lt;/p&gt;
+&lt;p&gt;Q3. The title of the movies released in 2015.&lt;/p&gt;
+&lt;p&gt;Q4. The number of directors by movie. Sort in decreasing order.&lt;/p&gt;
+&lt;p&gt;Q5. The names of the directors and the title of the movies that they
+directed and in which they also played.&lt;/p&gt;
+&lt;p&gt;Q6. The genres of the movies in which Tom Hanks played.&lt;/p&gt;
+Q7. The title and the rate of all the movies that
 the user with identifier 3 rated.
-Sort by rate in decreasing order.&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
-
-
-## Query chaining
-
-Cypher allows the specification of 
-complex queries composed of 
-several queries that are concatenated 
-with the clause **WITH**. 
-We are now going to see an example to 
-obtain the titles of the movies 
-that have been rated by at least 100 users.
-
-At a first glance, the following query looks like a good solution:
-
+Sort by rate in decreasing order.
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;query-chaining&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.1&lt;/span&gt; Query chaining&lt;/h2&gt;
+&lt;p&gt;Cypher allows the specification of
+complex queries composed of
+several queries that are concatenated
+with the clause &lt;strong&gt;WITH&lt;/strong&gt;.
+We are now going to see an example to
+obtain the titles of the movies
+that have been rated by at least 100 users.&lt;/p&gt;
+&lt;p&gt;At a first glance, the following query looks like a good solution:&lt;/p&gt;
 &lt;pre&gt;
 MATCH (n:Movie)&lt;-[:RATED]-(u:User) WHERE count(u) &gt;= 100
 RETURN n.title_en
 LIMIT 5;
 &lt;/pre&gt;
-
-However, executing this query returns the following error:
-
+&lt;p&gt;However, executing this query returns the following error:&lt;/p&gt;
 &lt;pre&gt;
 Invalid use of aggregating function count(...) in this context (line 1, column 42 (offset: 41))
 &#34;MATCH (n:Movie)&lt;-[:RATED]-(u:User) WHERE count(u) &gt;= 100&#34;
 &lt;/pre&gt;
-
-Similarly to SQL, we cannot use aggregating functions in the clause WHERE.
-
-A correct formulation of the query requires the use of the clause WITH
+&lt;p&gt;Similarly to SQL, we cannot use aggregating functions in the clause WHERE.&lt;/p&gt;
+&lt;p&gt;A correct formulation of the query requires the use of the clause WITH
 to concatenate two queries: the first will count the number of rates
-for each movie:
-
+for each movie:&lt;/p&gt;
 &lt;pre&gt;
 MATCH (n:Movie)&lt;-[:RATED]-(u:User) 
 RETURN n, count(u) as nb_rates
 &lt;/pre&gt;
-
-The second will take in the output of the first and will
-filter all the movies where nb_rates &lt; 100. 
-In order to chain the two queries, we&#39;ll replace the 
-RETURN clause in the first query with a WITH clause, as follows:
-
+&lt;p&gt;The second will take in the output of the first and will
+filter all the movies where nb_rates &amp;lt; 100.
+In order to chain the two queries, we’ll replace the
+RETURN clause in the first query with a WITH clause, as follows:&lt;/p&gt;
 &lt;pre&gt;
 MATCH (n:Movie)&lt;-[:RATED]-(u:User) 
 WITH n, count(u) as nb_rates
 WHERE nb_rates &gt;= 100
 RETURN n.title_en
 &lt;/pre&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercise&lt;/strong&gt;
 
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-4&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-4) &lt;/strong&gt;&lt;/span&gt;
-Write and execute a query to obtain  the five movies 
-that obtained the best average rate among the movies 
-that have been rated by at least 100 users.
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
-
-
-# Movie recommendation
-
-We are now going to see how Neo4j 
-can be effectively used in a real application 
-by implementing queries that form the basis of a 
-simple **movie recommendation system**. 
-This system is based on the notion of **collaborative filtering**. 
-
-This consists in recommending a user $u$ some films 
-that s/he hasn’t rated yet and other 
-users with similar preferences have loved. 
-In our context, we say that a user loves 
-a movie if s/he rated the movie at least 3.
-
-This concept is explained in the following figure.
-
-&lt;img src=&#34;/courses/plp/tutorials/neo4j/collaborative-filtering.png&#34; width=&#34;100%&#34; style=&#34;display: block; margin: auto;&#34; /&gt;
-
-The user $u$ loves 6 movies, 
-3 of which are also loved by the user $v$ (the black nodes); 
-it is reasonable to think that $u$ 
-may also love the two movies that $v$ loved and $u$ hasn’t rated yet.
-
-The principle of collaborative filtering is 
-based on the computation of a **similarity score** 
-between two users. 
-Several similarity scores are possible in this context; 
-here, we are going to use the **Jaccard coefficient**. 
-Let $L(u)$ and $L(v)$ be the 
-sets of movies that $u$ and $v$ love
-respectively; 
-the similarity score $J(u,v)$ between $u$ and $v$ is given by:
-
-$$
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.2  &lt;/strong&gt;&lt;/span&gt;
+Write and execute a query to obtain the five movies
+that obtained the best average rate among the movies
+that have been rated by at least 100 users.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;movie-recommendation&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Movie recommendation&lt;/h1&gt;
+&lt;p&gt;We are now going to see how Neo4j
+can be effectively used in a real application
+by implementing queries that form the basis of a
+simple &lt;strong&gt;movie recommendation system&lt;/strong&gt;.
+This system is based on the notion of &lt;strong&gt;collaborative filtering&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;This consists in recommending a user &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; some films
+that s/he hasn’t rated yet and other
+users with similar preferences have loved.
+In our context, we say that a user loves
+a movie if s/he rated the movie at least 3.&lt;/p&gt;
+&lt;p&gt;This concept is explained in the following figure.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/plp/tutorials/neo4j/collaborative-filtering.png&#34; width=&#34;100%&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;The user &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; loves 6 movies,
+3 of which are also loved by the user &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt; (the black nodes);
+it is reasonable to think that &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt;
+may also love the two movies that &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt; loved and &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; hasn’t rated yet.&lt;/p&gt;
+&lt;p&gt;The principle of collaborative filtering is
+based on the computation of a &lt;strong&gt;similarity score&lt;/strong&gt;
+between two users.
+Several similarity scores are possible in this context;
+here, we are going to use the &lt;strong&gt;Jaccard coefficient&lt;/strong&gt;.
+Let &lt;span class=&#34;math inline&#34;&gt;\(L(u)\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(L(v)\)&lt;/span&gt; be the
+sets of movies that &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt; love
+respectively;
+the similarity score &lt;span class=&#34;math inline&#34;&gt;\(J(u,v)\)&lt;/span&gt; between &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt; is given by:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
 J(u, v) = \frac{|L(u) \cap L(v)|}{|L(u) \cup L(v)|}
-$$
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;In order to recommend movies to
+a target user &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt;,
+the recommender system computes the
+similarity score between &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt; and all
+the other users of the system and
+proposes to &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt; the movies
+that s/he hasn’t rated yet and that the &lt;span class=&#34;math inline&#34;&gt;\(k\)&lt;/span&gt; most similar users loved.&lt;/p&gt;
+&lt;p&gt;We are now going to incrementally write a query to recommend some movies to the target user 3.
+The first step consists in determining the value &lt;span class=&#34;math inline&#34;&gt;\(|L(v)|\)&lt;/span&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercise&lt;/strong&gt;
 
-In order to recommend movies to 
-a target user $v$, 
-the recommender system computes the 
-similarity score between $v$ and all 
-the other users of the system and 
-proposes to $v$ the movies 
-that s/he hasn’t rated yet and that the $k$ most similar users loved.
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.1  &lt;/strong&gt;&lt;/span&gt;
+Write and execute the query to obtain
+the number of movies that the user 3 loved.
+This query must return the target user
+and the number of movies that s/he loves.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Next, we are going to determine the value &lt;span class=&#34;math inline&#34;&gt;\(|L(u)|\)&lt;/span&gt;,
+for all users &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; except &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercise&lt;/strong&gt;
 
-We are now going to incrementally write a query to recommend some movies to the target user 3.
-The first step consists in determining the value $|L(v)|$.
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-5&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-5) &lt;/strong&gt;&lt;/span&gt;
-Write and execute the query to obtain 
-the number of movies that the user 3 loved. 
-This query must return the target user 
-and the number of movies that s/he loves.
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
-
-
-
-Next, we are going to determine the value $|L(u)|$, 
-for all users $u$ except $v$.
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-6&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-6) &lt;/strong&gt;&lt;/span&gt;
-Write and execute the query 
-to obtain the number of movies that each user $u$ loves, 
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.2  &lt;/strong&gt;&lt;/span&gt;
+Write and execute the query
+to obtain the number of movies that each user &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; loves,
 except the target user 3.
-This query must return each user $u$ and the number 
-of movies that s/he loves.
-&lt;/div&gt;\EndKnitrBlock{exercise}
+This query must return each user &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; and the number
+of movies that s/he loves.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;We put the two queries together with the clause WITH.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercise&lt;/strong&gt;
 
-:::
-
-
-
-We put the two queries together with the clause WITH.
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-7&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-7) &lt;/strong&gt;&lt;/span&gt;
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.3  &lt;/strong&gt;&lt;/span&gt;
 Compose the two previous queries with the clause WITH.
-This query must return 
-the target user 3, 
-the number of movies that s/he loves, 
-the other users $u$ and the number of movies 
-that they love.
-&lt;/div&gt;\EndKnitrBlock{exercise}
+This query must return
+the target user 3,
+the number of movies that s/he loves,
+the other users &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; and the number of movies
+that they love.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Now, we need to
+determine the value &lt;span class=&#34;math inline&#34;&gt;\(L(u)\cup L(v)\)&lt;/span&gt;,
+for each user &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt;, and compute the similarity score with the
+Jaccard coefficient.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercise&lt;/strong&gt;
 
-:::
-
-
-
-Now, we need to 
-determine the value $L(u)\cup L(v)$, 
-for each user $u$, and compute the similarity score with the 
-Jaccard coefficient. 
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-8&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-8) &lt;/strong&gt;&lt;/span&gt;
-Append (by using WITH) 
-to the query written in the previous exercise 
-a query that obtains 
-the number of movies 
-that any user $u$ loved 
-and that the target user 3 loved too, 
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.4  &lt;/strong&gt;&lt;/span&gt;
+Append (by using WITH)
+to the query written in the previous exercise
+a query that obtains
+the number of movies
+that any user &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; loved
+and that the target user 3 loved too,
 and computes the similarity score
-between the target user 3 and $u$. 
-This query must return the five most similar 
-users to the target user and the similarity scores.
-
+between the target user 3 and &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt;.
+This query must return the five most similar
+users to the target user and the similarity scores.&lt;/p&gt;
 &lt;details&gt;
 &lt;summary&gt;Hint&lt;/summary&gt;
-Multiply the numerator of the equation 
+Multiply the numerator of the equation
 by 1.0, otherwise Cypher will compute an integer division.
 &lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;The last step consists in recommending some movies to the target user.
+From the previous query,
+take the identifier of the user &lt;span class=&#34;math inline&#34;&gt;\(w\)&lt;/span&gt; with
+the highest similarity to the target user.
+You are going to use this identifier directly in the new query.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercise&lt;/strong&gt;
 
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
-
-
-The last step consists in recommending some movies to the target user.
-From the previous query, 
-take the identifier of the user $w$ with 
-the highest similarity to the target user. 
-You are going to use this identifier directly in the new query.
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-9&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-9) &lt;/strong&gt;&lt;/span&gt;
-Write and execute 
-the query to obtain the list of 
-the movies that the user $w$ loved 
-and that the target user hasn&#39;t rated yet. Sort this list by decreasing rate.
-
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.5  &lt;/strong&gt;&lt;/span&gt;
+Write and execute
+the query to obtain the list of
+the movies that the user &lt;span class=&#34;math inline&#34;&gt;\(w\)&lt;/span&gt; loved
+and that the target user hasn’t rated yet. Sort this list by decreasing rate.&lt;/p&gt;
 &lt;details&gt;
-&lt;summary&gt;Hint&lt;/summary&gt;
-
-*  First, write a query 
-to obtain the list of the movies 
-that the target user rated. 
-In the MATCH clause, 
-use the variable $m$ to indicate a movie that the target user rated. 
-Conclude the query with:
-
+&lt;p&gt;&lt;summary&gt;Hint&lt;/summary&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;First, write a query
+to obtain the list of the movies
+that the target user rated.
+In the MATCH clause,
+use the variable &lt;span class=&#34;math inline&#34;&gt;\(m\)&lt;/span&gt; to indicate a movie that the target user rated.
+Conclude the query with:&lt;/li&gt;
+&lt;/ul&gt;
 &lt;pre&gt;
 RETURN collect(m.title_en) AS movies
 &lt;/pre&gt;
-
-The function *collect* creates a list called *movies*.
-
-* Replace RETURN with WITH in the previous query and add a 
-second query to select the titles of the movies 
-$m$ that the user $w$ loved and the target user 
-did not rate. 
-In order to exclude the films that the target user 
-did not rate, use the following predicate:
-
+&lt;p&gt;The function &lt;em&gt;collect&lt;/em&gt; creates a list called &lt;em&gt;movies&lt;/em&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Replace RETURN with WITH in the previous query and add a
+second query to select the titles of the movies
+&lt;span class=&#34;math inline&#34;&gt;\(m\)&lt;/span&gt; that the user &lt;span class=&#34;math inline&#34;&gt;\(w\)&lt;/span&gt; loved and the target user
+did not rate.
+In order to exclude the films that the target user
+did not rate, use the following predicate:&lt;/li&gt;
+&lt;/ul&gt;
 &lt;pre&gt;
 none(x in movies where x=m.title_en)
 &lt;/pre&gt;
-
-in the WHERE clause.
-
+&lt;p&gt;in the WHERE clause.&lt;/p&gt;
 &lt;/details&gt;
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
-
-
---&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
 </description>
     </item>
     
