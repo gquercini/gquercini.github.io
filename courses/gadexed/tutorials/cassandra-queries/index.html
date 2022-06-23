@@ -28,10 +28,10 @@
   
     
   
-  <meta name="description" content="Queries in MongoDB">
+  <meta name="description" content="Queries in Cassandra">
 
   
-  <link rel="alternate" hreflang="en-us" href="/courses/gadexed/tutorials/mongodb-queries/">
+  <link rel="alternate" hreflang="en-us" href="/courses/gadexed/tutorials/cassandra-queries/">
 
   
 
@@ -219,7 +219,7 @@
   <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_2.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_2.png">
 
-  <link rel="canonical" href="/courses/gadexed/tutorials/mongodb-queries/">
+  <link rel="canonical" href="/courses/gadexed/tutorials/cassandra-queries/">
 
   
   
@@ -233,9 +233,9 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Gianluca Quercini">
-  <meta property="og:url" content="/courses/gadexed/tutorials/mongodb-queries/">
-  <meta property="og:title" content="Queries in MongoDB | Gianluca Quercini">
-  <meta property="og:description" content="Queries in MongoDB"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:url" content="/courses/gadexed/tutorials/cassandra-queries/">
+  <meta property="og:title" content="Queries in Cassandra | Gianluca Quercini">
+  <meta property="og:description" content="Queries in Cassandra"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
   
     
@@ -258,7 +258,7 @@
 
 
 
-  <title>Queries in MongoDB | Gianluca Quercini</title>
+  <title>Queries in Cassandra | Gianluca Quercini</title>
 
 </head>
 
@@ -569,8 +569,8 @@
         <a href="/courses/gadexed/tutorials/mongodb-data-modeling/">5. Data modeling in MongoDB</a>
       </li>
       
-      <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
-      <li class="active tutorials">
+      
+      <li class="tutorials">
         <a href="/courses/gadexed/tutorials/mongodb-queries/">6. Queries in MongoDB</a>
       </li>
       
@@ -584,8 +584,8 @@
         <a href="/courses/gadexed/tutorials/cassandra-data-modeling/">8. Data modeling in Cassandra</a>
       </li>
       
-      
-      <li class="tutorials">
+      <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
+      <li class="active tutorials">
         <a href="/courses/gadexed/tutorials/cassandra-queries/">9. Data modeling in Cassandra</a>
       </li>
       
@@ -608,8 +608,8 @@
       <article class="article">
 
         <div class="docs-article-container">
-          <div class="heading">Gestion et analyse des données — Tutorial 6</div>
-          <h1>Queries in MongoDB</h1>
+          <div class="heading">Gestion et analyse des données — Tutorial 9</div>
+          <h1>Queries in Cassandra</h1>
           <hr>
           <div class="logo">
             <p><img src="/img/cs-logo.png" width="20%" style="display: block; margin: auto;" /></p>
@@ -621,215 +621,73 @@
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<p>In this tutorial you’ll learn to write basic and advanced queries in MongoDB.</p>
-<div id="get-the-data" class="section level1">
-<h1>Get the data</h1>
-<p>Download the <a href="/courses/databases/tutorial-6/sakila-mongodb.zip"><strong>this archive file</strong></a> and extract it.
-You’ll find a file for each collection to import into the database.</p>
-<p>Open MongoDB Compass, create a new database named <TT>sakila</TT> and
-create the different collections while importing the data.</p>
+<div id="setting-up-the-environment" class="section level1">
+<h1>Setting up the environment</h1>
+<ul>
+<li><p>Download Cassandra <a href="https://dlcdn.apache.org/cassandra/4.0.4/apache-cassandra-4.0.4-bin.tar.gz" target="_blank"><strong>from this address</strong></a>.</p></li>
+<li><p>Move the downloaded archive file to a folder of your choice (other than downloads).</p></li>
+<li><p>Extract the archive. This will create a folder, containing all the files with the Cassandra server.</p></li>
+<li><p>Open a terminal and go the the Cassandra folder.</p></li>
+<li><p><strong>Run the Cassandra server</strong> with the following command <code>./bin/cassandra -f</code>.</p></li>
+<li><p>Once the initialization is complete, open a new terminal and go again to the Cassandra folder.</p></li>
+<li><p>Open the CQL shell, by typing the following command: <code>./bin/cqlsh</code>.</p></li>
+</ul>
+<p>Once you enter the CQL shell, you can start interacting with the Cassandra server to create a new database.</p>
 </div>
-<div id="basic-queries" class="section level1">
-<h1>Basic queries</h1>
+<div id="import-the-data" class="section level1">
+<h1>Import the data</h1>
+<ul>
+<li><p>Download the <a href="/courses/databases/tutorial-8/sakila-data-cassandra.zip" target="_blank"><strong>data here</strong></a></p></li>
+<li><p>Extract the downloaded archive. This will create a new folder containing the data. Let’s refer to this folder as DATA_FOLDER.</p></li>
+<li><p>Go back to the CQL shell and type the following command <code>source 'DATAFOLDER/sakila.cql'</code> (replace DATAFOLDER with the full path to the data folder). This command will
+create the sakila keyspace (database).</p></li>
+<li><p>In the CQL shell, type the command <code>use sakila;</code></p></li>
+<li><p>We have 11 tables in this database. You can see the definition with the command <code>describe sakila</code>.</p></li>
+<li><p>As the last step, we need to import the data. No luck here, we need to import the data table by table with the following commands:</p></li>
+</ul>
+<pre><code>COPY sakila.actors_by_film FROM &#39;DATAFOLDER/actors_by_film.csv&#39; WITH HEADER = TRUE ;
+
+COPY sakila.categories_by_film FROM &#39;DATAFOLDER/categories_by_film.csv&#39; WITH HEADER = TRUE ;
+
+COPY sakila.customers FROM &#39;DATAFOLDER/customers.csv&#39; WITH HEADER = TRUE ;
+
+COPY sakila.film FROM &#39;DATAFOLDER/film.csv&#39; WITH HEADER = TRUE ;
+
+COPY sakila.inventory FROM &#39;DATAFOLDER/inventory.csv&#39; WITH HEADER = TRUE ;
+
+COPY sakila.rentals_by_customer FROM &#39;DATAFOLDER/rentals_by_customer.csv&#39; WITH HEADER = TRUE ;
+
+COPY rentals_by_film FROM &#39;DATAFOLDER/rentals_by_film.csv&#39; WITH HEADER = TRUE ;
+
+COPY rentals_by_staff FROM &#39;DATAFOLDER/rentals_by_staff.csv&#39; WITH HEADER = TRUE ;
+
+COPY rentals FROM &#39;DATAFOLDER/rentals.csv&#39; WITH HEADER = TRUE ;
+
+COPY staff FROM &#39;DATAFOLDER/staff.csv&#39; WITH HEADER = TRUE ;
+
+COPY store FROM &#39;DATAFOLDER/store.csv&#39; WITH HEADER = TRUE ;
+</code></pre>
+<p><strong>If during the import you get the error ‘too many open files’ close the shell with exit and start it again.</strong></p>
+</div>
+<div id="queries" class="section level1">
+<h1>Queries</h1>
+<p>The CQL language used by Cassandra is highly similar to SQL, but there are some key differences.
+Here we analyze few of them.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1  </strong></span>
-Write the following queries in MongoDB:</p>
-<ol style="list-style-type: decimal">
-<li><p>Return all the information on all customers.</p></li>
-<li><p>Return the email of all customers.</p></li>
-<li><p>Return the email of the customers of Canadian stores.</p></li>
-<li><p>Return the identifier of all rentals made by customers from Iran, where
-the amount paid is strictly greater than 10 dollars.</p></li>
-<li><p>Return the first and last names of the actors who played a role in film 213.</p></li>
-</ol>
+Consider the table <TT>rentals_by_customer</TT> and try some queries
+that use (not all in the same query):</p>
+<ul>
+<li><p>The WHERE condition.</p></li>
+<li><p>Aggregating functions and the GROUP BY clause.</p></li>
+<li><p>The SELECT JSON statement.</p></li>
+</ul>
+<p>Feel free to refer to the <a href="https://cassandra.apache.org/doc/latest/cassandra/cql/dml.html" target="_blank"><strong>CQL documentation</strong></a>.</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<ol style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>db.customer.find()</pre>
-<ol start="2" style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>db.customer.find({}, {email:1})</pre>
-<ol start="3" style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>db.customer.find({"store.country": "Canada"}, {email:1});</pre>
-<ol start="4" style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>db.rental.find({"customer.country": "Iran", amount: {$gt: 10}}, {rental_id: 1, _id:0});</pre>
-<ol start="5" style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>db.film.find({film_id: 213}, {"actors.first_name":1, "actors.last_name": 1}).sort({"actors.last_name": -1});</pre>
-</div>
-</details>
-</div>
-<div id="operations-on-arrays" class="section level1">
-<h1>Operations on arrays</h1>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 2  </strong></span>
-Write the following queries in MongoDB:</p>
-<ol style="list-style-type: decimal">
-<li><p>Return the identifier of the films that have “Behind the Scenes” as special features.</p></li>
-<li><p>Return the identifier of the films that have as special features all of the following: “Commentaries” and “Deleted Scenes”.</p></li>
-<li><p>Return the identifier of all the films where BURT POSEY played a role.</p></li>
-<li><p>Return the identifier of the film that has exactly 15 actors.</p></li>
-</ol>
-</div>
-</div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<ol style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>db.film.find({special_features : {$elemMatch: {$eq: "Behind the Scenes"}}}, {film_id: 1, _id:0});</pre>
-<ol start="2" style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>db.film.find({special_features : {$all: ["Commentaries", "Deleted Scenes"]}}, {film_id: 1, _id:0});</pre>
-<ol start="3" style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>db.film.find({"actors.first_name": "BURT", "actors.last_name": "POSEY"}, {film_id: 1, _id:0});</pre>
-<ol start="4" style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>db.film.find({actors: {$size : 15}}, {film_id: 1, _id:0});</pre>
-</div>
-</details>
-</div>
-<div id="aggregation-framework" class="section level1">
-<h1>Aggregation framework</h1>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3  </strong></span>
-Write the following queries in MongoDB using the aggregation framework:</p>
-<ol style="list-style-type: decimal">
-<li><p>Return the title of the films rented by TOMMY COLLAZO (can you also express this query with the function find()?)</p></li>
-<li><p>Count the total amount of payments across all rentals.</p></li>
-<li><p>Return the number of actors of each film.</p></li>
-<li><p>Sort the films by the number of actors (decreasing order).</p></li>
-<li><p>Return the average number of actors for each film.</p></li>
-<li><p>Return the identifier of the customer who made the most of rentals.</p></li>
-<li><p>Return the first and last name of the customer who made the most of rentals.</p></li>
-<li><p>Return the country where the customers have rented the most of the films in the category “Music”.</p></li>
-</ol>
-</div>
-</div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<ol style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>
-db.rental.aggregate({$match: {"customer.first_name": "TOMMY", "customer.last_name": "COLLAZO"}}, 
-                    {$project: {"inventory.film.title": 1, _id:0}})
-</pre>
-One can also express this query with the function find()
-<pre>
-db.rental.find({"customer.first_name": "TOMMY", "customer.last_name": "COLLAZO"}, {"inventory.film.title": 1, _id:0});
-</pre>
-<ol start="2" style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>
-db.rental.aggregate({$group: {"_id": null, total_amount: {$sum: "$amount"}}})
-</pre>
-<ol start="3" style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>
-db.film.aggregate({$project: {nb_actors: {$size: "$actors"}}})
-</pre>
-<ol start="4" style="list-style-type: decimal">
-<li></li>
-</ol>
-<p>If we don’t put the match condition, we get an error because for some films
-the field actors is not defined.</p>
-<pre>db.film.aggregate({$match: {actors: {$elemMatch: {$exists: true}}}}, 
-                {$project: {film_id: 1, "nb_actors": {$size: "$actors"}}}, 
-                {$sort: {nb_actors: -1}})
-</pre>
-<ol start="5" style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>
-db.film.aggregate({$match: {actors: {$elemMatch: {$exists: true}}}}, 
-                {$project: {film_id: 1, "nb_actors": {$size: "$actors"}}}, 
-                {$group: {_id: null, avg_actors: {$avg: "$nb_actors"}}})
-</pre>
-<ol start="6" style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>
-db.rental.aggregate({$group: {_id: "$customer.customer_id", count: {$sum: 1}}}, {$sort: {count: -1}})
-</pre>
-<ol start="7" style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>
-db.rental.aggregate({$group: {_id: {cust_id: "$customer.customer_id", cust_first_name: "$customer.first_name", 
-                                    cust_last_name: "$customer.last_name"}, count: {$sum: 1}}}, 
-                            {$sort: {count: -1}}, {$limit :1})
-</pre>
-<ol start="8" style="list-style-type: decimal">
-<li></li>
-</ol>
-<p>db.rental.aggregate({<span class="math inline">\(match: {&quot;inventory.film.categories.category&quot;: &quot;Music&quot;}}, {\)</span>group: {_id: &quot;<span class="math inline">\(customer.country&quot;, count: {\)</span>sum: 1}}}, {<span class="math inline">\(sort:{count: -1}}, {\)</span>limit: 1})</p>
-</div>
-</details>
-</div>
-<div id="join-operations" class="section level1">
-<h1>Join Operations</h1>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 4  </strong></span>
-Write the following queries in MongoDB using the aggregation framework:</p>
-<ol style="list-style-type: decimal">
-<li><p>Return the language of the film with title “ACE GOLDFINGER”.</p></li>
-<li><p>Return all the information about the staff member who took care of rental 2.</p></li>
-</ol>
-</div>
-</div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<ol style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>
-db.rental.aggregate({$match: {"inventory.film.title": "ACE GOLDFINGER"}}, 
-            {$lookup: {from: "film", localField: "inventory.film.film_id", foreignField:"film_id", as:"film"}}, 
-            {$project: {"film.language": 1}}, {$limit : 1})
-</pre>
-<ol start="2" style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>
-db.rental.aggregate({$match: {rental_id: 2}}, 
-                    {$lookup: {from: "staff", localField: "staff.staff_id", 
-                    foreignField:"staff_id", as:"staff_member"}}, {$project: {"staff_member": 1}})
-</pre>
-</div>
-</details>
 </div>
 
           </div>

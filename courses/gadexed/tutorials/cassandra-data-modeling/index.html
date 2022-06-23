@@ -28,10 +28,10 @@
   
     
   
-  <meta name="description" content="Queries in MongoDB">
+  <meta name="description" content="Data modeling in Cassandra">
 
   
-  <link rel="alternate" hreflang="en-us" href="/courses/gadexed/tutorials/mongodb-queries/">
+  <link rel="alternate" hreflang="en-us" href="/courses/gadexed/tutorials/cassandra-data-modeling/">
 
   
 
@@ -219,7 +219,7 @@
   <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_2.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_2.png">
 
-  <link rel="canonical" href="/courses/gadexed/tutorials/mongodb-queries/">
+  <link rel="canonical" href="/courses/gadexed/tutorials/cassandra-data-modeling/">
 
   
   
@@ -233,9 +233,9 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Gianluca Quercini">
-  <meta property="og:url" content="/courses/gadexed/tutorials/mongodb-queries/">
-  <meta property="og:title" content="Queries in MongoDB | Gianluca Quercini">
-  <meta property="og:description" content="Queries in MongoDB"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:url" content="/courses/gadexed/tutorials/cassandra-data-modeling/">
+  <meta property="og:title" content="Data modeling in Cassandra | Gianluca Quercini">
+  <meta property="og:description" content="Data modeling in Cassandra"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
   
     
@@ -258,7 +258,7 @@
 
 
 
-  <title>Queries in MongoDB | Gianluca Quercini</title>
+  <title>Data modeling in Cassandra | Gianluca Quercini</title>
 
 </head>
 
@@ -569,8 +569,8 @@
         <a href="/courses/gadexed/tutorials/mongodb-data-modeling/">5. Data modeling in MongoDB</a>
       </li>
       
-      <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
-      <li class="active tutorials">
+      
+      <li class="tutorials">
         <a href="/courses/gadexed/tutorials/mongodb-queries/">6. Queries in MongoDB</a>
       </li>
       
@@ -579,8 +579,8 @@
         <a href="/courses/gadexed/tutorials/neo4j/">7. Neo4j</a>
       </li>
       
-      
-      <li class="tutorials">
+      <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
+      <li class="active tutorials">
         <a href="/courses/gadexed/tutorials/cassandra-data-modeling/">8. Data modeling in Cassandra</a>
       </li>
       
@@ -608,8 +608,8 @@
       <article class="article">
 
         <div class="docs-article-container">
-          <div class="heading">Gestion et analyse des données — Tutorial 6</div>
-          <h1>Queries in MongoDB</h1>
+          <div class="heading">Gestion et analyse des données — Tutorial 8</div>
+          <h1>Data modeling in Cassandra</h1>
           <hr>
           <div class="logo">
             <p><img src="/img/cs-logo.png" width="20%" style="display: block; margin: auto;" /></p>
@@ -621,216 +621,43 @@
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<p>In this tutorial you’ll learn to write basic and advanced queries in MongoDB.</p>
-<div id="get-the-data" class="section level1">
-<h1>Get the data</h1>
-<p>Download the <a href="/courses/databases/tutorial-6/sakila-mongodb.zip"><strong>this archive file</strong></a> and extract it.
-You’ll find a file for each collection to import into the database.</p>
-<p>Open MongoDB Compass, create a new database named <TT>sakila</TT> and
-create the different collections while importing the data.</p>
-</div>
-<div id="basic-queries" class="section level1">
-<h1>Basic queries</h1>
+<p>The Sakila management wants us to migrate their database to Cassandra,
+they need to compare how Cassandra would compare against MongoDB.
+To this extent, your first task is to think of a data model for the new database.</p>
+<p>When designing your data model, you’ll two follow two basic rules:</p>
+<ul>
+<li><p>Your data model should distribute the data evenly across the nodes of the cluster.</p></li>
+<li><p>For each frequent query, the number of partition to read should be as minimum as possible.</p></li>
+</ul>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1  </strong></span>
-Write the following queries in MongoDB:</p>
-<ol style="list-style-type: decimal">
-<li><p>Return all the information on all customers.</p></li>
-<li><p>Return the email of all customers.</p></li>
-<li><p>Return the email of the customers of Canadian stores.</p></li>
-<li><p>Return the identifier of all rentals made by customers from Iran, where
-the amount paid is strictly greater than 10 dollars.</p></li>
-<li><p>Return the first and last names of the actors who played a role in film 213.</p></li>
-</ol>
+Analyze the Sakila business domain and propose a series of queries
+that the Sakila administration might want to run against the database.</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<ol style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>db.customer.find()</pre>
-<ol start="2" style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>db.customer.find({}, {email:1})</pre>
-<ol start="3" style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>db.customer.find({"store.country": "Canada"}, {email:1});</pre>
-<ol start="4" style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>db.rental.find({"customer.country": "Iran", amount: {$gt: 10}}, {rental_id: 1, _id:0});</pre>
-<ol start="5" style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>db.film.find({film_id: 213}, {"actors.first_name":1, "actors.last_name": 1}).sort({"actors.last_name": -1});</pre>
-</div>
-</details>
-</div>
-<div id="operations-on-arrays" class="section level1">
-<h1>Operations on arrays</h1>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 2  </strong></span>
-Write the following queries in MongoDB:</p>
-<ol style="list-style-type: decimal">
-<li><p>Return the identifier of the films that have “Behind the Scenes” as special features.</p></li>
-<li><p>Return the identifier of the films that have as special features all of the following: “Commentaries” and “Deleted Scenes”.</p></li>
-<li><p>Return the identifier of all the films where BURT POSEY played a role.</p></li>
-<li><p>Return the identifier of the film that has exactly 15 actors.</p></li>
-</ol>
+Given the queries that you proposed in the first exercise, draw
+a workflow of the application that the Sakila management
+will use to query the data.</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<ol style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>db.film.find({special_features : {$elemMatch: {$eq: "Behind the Scenes"}}}, {film_id: 1, _id:0});</pre>
-<ol start="2" style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>db.film.find({special_features : {$all: ["Commentaries", "Deleted Scenes"]}}, {film_id: 1, _id:0});</pre>
-<ol start="3" style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>db.film.find({"actors.first_name": "BURT", "actors.last_name": "POSEY"}, {film_id: 1, _id:0});</pre>
-<ol start="4" style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>db.film.find({actors: {$size : 15}}, {film_id: 1, _id:0});</pre>
-</div>
-</details>
-</div>
-<div id="aggregation-framework" class="section level1">
-<h1>Aggregation framework</h1>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3  </strong></span>
-Write the following queries in MongoDB using the aggregation framework:</p>
-<ol style="list-style-type: decimal">
-<li><p>Return the title of the films rented by TOMMY COLLAZO (can you also express this query with the function find()?)</p></li>
-<li><p>Count the total amount of payments across all rentals.</p></li>
-<li><p>Return the number of actors of each film.</p></li>
-<li><p>Sort the films by the number of actors (decreasing order).</p></li>
-<li><p>Return the average number of actors for each film.</p></li>
-<li><p>Return the identifier of the customer who made the most of rentals.</p></li>
-<li><p>Return the first and last name of the customer who made the most of rentals.</p></li>
-<li><p>Return the country where the customers have rented the most of the films in the category “Music”.</p></li>
-</ol>
+Based on the application workflow, draw the Chebotko diagram (the logical model)
+of the Sakila database.</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<ol style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>
-db.rental.aggregate({$match: {"customer.first_name": "TOMMY", "customer.last_name": "COLLAZO"}}, 
-                    {$project: {"inventory.film.title": 1, _id:0}})
-</pre>
-One can also express this query with the function find()
-<pre>
-db.rental.find({"customer.first_name": "TOMMY", "customer.last_name": "COLLAZO"}, {"inventory.film.title": 1, _id:0});
-</pre>
-<ol start="2" style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>
-db.rental.aggregate({$group: {"_id": null, total_amount: {$sum: "$amount"}}})
-</pre>
-<ol start="3" style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>
-db.film.aggregate({$project: {nb_actors: {$size: "$actors"}}})
-</pre>
-<ol start="4" style="list-style-type: decimal">
-<li></li>
-</ol>
-<p>If we don’t put the match condition, we get an error because for some films
-the field actors is not defined.</p>
-<pre>db.film.aggregate({$match: {actors: {$elemMatch: {$exists: true}}}}, 
-                {$project: {film_id: 1, "nb_actors": {$size: "$actors"}}}, 
-                {$sort: {nb_actors: -1}})
-</pre>
-<ol start="5" style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>
-db.film.aggregate({$match: {actors: {$elemMatch: {$exists: true}}}}, 
-                {$project: {film_id: 1, "nb_actors": {$size: "$actors"}}}, 
-                {$group: {_id: null, avg_actors: {$avg: "$nb_actors"}}})
-</pre>
-<ol start="6" style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>
-db.rental.aggregate({$group: {_id: "$customer.customer_id", count: {$sum: 1}}}, {$sort: {count: -1}})
-</pre>
-<ol start="7" style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>
-db.rental.aggregate({$group: {_id: {cust_id: "$customer.customer_id", cust_first_name: "$customer.first_name", 
-                                    cust_last_name: "$customer.last_name"}, count: {$sum: 1}}}, 
-                            {$sort: {count: -1}}, {$limit :1})
-</pre>
-<ol start="8" style="list-style-type: decimal">
-<li></li>
-</ol>
-<p>db.rental.aggregate({<span class="math inline">\(match: {&quot;inventory.film.categories.category&quot;: &quot;Music&quot;}}, {\)</span>group: {_id: &quot;<span class="math inline">\(customer.country&quot;, count: {\)</span>sum: 1}}}, {<span class="math inline">\(sort:{count: -1}}, {\)</span>limit: 1})</p>
-</div>
-</details>
-</div>
-<div id="join-operations" class="section level1">
-<h1>Join Operations</h1>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 4  </strong></span>
-Write the following queries in MongoDB using the aggregation framework:</p>
-<ol style="list-style-type: decimal">
-<li><p>Return the language of the film with title “ACE GOLDFINGER”.</p></li>
-<li><p>Return all the information about the staff member who took care of rental 2.</p></li>
-</ol>
-</div>
-</div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<ol style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>
-db.rental.aggregate({$match: {"inventory.film.title": "ACE GOLDFINGER"}}, 
-            {$lookup: {from: "film", localField: "inventory.film.film_id", foreignField:"film_id", as:"film"}}, 
-            {$project: {"film.language": 1}}, {$limit : 1})
-</pre>
-<ol start="2" style="list-style-type: decimal">
-<li></li>
-</ol>
-<pre>
-db.rental.aggregate({$match: {rental_id: 2}}, 
-                    {$lookup: {from: "staff", localField: "staff.staff_id", 
-                    foreignField:"staff_id", as:"staff_member"}}, {$project: {"staff_member": 1}})
-</pre>
-</div>
-</details>
-</div>
+<!--  -->
 
           </div>
 

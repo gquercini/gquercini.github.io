@@ -1878,6 +1878,137 @@ third-party drivers can be used by installing the corresponding plugins.&lt;/p&g
     </item>
     
     <item>
+      <title>Data modeling in Cassandra</title>
+      <link>/courses/gadexed/tutorials/cassandra-data-modeling/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/gadexed/tutorials/cassandra-data-modeling/</guid>
+      <description>
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;p&gt;The Sakila management wants us to migrate their database to Cassandra,
+they need to compare how Cassandra would compare against MongoDB.
+To this extent, your first task is to think of a data model for the new database.&lt;/p&gt;
+&lt;p&gt;When designing your data model, you’ll two follow two basic rules:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Your data model should distribute the data evenly across the nodes of the cluster.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;For each frequent query, the number of partition to read should be as minimum as possible.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1  &lt;/strong&gt;&lt;/span&gt;
+Analyze the Sakila business domain and propose a series of queries
+that the Sakila administration might want to run against the database.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2  &lt;/strong&gt;&lt;/span&gt;
+Given the queries that you proposed in the first exercise, draw
+a workflow of the application that the Sakila management
+will use to query the data.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3  &lt;/strong&gt;&lt;/span&gt;
+Based on the application workflow, draw the Chebotko diagram (the logical model)
+of the Sakila database.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;!--  --&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Queries in Cassandra</title>
+      <link>/courses/gadexed/tutorials/cassandra-queries/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/gadexed/tutorials/cassandra-queries/</guid>
+      <description>
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;div id=&#34;setting-up-the-environment&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Setting up the environment&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Download Cassandra &lt;a href=&#34;https://dlcdn.apache.org/cassandra/4.0.4/apache-cassandra-4.0.4-bin.tar.gz&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;from this address&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Move the downloaded archive file to a folder of your choice (other than downloads).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Extract the archive. This will create a folder, containing all the files with the Cassandra server.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Open a terminal and go the the Cassandra folder.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Run the Cassandra server&lt;/strong&gt; with the following command &lt;code&gt;./bin/cassandra -f&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Once the initialization is complete, open a new terminal and go again to the Cassandra folder.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Open the CQL shell, by typing the following command: &lt;code&gt;./bin/cqlsh&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Once you enter the CQL shell, you can start interacting with the Cassandra server to create a new database.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;import-the-data&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Import the data&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Download the &lt;a href=&#34;/courses/databases/tutorial-8/sakila-data-cassandra.zip&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;data here&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Extract the downloaded archive. This will create a new folder containing the data. Let’s refer to this folder as DATA_FOLDER.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Go back to the CQL shell and type the following command &lt;code&gt;source &#39;DATAFOLDER/sakila.cql&#39;&lt;/code&gt; (replace DATAFOLDER with the full path to the data folder). This command will
+create the sakila keyspace (database).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In the CQL shell, type the command &lt;code&gt;use sakila;&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;We have 11 tables in this database. You can see the definition with the command &lt;code&gt;describe sakila&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;As the last step, we need to import the data. No luck here, we need to import the data table by table with the following commands:&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;COPY sakila.actors_by_film FROM &amp;#39;DATAFOLDER/actors_by_film.csv&amp;#39; WITH HEADER = TRUE ;
+
+COPY sakila.categories_by_film FROM &amp;#39;DATAFOLDER/categories_by_film.csv&amp;#39; WITH HEADER = TRUE ;
+
+COPY sakila.customers FROM &amp;#39;DATAFOLDER/customers.csv&amp;#39; WITH HEADER = TRUE ;
+
+COPY sakila.film FROM &amp;#39;DATAFOLDER/film.csv&amp;#39; WITH HEADER = TRUE ;
+
+COPY sakila.inventory FROM &amp;#39;DATAFOLDER/inventory.csv&amp;#39; WITH HEADER = TRUE ;
+
+COPY sakila.rentals_by_customer FROM &amp;#39;DATAFOLDER/rentals_by_customer.csv&amp;#39; WITH HEADER = TRUE ;
+
+COPY rentals_by_film FROM &amp;#39;DATAFOLDER/rentals_by_film.csv&amp;#39; WITH HEADER = TRUE ;
+
+COPY rentals_by_staff FROM &amp;#39;DATAFOLDER/rentals_by_staff.csv&amp;#39; WITH HEADER = TRUE ;
+
+COPY rentals FROM &amp;#39;DATAFOLDER/rentals.csv&amp;#39; WITH HEADER = TRUE ;
+
+COPY staff FROM &amp;#39;DATAFOLDER/staff.csv&amp;#39; WITH HEADER = TRUE ;
+
+COPY store FROM &amp;#39;DATAFOLDER/store.csv&amp;#39; WITH HEADER = TRUE ;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;If during the import you get the error ‘too many open files’ close the shell with exit and start it again.&lt;/strong&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;queries&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Queries&lt;/h1&gt;
+&lt;p&gt;The CQL language used by Cassandra is highly similar to SQL, but there are some key differences.
+Here we analyze few of them.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1  &lt;/strong&gt;&lt;/span&gt;
+Consider the table &lt;TT&gt;rentals_by_customer&lt;/TT&gt; and try some queries
+that use (not all in the same query):&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The WHERE condition.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Aggregating functions and the GROUP BY clause.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The SELECT JSON statement.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Feel free to refer to the &lt;a href=&#34;https://cassandra.apache.org/doc/latest/cassandra/cql/dml.html&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;CQL documentation&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Data warehousing</title>
       <link>/courses/gadexed/tutorials/data-warehouse/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -2615,6 +2746,31 @@ the amount paid is strictly greater than 10 dollars.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;db.customer.find()&lt;/pre&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;db.customer.find({}, {email:1})&lt;/pre&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;db.customer.find({&#34;store.country&#34;: &#34;Canada&#34;}, {email:1});&lt;/pre&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;db.rental.find({&#34;customer.country&#34;: &#34;Iran&#34;, amount: {$gt: 10}}, {rental_id: 1, _id:0});&lt;/pre&gt;
+&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;db.film.find({film_id: 213}, {&#34;actors.first_name&#34;:1, &#34;actors.last_name&#34;: 1}).sort({&#34;actors.last_name&#34;: -1});&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;operations-on-arrays&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Operations on arrays&lt;/h1&gt;
@@ -2632,6 +2788,27 @@ Write the following queries in MongoDB:&lt;/p&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;db.film.find({special_features : {$elemMatch: {$eq: &#34;Behind the Scenes&#34;}}}, {film_id: 1, _id:0});&lt;/pre&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;db.film.find({special_features : {$all: [&#34;Commentaries&#34;, &#34;Deleted Scenes&#34;]}}, {film_id: 1, _id:0});&lt;/pre&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;db.film.find({&#34;actors.first_name&#34;: &#34;BURT&#34;, &#34;actors.last_name&#34;: &#34;POSEY&#34;}, {film_id: 1, _id:0});&lt;/pre&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;db.film.find({actors: {$size : 15}}, {film_id: 1, _id:0});&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;aggregation-framework&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Aggregation framework&lt;/h1&gt;
@@ -2653,6 +2830,69 @@ Write the following queries in MongoDB using the aggregation framework:&lt;/p&gt
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+db.rental.aggregate({$match: {&#34;customer.first_name&#34;: &#34;TOMMY&#34;, &#34;customer.last_name&#34;: &#34;COLLAZO&#34;}}, 
+                    {$project: {&#34;inventory.film.title&#34;: 1, _id:0}})
+&lt;/pre&gt;
+One can also express this query with the function find()
+&lt;pre&gt;
+db.rental.find({&#34;customer.first_name&#34;: &#34;TOMMY&#34;, &#34;customer.last_name&#34;: &#34;COLLAZO&#34;}, {&#34;inventory.film.title&#34;: 1, _id:0});
+&lt;/pre&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+db.rental.aggregate({$group: {&#34;_id&#34;: null, total_amount: {$sum: &#34;$amount&#34;}}})
+&lt;/pre&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+db.film.aggregate({$project: {nb_actors: {$size: &#34;$actors&#34;}}})
+&lt;/pre&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;If we don’t put the match condition, we get an error because for some films
+the field actors is not defined.&lt;/p&gt;
+&lt;pre&gt;db.film.aggregate({$match: {actors: {$elemMatch: {$exists: true}}}}, 
+                {$project: {film_id: 1, &#34;nb_actors&#34;: {$size: &#34;$actors&#34;}}}, 
+                {$sort: {nb_actors: -1}})
+&lt;/pre&gt;
+&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+db.film.aggregate({$match: {actors: {$elemMatch: {$exists: true}}}}, 
+                {$project: {film_id: 1, &#34;nb_actors&#34;: {$size: &#34;$actors&#34;}}}, 
+                {$group: {_id: null, avg_actors: {$avg: &#34;$nb_actors&#34;}}})
+&lt;/pre&gt;
+&lt;ol start=&#34;6&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+db.rental.aggregate({$group: {_id: &#34;$customer.customer_id&#34;, count: {$sum: 1}}}, {$sort: {count: -1}})
+&lt;/pre&gt;
+&lt;ol start=&#34;7&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+db.rental.aggregate({$group: {_id: {cust_id: &#34;$customer.customer_id&#34;, cust_first_name: &#34;$customer.first_name&#34;, 
+                                    cust_last_name: &#34;$customer.last_name&#34;}, count: {$sum: 1}}}, 
+                            {$sort: {count: -1}}, {$limit :1})
+&lt;/pre&gt;
+&lt;ol start=&#34;8&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;db.rental.aggregate({&lt;span class=&#34;math inline&#34;&gt;\(match: {&amp;quot;inventory.film.categories.category&amp;quot;: &amp;quot;Music&amp;quot;}}, {\)&lt;/span&gt;group: {_id: &amp;quot;&lt;span class=&#34;math inline&#34;&gt;\(customer.country&amp;quot;, count: {\)&lt;/span&gt;sum: 1}}}, {&lt;span class=&#34;math inline&#34;&gt;\(sort:{count: -1}}, {\)&lt;/span&gt;limit: 1})&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;join-operations&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Join Operations&lt;/h1&gt;
@@ -2668,6 +2908,27 @@ Write the following queries in MongoDB using the aggregation framework:&lt;/p&gt
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+db.rental.aggregate({$match: {&#34;inventory.film.title&#34;: &#34;ACE GOLDFINGER&#34;}}, 
+            {$lookup: {from: &#34;film&#34;, localField: &#34;inventory.film.film_id&#34;, foreignField:&#34;film_id&#34;, as:&#34;film&#34;}}, 
+            {$project: {&#34;film.language&#34;: 1}}, {$limit : 1})
+&lt;/pre&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+db.rental.aggregate({$match: {rental_id: 2}}, 
+                    {$lookup: {from: &#34;staff&#34;, localField: &#34;staff.staff_id&#34;, 
+                    foreignField:&#34;staff_id&#34;, as:&#34;staff_member&#34;}}, {$project: {&#34;staff_member&#34;: 1}})
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
