@@ -3144,6 +3144,14 @@ to a node with label &lt;em&gt;Movie&lt;/em&gt;?
 Click once on the node to display its properties.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The requested node is displayed in the Neo4j Browser.
+By clicking on the node, we see that the properties are:
+&lt;em&gt;movie_id&lt;/em&gt;, &lt;em&gt;title_en&lt;/em&gt;, &lt;em&gt;title_fr&lt;/em&gt;, &lt;em&gt;year&lt;/em&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;strong&gt;Exercise&lt;/strong&gt;
 
@@ -3155,6 +3163,28 @@ and the incident links (direction, type and properties).
 You can move around the node by dragging it in the window.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;From the interface, we see that the movie Toy Story is rated by 90 users,
+has 5 genres, 4 actors and 1 director.
+The following observations can be made:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Each node with label &lt;em&gt;User&lt;/em&gt; has two properties, &lt;em&gt;user_id&lt;/em&gt; and &lt;em&gt;name&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Each node with label &lt;em&gt;Genre&lt;/em&gt; has two properties, &lt;em&gt;genre_id&lt;/em&gt; and &lt;em&gt;name&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Each node with label &lt;em&gt;Director&lt;/em&gt; has two properties, &lt;em&gt;director_id&lt;/em&gt; and &lt;em&gt;name&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Each node with label &lt;em&gt;Actor&lt;/em&gt; has two properties, &lt;em&gt;actor_id&lt;/em&gt; and &lt;em&gt;name&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;A relationship of type &lt;em&gt;RATED&lt;/em&gt; has a property &lt;em&gt;rate&lt;/em&gt; and is directed from
+a node with label &lt;em&gt;User&lt;/em&gt; to a node with label &lt;em&gt;Movie&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;A relationship of type &lt;em&gt;DIRECTED&lt;/em&gt; is directed from
+a node with label &lt;em&gt;Director&lt;/em&gt; to a node with label &lt;em&gt;Movie&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;A relationship of type &lt;em&gt;HAS_GENRE&lt;/em&gt; is directed from
+a node with label &lt;em&gt;Movie&lt;/em&gt; to a node with label &lt;em&gt;Genre&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;A relationship of type &lt;em&gt;ACTED_IN&lt;/em&gt; is directed from
+a node with label &lt;em&gt;Actor&lt;/em&gt; to a node with label &lt;em&gt;Movie&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;queries&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Queries&lt;/h1&gt;
@@ -3176,6 +3206,49 @@ the user with identifier 3 rated.
 Sort by rate in decreasing order.
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+Q1.
+&lt;pre&gt;
+MATCH (g:Genre) 
+RETURN g.name
+&lt;/pre&gt;
+Q2.
+&lt;pre&gt;
+MATCH (n:Movie) 
+RETURN count(n)
+&lt;/pre&gt;
+Q3.
+&lt;pre&gt;
+MATCH (n:Movie {year:2015}) 
+RETURN n.title_en;
+&lt;/pre&gt;
+Q4.
+&lt;pre&gt;
+MATCH (n:Movie)&lt;-[:DIRECTED]-(d:Director) 
+RETURN n.title_en, count(*) AS nb_directors 
+ORDER BY nb_directors DESC
+&lt;/pre&gt;
+Q5.
+&lt;pre&gt;
+MATCH (a:Actor)-[:ACTED_IN]-&gt;(m:Movie)&lt;-[:DIRECTED]-(d:Director) 
+WHERE a.name=d.name 
+RETURN a.name, m.title_en;
+&lt;/pre&gt;
+Q6.
+&lt;pre&gt;
+MATCH (:Actor {name:&#34;Tom Hanks&#34;})-[:ACTED_IN]-&gt;(:Movie)-[:HAS_GENRE]-&gt;(g:Genre) 
+RETURN DISTINCT (g.name);
+&lt;/pre&gt;
+Q7.
+&lt;pre&gt;
+MATCH (n:User {user_id:3})-[r:RATED]-&gt;(m:Movie) 
+RETURN m.title_en, r.rate 
+ORDER BY r.rate desc;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div id=&#34;query-chaining&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Query chaining&lt;/h2&gt;
 &lt;p&gt;Cypher allows the specification of
@@ -3224,6 +3297,18 @@ that obtained the best average rate among the movies
 that have been rated by at least 100 users.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;pre&gt;
+MATCH (n:Movie)&lt;-[r:RATED]-(u:User) 
+WITH n, avg(r.rate) as avg,  count(u) AS nb_rates 
+WHERE nb_rates &gt;= 100 
+RETURN n.title_en,  avg 
+ORDER BY avg DESC;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;movie-recommendation&#34; class=&#34;section level1&#34;&gt;
@@ -3276,6 +3361,16 @@ This query must return the target user
 and the number of movies that s/he loves.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;pre&gt;
+MATCH (target:User {user_id:3})-[r:RATED]-&gt;(m:Movie) 
+WHERE r.rate &gt;= 3 
+RETURN target, count(m) AS lovedByTarget;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;Next, we are going to determine the value &lt;span class=&#34;math inline&#34;&gt;\(|L(u)|\)&lt;/span&gt;,
 for all users &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; except &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt;.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -3290,6 +3385,16 @@ This query must return each user &lt;span class=&#34;math inline&#34;&gt;\(u\)&l
 of movies that s/he loves.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;pre&gt;
+MATCH (other:User)-[r:RATED]-&gt;(m:Movie) 
+WHERE other.user_id &lt;&gt; 3 and r.rate &gt;= 3 
+RETURN other, count(m) as lovedByOther
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;We put the two queries together with the clause WITH.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;strong&gt;Exercise&lt;/strong&gt;
@@ -3304,6 +3409,19 @@ the other users &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; and t
 that they love.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;pre&gt;
+MATCH (target:User {user_id:3})-[r:RATED]-&gt;(m:Movie) 
+WHERE r.rate &gt;= 3 
+WITH target, count(m) AS lovedByTarget
+MATCH (other:User)-[r:RATED]-&gt;(m:Movie) 
+WHERE other &lt;&gt; target and r.rate &gt;= 3 
+RETURN target, lovedByTarget, other, count(m) as lovedByOther
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;Now, we need to
 determine the value &lt;span class=&#34;math inline&#34;&gt;\(L(u)\cup L(v)\)&lt;/span&gt;,
 for each user &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt;, and compute the similarity score with the
@@ -3330,6 +3448,28 @@ by 1.0, otherwise Cypher will compute an integer division.
 &lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The following is the query written at the previous exercise,
+where the RETURN clause has been replaced with WITH.&lt;/p&gt;
+&lt;pre&gt;
+MATCH (target:User {user_id:3})-[r:RATED]-&gt;(m:Movie) 
+WHERE r.rate &gt;= 3 
+WITH target, count(m) AS lovedByTarget
+MATCH (other:User)-[r:RATED]-&gt;(m:Movie) 
+WHERE other &lt;&gt; target and r.rate &gt;= 3 
+WITH target, lovedByTarget, other, count(m) as lovedByOther
+&lt;/pre&gt;
+&lt;p&gt;We have to append the following query:&lt;/p&gt;
+&lt;pre&gt;
+MATCH (target)-[r:RATED]-&gt;(m:Movie)&lt;-[r1:RATED]-(other) 
+WHERE r.rate &gt;= 3 and r1.rate &gt;= 3 
+RETURN other, count(m)*1.0 / (lovedByTarget + lovedByOther - count(m)) as sim 
+ORDER BY sim DESC LIMIT 5
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;The last step consists in recommending some movies to the target user.
 From the previous query,
 take the identifier of the user &lt;span class=&#34;math inline&#34;&gt;\(w\)&lt;/span&gt; with
@@ -3373,6 +3513,21 @@ none(x in movies where x=m.title_en)
 &lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The following is the query written at the previous exercise,
+where the RETURN clause has been replaced with WITH.&lt;/p&gt;
+&lt;pre&gt;
+MATCH (target:User {user_id:3})-[r:RATED]-&gt;(m:Movie)  
+WITH collect(m.title_en) as movies  
+MATCH (u:User {user_id:129})-[r:RATED]-&gt;(m:Movie)  
+WHERE r.rate &gt;=3 AND none(x IN movies WHERE x=m.title_en) 
+RETURN m.title_en 
+ORDER BY r.rate DESC;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
