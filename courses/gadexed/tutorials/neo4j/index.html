@@ -822,14 +822,6 @@ to a node with label <em>Movie</em>?
 Click once on the node to display its properties.</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>The requested node is displayed in the Neo4j Browser.
-By clicking on the node, we see that the properties are:
-<em>movie_id</em>, <em>title_en</em>, <em>title_fr</em>, <em>year</em>.</p>
-</div>
-</details>
 <div class="infobox exercisebox">
 <strong>Exercise</strong>
 
@@ -841,28 +833,6 @@ and the incident links (direction, type and properties).
 You can move around the node by dragging it in the window.</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>From the interface, we see that the movie Toy Story is rated by 90 users,
-has 5 genres, 4 actors and 1 director.
-The following observations can be made:</p>
-<ul>
-<li><p>Each node with label <em>User</em> has two properties, <em>user_id</em> and <em>name</em>.</p></li>
-<li><p>Each node with label <em>Genre</em> has two properties, <em>genre_id</em> and <em>name</em>.</p></li>
-<li><p>Each node with label <em>Director</em> has two properties, <em>director_id</em> and <em>name</em>.</p></li>
-<li><p>Each node with label <em>Actor</em> has two properties, <em>actor_id</em> and <em>name</em>.</p></li>
-<li><p>A relationship of type <em>RATED</em> has a property <em>rate</em> and is directed from
-a node with label <em>User</em> to a node with label <em>Movie</em>.</p></li>
-<li><p>A relationship of type <em>DIRECTED</em> is directed from
-a node with label <em>Director</em> to a node with label <em>Movie</em>.</p></li>
-<li><p>A relationship of type <em>HAS_GENRE</em> is directed from
-a node with label <em>Movie</em> to a node with label <em>Genre</em>.</p></li>
-<li><p>A relationship of type <em>ACTED_IN</em> is directed from
-a node with label <em>Actor</em> to a node with label <em>Movie</em>.</p></li>
-</ul>
-</div>
-</details>
 </div>
 <div id="queries" class="section level1">
 <h1>Queries</h1>
@@ -884,49 +854,6 @@ the user with identifier 3 rated.
 Sort by rate in decreasing order.
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-Q1.
-<pre>
-MATCH (g:Genre) 
-RETURN g.name
-</pre>
-Q2.
-<pre>
-MATCH (n:Movie) 
-RETURN count(n)
-</pre>
-Q3.
-<pre>
-MATCH (n:Movie {year:2015}) 
-RETURN n.title_en;
-</pre>
-Q4.
-<pre>
-MATCH (n:Movie)<-[:DIRECTED]-(d:Director) 
-RETURN n.title_en, count(*) AS nb_directors 
-ORDER BY nb_directors DESC
-</pre>
-Q5.
-<pre>
-MATCH (a:Actor)-[:ACTED_IN]->(m:Movie)<-[:DIRECTED]-(d:Director) 
-WHERE a.name=d.name 
-RETURN a.name, m.title_en;
-</pre>
-Q6.
-<pre>
-MATCH (:Actor {name:"Tom Hanks"})-[:ACTED_IN]->(:Movie)-[:HAS_GENRE]->(g:Genre) 
-RETURN DISTINCT (g.name);
-</pre>
-Q7.
-<pre>
-MATCH (n:User {user_id:3})-[r:RATED]->(m:Movie) 
-RETURN m.title_en, r.rate 
-ORDER BY r.rate desc;
-</pre>
-</div>
-</details>
 <div id="query-chaining" class="section level2">
 <h2>Query chaining</h2>
 <p>Cypher allows the specification of
@@ -975,18 +902,6 @@ that obtained the best average rate among the movies
 that have been rated by at least 100 users.</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<pre>
-MATCH (n:Movie)<-[r:RATED]-(u:User) 
-WITH n, avg(r.rate) as avg,  count(u) AS nb_rates 
-WHERE nb_rates >= 100 
-RETURN n.title_en,  avg 
-ORDER BY avg DESC;
-</pre>
-</div>
-</details>
 </div>
 </div>
 <div id="movie-recommendation" class="section level1">
@@ -1039,16 +954,6 @@ This query must return the target user
 and the number of movies that s/he loves.</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<pre>
-MATCH (target:User {user_id:3})-[r:RATED]->(m:Movie) 
-WHERE r.rate >= 3 
-RETURN target, count(m) AS lovedByTarget;
-</pre>
-</div>
-</details>
 <p>Next, we are going to determine the value <span class="math inline">\(|L(u)|\)</span>,
 for all users <span class="math inline">\(u\)</span> except <span class="math inline">\(v\)</span>.</p>
 <div class="infobox exercisebox">
@@ -1063,16 +968,6 @@ This query must return each user <span class="math inline">\(u\)</span> and the 
 of movies that s/he loves.</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<pre>
-MATCH (other:User)-[r:RATED]->(m:Movie) 
-WHERE other.user_id <> 3 and r.rate >= 3 
-RETURN other, count(m) as lovedByOther
-</pre>
-</div>
-</details>
 <p>We put the two queries together with the clause WITH.</p>
 <div class="infobox exercisebox">
 <strong>Exercise</strong>
@@ -1087,19 +982,6 @@ the other users <span class="math inline">\(u\)</span> and the number of movies
 that they love.</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<pre>
-MATCH (target:User {user_id:3})-[r:RATED]->(m:Movie) 
-WHERE r.rate >= 3 
-WITH target, count(m) AS lovedByTarget
-MATCH (other:User)-[r:RATED]->(m:Movie) 
-WHERE other <> target and r.rate >= 3 
-RETURN target, lovedByTarget, other, count(m) as lovedByOther
-</pre>
-</div>
-</details>
 <p>Now, we need to
 determine the value <span class="math inline">\(L(u)\cup L(v)\)</span>,
 for each user <span class="math inline">\(u\)</span>, and compute the similarity score with the
@@ -1126,28 +1008,6 @@ by 1.0, otherwise Cypher will compute an integer division.
 </details>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>The following is the query written at the previous exercise,
-where the RETURN clause has been replaced with WITH.</p>
-<pre>
-MATCH (target:User {user_id:3})-[r:RATED]->(m:Movie) 
-WHERE r.rate >= 3 
-WITH target, count(m) AS lovedByTarget
-MATCH (other:User)-[r:RATED]->(m:Movie) 
-WHERE other <> target and r.rate >= 3 
-WITH target, lovedByTarget, other, count(m) as lovedByOther
-</pre>
-<p>We have to append the following query:</p>
-<pre>
-MATCH (target)-[r:RATED]->(m:Movie)<-[r1:RATED]-(other) 
-WHERE r.rate >= 3 and r1.rate >= 3 
-RETURN other, count(m)*1.0 / (lovedByTarget + lovedByOther - count(m)) as sim 
-ORDER BY sim DESC LIMIT 5
-</pre>
-</div>
-</details>
 <p>The last step consists in recommending some movies to the target user.
 From the previous query,
 take the identifier of the user <span class="math inline">\(w\)</span> with
@@ -1191,21 +1051,6 @@ none(x in movies where x=m.title_en)
 </details>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>The following is the query written at the previous exercise,
-where the RETURN clause has been replaced with WITH.</p>
-<pre>
-MATCH (target:User {user_id:3})-[r:RATED]->(m:Movie)  
-WITH collect(m.title_en) as movies  
-MATCH (u:User {user_id:129})-[r:RATED]->(m:Movie)  
-WHERE r.rate >=3 AND none(x IN movies WHERE x=m.title_en) 
-RETURN m.title_en 
-ORDER BY r.rate DESC;
-</pre>
-</div>
-</details>
 </div>
 
           </div>
