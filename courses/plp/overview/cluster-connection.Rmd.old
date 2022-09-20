@@ -1,0 +1,313 @@
+---
+title: "Connecting to the cluster"
+heading: Platforms and languages — Connecting to the cluster
+linktitle: connecting-to-dce
+output:
+  bookdown::pdf_book:
+    toc: false
+    includes:
+      in_header: ../latex-files/preamble.tex
+    number_sections: no
+  blogdown::html_page:
+    number_sections: no
+  html_document:
+    df_print: paged
+menu:
+  plp:
+    name: Connecting to the cluster
+    parent: overview
+    identifier: connecting-to-dce
+    weight: 3
+params:
+  solution: true
+summary: How to connect to the cluster
+draft: no
+type: docs
+---
+
+<link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/cloud-computing.css">
+
+<!-- ############ IMPORTANT: CHANGE THESE VALUES BEFORE ANY LAB ############ -->
+
+<!-- The group to which users in the cluster belong-->
+`r user_group <- "cpuasi1"`
+
+
+<!-- User accounts are numbered from the lower to the upper limit-->
+
+`r user_account_lower <- "1"`
+
+`r user_account_upper <- "28"`
+
+
+<!-- The link to the Edunao page where the students can choose a username to connect to the cluster. -->
+`r account_choice <- "https://centralesupelec.edunao.com/mod/choice/view.php?id=47207"`
+
+<!-- ############ END OF MODIFICATIONS ############ -->
+
+
+
+The architecture of the cluster at the CentraleSupélec campus in Metz is shown in the following figure.
+
+```{r cluster-metz, out.width = "100%", fig.align="center", fig.cap="Cluster architecture (image credit: [Stéphane Vialle](http://www.metz.supelec.fr/metz/personnel/vialle/){target=\"_blank\"})", fig.margin=TRUE, echo=FALSE}
+knitr::include_graphics("/courses/plp/tutorials/spark-dce/cluster-metz.png", error=FALSE)
+```
+
+In order to use the Spark cluster, you'll need to go through the following fours steps:
+
+1. Choose a username [on Edunao](`r account_choice`){target="_blank"}. 
+The password will be communicated by the teacher during the tutorial.
+
+2. Open a SSH connection to the machine ``phome.metz.supelec.fr`` from your local machine.
+
+3. Open a SSH connection to the machine ``slurm1`` from the machine ``phome.metz.supelec.fr``.
+
+4. On the machine ``slurm1`` allocate resources for the job from a named reservation.
+
+Steps 2, 3 and 4 are detailed in the following subsections.
+
+::: {.infobox .warning data-latex="{warning}"}
+**Opening a SSH connection**
+
+If your operating system is either **Linux** or **MacOS**, the command ``ssh``, necessary to open a SSH connection to 
+a computer, is likely to be already available.
+
+If your operating system is **Windows**, you're not likely to have a command ``ssh`` readily available.
+In that case, you'll need to install a SSH client. 
+A good one is PuTTY, that you can [download here](https://www.chiark.greenend.org.uk/~sgtatham/putty/latest.html){target="_blank"}.
+
+
+:::
+
+## Connect to ``phome``
+
+If your operating system is **Linux** or **MacOS**, open a command-line terminal and type the following command
+(replace ``your-username`` with the username that you chose).
+
+``
+ssh phome.metz.supelec.fr -l your-username
+``
+
+After executing the command, you'll be prompted to enter the password.
+
+If your operating system is **Windows**:
+
+1. Launch PuTTY.
+
+2. In the ``session`` panel, specify ``phome.metz.supelec.fr`` 
+as the host name. Select ``ssh`` (port 22) as connection type.
+
+3. In the connection panel, set ``Enable TCP keepalives`` and set 
+30s between ``keepalives``.
+
+4. Click on the button ``Open`` and click on the button ``Yes`` 
+if you receive a warning informing you the key 
+of the destination server is not cached yet.
+
+5. A command-line terminal should pop up, prompting you to enter your username and password.
+
+
+
+## Connect to ``slurm1``
+
+In the command-line terminal type the following command:
+
+``
+ssh slurm1
+``
+
+## Allocate resources for the job
+
+Once you're connected to ``slurm1``, 
+you can allocate resources for the job by typing the following command
+(**in place of ``resa-code`` you will type a code that 
+will be communicated by the teacher during the tutorial.**)
+
+
+``
+srun --reservation=resa-code -N 1 --ntasks-per-node=4 --pty bash
+``
+
+::: {.infobox .warning data-latex="{warning}"}
+**Read carefully**
+
+If you want to access the cluster **after the tutorial**, remember to:
+
+* Use the cluster only in the evening in weekdays or during the weekends.
+
+* In order to allocate the resources, **use the following command** instead 
+of the previous one:
+
+    ``
+    srun -p ks1 -N 1 --ntasks-per-node=4 --pty bash
+    ``
+
+:::
+
+
+# Source file edition
+
+The Python source files that you'll be editing in this tutorial are 
+stored in the remote machines under your home directory 
+``/usr/users/`r user_group`/your-username``.
+In order to edit them, you have two options:
+
+1. Use a remote text editor, such as *vim* or *nano* (Linux users, I'm talking to you!).
+
+or,
+
+2. Download the file to your local machine, edit it with your usual code editor and upload it 
+to the remote machine (Windows and MacOS users, I'm talking to you!).
+
+The first option should only be chosen by users who are already familiar with 
+command-line editors.
+
+As for the other users, keep reading this section.
+
+## MacOS users
+
+
+In order to download a file (say, ``test.txt``) from  the home directory of a remote machine in the cluster, 
+you can type the following command **on your local machine**:
+
+``scp your-username@phome.metz.supelec.fr:~/test.txt .``
+
+This will copy the file ``test.txt`` to your working directory **on your local machine**.
+
+Once you're done editing  ``test.txt`` on your local machine, you can upload the file 
+to the remote machine by typing the following command **on your local machine**:
+
+``scp wc.txt  your-username@phome.metz.supelec.fr:~``
+
+It's really that easy!
+
+## Windows users
+
+Windows users can benefit from a graphical client called 
+**WinSCP**, that you can [download here](https://winscp.net/eng/download.php){target="_blank"}.
+Install it, connect to the remote machine and you'll be able to download/upload 
+files from/to the remote machine by a simple drag-and-drop!
+
+
+# Creating your working directory in HDFS
+
+In this section, you'll be walked through the procedure to create a directory 
+in HDFS that you'll use as your working directory in the lab sessions.
+
+You user account is: ```r user_group`_X``, where X is between `r user_account_lower` and 
+`r user_account_upper`.
+
+In order to create your working directory in HDFS, type the following command in the terminal:
+
+``
+hdfs dfs -mkdir hdfs://sar01:9000/`r user_group`/`r user_group`_X
+``
+
+You can verify that the directory is there by listing the content of the folder hdfs://sar01:9000/`r user_group`/
+with the following command:
+
+``
+hdfs dfs -ls hdfs://sar01:9000/`r user_group`/
+``
+
+
+# Preliminary exercise
+
+
+The datasets that you'll be using in this tutorial are 
+available under the folder ``hdfs://sar01:9000/data/`` 
+stored in HDFS. 
+In order to see the content of the directory you can type the following command:
+
+``
+hdfs dfs -ls -h hdfs://sar01:9000/data
+``
+
+
+
+In order to get some familiarity with the commands necessary to run Spark programs in the cluster, 
+let's look at an already implemented example.
+
+* Copy the file ``~vialle/DCE-Spark/template_wc.py`` to your home directory by typing the
+following command:
+    
+    ``
+    cp ~vialle/DCE-Spark/template_wc.py ./wc.py
+    ``
+
+* If you type the command ``ls``, you should see a file named ``wc.py`` in your home directory.
+This file contains the Python code to count the number of occurrences of words in a text file.
+
+* Open the file ``wc.py`` by either using a text editor on the remote machine or by downloading it on your 
+local machine, as explained in the section above.
+
+* Locate the following instruction:
+
+    ``
+    text_file = sc.textFile("hdfs://...")
+    ``
+    
+    and replace it with the following instruction:
+    
+    ``
+    text_file = sc.textFile("hdfs://sar01:9000/data/sherlock.txt")
+    ``
+    
+    This will create an RDD named ``text_file`` with the content of the specified file.
+
+* Similarly, locate the following instruction:
+
+    ``
+    counts.saveAsTextFile("hdfs://...")
+    ``
+    
+    and replace it with the following instruction (**replace ```r user_group`_X`` with your username!**):
+    
+    ``
+    counts.saveAsTextFile("hdfs://sar01:9000/`r user_group`/`r user_group`_X/sherlock.out")
+    ``
+    
+    This will create an output directory *sherlock.out* that will contain the files with the output of the program.
+
+* Run the Python script ``wc.py`` with the following command:
+
+    ``
+    spark-submit --master spark://sar01:7077 wc.py
+    ``
+
+* When the execution is over, the output will be available under the directory 
+``sherlock.out``. To verify it, run the following command:
+
+    ``
+    hdfs dfs -ls -h hdfs://sar01:9000/`r user_group`/`r user_group`_X/sherlock.out
+    ``
+    
+    As usual, remember to replace ```r user_group`_X`` with your username.
+
+* In order to see the result, run the following command:
+
+   <div align="left">
+   ``
+   hdfs dfs -cat hdfs://sar01:9000/`r user_group`/`r user_group`_X/sherlock.out/*
+   ``
+   </div>
+
+::: {.infobox .warning data-latex="{warning}"}
+**Output files**
+
+If you rerun the script by specifying an output file that **already exists**,
+you'd get an error. 
+If you really want to overwrite the output file, you first need to remove it 
+explicitly by typing the following command:
+
+<div align="left">
+``
+hdfs dfs -rm -r hdfs://sar01:9000/`r user_group`/`r user_group`_X/sherlock.out
+``
+</div>
+
+:::
+
+
+
