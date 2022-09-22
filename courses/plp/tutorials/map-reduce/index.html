@@ -612,6 +612,18 @@ Write a MapReduce algorithm that generates key-value pairs
 <span class="math inline">\((year, average\_temperature)\)</span>.</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>map: <span class="math inline">\((year, month, temperature) \rightarrow (year, temperature)\)</span></p>
+<p>reduce: <span class="math inline">\((year, temps) \rightarrow\)</span> <span class="math inline">\((year, sum(temps)/len(temps))\)</span></p>
+<ul>
+<li><span class="math inline">\(temps\)</span> is the list of all temperatures in the same <span class="math inline">\(year\)</span>.</li>
+<li><span class="math inline">\(sum(temps)\)</span> sums all the elements in the list <span class="math inline">\(temps\)</span>.</li>
+<li><span class="math inline">\(len(temps)\)</span> gives the length of the list <span class="math inline">\(temps\)</span>.</li>
+</ul>
+</div>
+</details>
 <p>Suppose now that we have a large CSV file
 stored in a distributed file system (e.g., HDFS),
 containing a series of measurements in the format “Year, Month, Day, Minute, Second, Temperature”.
@@ -626,6 +638,16 @@ a MapReduce algorithm.</p>
 What is the maximum number of measurements in a year?</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>Since we can have up to one measurement per second, the maximum number of
+measurements <span class="math inline">\(M_{max}\)</span> for a certain year is given by the following formula:</p>
+<p><span class="math display">\[
+M_{max} = 365 \times 24 \times 60 \times 60 \approx 31.5 \times 10^6 
+\]</span></p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -635,6 +657,17 @@ Considering the answer to the previous question, discuss the efficiency
 of the first implementation of the algorithm.</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>Since there might be up to 31 million values
+associated with a key, the bottleneck of the computation would be
+the shuffle operation, since we need to copy a high number of
+(key,value) pairs from the mappers to the reducers.</p>
+<p>Also, a reducer might have to
+loop over a huge list of values in order to compute their average.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -644,6 +677,19 @@ Based on the answer to the previous question,
 propose a better implementation to handle the CSV file.</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>map: <span class="math inline">\((year, mo, d, mi, sec, temperature) \rightarrow (year, temperature)\)</span></p>
+<p>combine: <span class="math inline">\((year, temps) \rightarrow\)</span> <span class="math inline">\((year, (sum(temps), len(temps)))\)</span></p>
+<p>reduce: <span class="math inline">\((year, [(s_i, l_i),\ i=1\dots n]) \rightarrow\)</span> <span class="math inline">\((year, \frac{\sum_{i=1}^n s_i}{\sum_{i=1}^n l_i})\)</span></p>
+<ul>
+<li><span class="math inline">\(temps\)</span> is the list of all temperatures in the same <span class="math inline">\(year\)</span>.</li>
+<li><span class="math inline">\(sum(temps)\)</span> sums all the elements in the list <span class="math inline">\(temps\)</span>.</li>
+<li><span class="math inline">\(len(temps)\)</span> gives the length of the list <span class="math inline">\(temps\)</span>.</li>
+</ul>
+</div>
+</details>
 </div>
 <div id="computing-average-and-standard-deviation" class="section level1">
 <h1><span class="header-section-number">2</span> Computing average and standard deviation</h1>
@@ -670,6 +716,16 @@ is more appropriate in a Map-Reduce algorithm?
 Why?</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>The second equation is more appropriate because it allows the computation
+of the sum of the elements and of the square of the elements step by step
+by using map and combine together.</p>
+<p>Instead, if we use the first equation, we need first to compute the average and then use it
+to compute the variance.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -679,6 +735,23 @@ Propose a MapReduce implementation to compute the average and the standard
 deviation of the temperatures for each year.
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>map: <span class="math inline">\((year, mo, d, mi, sec, temperature) \rightarrow (year, temperature)\)</span></p>
+<p>combine: <span class="math inline">\((year, T) \rightarrow\)</span> <span class="math inline">\((year, (sum(T), sum(T^2), len(T)))\)</span></p>
+<p>reduce: <span class="math inline">\((year, [(s_{i}, sq_{i}, l_{i}),\ i=1\dots n]) \rightarrow\)</span> <span class="math inline">\((year, (\mu, \sigma))\)</span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(T\)</span> is the list of all temperatures in the same <span class="math inline">\(year\)</span>.</li>
+<li><span class="math inline">\(sum(T)\)</span> sums all the elements in the list <span class="math inline">\(T\)</span>.</li>
+<li><span class="math inline">\(T^2 = [x^2 | x\in T]\)</span></li>
+<li><span class="math inline">\(len(T)\)</span> gives the length of the list <span class="math inline">\(T\)</span>.</li>
+<li><span class="math inline">\(\mu = \sum_{i=1}^n s_{i}/ \sum_{i=1}^n l_{i}\)</span></li>
+<li><span class="math inline">\(\sigma = \sqrt{ (\sum_{i=1}^n sq_{i}/ \sum_{i=1}^n l_{i}) - \mu^2 }\)</span></li>
+</ul>
+</div>
+</details>
 </div>
 <div id="common-friends" class="section level1">
 <h1><span class="header-section-number">3</span> Common friends in a social network</h1>
@@ -712,6 +785,20 @@ Propose a MapReduce implementation to find the common friends in a
 social network satisifying the given constraints.</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>map: <span class="math inline">\((x, F) \rightarrow [((u, v), x)\ \forall (u, v) \in F\ |\ u &lt; v ]\)</span></p>
+<p>reduce: <span class="math inline">\([(u, v), LCF] \rightarrow [(u, v), LCF]\)</span></p>
+<p>where:</p>
+<ul>
+<li><span class="math inline">\(x\)</span> is the first item in a line.</li>
+<li><span class="math inline">\(F\)</span> is the list containing the items in a line except the first one (<span class="math inline">\(x\)</span>’s friends).</li>
+<li><span class="math inline">\(LCF\)</span> is the list of all individuals that are friends with both <span class="math inline">\(u\)</span> and <span class="math inline">\(v\)</span>.</li>
+</ul>
+<p>We note that the reduce function is the identity.</p>
+</div>
+</details>
 <!--
 # Creating an inverted index
 
@@ -732,6 +819,32 @@ collection of documents.
 :::
 
 
+
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex="{exercisebox}"}
+
+The input to the map will be a key-value pair, where 
+the key is the name of a file $f$ and the value is the 
+content $C$ of the file.
+
+map: $(f, C) \rightarrow [(w, f)\ \forall w \in C]$
+
+reduce: $(w, L) \rightarrow (w, L)$
+
+where $L$ is the list of the files containing the word $w$.
+
+We note that the reduce function is the identity.
+
+Note also that in the map function we can add instructions 
+to preprocess the text. For example, we can eliminate some words
+that are not useful in the index (e.g., the stopwords) or remove 
+special symbols.
+
+:::
+
+</details>
 
 
 -->
