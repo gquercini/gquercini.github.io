@@ -28,10 +28,10 @@
   
     
   
-  <meta name="description" content="Description of the SQLite tutorial.">
+  <meta name="description" content="Advanced SQL queries.">
 
   
-  <link rel="alternate" hreflang="en-us" href="/courses/databases/tutorials/sql-intro/">
+  <link rel="alternate" hreflang="en-us" href="/courses/databases/tutorials/sql-advanced/">
 
   
 
@@ -219,7 +219,7 @@
   <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_2.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_2.png">
 
-  <link rel="canonical" href="/courses/databases/tutorials/sql-intro/">
+  <link rel="canonical" href="/courses/databases/tutorials/sql-advanced/">
 
   
   
@@ -233,9 +233,9 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Gianluca Quercini">
-  <meta property="og:url" content="/courses/databases/tutorials/sql-intro/">
+  <meta property="og:url" content="/courses/databases/tutorials/sql-advanced/">
   <meta property="og:title" content="Learning SQL queries | Gianluca Quercini">
-  <meta property="og:description" content="Description of the SQLite tutorial."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="Advanced SQL queries."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
   
     
@@ -554,13 +554,13 @@
         <a href="/courses/databases/tutorials/normalization/">2. Normalization</a>
       </li>
       
-      <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
-      <li class="active tutorials">
+      
+      <li class="tutorials">
         <a href="/courses/databases/tutorials/sql-intro/">3. Learning SQL queries</a>
       </li>
       
-      
-      <li class="tutorials">
+      <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
+      <li class="active tutorials">
         <a href="/courses/databases/tutorials/sql-advanced/">4. Advanced SQL queries</a>
       </li>
       
@@ -597,7 +597,7 @@
       <article class="article">
 
         <div class="docs-article-container">
-          <div class="heading">Introduction to databases — Tutorial 3</div>
+          <div class="heading">Introduction to databases — Tutorial 4</div>
           <h1>Learning SQL queries</h1>
           <hr>
           <div class="logo">
@@ -610,191 +610,42 @@
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<p>In this tutorial you’ll learn:</p>
-<ul>
-<li>The key integrity constraints in a relational database.</li>
-<li>Basic SQL queries.</li>
-</ul>
-<div id="setting-up-the-environment" class="section level1">
-<h1><span class="header-section-number">1</span> Setting up the environment</h1>
-<p>We use a database managed by a PostgreSQL server. The server runs in a dedicated virtual machine.</p>
-<p><a href="https://webtv.centralesupelec.fr/permalink/v12640ce1094dv76ozuh/" target="_blank"><strong>Watch this video</strong></a> to find out how to
-launch a server and connect to it. The data is already stored at the server.</p>
-</div>
-<div id="description-of-the-data" class="section level1">
-<h1><span class="header-section-number">2</span> Description of the data</h1>
-<p>We consider the database of a DVD rental store chain containing data on films, actors,
-customers and the transactions of the store.</p>
-<p>This database goes by the name <strong>Sakila</strong> and was developed by Mike Hillyer, a former member of the MySQL team.</p>
-<div class="figure" style="text-align: center"><span id="fig:cnm"></span>
-<img src="/courses/databases/tutorial-4/sakila-3nf.png" alt="The conceptual schema of the Sakila database" width="100%" />
-<p class="caption">
-Figure 2.1: The conceptual schema of the Sakila database
-</p>
-</div>
-<p>The tables of the database are <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables.html" target="_blank"><strong>documented on this page</strong></a>.</p>
-<p>Sakila has been ported from MySQL to PostgreSQL under the name <strong>pagila</strong>.</p>
-<p>In pgAdmin, <strong>Open a new query tool</strong> to do the exercises.</p>
-</div>
-<div id="integrity-constraints" class="section level1">
-<h1><span class="header-section-number">3</span> Integrity constraints</h1>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 3.1  </strong></span>
-Execute the following statement:</p>
-<pre>
-insert into film_actor values(1, 25)
-</pre>
-<p>What is this statement supposed to do?
-What is the reaction of the DBMS?</p>
-</div>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 3.2  </strong></span>
-Write the statement to delete the film with
-<em>film_id</em>=1 from
-the table <TT>Film</TT>.</p>
-<p>Execute the command. What happens?</p>
-</div>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3.3  </strong></span>
-Look at the definition of the foreign key constraints
-in table <TT>film_actor</TT> (right-click on the table,
-select <em>Constraints</em>, <em>foreign key</em>).</p>
-<p>Is the definition of the foreign key constraint
-to table <TT>film</TT> coherent with the behavior observed
-in the previous exercise?</p>
-<p><strong>NB</strong> In order to see the options of a foreign key, click on the
-edit button on the left of the constraint. Then look at the
-tab <em>Action</em>.</p>
-</div>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 3.4  </strong></span>
-Execute the following query:</p>
-<pre>
-SELECT f.film_id as film_id_in_table_film, 
-       fa.film_id AS film_id_in_table_film_actor, 
-       fa.actor_id as actor_id, f.title as title
-FROM film f  JOIN film_actor fa  USING (film_id)
-WHERE  f.title='ACE GOLDFINGER'
-</pre>
-<p>What does the query? Note down the identifier of the film in both tables
-<TT>film</TT> and <TT>film_actor</TT>.
-(columns <TT>film_id_in_table_film</TT> and <TT>film_id_in_table_film_actor</TT>).</p>
-</div>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 3.5  </strong></span>
-Write and execute a statement to set the value 10000 to the identifier of the
-film ACE GOLDFINGER in table <TT>Film</TT>.</p>
-<p>After the modification, execute the query of the previous exercise.
-What changed? Explain in details what happened.</p>
-</div>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 3.6  </strong></span>
-Execute the following statement:</p>
-<pre>
-UPDATE film_actor
-SET film_id=2
-WHERE film_id=10000
-</pre>
-<p>What does? What happens? Explain.</p>
-</div>
-</div>
-</div>
-<div id="basic-queries" class="section level1">
-<h1><span class="header-section-number">4</span> Basic queries</h1>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 4.1  </strong></span>
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1  </strong></span>
 Write the following SQL queries:</p>
 <ol style="list-style-type: decimal">
-<li><p>Return all the information on all customers.</p></li>
-<li><p>Return the first and last name of all customers.</p></li>
-<li>Return the first and last name of all customers of the store with identifier 1.</li>
+<li><p>Which last names are <strong>not</strong> repeated in table <em>actor</em>?</p></li>
+<li><p>Is a copy of the movie ACADEMY DINOSAUR available for rent from store 1?</p></li>
+<li><p>Return the title and the release year of all films in one of the following categories:
+<em>Family</em>, <em>Animation</em>, <em>Documentary</em>.</p></li>
 </ol>
-</div>
-</div>
-</div>
-<div id="sorting-and-paginating" class="section level1">
-<h1><span class="header-section-number">5</span> Sorting and paginating</h1>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 5.1  </strong></span>
-Write the following SQL queries:</p>
-<ol style="list-style-type: decimal">
-<li><p>Return the last and first name of all customers. Sort by last name in ascending order.</p></li>
-<li><p>Same as in 1., but only return the first 100 customers.</p></li>
-<li>Return the last and first name of all customers of the store with identifier 1.
-Sort by last name in ascending order and by first name in descending order.</li>
+<details>
+<summary>Tip</summary>
+You can use the <a href="https://www.w3schools.com/sql/sql_in.asp" target="_blank">operator IN</a>
+</details>
+<ol start="4" style="list-style-type: decimal">
+<li>Find all customers (id, last name, first name) whose last name starts with the letter L.
+<details>
+<summary>Tip</summary>
+You can use the <a href="https://www.w3schools.com/sql/sql_like.asp" target="_blank">operator LIKE</a>
+</details></li>
+<li>Return the total paid by each customer. For each customer, display a single
+column containing first and last name and another column with the total amount paid.
+Order the result alphabetically by last name</li>
 </ol>
-</div>
-</div>
-</div>
-<div id="aggregating-queries" class="section level1">
-<h1><span class="header-section-number">6</span> Aggregating queries</h1>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-9" class="exercise"><strong>Exercise 6.1  </strong></span>
-Write the following SQL queries:</p>
-<ol style="list-style-type: decimal">
-<li><p>Count the number of films in the database (expected result: 1000).</p></li>
-<li><p>How many distinct actor last names are there?</p></li>
-<li><p>Compute the total amount of payments across all rentals (expected result: 67416.51).</p></li>
-<li><p>Compute the average, minimum and maximum duration of rental across all films
-(expected result: 4.9850000000000000, 3, 7).</p></li>
-<li><p>Return the number of actors for each film.</p></li>
-<li><p>Return the number of copies of each film in each store (table <TT>inventory</TT>).</p></li>
-<li><p>Same as 6., but only returns the pairs (film, store) if the number of copies is
-greater than or equal to 3.</p></li>
+<details>
+<summary>Tip</summary>
+You can use the <a href="https://www.w3schools.com/sql/func_sqlserver_concat.asp" target="_blank">operator CONCAT</a>
+</details>
+<ol start="6" style="list-style-type: decimal">
+<li><p>Return the total revenue from the rentals across the stores in each country.
+Order by descending revenue.</p></li>
+<li>The first and last name of the actor that played in the most films.
+If two or more actors are tied, the query must return the names of all of them.</li>
 </ol>
-</div>
-</div>
-</div>
-<div id="join-queries" class="section level1">
-<h1><span class="header-section-number">7</span> Join queries</h1>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-10" class="exercise"><strong>Exercise 7.1  </strong></span>
-Write the following SQL queries:</p>
-<ol style="list-style-type: decimal">
-<li><p>Return the first and last name of the manager of the store with identifier 1 (expected result: Mike Hillyer).</p></li>
-<li><p>Return the first and last name of the actors in the film ACE GOLDFINGER.</p></li>
-<li><p>Return first and last name of each actor and the number of films in which they played a role.</p></li>
-<li><p>Same as in 3., but order by number of films in descending order.</p></li>
-<li><p>Same as in 4., but only return actors who played a role in at least 10 films.</p></li>
-<li>Return the identifier, the first and family name of the customers who have rented between 10 and 20
-movies in the category <em>Family</em>.</li>
-</ol>
-</div>
 </div>
 </div>
 
