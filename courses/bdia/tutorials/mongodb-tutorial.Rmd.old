@@ -1,0 +1,278 @@
+---
+title: "MongoDB"
+heading: Platforms and languages — Lab assignment 2
+linktitle: lab-mongodb
+output:
+  bookdown::pdf_book:
+    toc: false
+    includes:
+      in_header: ./latex-files/preamble.tex
+    number_sections: yes
+  blogdown::html_page:
+    number_sections: no
+  html_document:
+    df_print: paged
+menu:
+  plp:
+    name: Lab2. MongoDB Query Language
+    parent: tutorials
+    identifier: mongodb-tutorial
+    weight: 6
+params:
+  solution: false
+summary: Description of the MongoDB tutorial.
+draft: no
+type: docs
+---
+
+<link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/cloud-computing.css">
+
+<!--
+
+# Introduction 
+
+In this lab assignment you'll run queries in MongoDB.
+
+::: {.infobox .warning data-latex="{warning}"}
+**Assignment submission**
+
+This lab assignment will be **evaluated**.
+
+In order to finalize the submission of the assignment, 
+submit a report in PDF by using [this link](https://centralesupelec.edunao.com/mod/assign/view.php?id=43066){target="_blank"}.
+
+The report must not be longer than 4 pages. In the report:
+
+* Indicate your first and family name.
+
+* Describe briefly the MongoDB query language and the aggregation framework.
+
+* Write the queries but not the results of the queries.
+
+The submission deadline is **Thursday, January 28, 2021 8:00 AM**.
+
+:::
+
+
+
+
+# Setting up the work environment.
+
+* Start the **MongoDB server**. Refer 
+to the [documentation](/courses/plp/overview/installation-mongodb) 
+to find out how to start the server depending on your operating system.
+
+* Launch **MongoDB compass**. You should have installed it 
+with the MongoDB server.
+
+* From within MongoDB compass, connect to the local MongoDB server.
+
+# Creating the database
+
+* Download the data by [clicking here](/courses/plp/tutorials/mongodb-data.zip).
+
+* In MongoDB Compass, click on the button "Create database".
+
+* Give the database a name (e.g., *cinema*) and create a collection 
+named *movies*.
+
+* Click on the button *Add data* and select *Import file*.
+
+* Select JSON as a file format and select the file *movies.json*.
+
+* Click on "Import"; 88 documents should be imported into the database.
+
+::: {.infobox .warning data-latex="{warning}"}
+**Troubleshooting**
+
+In case you experience problems while importing the JSON file, you might want to 
+try to import the file *movies.csv*.
+
+:::
+
+# Querying the data with *find*
+
+At the bottom of the MongoDB window, you should find a link 
+to open the MongoDB shell (MongoSH Beta).
+
+After opening the shell, write the following command to 
+switch to database *cinema*:
+
+```
+use cinema
+```
+
+To verify that you're actually connected to the database *cinema*, 
+type the following query:
+
+```
+db.movies.findOne()
+```
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+By using the MongoDB shell, execute the following queries.
+
+Q1. The release year of the movie "Le parrain III".
+
+Q2. The title of the movies released between  1980 and 1990.
+
+Q3. Same query as b. with the titles must be sorted by alphabetical order.
+
+Q4. The titles of the french movies.
+
+Q5. The title of the  "crime" or  "drama" movies.
+
+Q6. The names and birth dates of the  directors of french movies.
+
+Q7. The title of the movies in which Sofia Coppola played.
+
+Q8. The title and the genre of the movies of which Hitchcock is director.
+
+```
+
+:::
+
+`r if(params$solution) {"
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+Q1. 
+<pre>db.movies.find({title:\"Le parrain III\"}, {year:1})</pre>
+
+Q2. 
+<pre>db.movies.find({year:{$gte:1980, $lte:1990}}, {title:1})</pre>
+
+Q3.
+<pre>db.movies.find({year:{$gte:1980, $lte:1990}}, {title:1}).sort({title:1})</pre>
+
+Q4.
+<pre>db.movies.find({country:\"FR\"}, {title:1})</pre>
+
+Q5.
+<pre>db.movies.find( { $or : [ {genre:\"crime\" }, {genre:\"drama\"} ] }, {title:1} )</pre>
+
+Q6.
+<pre>db.movies.find({country:\"FR\"}, 
+    {\"director.first_name\":1, 
+    \"director.last_name\":1, \"director.birth_date\":1})
+</pre>
+
+Q7.
+<pre>db.movies.find({\"actors.first_name\": \"Sofia\", \"actors.last_name\": \"Coppola\"}, {title:1})</pre>
+
+Q8.
+<pre>db.movies.find({\"director.last_name\": \"Hitchcock\"}, {title:1, genre:1})</pre>
+
+:::
+
+</details>
+"}`
+
+# Querying the data with the aggregation framework
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+By using the MongoDB shell, execute the following queries 
+by using **aggregation pipelines**.
+
+Q1.	The number of movies by country. Show by decresing number.
+
+Q2.	The name of the actor in the role "Mary Corleone" in the movie "Le parrain III".
+
+Q3.	The number of actors by movie. Sort by decreasing number.
+
+Q4. The average number of actors in a film.
+
+
+```
+
+:::
+
+`r if(params$solution) {"
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+Q1.
+<pre>
+db.movies.aggregate({$group:{_id:\"$country\", count:{$sum:1}}}, 
+                    {$sort:{count:-1}})
+</pre>
+
+Q2.
+<pre>
+db.movies.aggregate({$unwind: \"$actors\"}, 
+                    {$match: {\"actors.role\":\"Mary Corleone\"}}, 
+                    {$project: {\"actors.first_name\": 1, \"actors.last_name\":1}})
+</pre>
+
+Q3. 
+<pre>
+db.movies.aggregate({$unwind: \"$actors\"}, 
+                    {$group: {_id:\"$_id\", count:{$sum:1}}}, 
+                    {$sort: {count:-1}})  
+</pre>
+
+Q4. 
+<pre>
+db.movies.aggregate( {$project:{nb_actors:{$size: \"$actors\"}}}, 
+                    {$group: {_id:\"_id\", avg_nb_actors:{$avg: \"$nb_actors\"}}})
+</pre>
+
+:::
+
+</details>
+"}`
+
+# Join in MongoDB
+
+In the database *cinema*, create a new collection called *movies_boffice*.
+Import the documents in file *moviesBoxOffice.json* into this collection.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+By using the operator *$lookup* on the collections 
+*movies* and *movies_boffice*, find the box office of the 
+movie "Le parrain III".
+
+```
+
+:::
+
+`r if(params$solution) {"
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+
+<pre>
+db.movies.aggregate({$match: {title:\"Le parrain III\"}}, 
+                    {$lookup: {from: \"movies_boffice\", localField: \"_id\", 
+                                foreignField: \"_id\", as: \"movie\"}}, 
+                    {$project: {\"movie.box_office\": 1}})
+</pre>
+
+:::
+
+</details>
+"}`
+
+-->

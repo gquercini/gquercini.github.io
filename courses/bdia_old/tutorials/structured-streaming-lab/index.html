@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Gianluca Quercini">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Description of the lab structured streaming.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/courses/bdia_old/tutorials/structured-streaming-lab/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="rgb(0, 136, 204)">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_2.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_2.png">
+
+  <link rel="canonical" href="/courses/bdia_old/tutorials/structured-streaming-lab/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="Gianluca Quercini">
+  <meta property="og:url" content="/courses/bdia_old/tutorials/structured-streaming-lab/">
+  <meta property="og:title" content="Spark structured streaming | Gianluca Quercini">
+  <meta property="og:description" content="Description of the lab structured streaming."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
+  
+    
+    
+  
+
+  
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Spark structured streaming | Gianluca Quercini</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#experience"><span>Experience</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#publications"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  
+
+  
+
+<div class="container-fluid docs">
+  <div class="row flex-xl-nowrap">
+    <div class="col-12 col-md-3 col-xl-2 docs-sidebar">
+      
+
+
+<script src="/js/toggle-menu.js"></script>
+
+
+
+
+
+
+
+  
+    
+  
+
+
+
+
+<form class="docs-search d-flex align-items-center">
+  <button class="btn docs-toggle d-md-none p-0 mr-3" type="button" data-toggle="collapse" data-target="#docs-nav" aria-controls="docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    <span><i class="fas fa-bars"></i></span>
+  </button>
+
+  
+</form>
+
+<nav class="collapse docs-links" id="docs-nav">
+  
+
+  
+  
+  
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="overview" class="docs-toc-link" href="/courses/bdia_old/overview/">Overview</a>
+    
+    <div id="overview-ddowncontent" class="overview-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="overview">
+        <a href="/courses/bdia_old/overview/">Big data algorithms, techniques and platforms</a>
+      </li>
+      
+      
+      <li class="overview">
+        <a href="/courses/bdia_old/overview/installation-mongodb/">Installing MongoDB</a>
+      </li>
+      
+      
+      <li class="overview">
+        <a href="/courses/bdia_old/overview/cluster-connection/">Connecting to the cluster</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="lectures" class="docs-toc-link" href="/courses/bdia_old/lectures/lectures/">Lectures</a>
+    
+    <div id="lectures-ddowncontent" class="lectures-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="lectures">
+        <a href="/courses/bdia_old/lectures/lectures/">Overview</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="tutorials" class="docs-toc-link" href="/courses/bdia_old/tutorials/cc-tutorials/">Tutorials and labs</a>
+    
+    <div id="tutorials-ddowncontent" class="tutorials-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="tutorials">
+        <a href="/courses/bdia_old/tutorials/cc-tutorials/">Overview</a>
+      </li>
+      
+      
+      <li class="tutorials">
+        <a href="/courses/bdia_old/tutorials/map-reduce/">MapReduce</a>
+      </li>
+      
+      
+      <li class="tutorials">
+        <a href="/courses/bdia_old/tutorials/spark-programming-dce/">Introduction to Spark programming</a>
+      </li>
+      
+      
+      <li class="tutorials">
+        <a href="/courses/bdia_old/tutorials/neo4j-tutorial/">Neo4j</a>
+      </li>
+      
+      
+      <li class="tutorials">
+        <a href="/courses/bdia_old/tutorials/spark-lab-assignment/">Lab 1. Advanced Spark programming</a>
+      </li>
+      
+      
+      <li class="tutorials">
+        <a href="/courses/bdia_old/tutorials/mongodb-tutorial/">Lab2. MongoDB Query Language</a>
+      </li>
+      
+      <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
+      <li class="active tutorials">
+        <a href="/courses/bdia_old/tutorials/structured-streaming-lab/">Lab 3. Spark structured streaming</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="references" class="docs-toc-link" href="/courses/bdia_old/references/cc-references/">References</a>
+    
+    <div id="references-ddowncontent" class="references-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="references">
+        <a href="/courses/bdia_old/references/cc-references/">Bibliography</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  
+</nav>
+
+    </div>
+
+    
+
+    <main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 docs-content" role="main">
+
+      <article class="article">
+
+        <div class="docs-article-container">
+          <div class="heading">Big data algorithms, techniques and platforms — Lab assignment 3</div>
+          <h1>Spark structured streaming</h1>
+          <hr>
+          <div class="logo">
+            <p><img src="/img/cs-logo.png" width="20%" style="display: block; margin: auto;" /></p>
+            </div>
+
+          <div class="article-style">
+            
+
+
+<p><link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/cloud-computing.css"></p>
+<!-- ############ IMPORTANT: CHANGE THESE VALUES BEFORE ANY LAB ############ -->
+<!-- The link to the Edunao page where the students submit their work -->
+<!-- The submission deadline -->
+<!-- The group to which users in the cluster belong-->
+<!-- User accounts are numbered from the lower to the upper limit-->
+<!-- ############ END OF MODIFICATIONS ############ -->
+<!--
+
+
+# Introduction 
+
+The goal of this lab assignment is to learn how to analyze streams of data with the Spark Structured Streaming API.
+[Refer to this documentation](/courses/plp/overview/cluster-connection){target="_blank"} to learn how to connect and 
+interact with the cluster.
+
+::: {.infobox .warning data-latex="{warning}"}
+**Assignment submission**
+
+This lab assignment will be **evaluated**.
+
+In order to finalize the submission of the assignment, 
+complete [this form available on Edunao](https://centralesupelec.edunao.com/mod/quiz/view.php?id=48267){target="_blank"}.
+
+The submission deadline is **Tuesday, March 30, 2021 8:00 AM**.
+
+:::
+
+
+::: {.infobox .warning data-latex="{warning}"}
+**Documentation**
+
+In order to answer the questions and do the exercises, you might want to refer to the following 
+documentation:
+
+*  The [Structured Streaming programing guide](https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html){target="_blank"}.
+
+* The [Spark SQL API reference](https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql.html){target="_blank"}.
+
+:::
+
+
+
+# Warming up
+
+Consider the following program.
+
+```
+from pyspark.sql import SparkSession
+from pyspark.sql.types import *
+import pyspark.sql.functions as F
+
+port_number = COMPLETE HERE
+checkpoint_location = COMPLETE HERE
+
+spark = (SparkSession.builder.appName("Structured Streaming - exo1").getOrCreate())
+
+lines = (spark\
+        .readStream.format("socket")\
+        .option("host", "localhost")\
+        .option("port", port_number)\
+        .load())
+
+streamingQuery = lines.writeStream\
+                .option("checkpointLocation", checkpoint_location)\
+                .format("console").start()
+
+streamingQuery.awaitTermination()
+```
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-1"><strong>(\#exr:unnamed-chunk-1) </strong></span>
+
+1. Where does this program get its input from?
+
+2. What object type does the variable ``lines`` contain? 
+
+3. Where does this program write its output?
+
+4. What is the output of this program?
+
+5. What is the option  ``checkpointLocation`` intended for?
+
+6. What does the instruction ``streamingQuery.awaitTermination()``?
+
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+You can now verify your answers to the previous questions by **executing the program**. 
+
+::: {.infobox .activitybox data-latex="{exercisebox}"}
+**Activity**
+
+
+
+1. Connect to the cluster, if you haven't done so yet. [Refer to this documentation](/courses/plp/overview/cluster-connection){target="_blank"}.
+
+2. After running the command ``srun ...``, you should be connected to a machine on the cluster Kyle. 
+Note the name of this machine (you should see it at the terminal prompt).
+
+3. Create a checkpoint directory for the first exercise (e.g., ``checkpoint_exo1``) under your home directory
+``hdfs://sar01:9000/cpuasi1/cpuasi1_X`` **in HDFS**. 
+
+4. Copy and paste the code into a Python file (e.g., ``exo1.py``) that you'll save into your home directory **in the local filesystem** 
+of the cluster machine.
+   * Change the value of the variable ``checkpoint_location`` so that it points to the directory that you created at point 3.
+   * Change the value of the variable ``port_number`` to any value in the range [49152, 65535].
+
+5. Open a new terminal window, connect to ``phome.metz.supelec.fr`` and then to the same machine that you noted at point 2.
+
+6. In the new terminal, start a **netcat server** listening on the port number that you selected at point 4. Use the following command:
+
+``
+nc -lk port_number
+``
+
+7. Run the Python code with the command ``spark-submit``. Wait until Spark does not display any more messages on screen.
+   * In case the program stops for an error, read the box "What to do in case of errors" below.
+
+8. In the netcat terminal, write few lines of text. Look at the terminal where the Spark program is running and observe the output.
+
+:::
+
+::: {.infobox .warning data-latex="{warning}"}
+**What to do in case of errors**
+
+If any error arises, **before** running the ``spark-submit`` again it would be better to remove 
+all files from the checkpoint directory.
+
+:::
+
+
+::: {.infobox .warning data-latex="{warning}"}
+**Stop the program**
+
+* When you're done with your experiments, you can stop the Spark program by simply 
+typing CTRL-C in the terminal where Spark is running. 
+
+* Don't stop the netcat server, you'll need it in the next exercise.
+
+:::
+
+
+# Triggering policy
+
+In a Structured Streaming program we can choose a **triggering policy**.
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-2"><strong>(\#exr:unnamed-chunk-2) </strong></span>
+
+1. What is a triggering policy?
+
+2. What is the triggering policy in the previous program?
+
+3. Modify the code of the previous program in order to set  the 
+``Fixed interval micro-batch`` triggering policy.
+
+4. Run the program. How is the behaviour of this program different from before?
+
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+# Checkpoint location and output mode
+
+We're now going to see the impact of  the checkpoint location and the output modes on a streaming query.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-3"><strong>(\#exr:unnamed-chunk-3) </strong></span>
+
+1. What is an output mode and what are the available options?
+
+2. What is the output mode of the previous program?
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+We're now going to write a new streaming query.
+
+
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-4"><strong>(\#exr:unnamed-chunk-4) </strong></span>
+
+1. Create  a new checkpoint location in HDFS. 
+You may also keep the same directory as before; in this case, make sure you **remove all files** from that 
+directory.
+
+2. Write a new program that reads a streaming text from a TCP socket and 
+counts the number of occurrences of each word.
+
+3. Which output mode are you going to choose and why?
+
+4. Run the program. Write few lines on the netcat server and observe the output.
+
+5. Stop the program and run it again with no modifications. Write few lines in the netcat terminal and observe the output.
+What can you say about the word counts?
+
+6. Stop the program and remove the files in the checkpoint location. Run the program again and write few lines 
+on the netcat terminal. What can you say about the word counts?
+
+7. Play with the different output modes and observe how the output changes.
+
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+# Window operations on event time
+
+
+
+::: {.infobox .warning data-latex="{warning}"}
+**Netcat and checkpoint**
+
+1. You can stop the netcat server now. 
+
+2. Remember to create a new checkpoint location for this exercise. 
+Alternatively, you can also use the same directory as in the previous exercises, but
+you should remove all its files.
+
+
+:::
+
+
+We're now going to find out how to perform aggregations over  a sliding event-time window.
+
+A given data source generates some words for a certain time interval.
+Each word is accompanied with a timestamp that indicates the exact moment when the word is 
+generated. This timestamp is the **event time**.
+
+After generating a word, the data source saves the word and its timestamp into 
+a CSV file in a directory on HDFS. 
+For convenience, we'll refer to this directory as the **source directory**.
+
+At any given moment, the source  will contain zero to many CSV files, 
+where each file only contains exactly one line in the format 
+``word,timestamp`` (no whitespace before nor after the comma).
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-5"><strong>(\#exr:unnamed-chunk-5) </strong></span>
+
+Write a Spark program that:
+
+1. Reads the stream of data from the source directory.
+
+2. Counts the number of occurrences of each word within 10 minute windows that slide every 5 minutes.
+
+3. Print the output counts to the console. Use triggers of 5 seconds.
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+We now test the new Spark program.
+
+::: {.infobox .warning data-latex="{warning}"}
+**Data source and timeline visualization**
+
+We provide two Python programs for this exercise: a data generator and 
+a tool for visualizing words in a timeline. Instructions to get and run
+these two programs are given in the activity below.
+
+The **data generator** is our data source. 
+It generates two words every second for a certain 
+amount of time. 
+Each word is saved in a separate CSV file in source directory.
+It also saves the list of all generated 
+words to a summary CSV file. 
+
+The **visualization tool** takes as its input the summary CSV file 
+written by the data generator and visualizes the words 
+on a timeline.
+
+:::
+
+
+::: {.infobox .activitybox data-latex="{exercisebox}"}
+**Activity**
+
+1. Create the source directory under your home directory
+``hdfs://sar01:9000/cpuasi1/cpuasi1_X`` **in HDFS**. 
+
+2. Copy to your home directory 
+in the local filesystem 
+the data generator that you find at the following path
+
+``/usr/users/cpu-prof/cpu_quercini/structured-streaming/tempws_gen.py``. 
+
+3. Start your Spark program. When running the first time, you might get some errors. Correct your code accordingly.
+
+4. In another terminal, run the Python script ``tempws_gen.py``. Use the 
+following command to learn how to run this program:
+
+``python3 tempws_gen.py --help``
+
+For this exercise, do not introduce any delay 
+(keep the default values of the parameters ``--delay``, ``--mindelay``, ``--maxdelay``).
+
+5. After launching the data generator, you should 
+see some output in the terminal where you launched the Spark program. 
+**Wait for the script ``tempws_gen.py`` to terminate the data generation**.
+The output might be a bit overwhelming. Scroll up to identify the results 
+on each micro-batch.
+
+6. If you need to rerun the Spark program and the data generator, make sure you delete all the files in the 
+checkpoint location and the source directory.
+
+
+:::
+
+We now want to analyze the output of the program.
+
+
+* The script ``tempws_gen.py`` has generated 
+a file ``gen_words.csv`` in your home directory. 
+This file contains the list of all words generated with the relative timestamps. 
+**Download the file to your computer**.
+
+* Download the visualization tool ``/usr/users/cpu-prof/cpu_quercini/structured-streaming/timeline_visualization.py`` 
+to your computer.
+
+
+::: {.infobox .warning data-latex="{warning}"}
+**Visualization tool**
+
+Use the following command to learn how to run the visualization tool:
+
+``
+python timeline_visualization.py --help
+``
+ 
+The visualization tool displays a vertical blue bar at each trigger.
+To this purpose, you'll need to pass the tool the timestamps associated to the first 
+and last trigger and the interval (in seconds) between two consecutive triggers.
+
+You can get the timestamps associated to the first and last trigger by analyzing the output of Spark.
+More specifically, for each micro-batch, Spark outputs the progress details of the streaming query; you'll need 
+to look at the timestamp associated to the first and last micro-batch.
+
+
+
+:::
+
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-6"><strong>(\#exr:unnamed-chunk-6) </strong></span>
+
+1. Analyze the output of your Spark program and the timeline of the generated words.
+
+2. Describe how the counts are updated by the Spark program.
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+# Late data and watermarking
+
+We're now going to learn how Structured Streaming handles 
+late data in windowed aggregations.
+
+
+::: {.infobox .warning data-latex="{warning}"}
+**Remove generated files**
+
+Remove all the files in the directory ``tempws``.
+
+:::
+
+The data generator ``tempws_gen.py``
+can generate a stream of words, some of which 
+might be written to the directory ``tempws`` with some amount of 
+delay. In other words, there is a gap between the event time (when the word is generated)
+and the arrival time (when the word is written to the directory).
+
+Use the following command to learn how to do it:
+
+``python3 tempws_gen.py --help``
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-7"><strong>(\#exr:unnamed-chunk-7) </strong></span>
+
+1. Write a Spark program that does the same aggregation as in the previous exercise.
+Additionally, the program must use watermarking to handle late data.
+
+2. Start the Spark program.
+
+3. Generate some data with delay with the program ``tempws_gen.py``. 
+Once the data generation stops, you can stop the Spark program.
+
+4. Visualize the generated words with the visualization tool. 
+Late words have the delay indicated between parentheses.
+
+5. Observe the output of the Spark program and describe how 
+the watermarking mechanism works on this example.
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+-->
+
+          </div>
+
+          
+
+
+
+          
+        </div>
+
+        
+      </article>
+
+      
+
+    </main>
+  </div>
+</div>
+
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.1/anchor.min.js" integrity="sha256-pB/deHc9CGfFpJRjC43imB29Rse8tak+5eXqntO94ck=" crossorigin="anonymous"></script>
+    <script>
+      anchors.add();
+    </script>
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.6f7ce8be710290b8c431bbc97f405d15.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
