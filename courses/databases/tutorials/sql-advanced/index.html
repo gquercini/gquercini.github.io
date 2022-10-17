@@ -660,63 +660,6 @@ If two or more actors are tied, the query must return the names of all of them.<
 </ol>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<ol style="list-style-type: decimal">
-<li><pre>
-select last_name
-from actor
-group by last_name
-having count(*) = 1
-</pre></li>
-<li><pre>
-select distinct i.inventory_id
-from film f join inventory i using(film_id)
-join rental r using(inventory_id)
-where f.title='ACADEMY DINOSAUR' 
-    and i.store_id=1 
-    and r.return_date is not null  
-</pre></li>
-<li><pre>
-select  distinct f.title, f.release_year
-from film f join film_category using(film_id)
-join category cat using(category_id)
-where cat.name in ('Family', 'Animation', 'Documentary')
-</pre></li>
-<li><pre>
-select customer_id, first_name, last_name
-from customer
-where last_name LIKE 'L%'
-</pre></li>
-<li><pre>
-select concat(first_name, ' ', last_name), sum(amount)
-from customer join payment using (customer_id)
-group by customer_id
-order by last_name asc
-</pre></li>
-<li><pre>
-select country, sum(amount) as revenue
-from payment join rental using (rental_id)
-  join inventory using (inventory_id)
-  join store using (store_id)
-  join address using (address_id)
-  join city using (city_id)
-  join country using (country_id)
-group by country_id
-order by revenue desc
-</pre></li>
-<li>select actor_id, first_name, last_name, count(<em>)
-from film_actor join actor using(actor_id)
-group by actor_id
-having count(</em>) =
-(select max(nb_films)
-from (select count(*) as nb_films
-from film_actor
-group by actor_id) t)</li>
-</ol>
-</div>
-</details>
 
           </div>
 
