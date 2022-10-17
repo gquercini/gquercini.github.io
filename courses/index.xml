@@ -12119,6 +12119,17 @@ insert into film_actor values(1, 25)
 What is the reaction of the DBMS?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;This statement should insert a new row in table &lt;TT&gt;film_actor&lt;/TT&gt;,
+where the value of &lt;TT&gt;actor_id&lt;/TT&gt; is 1 and the value of
+&lt;TT&gt;film_id&lt;/TT&gt; is 25.&lt;/p&gt;
+&lt;p&gt;The DBMS returns an error because there is already a row
+with these values and the two columns
+&lt;TT&gt;film_actor&lt;/TT&gt;, &lt;TT&gt;film_id&lt;/TT&gt; form the primary key.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -12130,6 +12141,17 @@ the table &lt;TT&gt;Film&lt;/TT&gt;.&lt;/p&gt;
 &lt;p&gt;Execute the command. What happens?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;PRE&gt;
+delete from film where film_id=1
+&lt;/PRE&gt;
+&lt;p&gt;The statement is rejected because there are rows in other tables
+that reference the row that we intend to delete.
+This is the effect of the foreign key constraint.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -12146,6 +12168,16 @@ edit button on the left of the constraint. Then look at the
 tab &lt;em&gt;Action&lt;/em&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The foreign key linking table &lt;TT&gt;film_actor&lt;/TT&gt; to table
+&lt;TT&gt;film&lt;/TT&gt; is defined with the option RESTRICT on delete.
+This is coherent with the behavior that we observed
+in the previous exercise. Referenced rows cannot be deleted if
+there are still referencing rows.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -12164,6 +12196,14 @@ WHERE  f.title=&#39;ACE GOLDFINGER&#39;
 (columns &lt;TT&gt;film_id_in_table_film&lt;/TT&gt; and &lt;TT&gt;film_id_in_table_film_actor&lt;/TT&gt;).&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The query returns the list of all actors in the film titled Ace Goldfinger.
+We note that the identifier of the film in both tables is identical (2), as it should
+because the query joins the two tables on the equality of these two values.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -12175,6 +12215,24 @@ film ACE GOLDFINGER in table &lt;TT&gt;Film&lt;/TT&gt;.&lt;/p&gt;
 What changed? Explain in details what happened.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The statement to modify the &lt;TT&gt;film_id&lt;/TT&gt; of the given film is as follows:&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;
+UPDATE film
+SET film_id=10000
+WHERE title=‘ACE GOLDFINGER’
+&lt;/TT&gt;&lt;/p&gt;
+&lt;p&gt;After executing the same query as the previous exercise, we see that
+the identifier of the film has changed in the table &lt;TT&gt;film_actor&lt;/TT&gt; too.
+This is expected, because the foreign key constraint between the
+colum &lt;TT&gt;film_id&lt;/TT&gt; in table &lt;TT&gt;film_actor&lt;/TT&gt; and the column
+&lt;TT&gt;film_id&lt;/TT&gt; in table &lt;TT&gt;film&lt;/TT&gt; has the option ON UPDATE CASCADE.
+This means that if we modify the identifier of the film in table
+&lt;TT&gt;film&lt;/TT&gt;, the modification is propagated to all the referencing columns.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -12189,6 +12247,19 @@ WHERE film_id=10000
 &lt;p&gt;What does? What happens? Explain.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The statement intends to set the identifier of the film
+titled Ace Goldfinger (in the previous exercise we gave it the identifier 10000)
+back to its original value.
+However, we execute the statement on the table &lt;TT&gt;film_actor&lt;/TT&gt;.
+The action is not allowed, as the identifier 2 does not correspond to
+any film in table &lt;TT&gt;film&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;The foreign key enforces the referential integrity constraint.
+A row cannot refer to a non-existing entity in the referenced table.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;basic-queries&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Basic queries&lt;/h1&gt;
@@ -12205,6 +12276,26 @@ Write the following SQL queries:&lt;/p&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;pre&gt;
+select * 
+from customer
+&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;pre&gt;
+select first_name, last_name 
+from customer
+&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;pre&gt;
+select first_name, last_name 
+from customer
+where store_id=1
+&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;sorting-and-paginating&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;5&lt;/span&gt; Sorting and paginating&lt;/h1&gt;
@@ -12222,6 +12313,29 @@ Sort by last name in ascending order and by first name in descending order.&lt;/
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;pre&gt;
+select last_name, first_name 
+from customer
+order by last_name asc
+&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;pre&gt;
+select last_name, first_name 
+from customer
+order by last_name asc
+limit 100
+&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;pre&gt;
+select first_name, last_name 
+from customer
+where store_id=1
+&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;aggregating-queries&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;6&lt;/span&gt; Aggregating queries&lt;/h1&gt;
@@ -12244,6 +12358,45 @@ greater than or equal to 3.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;pre&gt;
+select count(*) 
+from film
+&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;pre&gt;
+select  count (distinct last_name) 
+from actor
+&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;pre&gt;
+select sum(amount) 
+from payment
+&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;pre&gt;
+select avg(rental_duration), min(rental_duration), max(rental_duration) 
+from film
+&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;pre&gt;
+select film_id, count(*) as nb_actors
+from film_actor
+group by film_id
+&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;pre&gt;
+select film_id, store_id, count(*) as nb_films
+from inventory
+group by film_id, store_id
+&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;pre&gt;
+select film_id, store_id, count(*) as nb_films
+from inventory
+group by film_id, store_id
+having count(*) &gt;=3
+&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;join-queries&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;7&lt;/span&gt; Join queries&lt;/h1&gt;
@@ -12259,11 +12412,56 @@ Write the following SQL queries:&lt;/p&gt;
 &lt;li&gt;&lt;p&gt;Return first and last name of each actor and the number of films in which they played a role.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Same as in 3., but order by number of films in descending order.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Same as in 4., but only return actors who played a role in at least 10 films.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;Return the identifier, the first and family name of the customers who have rented between 10 and 20
+&lt;li&gt;Return the identifier, the first and family name of the customers who have rented between 5 and 10
 movies in the category &lt;em&gt;Family&lt;/em&gt;.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;pre&gt;
+select first_name, last_name
+from staff join store using(store_id)
+where store_id=1
+&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;pre&gt;
+select first_name, last_name
+from film join film_actor using(film_id) join actor using(actor_id)
+where title=&#39;ACE GOLDFINGER&#39;
+&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;pre&gt;
+select first_name, last_name, count(*) as nb_films
+from actor join film_actor using(actor_id)
+group by actor_id
+&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;pre&gt;
+select first_name, last_name, count(*) as nb_films
+from actor join film_actor using(actor_id)
+group by actor_id
+order by nb_films desc
+&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;pre&gt;
+select first_name, last_name, count(*) as nb_films
+from actor join film_actor using(actor_id)
+group by actor_id
+having count(*) &gt;= 10
+order by nb_films desc
+&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;pre&gt;
+select cust.customer_id, first_name, last_name, count(*) as nb_films
+from customer cust join rental using(customer_id) 
+  join inventory using(inventory_id)
+    join film_category using(film_id)
+    join category cat using(category_id)
+where cat.name=&#39;Family&#39;
+group by customer_id
+having count(*) between 5 and 10
+&lt;/pre&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
