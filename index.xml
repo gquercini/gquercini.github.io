@@ -13509,6 +13509,63 @@ If two or more actors are tied, the query must return the names of all of them.&
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;pre&gt;
+select last_name
+from actor
+group by last_name
+having count(*) = 1
+&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;pre&gt;
+select distinct i.inventory_id
+from film f join inventory i using(film_id)
+join rental r using(inventory_id)
+where f.title=&#39;ACADEMY DINOSAUR&#39; 
+    and i.store_id=1 
+    and r.return_date is not null  
+&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;pre&gt;
+select  distinct f.title, f.release_year
+from film f join film_category using(film_id)
+join category cat using(category_id)
+where cat.name in (&#39;Family&#39;, &#39;Animation&#39;, &#39;Documentary&#39;)
+&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;pre&gt;
+select customer_id, first_name, last_name
+from customer
+where last_name LIKE &#39;L%&#39;
+&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;pre&gt;
+select concat(first_name, &#39; &#39;, last_name), sum(amount)
+from customer join payment using (customer_id)
+group by customer_id
+order by last_name asc
+&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;pre&gt;
+select country, sum(amount) as revenue
+from payment join rental using (rental_id)
+  join inventory using (inventory_id)
+  join store using (store_id)
+  join address using (address_id)
+  join city using (city_id)
+  join country using (country_id)
+group by country_id
+order by revenue desc
+&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;select actor_id, first_name, last_name, count(&lt;em&gt;)
+from film_actor join actor using(actor_id)
+group by actor_id
+having count(&lt;/em&gt;) =
+(select max(nb_films)
+from (select count(*) as nb_films
+from film_actor
+group by actor_id) t)&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 </description>
     </item>
     
