@@ -234,7 +234,7 @@
   
   <meta property="og:site_name" content="Gianluca Quercini">
   <meta property="og:url" content="/courses/bdia/tutorials/spark-programming-dce/">
-  <meta property="og:title" content="Introduction to Spark programming | Gianluca Quercini">
+  <meta property="og:title" content="Running Spark programs on a cluster | Gianluca Quercini">
   <meta property="og:description" content="Description of the tutorial on Spark programming on a cluster"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
   
@@ -258,7 +258,7 @@
 
 
 
-  <title>Introduction to Spark programming | Gianluca Quercini</title>
+  <title>Running Spark programs on a cluster | Gianluca Quercini</title>
 
 </head>
 
@@ -539,63 +539,10 @@
   
   <div class="docs-toc-item">
 
-    <a onclick=open_menu_on_click(this) id="overview" class="docs-toc-link" href="/courses/bdia/overview/">Overview</a>
-    
-    <div id="overview-ddowncontent" class="overview-ddowncontent ddowncontent">
-    <ul class="nav docs-sidenav">
-      
-      
-      <li class="overview">
-        <a href="/courses/bdia/overview/">Big data algorithms, techniques and platforms</a>
-      </li>
-      
-      
-      <li class="overview">
-        <a href="/courses/bdia/overview/installation-mongodb/">Installing MongoDB</a>
-      </li>
-      
-      
-      <li class="overview">
-        <a href="/courses/bdia/overview/cluster-connection/">Connecting to the cluster</a>
-      </li>
-      
-    </ul>
-    </div>
-    
-    
-
-  </div>
-  
-  <div class="docs-toc-item">
-
-    <a onclick=open_menu_on_click(this) id="lectures" class="docs-toc-link" href="/courses/bdia/lectures/lectures/">Lectures</a>
-    
-    <div id="lectures-ddowncontent" class="lectures-ddowncontent ddowncontent">
-    <ul class="nav docs-sidenav">
-      
-      
-      <li class="lectures">
-        <a href="/courses/bdia/lectures/lectures/">Overview</a>
-      </li>
-      
-    </ul>
-    </div>
-    
-    
-
-  </div>
-  
-  <div class="docs-toc-item">
-
-    <a onclick=open_menu_on_click(this) id="tutorials" class="docs-toc-link" href="/courses/bdia/tutorials/cc-tutorials/">Tutorials and labs</a>
+    <a onclick=open_menu_on_click(this) id="tutorials" class="docs-toc-link" href="/courses/bdia/tutorials/map-reduce/">Tutorials and labs</a>
     
     <div id="tutorials-ddowncontent" class="tutorials-ddowncontent ddowncontent">
     <ul class="nav docs-sidenav">
-      
-      
-      <li class="tutorials">
-        <a href="/courses/bdia/tutorials/cc-tutorials/">Overview</a>
-      </li>
       
       
       <li class="tutorials">
@@ -604,46 +551,7 @@
       
       <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
       <li class="active tutorials">
-        <a href="/courses/bdia/tutorials/spark-programming-dce/">Introduction to Spark programming</a>
-      </li>
-      
-      
-      <li class="tutorials">
-        <a href="/courses/bdia/tutorials/neo4j-tutorial/">Neo4j</a>
-      </li>
-      
-      
-      <li class="tutorials">
-        <a href="/courses/bdia/tutorials/spark-lab-assignment/">Lab 1. Advanced Spark programming</a>
-      </li>
-      
-      
-      <li class="tutorials">
-        <a href="/courses/bdia/tutorials/mongodb-tutorial/">Lab2. MongoDB Query Language</a>
-      </li>
-      
-      
-      <li class="tutorials">
-        <a href="/courses/bdia/tutorials/structured-streaming-lab/">Lab 3. Spark structured streaming</a>
-      </li>
-      
-    </ul>
-    </div>
-    
-    
-
-  </div>
-  
-  <div class="docs-toc-item">
-
-    <a onclick=open_menu_on_click(this) id="references" class="docs-toc-link" href="/courses/bdia/references/cc-references/">References</a>
-    
-    <div id="references-ddowncontent" class="references-ddowncontent ddowncontent">
-    <ul class="nav docs-sidenav">
-      
-      
-      <li class="references">
-        <a href="/courses/bdia/references/cc-references/">Bibliography</a>
+        <a href="/courses/bdia/tutorials/spark-programming-dce/">Spark on a cluster</a>
       </li>
       
     </ul>
@@ -665,8 +573,8 @@
       <article class="article">
 
         <div class="docs-article-container">
-          <div class="heading">Big data algorithms, techniques and platforms — Tutorial 4</div>
-          <h1>Introduction to Spark programming</h1>
+          <div class="heading">Big data for AI — Tutorial 2</div>
+          <h1>Running Spark programs on a cluster</h1>
           <hr>
           <div class="logo">
             <p><img src="/img/cs-logo.png" width="20%" style="display: block; margin: auto;" /></p>
@@ -678,191 +586,238 @@
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<p><a href="/courses/plp/overview/cluster-connection" target="_blank">Refer to this documentation</a> to learn how to connect and
-interact with the cluster.</p>
-<!--
-
-# Computing averages
-
-We consider a collection of  CSV files containing temperature measurements in the following format:
-
-``year,month,day,hours,minutes,seconds,temperature`` 
-
-you can find the files under the directory ``hdfs://sar01:9000/data/temperatures/``
-
-Here are the details for each file:
-
-* File ``temperatures_86400.csv`` contains one measurement per day in the years 1980 - 2018. 
-* File ``temperatures_2880.csv`` contains one measurement every 2880 seconds in the years 1980 - 2018. 
-* File ``temperatures_86.csv`` contains one measurement every 86 seconds for the year 1980 alone. 
-* File ``temperatures_10.csv`` contains one measurement every 10 seconds for the years 1980 - 2018. 
-
-We intend to implement a Spark algorithm to generate pairs $(y, t_{avg})$, where 
-$y$ is the year and $t_{avg}$ is the average temperature in the year.
-
-## First implementation
-
-Copy the file  ``~vialle/DCE-Spark/template_temperatures.py`` 
-to your home directory by typing 
-the following command:
-
-``
-cp ~vialle/DCE-Spark/template_temperatures.py ./avg_temperatures_first.py
-``
-
-Open the file ``avg_temperatures_first.py`` 
-and write the following function:
-
-```
-def avg_temperature(theTextFile): 
-    temperatures = theTextFile \ 
-                        .map(lambda line: line.split(",")) \ 
-                        .map(lambda term: (term[0],   [float(term[6])])) \ 
-                        .reduceByKey(lambda x, y: x+y) \ 
-                        .mapValues(lambda lv: sum(lv)/len(lv)) 
-    return temperatures 
-```
-
-In the same file, locate the  two variables ``input_path`` and ``output-path``.
-and write the following code:
-
-```
-input_path = "hdfs://sar01:9000/data/temperatures/"
-output_path = "hdfs://sar01:9000/cpupsmia1/your_username/"
-```
-
-Always remember to replace ``your_username`` with your username!
-**Don't forget the / at the end of the file paths!**.
-
-
-::: {.infobox .exercisebox data-latex="{exercisebox}"}
-**Exercise**
-
-
-\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-1"><strong>(\#exr:unnamed-chunk-1) </strong></span>
-
-* Run the script ``avg_temperatures_first.py`` by using ``temperatures_86400.csv`` as an input.
-To this extent, use the following command:
-
-    <div align="left">
-    ``
-    spark-submit --master spark://sar01:7077 avg_temperatures_first.py temperatures_86400.csv
-    ``
-    </div>
-
-    You should find the output of the program under the folder ``hdfs://sar01:9000/cpupsmia1/your_username/temperatures_86400.out``
-
-
-* What's the execution time? 
-   * In the output of Spark on the command line you should see a line that mentions something along the following line:
-       
-       ``
-       INFO DAGScheduler: Job 0 finished: runJob at SparkHadoopWriter.scala:78, took 3.478220 s 
-       ``
-
-* Run the same script by using ``temperatures_2880.csv`` as an input.
-
-* What is the execution time? Does it seem reasonable compared with the execution time that you observed before?
-Justify your answer.
-
-* Execute the same script by using ``temperatures_86.csv`` as an input.
-
-* What is the execution time? How would you justify it, knowing that 
-the files  ``temperatures_2880.csv`` and ``temperatures_86.csv`` have a similar size (11 MB the former, 9 MB the latter)?
-</div>\EndKnitrBlock{exercise}
-
-:::
-
-
-
-
-
-## Second implementation
-
-Copy the file  ``~vialle/DCE-Spark/template_temperatures.py`` to your home directory by typing 
-the following command:
-
+<!-- ############ IMPORTANT: CHANGE THESE VALUES BEFORE ANY LAB ############ -->
+<!-- The group to which users in the cluster belong-->
+<!-- User accounts are numbered from the lower to the upper limit-->
+<!-- ############ END OF MODIFICATIONS ############ -->
+<div id="computing-averages" class="section level1">
+<h1><span class="header-section-number">1</span> Computing averages</h1>
+<p>We consider a collection of CSV files containing temperature measurements in the following format:</p>
+<p><code>year,month,day,hours,minutes,seconds,temperature</code></p>
+<p>you can find the files under the directory <code>hdfs://sar17:9000/data/temperatures/</code></p>
+<p>Here are the details for each file:</p>
+<ul>
+<li>File <code>temperatures_86400.csv</code> contains one measurement per day in the years 1980 - 2018.</li>
+<li>File <code>temperatures_2880.csv</code> contains one measurement every 2880 seconds in the years 1980 - 2018.</li>
+<li>File <code>temperatures_86.csv</code> contains one measurement every 86 seconds for the year 1980 alone.</li>
+<li>File <code>temperatures_10.csv</code> contains one measurement every 10 seconds for the years 1980 - 2018.</li>
+</ul>
+<p>We intend to implement a Spark algorithm to generate pairs <span class="math inline">\((y, t_{avg})\)</span>, where
+<span class="math inline">\(y\)</span> is the year and <span class="math inline">\(t_{avg}\)</span> is the average temperature in the year.</p>
+<div id="first-implementation" class="section level2">
+<h2><span class="header-section-number">1.1</span> First implementation</h2>
+<p>Copy the file <code>/usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_temperatures.py</code>
+to your home directory by typing
+the following command:</p>
 <div align="left">
-``
-cp ~vialle/DCE-Spark/template_temperatures.py ./avg_temperatures_second.py
-``
+<p><code>cp /usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_temperatures.py ./avg_temperatures_slow.py</code></p>
 </div>
+<p>Open the file <code>avg_temperatures_slow.py</code>.
+The file contains the implementation of the function <code>avg_temperature_slow</code>
+that takes in an RDD where each item is a line of the input text file and
+returns an RDD, where each item is a key-value pair <code>(year, avg_temp)</code>.</p>
+<p>In the same file, locate the two variables <code>input_path</code> and <code>output-path</code>.
+and write the following code:</p>
+<pre><code>input_path = &quot;hdfs://sar17:9000/data/temperatures/&quot;
+output_path = &quot;hdfs://sar17:9000/bdiaspark22/bdiaspark22_XX/&quot;</code></pre>
+<p>Replace <code>XX</code> with the number corresponding to your login!
+<strong>Don’t forget the / at the end of the file paths!</strong></p>
+<p><strong>Execute the following actions:</strong></p>
+<ul>
+<li>Run the script <code>avg_temperatures_slow.py</code> by using <code>temperatures_86400.csv</code> as an input.
+To this extent, use the following command:</li>
+</ul>
+<div align="left">
+<p><code>spark-submit --master spark://sar17:7077 avg_temperatures_slow.py temperatures_86400.csv</code></p>
+</div>
+<ul>
+<li>You should find the output of the program under the folder <code>hdfs://sar17:9000/bdiaspark22/bdiaspark22_XX/temperatures_86400.out</code></li>
+</ul>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
 
-::: {.infobox .exercisebox data-latex="{exercisebox}"}
-**Exercise**
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1.1  </strong></span></p>
+<ul>
+<li>What’s the execution time?
+<ul>
+<li><p>In the output of Spark on the command line you should see a line that mentions something along the following line:</p>
+<p><code>INFO DAGScheduler: Job 0 finished: runJob at SparkHadoopWriter.scala:78, took 3.478220 s</code></p></li>
+</ul></li>
+<li><p>Run the same script by using <code>temperatures_2880.csv</code> as an input.</p></li>
+<li><p>What is the execution time? Does it seem reasonable compared with the execution time that you observed before?
+Justify your answer.</p></li>
+<li><p>Execute the same script by using <code>temperatures_86.csv</code> as an input.</p></li>
+<li>What is the execution time? How would you justify it, knowing that
+the files <code>temperatures_2880.csv</code> and <code>temperatures_86.csv</code> have a similar size (11 MB the former, 9 MB the latter)?</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="second-implementation" class="section level2">
+<h2><span class="header-section-number">1.2</span> Second implementation</h2>
+<p>Create a copy of <code>avg_temperatures_slow.py</code> and rename it as<br />
+<code>avg_temperatures_fast.py</code>, with the following command:</p>
+<div align="left">
+<p><code>cp ./avg_temperature_slow ./avg_temperatures_fast.py</code></p>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
 
-\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-2"><strong>(\#exr:unnamed-chunk-2) </strong></span>
-Based on the observations made in the 
-previous exercise, write an improved implementation of the 
-function ``avg_temperature``.
-</div>\EndKnitrBlock{exercise}
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 1.2  </strong></span>
+Open the file and implement the function <code>avg_temperature_fast</code>.</p>
+<p><strong>NOTE.</strong> Remember to comment the call
+to <code>avg_temperature_slow</code> and to uncomment the call to <code>avg_temperature_fast</code> at the end of the file.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
 
-:::
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 1.3  </strong></span></p>
+<ul>
+<li><p>Run the script <code>avg_temperatures_fast.py</code> by using <code>temperatures_86.csv</code> as an input.</p></li>
+<li><p>What’s the execution time? Compare it with the execution time obtained in the previous exercise and
+comment the difference.</p></li>
+<li><p>Run the same script by using <code>temperatures_10.csv</code> (3 GB!) as an input.
+Do you think that the program takes too long? Why?</p></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="common-friends-in-a-social-network" class="section level1">
+<h1><span class="header-section-number">2</span> Common friends in a social network</h1>
+<p>Consider a social network described by a graph encoded in a text file.
+Each line of the file is a list of identifiers separated by commas.
+For instance, the line <span class="math inline">\(A,B,C,D\)</span> means that <span class="math inline">\(A\)</span> is friend with <span class="math inline">\(B\)</span>, <span class="math inline">\(C\)</span> and <span class="math inline">\(D\)</span>.
+An excerpt of the file looks like as follows:</p>
+<pre><code>A,B,C,D
+B,A,D
+C,A,D
+D,A,B,C
+...</code></pre>
+<p>We suppose that the friendship relation is symmetric: <span class="math inline">\((A, B)\)</span> implies
+<span class="math inline">\((B, A)\)</span>.</p>
+<p><strong>We want to obtain the list of the common friends for each pair of individuals</strong>:</p>
+<pre><code>(A, B), [D]
+(A, C), [D] 
+(A, D), [B, C] 
+(B, C), [A, D] 
+(B, D), [A] 
+(C, D), [A]</code></pre>
+<p>As an additional constraint, we want to represent a couple only once and avoid
+to represent the symmetric couple.
+In other words, if we output <span class="math inline">\((A, B)\)</span>, we don’t want to output <span class="math inline">\((B, A)\)</span>.</p>
+<p>We use the following input files available in folder <code>hdfs://sar17:9000/data/sn/</code>:</p>
+<ul>
+<li><p><code>sn_tiny.csv</code>. Small social network, that you can use to test your implementation.</p></li>
+<li><p><code>sn_10k_100k.csv</code>. Social network with <span class="math inline">\(10^4\)</span> individuals and <span class="math inline">\(10^5\)</span> links.</p></li>
+<li><p><code>sn_100k_100k.csv</code>. Social network with <span class="math inline">\(10^5\)</span> individuals and <span class="math inline">\(10^5\)</span> links.</p></li>
+<li><p><code>sn_1k_100k.csv</code>. Social network with <span class="math inline">\(10^3\)</span> individuals and <span class="math inline">\(10^5\)</span> links.</p></li>
+<li><p><code>sn_1m_1m.csv</code>. Social network with <span class="math inline">\(10^6\)</span> individuals and <span class="math inline">\(10^6\)</span> links.</p></li>
+</ul>
+<div id="implementation" class="section level2">
+<h2><span class="header-section-number">2.1</span> Implementation</h2>
+<p><strong>Get the code template with the following commands:</strong></p>
+<div align="left">
+<p><code>cp /usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_common_friends.py .</code></p>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
 
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 2.1  </strong></span></p>
+<ul>
+<li><p>Write an implementation that uses a <code>reduceByKey</code>.</p></li>
+<li><p>Write an implementation that uses a <code>groupByKey</code>.</p></li>
+<li>Test both implementations on file <code>sn_tiny.csv</code>.</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="tests-and-performance-measures" class="section level2">
+<h2><span class="header-section-number">2.2</span> Tests and performance measures</h2>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
 
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 2.2  </strong></span></p>
+<ul>
+<li><p>Run both implementations on the other files.</p></li>
+<li><p>Fill in a table where you indicate: the name and size of each file and
+the measured running times of both implementations.</p></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="minimum-maximum-and-average-degree" class="section level2">
+<h2><span class="header-section-number">2.3</span> Minimum, maximum and average degree</h2>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
 
-::: {.infobox .exercisebox data-latex="{exercisebox}"}
-**Exercise**
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 2.3  </strong></span></p>
+<ol style="list-style-type: decimal">
+<li><p>Write a Spark program to compute the minimum, maximum and average degree of
+a node in the social network. You should use RDDs to do so, <strong>don’t try to <code>collect()</code> the
+content of the RDDs and so compute the values on Python lists</strong>.</p></li>
+<li><p>Compute the minimum, maximum and average degree for all the given input files.</p></li>
+<li><p>Complete the table that you created at the previous exercise by adding the
+minimum, maximum and average number of friends.</p></li>
+</ol>
+</div>
+</div>
+</div>
+<div id="performance-analysis" class="section level2">
+<h2><span class="header-section-number">2.4</span> Performance analysis</h2>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
 
-
-\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-3"><strong>(\#exr:unnamed-chunk-3) </strong></span>
-
-* Run the script ``avg_temperatures_second.py`` by using ``temperatures_86.csv`` as an input.
-
-* What's the execution time? Compare it with the execution time obtained in the previous exercise and 
-comment the difference.
-   
-* Run the same script by using ``temperatures_10.csv`` (3 GB!) as an input. 
-Do you think that the program takes too long? Why?
-
-</div>\EndKnitrBlock{exercise}
-
-:::
-
-
-
-# Average and standard deviation
-
-We use the same files as in the first question.
-Our objective is to write a Spark program that produces 
-triples $(y, t_{\mu}, t_{\sigma})$, where $y$, $t_{\mu}$ and 
-$t_{\sigma}$ are the year, the average temperature in the year and the 
-standard deviation respectively.
-
-We can express the standard deviation of $n$ values $x_1 \ldots x_n$ with the following formula:
-
-$$
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 2.4  </strong></span></p>
+<ul>
+<li><p>We suppose that each node has a number of friends that is equal to
+average number of friends.
+Compute (with pencil or paper, no need to write a code for that) the number of
+intermediate pairs <span class="math inline">\(((A, B), X)\)</span> generated by your code.</p></li>
+<li><p>Complete the table by writing down the number of intermediate pairs for each file.</p></li>
+<li><p>Plot three graphs, where the y-axis has the program running times and the x-axis
+has: the number of intermediate pairs, the average degree and the file size respectively.</p></li>
+<li>Which graphs best predict the evolution of the computational time?</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="average-and-standard-deviation" class="section level1">
+<h1><span class="header-section-number">3</span> Average and standard deviation</h1>
+<p>We use the same files as in the first question.
+Our objective is to write a Spark program that produces
+triples <span class="math inline">\((y, t_{\mu}, t_{\sigma})\)</span>, where <span class="math inline">\(y\)</span>, <span class="math inline">\(t_{\mu}\)</span> and
+<span class="math inline">\(t_{\sigma}\)</span> are the year, the average temperature in the year and the
+standard deviation respectively.</p>
+<p>We can express the standard deviation of <span class="math inline">\(n\)</span> values <span class="math inline">\(x_1 \ldots x_n\)</span> with the following formula:</p>
+<p><span class="math display">\[
 \sigma = \sqrt{\overline{x^2} - \overline{x}^2} = \sqrt{\frac{\sum_{i=1}^n (x_i)^2}{n} - \Bigg(\frac{\sum_{i=1}^n x_i}{n}\Bigg)^2} 
-$$
+\]</span></p>
+<p>Type the following command to get a code template:</p>
+<div align="left">
+<p><code>cp /usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_temperatures.py  ./avg_stddev_temp.py</code></p>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
 
-Copy the file  ``~vialle/DCE-Spark/template_temperatures.py`` to your home directory by typing 
-the following command:
-
-``
-cp ~vialle/DCE-Spark/template_temperatures.py  ./avg_stddev_temp.py
-``
-
-
-::: {.infobox .exercisebox data-latex="{exercisebox}"}
-**Exercise**
-
-
-\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-4"><strong>(\#exr:unnamed-chunk-4) </strong></span>
-
-* Complete the definition of the function ``avg_temperature`` in file ``avg_stddev_temp.py``.
-   
-* Run the script by using  ``temperatures_86400.csv``  and ``temperatures_2880.csv`` 
-as input files (small files).
-
-* Run the script by using  ``temperatures_86.csv``  and ``temperatures_10.csv`` as input files (large files).
-
-</div>\EndKnitrBlock{exercise}
-
-:::
-
-
-
--->
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 3.1  </strong></span></p>
+<ul>
+<li><p>Define a new function <code>avg_stddev_temperature</code> in file <code>avg_stddev_temp.py</code>.</p></li>
+<li><p>Execute the script and observe the results.</p></li>
+</ul>
+</div>
+</div>
+</div>
 
           </div>
 
