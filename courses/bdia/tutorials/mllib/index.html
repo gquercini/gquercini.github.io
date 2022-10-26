@@ -28,10 +28,10 @@
   
     
   
-  <meta name="description" content="Description of the MapReduce tutorial.">
+  <meta name="description" content="Description of the Spark MLlib tutorial">
 
   
-  <link rel="alternate" hreflang="en-us" href="/courses/bdia/tutorials/map-reduce/">
+  <link rel="alternate" hreflang="en-us" href="/courses/bdia/tutorials/mllib/">
 
   
 
@@ -219,7 +219,7 @@
   <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_2.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_2.png">
 
-  <link rel="canonical" href="/courses/bdia/tutorials/map-reduce/">
+  <link rel="canonical" href="/courses/bdia/tutorials/mllib/">
 
   
   
@@ -233,9 +233,9 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Gianluca Quercini">
-  <meta property="og:url" content="/courses/bdia/tutorials/map-reduce/">
-  <meta property="og:title" content="MapReduce | Gianluca Quercini">
-  <meta property="og:description" content="Description of the MapReduce tutorial."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:url" content="/courses/bdia/tutorials/mllib/">
+  <meta property="og:title" content="Spark MLlib | Gianluca Quercini">
+  <meta property="og:description" content="Description of the Spark MLlib tutorial"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
   
     
@@ -258,7 +258,7 @@
 
 
 
-  <title>MapReduce | Gianluca Quercini</title>
+  <title>Spark MLlib | Gianluca Quercini</title>
 
 </head>
 
@@ -544,8 +544,8 @@
     <div id="tutorials-ddowncontent" class="tutorials-ddowncontent ddowncontent">
     <ul class="nav docs-sidenav">
       
-      <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
-      <li class="active tutorials">
+      
+      <li class="tutorials">
         <a href="/courses/bdia/tutorials/map-reduce/">MapReduce</a>
       </li>
       
@@ -559,8 +559,8 @@
         <a href="/courses/bdia/tutorials/spark-sql-assignment/">Spark SQL</a>
       </li>
       
-      
-      <li class="tutorials">
+      <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
+      <li class="active tutorials">
         <a href="/courses/bdia/tutorials/mllib/">Spark MLlib</a>
       </li>
       
@@ -583,8 +583,8 @@
       <article class="article">
 
         <div class="docs-article-container">
-          <div class="heading">Big Data for IA — Tutorial 1</div>
-          <h1>MapReduce</h1>
+          <div class="heading">Big Data for IA — Tutorial 4</div>
+          <h1>Spark MLlib</h1>
           <hr>
           <div class="logo">
             <p><img src="/img/cs-logo.png" width="20%" style="display: block; margin: auto;" /></p>
@@ -596,254 +596,113 @@
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<div id="computing-averages" class="section level1">
-<h1><span class="header-section-number">1</span> Computing averages</h1>
-<p>We are given a dataset that
-contains the average monthly
-temperature measurements
-over the course of some years.
-More precisely, the dataset is stored in a CSV file,
-where each row corresponds to a monthly
-measurement and the columns contain the following values:
-year, month, average temperature in the month.</p>
-<pre><code>1980,1,5
-1980,2,2
-1980,3,10
-1980,4,14
-1980,5,17
-....
-1981,1,2
-1981,2,1
-1981,3,3
-1981,4,10
-....</code></pre>
-<p>We intend to get the average monthly temperature for each year.</p>
+<!-- ############ IMPORTANT: CHANGE THESE VALUES BEFORE ANY LAB ############ -->
+<!-- The link to the Edunao page where the students submit their work -->
+<!-- The submission deadline -->
+<!-- The group to which users in the cluster belong-->
+<!-- User accounts are numbered from the lower to the upper limit-->
+<!-- ############ END OF MODIFICATIONS ############ -->
+<p>In this tutorial, you’ll learn how to use the Spark MLlib library to train, test and evaluate machine learning models.
+We’ll be using a dataset of AirBnb accommodation in the San Francisco area.
+The dataset is available in HDFS at the following path:</p>
+<div align="center">
+<pre><code>hdfs://sar17:9000/cpu_quercini/ml/sf-airbnb-clean.parquet</code></pre>
+</div>
+<div class="infobox warning">
+<p><strong>Dataset source</strong></p>
+<p>The dataset has been obtained <a href="https://github.com/databricks/LearningSparkV2" target="_blank">from this GitHub repository</a>.</p>
+</div>
+<p>The goal of the exercise is to predict the price per night of an apartment given all the features
+in the dataset.</p>
+<div id="obtaining-a-training-and-test-set" class="section level1">
+<h1><span class="header-section-number">1</span> Obtaining a training and test set</h1>
+<p>In order to build and evaluate a machine learning model, we need to split our dataset into
+a <strong>training</strong> and <strong>test set</strong>.</p>
+<div class="infobox exercisebox">
+<p><strong>Activity</strong></p>
+<ol style="list-style-type: decimal">
+<li>Copy the file <code>train_test.py</code> to your home folder in the cluster by typing the following command:</li>
+</ol>
+<div align="center">
+<pre><code>cp /usr/users/cpu-prof/cpu_quercini/mllib/train_test.py .</code></pre>
+</div>
+<ol start="2" style="list-style-type: decimal">
+<li><strong>Complete Line 9</strong>, by specifying your directory in HDFS, which is as follows (<strong>replace X with your account number</strong>).</li>
+</ol>
+<div align="center">
+<pre><code>hdfs://sar17:9000/bdiaspark22/bdiaspark22_X</code></pre>
+</div>
+</div>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1.1  </strong></span>
-Write a MapReduce algorithm that generates key-value pairs
-<span class="math inline">\((year, average\_temperature)\)</span>.</p>
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1.1  </strong></span></p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Complete Line 23.</strong> Write the code to read the input file, which is stored in HDFS as a Parquet file, into the DataFrame <code>airbnb_df</code>.</p></li>
+<li><p><strong>From Line 26</strong>, add the instructions necessary to print the schema of <code>airbnb_df</code> and the first 5 rows. Which option should you use
+to nicely see the values in the columns?</p></li>
+<li>Execute the code with <code>spark-submit</code> and verify that the data is correctly loaded.</li>
+</ol>
 </div>
 </div>
 <details>
 <p><summary>Solution</summary></p>
 <div class="infobox exosolution">
-<p>map: <span class="math inline">\((year, month, temperature) \rightarrow (year, temperature)\)</span></p>
-<p>reduce: <span class="math inline">\((year, temps) \rightarrow\)</span> <span class="math inline">\((year, sum(temps)/len(temps))\)</span></p>
-<ul>
-<li><span class="math inline">\(temps\)</span> is the list of all temperatures in the same <span class="math inline">\(year\)</span>.</li>
-<li><span class="math inline">\(sum(temps)\)</span> sums all the elements in the list <span class="math inline">\(temps\)</span>.</li>
-<li><span class="math inline">\(len(temps)\)</span> gives the length of the list <span class="math inline">\(temps\)</span>.</li>
-</ul>
+<p>The solutions are available in file:</p>
+<pre><code>
+/usr/users/cpu-prof/cpu_quercini/mllib_playground/train_test.py
+</code></pre>
+<p>Since the DataFrame has many columns, we need to use the option <code>vertical=True</code> when calling the
+function <code>show()</code>.</p>
 </div>
 </details>
-<p>Suppose now that we have a large CSV file
-stored in a distributed file system (e.g., HDFS),
-containing a series of measurements in the format “Year, Month, Day, Minute, Second, Temperature”.
-We can have up to one measurement per second in some years.
-Like before, we’d like to compute key-value pairs (year, average_temperature) by using
-a MapReduce algorithm.</p>
+<p>We now split <code>airbnb_df</code> into two separate DataFrames, <code>train_df</code> and <code>test_df</code>, containing the training and
+test instances respectively.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 1.2  </strong></span>
-What is the maximum number of measurements in a year?</p>
+<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 1.2  </strong></span></p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Uncomment Line 32.</strong> Write the code to split the dataset into a training and test set. 80% of the instances
+must be taken as training instances, while the remaining 20% will be used a test instances.
+<a href="https://spark.apache.org/docs/3.1.1/api/python/reference/pyspark.sql.html" target="_blank">Looking at the DataFrame API documentation</a>, which
+function are you going to use?</p></li>
+<li><p><strong>From Line 36</strong>, write the code to print the number of instances in the training and test set.</p></li>
+<li>Execute the code with <code>spark-submit</code>. You should have 5780 training instances and 1366 test instances.</li>
+</ol>
 </div>
 </div>
 <details>
 <p><summary>Solution</summary></p>
 <div class="infobox exosolution">
-<p>Since we can have up to one measurement per second, the maximum number of
-measurements <span class="math inline">\(M_{max}\)</span> for a certain year is given by the following formula:</p>
-<p><span class="math display">\[
-M_{max} = 365 \times 24 \times 60 \times 60 \approx 31.5 \times 10^6 
-\]</span></p>
+<p>The solutions are available in file:</p>
+<pre><code>
+/usr/users/cpu-prof/cpu_quercini/mllib_playground/train_test.py
+</code></pre>
 </div>
 </details>
+<p>It is time to save the training and test sets to a HDFS file.
+This way, we can load them whenever we need them to build a machine learning model
+for this problem.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 1.3  </strong></span>
-Considering the answer to the previous question, discuss the efficiency
-of the first implementation of the algorithm.</p>
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 1.3  </strong></span></p>
+<p><strong>From Line 47</strong>. Write the code to write the training and test sets to two Parquet files in HDFS.
+The paths to the two files are already available in variables <code>training_set_file</code> and <code>test_set_file</code>
+defined at Lines 40 and 43 respectively.</p>
 </div>
 </div>
 <details>
 <p><summary>Solution</summary></p>
 <div class="infobox exosolution">
-<p>Since there might be up to 31 million values
-associated with a key, the bottleneck of the computation would be
-the shuffle operation, since we need to copy a high number of
-(key,value) pairs from the mappers to the reducers.</p>
-<p>Also, a reducer might have to
-loop over a huge list of values in order to compute their average.</p>
-</div>
-</details>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 1.4  </strong></span>
-Based on the answer to the previous question,
-propose a better implementation to handle the CSV file.</p>
-</div>
-</div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>map: <span class="math inline">\((year, mo, d, mi, sec, temperature) \rightarrow (year, temperature)\)</span></p>
-<p>combine: <span class="math inline">\((year, temps) \rightarrow\)</span> <span class="math inline">\((year, (sum(temps), len(temps)))\)</span></p>
-<p>reduce: <span class="math inline">\((year, [(s_i, l_i),\ i=1\dots n]) \rightarrow\)</span> <span class="math inline">\((year, \frac{\sum_{i=1}^n s_i}{\sum_{i=1}^n l_i})\)</span></p>
-<ul>
-<li><span class="math inline">\(temps\)</span> is the list of all temperatures in the same <span class="math inline">\(year\)</span>.</li>
-<li><span class="math inline">\(sum(temps)\)</span> sums all the elements in the list <span class="math inline">\(temps\)</span>.</li>
-<li><span class="math inline">\(len(temps)\)</span> gives the length of the list <span class="math inline">\(temps\)</span>.</li>
-</ul>
-</div>
-</details>
-</div>
-<div id="common-friends" class="section level1">
-<h1><span class="header-section-number">2</span> Common friends in a social network</h1>
-<p>Consider a social network described by a graph encoded in a text file.
-Each line of the file is a list of identifiers separated by commas.
-For instance, the line <span class="math inline">\(A,B,C,D\)</span> means that <span class="math inline">\(A\)</span> is friend with <span class="math inline">\(B\)</span>, <span class="math inline">\(C\)</span> and <span class="math inline">\(D\)</span>.
-An excerpt of the file looks like as follows:</p>
-<pre><code>A,B,C,D
-B,A,D
-C,A,D
-D,A,B,C
-...</code></pre>
-<p>We suppose that the friendship relation is symmetric: <span class="math inline">\((A, B)\)</span> implies
-<span class="math inline">\((B, A)\)</span>.</p>
-<p>We want to obtain the list of the common friends for each pair of individuals:</p>
-<pre><code>(A, B), [D]
-(A, C), [D] 
-(A, D), [B, C] 
-(B, C), [D] 
-(B, D), [A] 
-(C, D), [A]</code></pre>
-<p>As an additional constraint, we want to represent a couple only once and avoid
-to represent the symmetric couple.
-In other words, if we output <span class="math inline">\((A, B)\)</span>, we don’t want to output <span class="math inline">\((B, A)\)</span>.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 2.1  </strong></span>
-Propose a MapReduce implementation to find the common friends in a
-social network satisifying the given constraints.</p>
-</div>
-</div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>map: <span class="math inline">\((x, F) \rightarrow [((u, v), x)\ \forall (u, v) \in F\ |\ u &lt; v ]\)</span></p>
-<p>reduce: <span class="math inline">\([(u, v), LCF] \rightarrow [(u, v), LCF]\)</span></p>
-<p>where:</p>
-<ul>
-<li><span class="math inline">\(x\)</span> is the first item in a line.</li>
-<li><span class="math inline">\(F\)</span> is the list containing the items in a line except the first one (<span class="math inline">\(x\)</span>’s friends).</li>
-<li><span class="math inline">\(LCF\)</span> is the list of all individuals that are friends with both <span class="math inline">\(u\)</span> and <span class="math inline">\(v\)</span>.</li>
-</ul>
-<p>We note that the reduce function is the identity.</p>
-</div>
-</details>
-<p>&lt;!–
-# Creating an inverted index</p>
-<p>We have a collection of <span class="math inline">\(n\)</span> documents in a directory and we want to create
-an <strong>inverted index</strong>, one that associates each word
-to the list of the files the word occurs in.
-More precisely, for each word, the inverted index will
-have a list of the names of the documents that contain the word.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 2.2  </strong></span>
-Propose a MapReduce implementation to create an inverted index over a
-collection of documents.</p>
-</div>
-</div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>The input to the map will be a key-value pair, where
-the key is the name of a file <span class="math inline">\(f\)</span> and the value is the
-content <span class="math inline">\(C\)</span> of the file.</p>
-<p>map: <span class="math inline">\((f, C) \rightarrow [(w, f)\ \forall w \in C]\)</span></p>
-<p>reduce: <span class="math inline">\((w, L) \rightarrow (w, L)\)</span></p>
-<p>where <span class="math inline">\(L\)</span> is the list of the files containing the word <span class="math inline">\(w\)</span>.</p>
-<p>We note that the reduce function is the identity.</p>
-<p>Note also that in the map function we can add instructions
-to preprocess the text. For example, we can eliminate some words
-that are not useful in the index (e.g., the stopwords) or remove
-special symbols.</p>
-</div>
-</details>
-</div>
-<div id="computing-average-and-standard-deviation" class="section level1">
-<h1><span class="header-section-number">3</span> Computing average and standard deviation</h1>
-<p>We consider again the large CSV file
-with a series of measurements in the format “Year, Month, Day, Minute, Second, Temperature”.
-We now intend to generate a series of key-value pairs (year, (avg_temperature, std_deviation)).</p>
-<p>We can express the standard deviation of <span class="math inline">\(n\)</span> values <span class="math inline">\(x_i\)</span> (<span class="math inline">\(1 \leq i \leq n\)</span>) with two different
-equations.</p>
-<p>The first equation is as follows:</p>
-<p><span class="math display">\[
-\sigma = \sqrt{\frac{\sum_{i=1}^n (x_i - \overline{x})^2}{n}} 
-\]</span></p>
-<p>The second equation is as follows:</p>
-<p><span class="math display">\[
-\sigma = \sqrt{\overline{x^2} - \overline{x}^2} = \sqrt{\frac{\sum_{i=1}^n (x_i)^2}{n} - \Bigg(\frac{\sum_{i=1}^n x_i}{n}\Bigg)^2} 
-\]</span></p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 3.1  </strong></span>
-Which equation of the standard deviation
-is more appropriate in a Map-Reduce algorithm?
-Why?</p>
-</div>
-</div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>The second equation is more appropriate because it allows the computation
-of the sum of the elements and of the square of the elements step by step
-by using map and combine together.</p>
-<p>Instead, if we use the first equation, we need first to compute the average and then use it
-to compute the variance.</p>
-</div>
-</details>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 3.2  </strong></span>
-Propose a MapReduce implementation to compute the average and the standard
-deviation of the temperatures for each year.
-</div>
-</div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>map: <span class="math inline">\((year, mo, d, mi, sec, temperature) \rightarrow (year, temperature)\)</span></p>
-<p>combine: <span class="math inline">\((year, T) \rightarrow\)</span> <span class="math inline">\((year, (sum(T), sum(T^2), len(T)))\)</span></p>
-<p>reduce: <span class="math inline">\((year, [(s_{i}, sq_{i}, l_{i}),\ i=1\dots n]) \rightarrow\)</span> <span class="math inline">\((year, (\mu, \sigma))\)</span></p>
-<p>where:</p>
-<ul>
-<li><span class="math inline">\(T\)</span> is the list of all temperatures in the same <span class="math inline">\(year\)</span>.</li>
-<li><span class="math inline">\(sum(T)\)</span> sums all the elements in the list <span class="math inline">\(T\)</span>.</li>
-<li><span class="math inline">\(T^2 = [x^2 | x\in T]\)</span></li>
-<li><span class="math inline">\(len(T)\)</span> gives the length of the list <span class="math inline">\(T\)</span>.</li>
-<li><span class="math inline">\(\mu = \sum_{i=1}^n s_{i}/ \sum_{i=1}^n l_{i}\)</span></li>
-<li><span class="math inline">\(\sigma = \sqrt{ (\sum_{i=1}^n sq_{i}/ \sum_{i=1}^n l_{i}) - \mu^2 }\)</span></li>
-</ul>
+<p>The solutions are available in file:</p>
+<pre><code>
+/usr/users/cpu-prof/cpu_quercini/mllib_playground/train_test.py
+</code></pre>
 </div>
 </details>
 </div>

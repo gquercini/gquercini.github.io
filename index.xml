@@ -7678,7 +7678,7 @@ documentation:&lt;/p&gt;
 &lt;code&gt;hdfs://sar17:9000/plpspark22/plpspark22_X&lt;/code&gt; &lt;strong&gt;in HDFS&lt;/strong&gt;. The command to do so is as follows:&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;pre&gt;&lt;code&gt;hdfs dfs -mkdir hdfs://sar17:9000/plpspark22_X/checkpoint_dir&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;hdfs dfs -mkdir hdfs://sar17:9000/plpspark22/plpspark22_X/checkpoint_dir&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;&lt;p&gt;&lt;strong&gt;Complete line 21&lt;/strong&gt; of file &lt;code&gt;warmup.py&lt;/code&gt;. Choose a port number in the interval [49152, 65535].&lt;/p&gt;&lt;/li&gt;
@@ -13456,6 +13456,129 @@ special symbols.
 
 
 --&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Spark MLlib</title>
+      <link>/courses/bdia/tutorials/mllib/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/bdia/tutorials/mllib/</guid>
+      <description>
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;!-- ############ IMPORTANT: CHANGE THESE VALUES BEFORE ANY LAB ############ --&gt;
+&lt;!-- The link to the Edunao page where the students submit their work --&gt;
+&lt;!-- The submission deadline --&gt;
+&lt;!-- The group to which users in the cluster belong--&gt;
+&lt;!-- User accounts are numbered from the lower to the upper limit--&gt;
+&lt;!-- ############ END OF MODIFICATIONS ############ --&gt;
+&lt;p&gt;In this tutorial, you’ll learn how to use the Spark MLlib library to train, test and evaluate machine learning models.
+We’ll be using a dataset of AirBnb accommodation in the San Francisco area.
+The dataset is available in HDFS at the following path:&lt;/p&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;pre&gt;&lt;code&gt;hdfs://sar17:9000/cpu_quercini/ml/sf-airbnb-clean.parquet&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Dataset source&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The dataset has been obtained &lt;a href=&#34;https://github.com/databricks/LearningSparkV2&#34; target=&#34;_blank&#34;&gt;from this GitHub repository&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;The goal of the exercise is to predict the price per night of an apartment given all the features
+in the dataset.&lt;/p&gt;
+&lt;div id=&#34;obtaining-a-training-and-test-set&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Obtaining a training and test set&lt;/h1&gt;
+&lt;p&gt;In order to build and evaluate a machine learning model, we need to split our dataset into
+a &lt;strong&gt;training&lt;/strong&gt; and &lt;strong&gt;test set&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Copy the file &lt;code&gt;train_test.py&lt;/code&gt; to your home folder in the cluster by typing the following command:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;pre&gt;&lt;code&gt;cp /usr/users/cpu-prof/cpu_quercini/mllib/train_test.py .&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;strong&gt;Complete Line 9&lt;/strong&gt;, by specifying your directory in HDFS, which is as follows (&lt;strong&gt;replace X with your account number&lt;/strong&gt;).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;pre&gt;&lt;code&gt;hdfs://sar17:9000/bdiaspark22/bdiaspark22_X&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Complete Line 23.&lt;/strong&gt; Write the code to read the input file, which is stored in HDFS as a Parquet file, into the DataFrame &lt;code&gt;airbnb_df&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;From Line 26&lt;/strong&gt;, add the instructions necessary to print the schema of &lt;code&gt;airbnb_df&lt;/code&gt; and the first 5 rows. Which option should you use
+to nicely see the values in the columns?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Execute the code with &lt;code&gt;spark-submit&lt;/code&gt; and verify that the data is correctly loaded.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The solutions are available in file:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+/usr/users/cpu-prof/cpu_quercini/mllib_playground/train_test.py
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Since the DataFrame has many columns, we need to use the option &lt;code&gt;vertical=True&lt;/code&gt; when calling the
+function &lt;code&gt;show()&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;p&gt;We now split &lt;code&gt;airbnb_df&lt;/code&gt; into two separate DataFrames, &lt;code&gt;train_df&lt;/code&gt; and &lt;code&gt;test_df&lt;/code&gt;, containing the training and
+test instances respectively.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.2  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Uncomment Line 32.&lt;/strong&gt; Write the code to split the dataset into a training and test set. 80% of the instances
+must be taken as training instances, while the remaining 20% will be used a test instances.
+&lt;a href=&#34;https://spark.apache.org/docs/3.1.1/api/python/reference/pyspark.sql.html&#34; target=&#34;_blank&#34;&gt;Looking at the DataFrame API documentation&lt;/a&gt;, which
+function are you going to use?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;From Line 36&lt;/strong&gt;, write the code to print the number of instances in the training and test set.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Execute the code with &lt;code&gt;spark-submit&lt;/code&gt;. You should have 5780 training instances and 1366 test instances.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The solutions are available in file:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+/usr/users/cpu-prof/cpu_quercini/mllib_playground/train_test.py
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;p&gt;It is time to save the training and test sets to a HDFS file.
+This way, we can load them whenever we need them to build a machine learning model
+for this problem.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.3  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;From Line 47&lt;/strong&gt;. Write the code to write the training and test sets to two Parquet files in HDFS.
+The paths to the two files are already available in variables &lt;code&gt;training_set_file&lt;/code&gt; and &lt;code&gt;test_set_file&lt;/code&gt;
+defined at Lines 40 and 43 respectively.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The solutions are available in file:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+/usr/users/cpu-prof/cpu_quercini/mllib_playground/train_test.py
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
