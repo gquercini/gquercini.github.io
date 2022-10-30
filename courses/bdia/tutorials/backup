@@ -1,0 +1,36 @@
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+```{exercise}
+
+Look at the cardinalities between the entities <TT>rental</TT> and <TT>payment</TT>
+in Figure \@ref(fig:sakila-model). 
+Is it wise to create two separate collections for rentals and payments? Why?
+What do you propose instead?
+
+```
+:::
+
+`r if(params$solution) {"
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+The relationship between the two given entities is **one-to-one**.
+It would not be wise to keep the same normalized schema as in the relational database, 
+because that would require us to use a join operation at query time. 
+Besides, with this schema, a rental might not be stored on the same node as the relative 
+payment, which would make the join operation even more costly.
+
+A denormalized schema here is more appropriate.
+In fact, since each payment is relative to one and only one rental, 
+the information about the payment is stored only once, therefore there is no redundancy.
+
+Therefore, we choose to embed the information about a payment into the corresponding 
+rental document.
+
+
+:::
+</details>
+"}`
