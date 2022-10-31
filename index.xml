@@ -14237,6 +14237,31 @@ the amount paid is strictly greater than 10 dollars.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;db.customer.find()&lt;/pre&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;db.customer.find({}, {email:1})&lt;/pre&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;db.customer.find({&#34;store.country&#34;: &#34;Canada&#34;}, {email:1});&lt;/pre&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;db.rental.find({&#34;customer.country&#34;: &#34;Iran&#34;, amount: {$gt: 10}}, {rental_id: 1, _id:0});&lt;/pre&gt;
+&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;db.film.find({film_id: 213}, {&#34;actors.first_name&#34;:1, &#34;actors.last_name&#34;: 1}).sort({&#34;actors.last_name&#34;: -1});&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;operations-on-arrays&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Operations on arrays&lt;/h1&gt;
@@ -14255,6 +14280,27 @@ Write the following queries in MongoDB:&lt;/p&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;db.film.find({special_features : {$elemMatch: {$eq: &#34;Behind the Scenes&#34;}}}, {film_id: 1, _id:0});&lt;/pre&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;db.film.find({special_features : {$all: [&#34;Commentaries&#34;, &#34;Deleted Scenes&#34;]}}, {film_id: 1, _id:0});&lt;/pre&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;db.film.find({&#34;actors.first_name&#34;: &#34;BURT&#34;, &#34;actors.last_name&#34;: &#34;POSEY&#34;}, {film_id: 1, _id:0});&lt;/pre&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;db.film.find({actors: {$size : 15}}, {film_id: 1, _id:0});&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;aggregation-framework&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Aggregation framework&lt;/h1&gt;
@@ -14277,6 +14323,71 @@ Write the following queries in MongoDB using the aggregation framework:&lt;/p&gt
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+db.rental.aggregate({$match: {&#34;customer.first_name&#34;: &#34;TOMMY&#34;, &#34;customer.last_name&#34;: &#34;COLLAZO&#34;}}, 
+                    {$project: {&#34;inventory.film.title&#34;: 1, _id:0}})
+&lt;/pre&gt;
+One can also express this query with the function find()
+&lt;pre&gt;
+db.rental.find({&#34;customer.first_name&#34;: &#34;TOMMY&#34;, &#34;customer.last_name&#34;: &#34;COLLAZO&#34;}, {&#34;inventory.film.title&#34;: 1, _id:0});
+&lt;/pre&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+db.rental.aggregate({$group: {&#34;_id&#34;: null, total_amount: {$sum: &#34;$amount&#34;}}})
+&lt;/pre&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+db.film.aggregate({$project: {nb_actors: {$size: &#34;$actors&#34;}}})
+&lt;/pre&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;If we don’t put the match condition, we get an error because for some films
+the field actors is not defined.&lt;/p&gt;
+&lt;pre&gt;db.film.aggregate({$match: {actors: {$elemMatch: {$exists: true}}}}, 
+                {$project: {film_id: 1, &#34;nb_actors&#34;: {$size: &#34;$actors&#34;}}}, 
+                {$sort: {nb_actors: -1}})
+&lt;/pre&gt;
+&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+db.film.aggregate({$match: {actors: {$elemMatch: {$exists: true}}}}, 
+                {$project: {film_id: 1, &#34;nb_actors&#34;: {$size: &#34;$actors&#34;}}}, 
+                {$group: {_id: null, avg_actors: {$avg: &#34;$nb_actors&#34;}}})
+&lt;/pre&gt;
+&lt;ol start=&#34;6&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+db.rental.aggregate({$group: {_id: &#34;$customer.customer_id&#34;, count: {$sum: 1}}}, {$sort: {count: -1}})
+&lt;/pre&gt;
+&lt;ol start=&#34;7&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+db.rental.aggregate({$group: {_id: {cust_id: &#34;$customer.customer_id&#34;, cust_first_name: &#34;$customer.first_name&#34;, 
+                                    cust_last_name: &#34;$customer.last_name&#34;}, count: {$sum: 1}}}, 
+                            {$sort: {count: -1}}, {$limit :1})
+&lt;/pre&gt;
+&lt;ol start=&#34;8&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+db.rental.aggregate({$match: {&#34;inventory.film.categories.category&#34;: &#34;Music&#34;}}, {$group: {_id: &#34;$customer.country&#34;, count: {$sum: 1}}}, {$sort:{count: -1}}, {$limit: 1})
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;join-operations&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;5&lt;/span&gt; Join Operations&lt;/h1&gt;
@@ -14293,6 +14404,27 @@ Write the following queries in MongoDB using the aggregation framework:&lt;/p&gt
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+db.rental.aggregate({$match: {&#34;inventory.film.title&#34;: &#34;ACE GOLDFINGER&#34;}}, 
+            {$lookup: {from: &#34;film&#34;, localField: &#34;inventory.film.film_id&#34;, foreignField:&#34;film_id&#34;, as:&#34;film&#34;}}, 
+            {$project: {&#34;film.language&#34;: 1}}, {$limit : 1})
+&lt;/pre&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;
+db.rental.aggregate({$match: {rental_id: 2}}, 
+                    {$lookup: {from: &#34;staff&#34;, localField: &#34;staff.staff_id&#34;, 
+                    foreignField:&#34;staff_id&#34;, as:&#34;staff_member&#34;}}, {$project: {&#34;staff_member&#34;: 1}})
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
