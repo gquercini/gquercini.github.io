@@ -28,10 +28,10 @@
   
     
   
-  <meta name="description" content="Description of the MapReduce tutorial.">
+  <meta name="description" content="MongoDB queries.">
 
   
-  <link rel="alternate" hreflang="en-us" href="/courses/plp/tutorials/map-reduce/">
+  <link rel="alternate" hreflang="en-us" href="/courses/plp/tutorials/mongodb-querying/">
 
   
 
@@ -219,7 +219,7 @@
   <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_3.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_3.png">
 
-  <link rel="canonical" href="/courses/plp/tutorials/map-reduce/">
+  <link rel="canonical" href="/courses/plp/tutorials/mongodb-querying/">
 
   
   
@@ -233,9 +233,9 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Gianluca Quercini">
-  <meta property="og:url" content="/courses/plp/tutorials/map-reduce/">
-  <meta property="og:title" content="MapReduce | Gianluca Quercini">
-  <meta property="og:description" content="Description of the MapReduce tutorial."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:url" content="/courses/plp/tutorials/mongodb-querying/">
+  <meta property="og:title" content="MongoDB queries | Gianluca Quercini">
+  <meta property="og:description" content="MongoDB queries."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
   
     
@@ -258,7 +258,7 @@
 
 
 
-  <title>MapReduce | Gianluca Quercini</title>
+  <title>MongoDB queries | Gianluca Quercini</title>
 
 </head>
 
@@ -544,8 +544,8 @@
     <div id="tutorials-ddowncontent" class="tutorials-ddowncontent ddowncontent">
     <ul class="nav docs-sidenav">
       
-      <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
-      <li class="active tutorials">
+      
+      <li class="tutorials">
         <a href="/courses/plp/tutorials/map-reduce/">MapReduce</a>
       </li>
       
@@ -564,8 +564,8 @@
         <a href="/courses/plp/tutorials/mongodb-modeling/">MongoDB data modeling</a>
       </li>
       
-      
-      <li class="tutorials">
+      <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
+      <li class="active tutorials">
         <a href="/courses/plp/tutorials/mongodb-querying/">MongoDB queries</a>
       </li>
       
@@ -588,8 +588,8 @@
       <article class="article">
 
         <div class="docs-article-container">
-          <div class="heading">Platforms and languages — Tutorial 1</div>
-          <h1>MapReduce</h1>
+          <div class="heading">Platforms and languages</div>
+          <h1>MongoDB queries</h1>
           <hr>
           <div class="logo">
             <p><img src="/img/cs-logo.png" width="20%" style="display: block; margin: auto;" /></p>
@@ -601,273 +601,227 @@
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<div id="computing-averages" class="section level1">
-<h1><span class="header-section-number">1</span> Computing averages</h1>
-<p>We are given a dataset that
-contains the average monthly
-temperature measurements
-over the course of some years.
-More precisely, the dataset is stored in a CSV file,
-where each row corresponds to a monthly
-measurement and the columns contain the following values:
-year, month, average temperature in the month.</p>
-<pre><code>1980,1,5
-1980,2,2
-1980,3,10
-1980,4,14
-1980,5,17
-....
-1981,1,2
-1981,2,1
-1981,3,3
-1981,4,10
-....</code></pre>
-<p>We intend to get the average monthly temperature for each year.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1.1  </strong></span>
-Write a MapReduce algorithm that generates key-value pairs
-<span class="math inline">\((year, average\_temperature)\)</span>.</p>
-</div>
-</div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>map: <span class="math inline">\((year, month, temperature) \rightarrow (year, temperature)\)</span></p>
-<p>reduce: <span class="math inline">\((year, temps) \rightarrow\)</span> <span class="math inline">\((year, sum(temps)/len(temps))\)</span></p>
+<p>We learn how to write queries in MongoDB on the Sakila database.</p>
+<div id="initialization" class="section level1">
+<h1><span class="header-section-number">1</span> Initialization</h1>
 <ul>
-<li><span class="math inline">\(temps\)</span> is the list of all temperatures in the same <span class="math inline">\(year\)</span>.</li>
-<li><span class="math inline">\(sum(temps)\)</span> sums all the elements in the list <span class="math inline">\(temps\)</span>.</li>
-<li><span class="math inline">\(len(temps)\)</span> gives the length of the list <span class="math inline">\(temps\)</span>.</li>
+<li><p>Launch a MongoDB server on your computer.</p></li>
+<li><p>Open MongoDB Compass.</p></li>
+<li><p>Connect to the MongoDB server with the following URI: <code>mongodb://localhost:27017</code>.</p></li>
+<li><p>Download the <a href="/courses/databases/tutorial-6/sakila-mongodb.zip"><strong>this archive file</strong></a> and extract it.
+Each file corresponds to a collection.</p></li>
+<li><p>In MongoDB Compass create a new database named <code>sakila</code>.</p></li>
+<li><p>Create the collections <code>customer</code>, <code>film</code>, <code>rental</code>, <code>staff</code> and <code>store</code>.</p></li>
+<li><p>Import the data from the downloaded JSON files.</p></li>
 </ul>
 </div>
-</details>
-<p>Suppose now that we have a large CSV file
-stored in a distributed file system (e.g., HDFS),
-containing a series of measurements in the format “Year, Month, Day, Minute, Second, Temperature”.
-We can have up to one measurement per second in some years.
-Like before, we’d like to compute key-value pairs (year, average_temperature) by using
-a MapReduce algorithm.</p>
+<div id="basic-queries" class="section level1">
+<h1><span class="header-section-number">2</span> Basic queries</h1>
+<p>We might want to see a list of common operators <a href="https://www.mongodb.com/docs/manual/reference/operator/query/#std-label-query-selectors" target="_blank">in this page</a>.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 1.2  </strong></span>
-What is the maximum number of measurements in a year?</p>
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 2.1  </strong></span>
+Write the following queries in MongoDB:</p>
+<ol style="list-style-type: decimal">
+<li><p>Return all the information on all customers.</p></li>
+<li><p>Return the email of all customers.</p></li>
+<li><p>Return the email of the customers of Canadian stores.</p></li>
+<li><p>Return the identifier of all rentals made by customers from Iran, where
+the amount paid is strictly greater than 10 dollars.</p></li>
+<li><p>Return the first and last names of the actors who played a role in film 213.</p></li>
+</ol>
 </div>
 </div>
 <details>
 <p><summary>Solution</summary></p>
 <div class="infobox exosolution">
-<p>Since we can have up to one measurement per second, the maximum number of
-measurements <span class="math inline">\(M_{max}\)</span> for a certain year is given by the following formula:</p>
-<p><span class="math display">\[
-M_{max} = 365 \times 24 \times 60 \times 60 \approx 31.5 \times 10^6 
-\]</span></p>
+<ol style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>db.customer.find()</pre>
+<ol start="2" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>db.customer.find({}, {email:1})</pre>
+<ol start="3" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>db.customer.find({"store.country": "Canada"}, {email:1});</pre>
+<ol start="4" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>db.rental.find({"customer.country": "Iran", amount: {$gt: 10}}, {rental_id: 1, _id:0});</pre>
+<ol start="5" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>db.film.find({film_id: 213}, {"actors.first_name":1, "actors.last_name": 1}).sort({"actors.last_name": -1});</pre>
 </div>
 </details>
+</div>
+<div id="operations-on-arrays" class="section level1">
+<h1><span class="header-section-number">3</span> Operations on arrays</h1>
+<p>Useful array operators are <a href="https://www.mongodb.com/docs/manual/reference/operator/query-array/" target="_blank">listed here</a>.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 1.3  </strong></span>
-Considering the answer to the previous question, discuss the efficiency
-of the first implementation of the algorithm.</p>
+<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 3.1  </strong></span>
+Write the following queries in MongoDB:</p>
+<ol style="list-style-type: decimal">
+<li><p>Return the identifier of the films that have “Behind the Scenes” as special features.</p></li>
+<li><p>Return the identifier of the films that have as special features all of the following: “Commentaries” and “Deleted Scenes”.</p></li>
+<li><p>Return the identifier of all the films where BURT POSEY played a role.</p></li>
+<li><p>Return the identifier of the film that has exactly 15 actors.</p></li>
+</ol>
 </div>
 </div>
 <details>
 <p><summary>Solution</summary></p>
 <div class="infobox exosolution">
-<p>Since there might be up to 31 million values
-associated with a key, the bottleneck of the computation would be
-the shuffle operation, since we need to copy a high number of
-(key,value) pairs from the mappers to the reducers.</p>
-<p>Also, a reducer might have to
-loop over a huge list of values in order to compute their average.</p>
+<ol style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>db.film.find({special_features : {$elemMatch: {$eq: "Behind the Scenes"}}}, {film_id: 1, _id:0});</pre>
+<ol start="2" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>db.film.find({special_features : {$all: ["Commentaries", "Deleted Scenes"]}}, {film_id: 1, _id:0});</pre>
+<ol start="3" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>db.film.find({"actors.first_name": "BURT", "actors.last_name": "POSEY"}, {film_id: 1, _id:0});</pre>
+<ol start="4" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>db.film.find({actors: {$size : 15}}, {film_id: 1, _id:0});</pre>
 </div>
 </details>
+</div>
+<div id="aggregation-framework" class="section level1">
+<h1><span class="header-section-number">4</span> Aggregation framework</h1>
+<p>A useful reference for the aggregation pipeline <a href="https://www.mongodb.com/docs/manual/meta/aggregation-quick-reference/" target="_blank">can be found here here</a>.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 1.4  </strong></span>
-Based on the answer to the previous question,
-propose a better implementation to handle the CSV file.</p>
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 4.1  </strong></span>
+Write the following queries in MongoDB using the aggregation framework:</p>
+<ol style="list-style-type: decimal">
+<li><p>Return the title of the films rented by TOMMY COLLAZO (can you also express this query with the function find()?)</p></li>
+<li><p>Count the total amount of payments across all rentals.</p></li>
+<li><p>Return the number of actors of each film.</p></li>
+<li><p>Sort the films by the number of actors (decreasing order).</p></li>
+<li><p>Return the average number of actors for each film.</p></li>
+<li><p>Return the identifier of the customer who made the most of rentals.</p></li>
+<li><p>Return the first and last name of the customer who made the most of rentals.</p></li>
+<li><p>Return the country where the customers have rented the most of the films in the category “Music”.</p></li>
+</ol>
 </div>
 </div>
 <details>
 <p><summary>Solution</summary></p>
 <div class="infobox exosolution">
-<p>map: <span class="math inline">\((year, mo, d, mi, sec, temperature) \rightarrow (year, temperature)\)</span></p>
-<p>combine: <span class="math inline">\((year, temps) \rightarrow\)</span> <span class="math inline">\((year, (sum(temps), len(temps)))\)</span></p>
-<p>reduce: <span class="math inline">\((year, [(s_i, l_i),\ i=1\dots n]) \rightarrow\)</span> <span class="math inline">\((year, \frac{\sum_{i=1}^n s_i}{\sum_{i=1}^n l_i})\)</span></p>
-<ul>
-<li><span class="math inline">\(temps\)</span> is the list of all temperatures in the same <span class="math inline">\(year\)</span>.</li>
-<li><span class="math inline">\(sum(temps)\)</span> sums all the elements in the list <span class="math inline">\(temps\)</span>.</li>
-<li><span class="math inline">\(len(temps)\)</span> gives the length of the list <span class="math inline">\(temps\)</span>.</li>
-</ul>
+<ol style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>
+db.rental.aggregate({$match: {"customer.first_name": "TOMMY", "customer.last_name": "COLLAZO"}}, 
+                    {$project: {"inventory.film.title": 1, _id:0}})
+</pre>
+One can also express this query with the function find()
+<pre>
+db.rental.find({"customer.first_name": "TOMMY", "customer.last_name": "COLLAZO"}, {"inventory.film.title": 1, _id:0});
+</pre>
+<ol start="2" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>
+db.rental.aggregate({$group: {"_id": null, total_amount: {$sum: "$amount"}}})
+</pre>
+<ol start="3" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>
+db.film.aggregate({$project: {nb_actors: {$size: "$actors"}}})
+</pre>
+<ol start="4" style="list-style-type: decimal">
+<li></li>
+</ol>
+<p>If we don’t put the match condition, we get an error because for some films
+the field actors is not defined.</p>
+<pre>db.film.aggregate({$match: {actors: {$elemMatch: {$exists: true}}}}, 
+                {$project: {film_id: 1, "nb_actors": {$size: "$actors"}}}, 
+                {$sort: {nb_actors: -1}})
+</pre>
+<ol start="5" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>
+db.film.aggregate({$match: {actors: {$elemMatch: {$exists: true}}}}, 
+                {$project: {film_id: 1, "nb_actors": {$size: "$actors"}}}, 
+                {$group: {_id: null, avg_actors: {$avg: "$nb_actors"}}})
+</pre>
+<ol start="6" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>
+db.rental.aggregate({$group: {_id: "$customer.customer_id", count: {$sum: 1}}}, {$sort: {count: -1}})
+</pre>
+<ol start="7" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>
+db.rental.aggregate({$group: {_id: {cust_id: "$customer.customer_id", cust_first_name: "$customer.first_name", 
+                                    cust_last_name: "$customer.last_name"}, count: {$sum: 1}}}, 
+                            {$sort: {count: -1}}, {$limit :1})
+</pre>
+<ol start="8" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>
+db.rental.aggregate({$match: {"inventory.film.categories.category": "Music"}}, {$group: {_id: "$customer.country", count: {$sum: 1}}}, {$sort:{count: -1}}, {$limit: 1})
+</pre>
 </div>
 </details>
 </div>
-<div id="computing-average-and-standard-deviation" class="section level1">
-<h1><span class="header-section-number">2</span> Computing average and standard deviation</h1>
-<p>We consider again the large CSV file
-with a series of measurements in the format “Year, Month, Day, Minute, Second, Temperature”.
-We now intend to generate a series of key-value pairs (year, (avg_temperature, std_deviation)).</p>
-<p>We can express the standard deviation of <span class="math inline">\(n\)</span> values <span class="math inline">\(x_i\)</span> (<span class="math inline">\(1 \leq i \leq n\)</span>) with two different
-equations.</p>
-<p>The first equation is as follows:</p>
-<p><span class="math display">\[
-\sigma = \sqrt{\frac{\sum_{i=1}^n (x_i - \overline{x})^2}{n}} 
-\]</span></p>
-<p>The second equation is as follows:</p>
-<p><span class="math display">\[
-\sigma = \sqrt{\overline{x^2} - \overline{x}^2} = \sqrt{\frac{\sum_{i=1}^n (x_i)^2}{n} - \Bigg(\frac{\sum_{i=1}^n x_i}{n}\Bigg)^2} 
-\]</span></p>
+<div id="join-operations" class="section level1">
+<h1><span class="header-section-number">5</span> Join Operations</h1>
+<p>The join operation is <a href="https://www.mongodb.com/docs/manual/reference/operator/aggregation/lookup/" target="_blank">explained here</a>.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 2.1  </strong></span>
-Which equation of the standard deviation
-is more appropriate in a Map-Reduce algorithm?
-Why?</p>
+<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 5.1  </strong></span>
+Write the following queries in MongoDB using the aggregation framework:</p>
+<ol style="list-style-type: decimal">
+<li><p>Return the language of the film with title “ACE GOLDFINGER”.</p></li>
+<li><p>Return all the information about the staff member who took care of rental 2.</p></li>
+</ol>
 </div>
 </div>
 <details>
 <p><summary>Solution</summary></p>
 <div class="infobox exosolution">
-<p>The second equation is more appropriate because it allows the computation
-of the sum of the elements and of the square of the elements step by step
-by using map and combine together.</p>
-<p>Instead, if we use the first equation, we need first to compute the average and then use it
-to compute the variance.</p>
+<ol style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>
+db.rental.aggregate({$match: {"inventory.film.title": "ACE GOLDFINGER"}}, 
+            {$lookup: {from: "film", localField: "inventory.film.film_id", foreignField:"film_id", as:"film"}}, 
+            {$project: {"film.language": 1}}, {$limit : 1})
+</pre>
+<ol start="2" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>
+db.rental.aggregate({$match: {rental_id: 2}}, 
+                    {$lookup: {from: "staff", localField: "staff.staff_id", 
+                    foreignField:"staff_id", as:"staff_member"}}, {$project: {"staff_member": 1}})
+</pre>
 </div>
 </details>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 2.2  </strong></span>
-Propose a MapReduce implementation to compute the average and the standard
-deviation of the temperatures for each year.
-</div>
-</div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>map: <span class="math inline">\((year, mo, d, mi, sec, temperature) \rightarrow (year, temperature)\)</span></p>
-<p>combine: <span class="math inline">\((year, T) \rightarrow\)</span> <span class="math inline">\((year, (sum(T), sum(T^2), len(T)))\)</span></p>
-<p>reduce: <span class="math inline">\((year, [(s_{i}, sq_{i}, l_{i}),\ i=1\dots n]) \rightarrow\)</span> <span class="math inline">\((year, (\mu, \sigma))\)</span></p>
-<p>where:</p>
-<ul>
-<li><span class="math inline">\(T\)</span> is the list of all temperatures in the same <span class="math inline">\(year\)</span>.</li>
-<li><span class="math inline">\(sum(T)\)</span> sums all the elements in the list <span class="math inline">\(T\)</span>.</li>
-<li><span class="math inline">\(T^2 = [x^2 | x\in T]\)</span></li>
-<li><span class="math inline">\(len(T)\)</span> gives the length of the list <span class="math inline">\(T\)</span>.</li>
-<li><span class="math inline">\(\mu = \sum_{i=1}^n s_{i}/ \sum_{i=1}^n l_{i}\)</span></li>
-<li><span class="math inline">\(\sigma = \sqrt{ (\sum_{i=1}^n sq_{i}/ \sum_{i=1}^n l_{i}) - \mu^2 }\)</span></li>
-</ul>
-</div>
-</details>
-</div>
-<div id="common-friends" class="section level1">
-<h1><span class="header-section-number">3</span> Common friends in a social network</h1>
-<p>Consider a social network described by a graph encoded in a text file.
-Each line of the file is a list of identifiers separated by commas.
-For instance, the line <span class="math inline">\(A,B,C,D\)</span> means that <span class="math inline">\(A\)</span> is friend with <span class="math inline">\(B\)</span>, <span class="math inline">\(C\)</span> and <span class="math inline">\(D\)</span>.
-An excerpt of the file looks like as follows:</p>
-<pre><code>A,B,C,D
-B,A,D
-C,A,D
-D,A,B,C
-...</code></pre>
-<p>We suppose that the friendship relation is symmetric: <span class="math inline">\((A, B)\)</span> implies
-<span class="math inline">\((B, A)\)</span>.</p>
-<p>We want to obtain the list of the common friends for each pair of individuals:</p>
-<pre><code>(A, B), [D]
-(A, C), [D] 
-(A, D), [B, C] 
-(B, C), [D] 
-(B, D), [A] 
-(C, D), [A]</code></pre>
-<p>As an additional constraint, we want to represent a couple only once and avoid
-to represent the symmetric couple.
-In other words, if we output <span class="math inline">\((A, B)\)</span>, we don’t want to output <span class="math inline">\((B, A)\)</span>.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 3.1  </strong></span>
-Propose a MapReduce implementation to find the common friends in a
-social network satisifying the given constraints.</p>
-</div>
-</div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>map: <span class="math inline">\((x, F) \rightarrow [((u, v), x)\ \forall (u, v) \in F\ |\ u &lt; v ]\)</span></p>
-<p>reduce: <span class="math inline">\([(u, v), LCF] \rightarrow [(u, v), LCF]\)</span></p>
-<p>where:</p>
-<ul>
-<li><span class="math inline">\(x\)</span> is the first item in a line.</li>
-<li><span class="math inline">\(F\)</span> is the list containing the items in a line except the first one (<span class="math inline">\(x\)</span>’s friends).</li>
-<li><span class="math inline">\(LCF\)</span> is the list of all individuals that are friends with both <span class="math inline">\(u\)</span> and <span class="math inline">\(v\)</span>.</li>
-</ul>
-<p>We note that the reduce function is the identity.</p>
-</div>
-</details>
-<!--
-# Creating an inverted index
-
-We have  a collection of $n$ documents in a directory and we want to create 
-an **inverted index**,  one that associates each word 
-to the list of the files the word occurs in. 
-More precisely, for each word, the inverted index will 
-have a list of the names of the documents that contain the word. 
-
-::: {.infobox .exercisebox data-latex="{exercisebox}"}
-**Exercise**
-
-\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-8"><strong>(\#exr:unnamed-chunk-8) </strong></span>
-Propose a MapReduce implementation to create an inverted index over a 
-collection of documents.
-</div>\EndKnitrBlock{exercise}
-
-:::
-
-
-
-<details>
-<summary>Solution</summary>
-
-::: {.infobox .exosolution data-latex="{exercisebox}"}
-
-The input to the map will be a key-value pair, where 
-the key is the name of a file $f$ and the value is the 
-content $C$ of the file.
-
-map: $(f, C) \rightarrow [(w, f)\ \forall w \in C]$
-
-reduce: $(w, L) \rightarrow (w, L)$
-
-where $L$ is the list of the files containing the word $w$.
-
-We note that the reduce function is the identity.
-
-Note also that in the map function we can add instructions 
-to preprocess the text. For example, we can eliminate some words
-that are not useful in the index (e.g., the stopwords) or remove 
-special symbols.
-
-:::
-
-</details>
-
-
--->
 </div>
 
           </div>

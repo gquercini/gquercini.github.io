@@ -1,0 +1,1311 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Gianluca Quercini">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="MongoDB data modeling.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/courses/plp/tutorials/mongodb-modeling/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="rgb(0, 136, 204)">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_3.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_3.png">
+
+  <link rel="canonical" href="/courses/plp/tutorials/mongodb-modeling/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="Gianluca Quercini">
+  <meta property="og:url" content="/courses/plp/tutorials/mongodb-modeling/">
+  <meta property="og:title" content="MongoDB modeling | Gianluca Quercini">
+  <meta property="og:description" content="MongoDB data modeling."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
+  
+    
+    
+  
+
+  
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>MongoDB modeling | Gianluca Quercini</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#experience"><span>Experience</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#publications"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  
+
+  
+
+<div class="container-fluid docs">
+  <div class="row flex-xl-nowrap">
+    <div class="col-12 col-md-3 col-xl-2 docs-sidebar">
+      
+
+
+<script src="/js/toggle-menu.js"></script>
+
+
+
+
+
+
+
+  
+    
+  
+
+
+
+
+<form class="docs-search d-flex align-items-center">
+  <button class="btn docs-toggle d-md-none p-0 mr-3" type="button" data-toggle="collapse" data-target="#docs-nav" aria-controls="docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    <span><i class="fas fa-bars"></i></span>
+  </button>
+
+  
+</form>
+
+<nav class="collapse docs-links" id="docs-nav">
+  
+
+  
+  
+  
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="tutorials" class="docs-toc-link" href="/courses/plp/tutorials/map-reduce/">Tutorials and labs</a>
+    
+    <div id="tutorials-ddowncontent" class="tutorials-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="tutorials">
+        <a href="/courses/plp/tutorials/map-reduce/">MapReduce</a>
+      </li>
+      
+      
+      <li class="tutorials">
+        <a href="/courses/plp/tutorials/structured-streaming-lab/">Spark structured streaming</a>
+      </li>
+      
+      
+      <li class="tutorials">
+        <a href="/courses/plp/tutorials/mllib/">Spark MLlib</a>
+      </li>
+      
+      <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
+      <li class="active tutorials">
+        <a href="/courses/plp/tutorials/mongodb-modeling/">MongoDB data modeling</a>
+      </li>
+      
+      
+      <li class="tutorials">
+        <a href="/courses/plp/tutorials/mongodb-querying/">MongoDB queries</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  
+</nav>
+
+    </div>
+
+    
+
+    <main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 docs-content" role="main">
+
+      <article class="article">
+
+        <div class="docs-article-container">
+          <div class="heading">Platforms and languages</div>
+          <h1>MongoDB modeling</h1>
+          <hr>
+          <div class="logo">
+            <p><img src="/img/cs-logo.png" width="20%" style="display: block; margin: auto;" /></p>
+            </div>
+
+          <div class="article-style">
+            
+
+
+<p><link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/cloud-computing.css"></p>
+<div id="use-case-scenario" class="section level1">
+<h1><span class="header-section-number">1</span> Use case scenario</h1>
+<p>We consider a relational database that holds the data of a chain of DVD stores; the <a href="https://dev.mysql.com/doc/sakila/en/sakila-preface.html" target="_blank">database name is
+Sakila</a>.</p>
+<p>The Sakila database is serving an increasing number of queries from staff and customers
+around the world.
+A single monolithic database is not sufficient anymore to serve all
+the requests and the company is thinking of distributing the database across
+several servers (<strong>horizontal scalability</strong>).
+However, a relational database does not handle horizontal scalability very well, due
+to the fact that the data is scattered across numerous tables, as the result of the normalization
+process.
+Hence, the Sakila team is turning to you to help them migrate the database from PostgreSQL to
+MongoDB.</p>
+<p>For the migration to happen, it is necessary to conceive a suitable data model.
+From the first discussions with the Sakila management,
+you quickly understand that one of the main use of the database is to
+manage (add, update and read) rental information.</p>
+<div id="description-of-the-relational-model" class="section level2">
+<h2><span class="header-section-number">1.1</span> Description of the relational model</h2>
+<p>The existing data model is recalled in Figure <a href="#fig:sakila-model">1.1</a>.</p>
+<div class="figure" style="text-align: center"><span id="fig:sakila-model"></span>
+<img src="/courses/databases/tutorial-4/sakila-3nf.png" alt="The logical schema of the Sakila database" width="100%" />
+<p class="caption">
+Figure 1.1: The logical schema of the Sakila database
+</p>
+</div>
+<p>Here is the <strong>description of the tables</strong>:</p>
+<ul>
+<li><p>The table <TT>actor</TT> lists information for all actors. Columns: <em>actor_id</em>, <em>first_name</em>, <em>last_name</em>.</p></li>
+<li><p>The table <TT>address</TT> contains address information for customers, staff and stores. Columns: <em>address_id</em>, <em>address</em>, <em>address2</em>, <em>district</em>, <em>city_id</em>, <em>postal_code</em>, <em>phone</em>.</p></li>
+<li><p>The table <TT>category</TT> lists the categories that can be assigned to a film. Columns: <em>category_id</em>, <em>name</em>.</p></li>
+<li><p>The table <TT>city</TT> contains a list of cities. Columns: <em>city_id</em>, <em>city</em>, <em>country_id</em>.</p></li>
+<li><p>The table <TT>country</TT> contains a list of countries. Columns: <em>country_id</em>, <em>country</em>.</p></li>
+<li><p>The table <TT>customer</TT> contains a list of all customers. Columns: <em>customer_id</em>, <em>store_id</em>, <em>first_name</em>, <em>last_name</em>, <em>email</em>, <em>address_id</em>, <em>active</em>, <em>create_date</em>.</p></li>
+<li><p>The table <TT>film</TT> is a list of all films potentially in stock in the stores. The actual in-stock copies of each film are represented in the inventory table.
+Columns: <em>film_id</em>, <em>title</em>, <em>description</em>, <em>release_year</em>, <em>language_id</em>, <em>original_language_id</em>, <em>rental_duration</em>, <em>rental_rate</em>, <em>length</em>.</p></li>
+<li><p>The table <TT>film_actor</TT> is used to support a many-to-many relationship between films and actors. Columns: <em>film_id</em>, <em>actor_id</em>.</p></li>
+<li><p>The table <TT>film_category</TT> is used to support a many-to-many relationship between films and categories. Columns: <em>film_id</em>, <em>category_id</em>.</p></li>
+<li><p>The table <TT>inventory</TT> contains one row for each copy of a given film in a given store. Columns: <em>inventory_id</em>, <em>film_id</em>, <em>store_id</em>.</p></li>
+<li><p>The table <TT>language</TT> contains possible languages that films can have for their language and original language values. Columns: <em>language_id</em>, <em>name</em>.</p></li>
+<li><p>The table <TT>payment</TT> records each payment made by a customer, with information such as the amount and the rental being paid for.
+Columns: <em>payment_id</em>, <em>customer_id</em>, <em>staff_id</em>, <em>rental_id</em>, <em>amount</em>, <em>payment_date</em>.</p></li>
+<li><p>The table <TT>rental</TT> contains one row for each rental of each inventory item with information about who rented what item, when it was rented, and when it was returned.
+Columns: <em>rental_id</em>, <em>rental_date</em>, <em>inventory_id</em>, <em>customer_id</em>, <em>return_date</em>, <em>staff_id</em>.</p></li>
+<li><p>The table <TT>staff</TT> lists all staff members. Columns: <em>staff_id</em>, <em>first_name</em>, <em>last_name</em>, <em>address_id</em>, <em>picture</em>, <em>email</em>, <em>store_id</em>, <em>active</em>, <em>username</em>, <em>password</em>.</p></li>
+<li><p>The table <TT>store</TT> lists all stores in the system. Columns: <em>store_id</em>, <em>manager_staff_id</em>, <em>address_id</em>.</p></li>
+</ul>
+</div>
+</div>
+<div id="data-types-in-mongdb" class="section level1">
+<h1><span class="header-section-number">2</span> Data types in MongDB</h1>
+<p>A MongoDB document is represented as a JSON record.
+However, internally MongoDB serializes the JSON record into a BSON record.
+In practice, a BSON record is a binary representation of a JSON record.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 2.1  </strong></span>
+Looking at
+the <a href="https://bsonspec.org/spec.html" target="_blank">specification of BSON</a>, can you tell how many <strong>bytes</strong> do you need to represent:
+an integer, a date, a string and a boolean?</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>From the specification we learn that each type is identified by a 1-byte value, for instance \x01 (that represents the binary string 0000 0001) indicates the type <code>double</code>.</p>
+<ul>
+<li><p>The <code>integer</code> type is identified by the value \x10 and the documentation specifies that we need 32 bits, that is <strong>4 bytes</strong>.</p></li>
+<li><p>The <code>date</code> type is identified by the value \x09 and the documentation specifies that we need an <code>int64</code>, which means an integer coded
+over 64 bits, that is <strong>8 bytes</strong>.</p></li>
+<li><p>The <code>string</code> type is identified by the value \x02 and the documentation specifies that the string is encoded in UTF-8. A UTF-8 character may need <strong>between 1 and 4 bytes</strong>.
+Therefore, the number of bytes depends on the length of the string and on the characters used.</p></li>
+<li><p>The <code>boolean</code> type is identified by the value \x08. We learn from the specification that the value <code>false</code> is encoded with \x00 and
+the value <code>true</code> is encoded with \x01. In both cases, we only need <strong>1 byte</strong>.</p></li>
+</ul>
+</div>
+</details>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 2.2  </strong></span>
+The size of a document in MongoDB is limited to 16 MiB.
+Can you tell why there is such a limit?</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>This choice is driven by two reasons:</p>
+<ol style="list-style-type: decimal">
+<li><p>Ensure that a single document does not use too much memory.</p></li>
+<li><p>Ensure that a document does not use too much bandwidth when it is transmitted over the network.</p></li>
+</ol>
+<p>The reasons are specified in the <a href="https://www.mongodb.com/docs/manual/core/document/" target="_blank">MongoDB manual</a>.</p>
+</div>
+</details>
+<p>The table <TT>rental</TT> has four integer columns (<em>rental_id</em>, <em>inventory_id</em>, <em>customer_id</em>, <em>staff_id</em>) and
+2 dates (<em>rental_date</em>, <em>return_date</em>).</p>
+<p>The table <TT>customer</TT> has three integer columns (<em>customer_id</em>, <em>store_id</em>, <em>address_id</em>), three strings (<em>first_name</em>, <em>last_name</em> and <em>email</em>),
+one boolean value (<em>active</em>) and one date (<em>create_date</em>).</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 2.3  </strong></span>
+Suppose that we want to create a MongoDB collection to list all rentals, and a separate collection to list all customers.</p>
+<p><strong>Estimate the size of a document in both collections.</strong></p>
+<p>We make the following assumptions:</p>
+<ul>
+<li><p>On average, each character needs 1.5 bytes.</p></li>
+<li><p>An email address is 20 characters long on average.</p></li>
+<li><p>A last name is 8 characters long on average.</p></li>
+<li>A first name is 6 characters long on average.</li>
+</ul>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>A document in the collection <TT>rental</TT> would need:</p>
+<ul>
+<li><p>16 bytes for the integer values (each integer needs 4 bytes, a rental has 4 integer values).</p></li>
+<li><p>16 bytes for the dates (each date needs 8 bytes, a rental has 2 dates).</p></li>
+</ul>
+<p><strong>In total, a document in collection <TT>rental</TT> needs 32 bytes</strong>.</p>
+<p>A document in collection <TT>customer</TT> would need:</p>
+<ul>
+<li><p>12 bytes for the integer values (each integer needs 4 bytes, a customer has 3 integer values).</p></li>
+<li><p><span class="math inline">\(20 \times 1.5\)</span> = 30 bytes for the email address.</p></li>
+<li><p><span class="math inline">\(8 \times 1.5\)</span> = 12 bytes for the last name.</p></li>
+<li><p><span class="math inline">\(6 \times 1.5\)</span> = 9 bytes for the first name.</p></li>
+<li><p>1 byte for the property <em>active</em>.</p></li>
+<li><p>8 bytes for the property <em>create_date</em>.</p></li>
+</ul>
+<p><strong>In total, a document in collection <TT>customer</TT> needs 72 bytes</strong>.</p>
+</div>
+</details>
+</div>
+<div id="considerations-for-the-new-model" class="section level1">
+<h1><span class="header-section-number">3</span> Considerations for the new model</h1>
+<p>Denormalization in MongoDB is <a href="https://www.mongodb.com/blog/post/6-rules-of-thumb-for-mongodb-schema-design-part-1" target="_blank">strongly encouraged</a>
+to read and write a record relative to an entity in one single operation.</p>
+<p>In the following exercises, we explore different options and analyze advantages and disadvantages.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 3.1  </strong></span>
+Suppose that we create a collection <TT>Customer</TT>,
+where each document includes information about a customer.</p>
+<p>Suppose that we embed in each document the list of rentals
+for a customer.</p>
+<p>How many rentals can we store for a given customer, knowing
+that the size of a document in MongoDB cannot exceed 16 MiB?</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>We’ve seen before that each rental needs 32 (<span class="math inline">\(2^5\)</span>) bytes.</p>
+<p>Considering that 16 MiB = <span class="math inline">\(2^4 \times 2^{20}\)</span> bytes, the maximum number of
+rentals that we can store for a given customer is given by:</p>
+<p><span class="math display">\[
+\frac{2^4 \times 2^{20}}{2^5} = 2^{-1} \times 2^{20} = 2^{19}
+\]</span></p>
+<p>This gives around 534,000 rentals.</p>
+</div>
+</details>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 3.2  </strong></span>
+Consider the two following options:</p>
+<ol style="list-style-type: decimal">
+<li><p>A collection <TT>customer</TT>, where each document contains the
+information about a customer and an embedded list with the information
+on all the rentals made by the customer.</p></li>
+<li><p>A collection <TT>rental</TT>, where each document contains the information
+about a rental and an embedded document with the information on the customer
+that made the rental.</p></li>
+</ol>
+<p><strong>Compute the size in byte</strong> of a document in the two collections.</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<ol style="list-style-type: decimal">
+<li><p>A document describing a customer needs <strong>72 bytes</strong>.
+A rental document needs 32 bytes, which includes <em>customer_id</em> (an integer, 4 bytes). We might want to drop
+this property, since we’re embedding a rental document into a customer document.
+Therefore, for each rental we need <strong>28 bytes</strong>.
+A document in the collection <TT>customer</TT> needs: <span class="math inline">\(72 + 28 \times 32\)</span> = <strong>968 bytes</strong>.</p></li>
+<li><p>For a rental, we need 32 bytes, which includes <em>customer_id</em> (an integer, 4 bytes). We drop this property, since
+we’re replacing it with a property <em>customer</em>, whose value is a document with all the information
+about a customer. Hence, we need 28 bytes to store the information on a rental and 72 bytes to store the information about
+a customer. In total: <strong>100 bytes</strong>.</p></li>
+</ol>
+</div>
+</details>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 3.3  </strong></span>
+Suppose that we have in our database</p>
+<ul>
+<li><p>512 customers.</p></li>
+<li><p>16384 rentals.</p></li>
+<li><p>On average, each customer has around 32 rentals.</p></li>
+</ul>
+<p><strong>Compute the size in byte</strong> of the collections <TT>customer</TT> and
+<TT>rental</TT> described in the previous question.</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<ol style="list-style-type: decimal">
+<li><p>The size the collection <TT>customer</TT> is <span class="math inline">\(512 \times 968\)</span> = 495,616 bytes.
+This corresponds to 484 KiB.</p></li>
+<li><p>The size of the collection <TT>rental</TT> is <span class="math inline">\(16384 \times 100\)</span> = 1,638,400 bytes.
+This corresponds to 1,56 MiB.</p></li>
+</ol>
+</div>
+</details>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 3.4  </strong></span>
+Based on the answers in the previous questions, discuss advantages and disadvantages of the two options:
+having a collection <TT>customer</TT> (solution 1) or a collection <TT>rental</TT> (solution 2).</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p><strong>Advantages of solution 1:</strong></p>
+<ul>
+<li><p>No redundancy. In fact, a rental is relative to only one customer, therefore
+the data on a rental is not duplicated across different documents.</p></li>
+<li><p>This also explains why the collection <TT>customer</TT> is smaller than the
+the collection <TT>rental</TT> (although this is also due to the fact that we’ll always have more rentals than customers).</p></li>
+<li><p>For each customer, we retrieve the information on all his/her rentals with only one read operation.</p></li>
+</ul>
+<p><strong>Disadvantages of solution 1:</strong></p>
+<ul>
+<li><p>There is a limit (albeit an acceptable one) on the number of rentals that we can store
+for each customer.</p></li>
+<li><p>The size of a document is not constant and it depends on the number of rentals of a customer.
+In the previous questions, we see that for a modest number of rentals a document
+in collection <TT>customer</TT> is ten times larger than a document in
+collection <TT>rental</TT>.</p></li>
+</ul>
+<p><strong>Advantages of solution 2:</strong></p>
+<ul>
+<li><p>The size of each document is constant and small and will never exceed the 16 MiB limit.</p></li>
+<li><p>As a result, reading a document from the collection takes less time and memory than
+reading a document from the collection in solution 1.</p></li>
+</ul>
+<p><strong>Disadvantages of solution 2:</strong></p>
+<ul>
+<li><p>There is redundancy. The information about a customer is replicated
+each time the customer makes a rental.</p></li>
+<li><p>As a result, the size of the collection is much higher than in solution 1.</p></li>
+</ul>
+</div>
+</details>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 3.5  </strong></span>
+Look again at the model in Figure <a href="#fig:sakila-model">1.1</a>.
+A rental document doesn’t only need to include
+information on the customer who made the rental, but also:</p>
+<ul>
+<li><p>The staff member who took care of the rental.</p></li>
+<li><p>The inventory item being rented.</p></li>
+<li><p>The payment information.</p></li>
+</ul>
+<p><strong>Questions.</strong></p>
+<ol style="list-style-type: decimal">
+<li><p>Discuss the different ways we can include this information in the collections
+<TT>customer</TT> and <TT>rental</TT>.</p></li>
+<li><p>Based on the discussion, which solution would you retain?
+A collection <TT>customer</TT> or a collection <TT>rental</TT>?</p></li>
+</ol>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>In collection <TT>customer</TT>:</p>
+<ul>
+<li><p>We follow a denormalized schema, and we associate all this information into the
+document that describes a rental. The size of a document in this collection grows further.
+Besides, since a staff member or an inventory item may be involved in more than one rental, we lose
+one of the advantages of this solution, which was the lack of redundancy.
+Consider also that an inventory item is associated with other information (such as, the film the item is a copy of).
+In this collection, we have different layers of nested documents.</p></li>
+<li><p>We follow a normalized schema, we create collections <TT>staff</TT>, <TT>inventory</TT> and
+<TT>payment</TT> and we add references to these collections in the customer documents.
+However, a normalized schema might not be efficient in a distributed context.</p></li>
+</ul>
+<p>In collection <TT>rental</TT>:</p>
+<ul>
+<li>We follow a denormalized schema and we associate this information into the document that
+describes a rental. The size of the document grows, but it is always constant and small.
+In fact, we don’t embed any unbounded list of values.</li>
+</ul>
+<p>Given these considerations, we go for solution 2.</p>
+</div>
+</details>
+</div>
+<div id="the-data-model-in-mongodb" class="section level1">
+<h1><span class="header-section-number">4</span> The data model in MongoDB</h1>
+<p>In the last question, we chose the collection that we intend to create.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-9" class="exercise"><strong>Exercise 4.1  </strong></span>
+Give the complete schema (name and type of the properties) of a document in the collection
+that you chose in the previous question.</p>
+<p>If the value of any property is an embedded document:</p>
+<ul>
+<li><p>Specify the schema of that document too.</p></li>
+<li><p>If any property of an embedded document is an identifier referencing another entity,
+use that identifier (don’t try, for now, to further denormalize the schema).</p></li>
+</ul>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>A document in the collection <TT>rental</TT> has the following properties:</p>
+<ul>
+<li><em>rental_id</em>, an integer.</li>
+<li><em>rental_date</em>, a date.</li>
+<li><em>return_date</em>, a date.</li>
+<li><em>inventory</em>, a document with information about the inventory item being rented.
+This document has the following schema:
+<ul>
+<li><em>inventory_id</em>, an integer.</li>
+<li><em>film_id</em>, an integer.</li>
+<li><em>store_id</em>, an integer.</li>
+</ul></li>
+<li><em>customer</em>, a document with information about the customer making the rental.
+This document has the following schema:
+<ul>
+<li><em>customer_id</em>, an integer.</li>
+<li><em>store_id</em>, an integer.</li>
+<li><em>first_name</em>, a string.</li>
+<li><em>last_name</em>, a string.</li>
+<li><em>email</em>, a string.</li>
+<li><em>address_id</em>, an integer.</li>
+<li><em>active</em>, a boolean.</li>
+<li><em>create_date</em>, a date.</li>
+</ul></li>
+<li><em>staff</em>, a document with information about the staff member who handled the rental.
+This document has the following schema:
+<ul>
+<li><em>staff_id</em>, an integer.</li>
+<li><em>first_name</em>, a string.</li>
+<li><em>last_name</em>, a string.</li>
+<li><em>address_id</em>, an integer.</li>
+<li><em>picture</em>, binary data.</li>
+<li><em>email</em>, a string.</li>
+<li><em>store_id</em>, an integer</li>
+<li><em>active</em>, a boolean</li>
+<li><em>username</em>, a string.</li>
+<li><em>password</em>, a string.</li>
+</ul></li>
+<li><em>payment</em>, document with information about the payment of the rental:
+<ul>
+<li>payment_id, an integer.</li>
+<li>amount, a real number.</li>
+<li>payment_date, a date</li>
+</ul></li>
+</ul>
+<p>Note that the <TT>payment</TT> table in the relational model include columns
+<em>customer_id</em>, <em>staff_id</em> and <em>rental_id</em>; these are not necessary in the embedded
+document <em>payment</em>, because we already have this information.</p>
+</div>
+</details>
+<p>Let’s take a closer look at the storage requirements of the adopted solution.
+Consider that:</p>
+<ul>
+<li><p>The size in bytes of a document storing the information of a staff member is around 64 KiB (65,536 bytes), because we store a profile picture.</p></li>
+<li><p>The size in bytes of a document storing the information of an inventory item is 12 bytes.</p></li>
+<li><p>The size in bytes of a document storing the information about a payment is 20 bytes.</p></li>
+</ul>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-10" class="exercise"><strong>Exercise 4.2  </strong></span>
+If we denote by <span class="math inline">\(N_{rental}\)</span> the number of rentals, what is the size in bytes of the
+database for the adopted solution?
+What do you get if we set <span class="math inline">\(N_{rental}\)</span> to <span class="math inline">\(10^4\)</span>, <span class="math inline">\(10^5\)</span> or <span class="math inline">\(10^6\)</span> ?</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>In a previous question, we saw that a document in the collection <TT>rental</TT>, including the information about a customer,
+needs 100 bytes. We need to add the size of the documents <em>inventory</em>, <em>staff</em> and <em>payment</em>.
+Therefore, we obtain: 100 + 12 + 20 + 65,536. The size of the document <em>staff</em> is far superior than the size of the other
+documents. We can approximate the size to 64 KiB.</p>
+<p>The size of the only collection <TT>rental</TT> (hence, of the whole database) is: <span class="math inline">\(N_{rentals} \times 64 KiB\)</span></p>
+<ul>
+<li>If <span class="math inline">\(N_{rentals}\)</span>=10,000, the size of the database is 640 MiB (if we consider 1 MiB = 1000 KiB).</li>
+<li>If <span class="math inline">\(N_{rentals}\)</span>=100,000, the size of the database is 6,4 GiB (if we consider 1 GiB = 1000,000 KiB)</li>
+<li>If <span class="math inline">\(N_{rentals}\)</span>=1,000,000 the size of the database is 64 GiB.</li>
+</ul>
+</div>
+</details>
+<p>Although the size that we determined in the previous exercise, may not sound
+impressive, we still have to store other information
+(films, actors….).
+If we could save a bit of space, we would be happy.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-11" class="exercise"><strong>Exercise 4.3  </strong></span>
+Discuss how you could save some space in the adopted solution.</p>
+<p><strong>HINT.</strong> Do you really need to denormalize all data?</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>While modeling data for a MongoDB database, the choice
+between a normalized and a denormalized schema
+does not need to be a black and white one.</p>
+<p>We can have a denormalized schema, where we embed in the same documents
+information that are queried together, while storing in a separate collection
+the information that are rarely queried.</p>
+<p>For instance, the profile picture of a staff member might not be
+an important piece of information while we’re trying to analyze
+which staff members are the more productive ones.</p>
+<p>So, we might add another collection <TT>Staff</TT> where each
+document only contains attributes that are not in embedded documents in the collection
+<TT>Rental</TT>.</p>
+</div>
+</details>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-12" class="exercise"><strong>Exercise 4.4  </strong></span>
+Propose a solution for all the entities involved and
+estimate the savings in terms of storage requirements.</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>Here is a solution with three different collections.
+The information on inventory are completely denormalized into the
+collection <TT>Rental</TT>. For customers and staff members we only keep
+the necessary information and we normalize the information that are less
+likely to be queried while analyzing the rentals.</p>
+<p><img src="/courses/databases/tutorial-5/mongodb-sakila-first-solution.png" alt="First schema MongoDB"></p>
+<p>Let’s try to estimate the savings in terms of storage.
+In a document of the collection <TT>Rental</TT>, we have the following attributes:</p>
+<ul>
+<li><p><em>rental_id</em>: 4 bytes.</p></li>
+<li><p><em>rental_date</em> and <em>return_date</em>: 16 bytes.</p></li>
+<li><p><em>inventory_id</em>, <em>film_id</em> and <em>store_id</em>: 12 bytes</p></li>
+<li><p><em>customer_id</em>: 4 bytes</p></li>
+<li><p>customer <em>first_name</em>: 9 bytes.</p></li>
+<li><p>customer <em>last_name</em>: 12 bytes.</p></li>
+<li><p><em>country</em>: 15 bytes (on average a country name has 10 characters).</p></li>
+<li><p><em>staff_id</em>: 4 bytes</p></li>
+<li><p>staff <em>first_name</em>: 9 bytes.</p></li>
+<li><p>staff <em>last_name</em>: 12 bytes.</p></li>
+</ul>
+<p>In total a document in our collection <TT>rental</TT> will have <strong>97 bytes</strong>
+(a huge improvement wrt the 64KiB bytes of our first solution).</p>
+<p>Of course, the size of a document in the <TT>staff</TT> collection will be
+around 64 KiB (we still store the profile picture).
+However, the number of staff members <span class="math inline">\(N_{staff}\)</span> is much lower
+than the number of rentals <span class="math inline">\(N_{rentals}\)</span>.</p>
+<p>It is easy to verify that the size of a document of the collection <TT>customer</TT>
+is <strong>51 bytes</strong>.
+Again, the number of customers <span class="math inline">\(N_{customers}\)</span> is much lower than
+<span class="math inline">\(N_{rentals}\)</span>.</p>
+<p>We assume that each customer has on average 30 rentals and for 100 customers we
+have 1 staff member.
+We have that:</p>
+<ul>
+<li><p>$N_{customer} = N_{rental}/30 $</p></li>
+<li><p>$N_{staff} = N_{customer}/100 = N_{rental}/3000 $</p></li>
+</ul>
+<p>So, the size of the database will be given by:</p>
+<p><span class="math display">\[
+97\times N_{rentals} + 65536 \times N_{rentals}/3000 + 51 \times N_{rentals}/30 \approx 120 \times N_{rental}
+\]</span></p>
+<p>Let’s compare against the first solution:</p>
+<ul>
+<li><p>If <span class="math inline">\(N_{rentals}\)</span> = 10,000 the size of the database is 1,2 MiB (instead of 640 MiB).</p></li>
+<li><p>If <span class="math inline">\(N_{rentals}\)</span> = 100,000 the size of the database is 12 MiB (instead of 6,4 GiB).</p></li>
+<li><p>If <span class="math inline">\(N_{rentals}\)</span> = 1,000,000 the size of the database is 120 MiB (instead of 64 GiB).</p></li>
+</ul>
+<p>As you can see, a big improvement! And we have a (partially) denormalized schema that
+lets us take advantage of the horizontal scalability of MongoDB.</p>
+</div>
+</details>
+</div>
+<div id="the-new-model" class="section level1">
+<h1><span class="header-section-number">5</span> The new model</h1>
+<p>In this section we intend to obtain a complete model of the Sakila database.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-13" class="exercise"><strong>Exercise 5.1  </strong></span>
+Consider the model that we obtained at the end of the previous section.
+Which data can you further denormalize?</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p><strong>Collection <TT>Staff</TT></strong></p>
+<ul>
+<li><p>The attribute <TT>address_id</TT> refers to a full address. We can fully
+denormalize this information into the documents of the collection.
+Although an address might be the same for two people, the level of redundancy will be very low.</p></li>
+<li><p>The attribute <TT>store_id</TT> refers to the store where the staff member works.
+The <TT>store</TT> table in the original PostgreSQL database does not have
+too many columns. Therefore, it might be reasonable to fully denormalize these data.
+However, information on the stores are also linked to customers and to inventory items.
+If we need to update, say, the manager of a store, we would need to update
+three different documents.
+Hence, we prefer to create a collection <TT>store</TT> and keep in the documents of the
+collection <TT>staff</TT> only the city and country of a store (and its identifier of course).</p></li>
+</ul>
+<p><strong>Attribute <TT>inventory</TT></strong> in collection <TT>customer</TT></p>
+<ul>
+<li><p>Same considerations for the attribute <TT>store_id</TT>.</p></li>
+<li><p>The attribute <TT>film_id</TT> is the reference to the film the inventory item is a copy of.
+The table <TT>film</TT> in the original PostgreSQL database contains 14 columns.
+This high number of attributes advises us against a full denormalization, considering that
+might have several inventory items for a film.
+We might only keep the film title and the film categories. The rest of the attributes are kept in documents
+of a separate collection <TT>film</TT>.</p></li>
+</ul>
+<p><strong>Collection <TT>customer</TT></strong></p>
+<p>Same considerations for the attributes <TT>store_id</TT> and <TT>address_id</TT>.</p>
+<p><img src="/courses/databases/tutorial-5/mongodb-sakila-first-model-further-denormalized.png" alt="Sakila MongoDB data model further normalized"></p>
+</div>
+</details>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-14" class="exercise"><strong>Exercise 5.2  </strong></span>
+Complete the diagram obtained in the previous exercise so as to obtain
+a full data model for the Sakila database.</p>
+</div>
+</div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p><img src="/courses/databases/tutorial-5/mongodb-sakila-complete.png" alt="Sakila MongoDB full data model"></p>
+</div>
+</details>
+</div>
+
+          </div>
+
+          
+
+
+
+          
+        </div>
+
+        
+      </article>
+
+      
+
+    </main>
+  </div>
+</div>
+
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.1/anchor.min.js" integrity="sha256-pB/deHc9CGfFpJRjC43imB29Rse8tak+5eXqntO94ck=" crossorigin="anonymous"></script>
+    <script>
+      anchors.add();
+    </script>
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.8741d44cdc5fc49466a5835d1bbea364.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
