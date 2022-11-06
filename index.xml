@@ -6906,6 +6906,276 @@ If Laura wants to move the directory &lt;em&gt;videos&lt;/em&gt; under &lt;em&gt
     </item>
     
     <item>
+      <title>MongoDB data modeling</title>
+      <link>/courses/databases/tutorials/mongodb-data-modeling/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/databases/tutorials/mongodb-data-modeling/</guid>
+      <description>
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;div id=&#34;use-case-scenario&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Use case scenario&lt;/h1&gt;
+&lt;p&gt;We consider a relational database that holds the data of a chain of DVD stores; the &lt;a href=&#34;https://dev.mysql.com/doc/sakila/en/sakila-preface.html&#34; target=&#34;_blank&#34;&gt;database name is
+Sakila&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The Sakila database is serving an increasing number of queries from staff and customers
+around the world.
+A single monolithic database is not sufficient anymore to serve all
+the requests and the company is thinking about distributing the database across
+several servers (&lt;strong&gt;horizontal scalability&lt;/strong&gt;).
+However, a relational database does not handle horizontal scalability very well, due
+to the fact that the data is scattered across numerous tables, as the result of the normalization
+process.
+Hence, the Sakila team is turning to you to help them migrate the database from PostgreSQL to
+MongoDB.&lt;/p&gt;
+&lt;p&gt;For the migration to happen, it is necessary to conceive a suitable data model.
+From the first discussions with the Sakila management,
+you quickly understand that one of the main use of the database is to
+manage (add, update and read) rental information.&lt;/p&gt;
+&lt;div id=&#34;description-of-the-relational-model&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.1&lt;/span&gt; Description of the relational model&lt;/h2&gt;
+&lt;p&gt;The existing data model is recalled in Figure &lt;a href=&#34;#fig:sakila-model&#34;&gt;1.1&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&#34;figure&#34; style=&#34;text-align: center&#34;&gt;&lt;span id=&#34;fig:sakila-model&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/courses/databases/tutorial-4/sakila-3nf.png&#34; alt=&#34;The logical schema of the Sakila database&#34; width=&#34;100%&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 1.1: The logical schema of the Sakila database
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Here is the &lt;strong&gt;description of the tables&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The table &lt;TT&gt;actor&lt;/TT&gt; lists information for all actors. Columns: &lt;em&gt;actor_id&lt;/em&gt;, &lt;em&gt;first_name&lt;/em&gt;, &lt;em&gt;last_name&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The table &lt;TT&gt;address&lt;/TT&gt; contains address information for customers, staff and stores. Columns: &lt;em&gt;address_id&lt;/em&gt;, &lt;em&gt;address&lt;/em&gt;, &lt;em&gt;address2&lt;/em&gt;, &lt;em&gt;district&lt;/em&gt;, &lt;em&gt;city_id&lt;/em&gt;, &lt;em&gt;postal_code&lt;/em&gt;, &lt;em&gt;phone&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The table &lt;TT&gt;category&lt;/TT&gt; lists the categories that can be assigned to a film. Columns: &lt;em&gt;category_id&lt;/em&gt;, &lt;em&gt;name&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The table &lt;TT&gt;city&lt;/TT&gt; contains a list of cities. Columns: &lt;em&gt;city_id&lt;/em&gt;, &lt;em&gt;city&lt;/em&gt;, &lt;em&gt;country_id&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The table &lt;TT&gt;country&lt;/TT&gt; contains a list of countries. Columns: &lt;em&gt;country_id&lt;/em&gt;, &lt;em&gt;country&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The table &lt;TT&gt;customer&lt;/TT&gt; contains a list of all customers. Columns: &lt;em&gt;customer_id&lt;/em&gt;, &lt;em&gt;store_id&lt;/em&gt;, &lt;em&gt;first_name&lt;/em&gt;, &lt;em&gt;last_name&lt;/em&gt;, &lt;em&gt;email&lt;/em&gt;, &lt;em&gt;address_id&lt;/em&gt;, &lt;em&gt;active&lt;/em&gt;, &lt;em&gt;create_date&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The table &lt;TT&gt;film&lt;/TT&gt; is a list of all films potentially in stock in the stores. The actual in-stock copies of each film are represented in the inventory table.
+Columns: &lt;em&gt;film_id&lt;/em&gt;, &lt;em&gt;title&lt;/em&gt;, &lt;em&gt;description&lt;/em&gt;, &lt;em&gt;release_year&lt;/em&gt;, &lt;em&gt;language_id&lt;/em&gt;, &lt;em&gt;original_language_id&lt;/em&gt;, &lt;em&gt;rental_duration&lt;/em&gt;, &lt;em&gt;rental_rate&lt;/em&gt;, &lt;em&gt;length&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The table &lt;TT&gt;film_actor&lt;/TT&gt; is used to support a many-to-many relationship between films and actors. Columns: &lt;em&gt;film_id&lt;/em&gt;, &lt;em&gt;actor_id&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The table &lt;TT&gt;film_category&lt;/TT&gt; is used to support a many-to-many relationship between films and categories. Columns: &lt;em&gt;film_id&lt;/em&gt;, &lt;em&gt;category_id&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The table &lt;TT&gt;inventory&lt;/TT&gt; contains one row for each copy of a given film in a given store. Columns: &lt;em&gt;inventory_id&lt;/em&gt;, &lt;em&gt;film_id&lt;/em&gt;, &lt;em&gt;store_id&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The table &lt;TT&gt;language&lt;/TT&gt; contains possible languages that films can have for their language and original language values. Columns: &lt;em&gt;language_id&lt;/em&gt;, &lt;em&gt;name&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The table &lt;TT&gt;payment&lt;/TT&gt; records each payment made by a customer, with information such as the amount and the rental being paid for.
+Columns: &lt;em&gt;payment_id&lt;/em&gt;, &lt;em&gt;customer_id&lt;/em&gt;, &lt;em&gt;staff_id&lt;/em&gt;, &lt;em&gt;rental_id&lt;/em&gt;, &lt;em&gt;amount&lt;/em&gt;, &lt;em&gt;payment_date&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The table &lt;TT&gt;rental&lt;/TT&gt; contains one row for each rental of each inventory item with information about who rented what item, when it was rented, and when it was returned.
+Columns: &lt;em&gt;rental_id&lt;/em&gt;, &lt;em&gt;rental_date&lt;/em&gt;, &lt;em&gt;inventory_id&lt;/em&gt;, &lt;em&gt;customer_id&lt;/em&gt;, &lt;em&gt;return_date&lt;/em&gt;, &lt;em&gt;staff_id&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The table &lt;TT&gt;staff&lt;/TT&gt; lists all staff members. Columns: &lt;em&gt;staff_id&lt;/em&gt;, &lt;em&gt;first_name&lt;/em&gt;, &lt;em&gt;last_name&lt;/em&gt;, &lt;em&gt;address_id&lt;/em&gt;, &lt;em&gt;picture&lt;/em&gt;, &lt;em&gt;email&lt;/em&gt;, &lt;em&gt;store_id&lt;/em&gt;, &lt;em&gt;active&lt;/em&gt;, &lt;em&gt;username&lt;/em&gt;, &lt;em&gt;password&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The table &lt;TT&gt;store&lt;/TT&gt; lists all stores in the system. Columns: &lt;em&gt;store_id&lt;/em&gt;, &lt;em&gt;manager_staff_id&lt;/em&gt;, &lt;em&gt;address_id&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;data-types-in-mongdb&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Data types in MongDB&lt;/h1&gt;
+&lt;p&gt;A MongoDB document is represented as a JSON record.
+However, internally MongoDB serializes the JSON record into a BSON record.
+In practice, a BSON record is a binary representation of a JSON record.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;
+Looking at
+the &lt;a href=&#34;https://bsonspec.org/spec.html&#34; target=&#34;_blank&#34;&gt;specification of BSON&lt;/a&gt;, can you tell how many &lt;strong&gt;bytes&lt;/strong&gt; do you need to represent:
+an integer, a date, a string and a boolean?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.2  &lt;/strong&gt;&lt;/span&gt;
+The size of a document in MongoDB is limited to 16 MiB.
+Can you tell why there is such a limit?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;The table &lt;TT&gt;rental&lt;/TT&gt; has four integer columns (&lt;em&gt;rental_id&lt;/em&gt;, &lt;em&gt;inventory_id&lt;/em&gt;, &lt;em&gt;customer_id&lt;/em&gt;, &lt;em&gt;staff_id&lt;/em&gt;) and
+2 dates (&lt;em&gt;rental_date&lt;/em&gt;, &lt;em&gt;return_date&lt;/em&gt;).&lt;/p&gt;
+&lt;p&gt;The table &lt;TT&gt;customer&lt;/TT&gt; has three integer columns (&lt;em&gt;customer_id&lt;/em&gt;, &lt;em&gt;store_id&lt;/em&gt;, &lt;em&gt;address_id&lt;/em&gt;), three strings (&lt;em&gt;first_name&lt;/em&gt;, &lt;em&gt;last_name&lt;/em&gt; and &lt;em&gt;email&lt;/em&gt;),
+one boolean value (&lt;em&gt;active&lt;/em&gt;) and one date (&lt;em&gt;create_date&lt;/em&gt;).&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.3  &lt;/strong&gt;&lt;/span&gt;
+Suppose that we want to create a MongoDB collection to list all rentals, and a separate collection to list all customers.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Estimate the size of a document in both collections.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;We make the following assumptions:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;On average, each character needs 1.5 bytes.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;An email address is 20 characters long on average.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;A last name is 8 characters long on average.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;A first name is 6 characters long on average.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;considerations-for-the-new-model&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Considerations for the new model&lt;/h1&gt;
+&lt;p&gt;Denormalization in MongoDB is &lt;a href=&#34;https://www.mongodb.com/blog/post/6-rules-of-thumb-for-mongodb-schema-design-part-1&#34; target=&#34;_blank&#34;&gt;strongly encouraged&lt;/a&gt;
+to read and write a record relative to an entity in one single operation.&lt;/p&gt;
+&lt;p&gt;In the following exercises, we explore different options and analyze advantages and disadvantages.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;
+Suppose that we create a collection &lt;TT&gt;Customer&lt;/TT&gt;,
+where each document includes information about a customer.&lt;/p&gt;
+&lt;p&gt;Suppose that we embed in each document the list of rentals
+for a customer.&lt;/p&gt;
+&lt;p&gt;How many rentals can we store for a given customer, knowing
+that the size of a document in MongoDB cannot exceed 16 MiB?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.2  &lt;/strong&gt;&lt;/span&gt;
+Consider the two following options:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;A collection &lt;TT&gt;customer&lt;/TT&gt;, where each document contains the
+information about a customer and an embedded list with the information
+on all the rentals made by the customer. We assume that the average number of rentals per customer is 32.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;A collection &lt;TT&gt;rental&lt;/TT&gt;, where each document contains the information
+about a rental and an embedded document with the information on the customer
+that made the rental.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;Compute the size in byte&lt;/strong&gt; of a document in the two collections.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.3  &lt;/strong&gt;&lt;/span&gt;
+Suppose that we have in our database&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;512 customers.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;16384 rentals.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;On average, each customer has around 32 rentals.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Compute the size in byte&lt;/strong&gt; of the collections &lt;TT&gt;customer&lt;/TT&gt; and
+&lt;TT&gt;rental&lt;/TT&gt; described in the previous question.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.4  &lt;/strong&gt;&lt;/span&gt;
+Based on the answers in the previous questions, discuss advantages and disadvantages of the two options:
+having a collection &lt;TT&gt;customer&lt;/TT&gt; (solution 1) or a collection &lt;TT&gt;rental&lt;/TT&gt; (solution 2).&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.5  &lt;/strong&gt;&lt;/span&gt;
+Look again at the model in Figure &lt;a href=&#34;#fig:sakila-model&#34;&gt;1.1&lt;/a&gt;.
+A rental document doesn’t only need to include
+information on the customer who made the rental, but also:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The staff member who took care of the rental.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The inventory item being rented.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The payment information.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Questions.&lt;/strong&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Discuss the different ways we can include this information in the collections
+&lt;TT&gt;customer&lt;/TT&gt; and &lt;TT&gt;rental&lt;/TT&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Based on the discussion, which solution would you retain?
+A collection &lt;TT&gt;customer&lt;/TT&gt; or a collection &lt;TT&gt;rental&lt;/TT&gt;?&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-data-model-in-mongodb&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; The data model in MongoDB&lt;/h1&gt;
+&lt;p&gt;In the last question, we chose the collection that we intend to create.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.1  &lt;/strong&gt;&lt;/span&gt;
+Give the complete schema (name and type of the properties) of a document in the collection
+that you chose in the previous question.&lt;/p&gt;
+&lt;p&gt;If the value of any property is an embedded document:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Specify the schema of that document too.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;If any property of an embedded document is an identifier referencing another entity,
+use that identifier (don’t try, for now, to further denormalize the schema).&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Let’s take a closer look at the storage requirements of the adopted solution.
+Consider that:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The size in bytes of a document storing the information of a staff member is around 64 KiB (65,536 bytes), because we store a profile picture.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The size in bytes of a document storing the information of an inventory item is 12 bytes.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The size in bytes of a document storing the information about a payment is 20 bytes.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.2  &lt;/strong&gt;&lt;/span&gt;
+If we denote by &lt;span class=&#34;math inline&#34;&gt;\(N_{rental}\)&lt;/span&gt; the number of rentals, what is the size in bytes of the
+database for the adopted solution?
+What do you get if we set &lt;span class=&#34;math inline&#34;&gt;\(N_{rental}\)&lt;/span&gt; to &lt;span class=&#34;math inline&#34;&gt;\(10^4\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(10^5\)&lt;/span&gt; or &lt;span class=&#34;math inline&#34;&gt;\(10^6\)&lt;/span&gt; ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Although the size that we determined in the previous exercise, may not sound
+impressive, we still have to store other information
+(films, actors….).
+If we could save a bit of space, we would be happy.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-11&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.3  &lt;/strong&gt;&lt;/span&gt;
+Discuss how you could save some space in the adopted solution.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;HINT.&lt;/strong&gt; Do you really need to denormalize all data?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-12&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.4  &lt;/strong&gt;&lt;/span&gt;
+Propose a solution for all the entities involved and
+estimate the savings in terms of storage requirements.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-new-model&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;5&lt;/span&gt; The new model&lt;/h1&gt;
+&lt;p&gt;In this section we intend to obtain a complete model of the Sakila database.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-13&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5.1  &lt;/strong&gt;&lt;/span&gt;
+Consider the model that we obtained at the end of the previous section.
+Which data can you further denormalize?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-14&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5.2  &lt;/strong&gt;&lt;/span&gt;
+Complete the diagram obtained in the previous exercise so as to obtain
+a full data model for the Sakila database.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>MongoDB modeling</title>
       <link>/courses/plp/tutorials/mongodb-modeling/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
