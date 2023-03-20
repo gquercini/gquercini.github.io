@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Gianluca Quercini">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Low-level Spark programming (RDD)">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/courses/bigdata/tutorials/spark-low-level/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="rgb(0, 136, 204)">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_3.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_3.png">
+
+  <link rel="canonical" href="/courses/bigdata/tutorials/spark-low-level/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="Gianluca Quercini">
+  <meta property="og:url" content="/courses/bigdata/tutorials/spark-low-level/">
+  <meta property="og:title" content="Spark low-level programming | Gianluca Quercini">
+  <meta property="og:description" content="Low-level Spark programming (RDD)"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
+  
+    
+    
+  
+
+  
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Spark low-level programming | Gianluca Quercini</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#experience"><span>Experience</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#publications"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  
+
+  
+
+<div class="container-fluid docs">
+  <div class="row flex-xl-nowrap">
+    <div class="col-12 col-md-3 col-xl-2 docs-sidebar">
+      
+
+
+<script src="/js/toggle-menu.js"></script>
+
+
+
+
+
+
+
+  
+    
+  
+
+
+
+
+<form class="docs-search d-flex align-items-center">
+  <button class="btn docs-toggle d-md-none p-0 mr-3" type="button" data-toggle="collapse" data-target="#docs-nav" aria-controls="docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    <span><i class="fas fa-bars"></i></span>
+  </button>
+
+  
+</form>
+
+<nav class="collapse docs-links" id="docs-nav">
+  
+
+  
+  
+  
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="labs" class="docs-toc-link" href="/courses/bigdata/tutorials/map-reduce/">Labs</a>
+    
+    <div id="labs-ddowncontent" class="labs-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="labs">
+        <a href="/courses/bigdata/tutorials/map-reduce/">1. MapReduce</a>
+      </li>
+      
+      <script>open_menu_on_load("labs".concat("-ddowncontent"))</script>
+      <li class="active labs">
+        <a href="/courses/bigdata/tutorials/spark-low-level/">2. Spark low-level programming</a>
+      </li>
+      
+      
+      <li class="labs">
+        <a href="/courses/bigdata/tutorials/structured-streaming-lab/">Spark structured streaming</a>
+      </li>
+      
+      
+      <li class="labs">
+        <a href="/courses/bigdata/tutorials/mllib/">Spark MLlib</a>
+      </li>
+      
+      
+      <li class="labs">
+        <a href="/courses/bigdata/tutorials/mongodb-modeling/">MongoDB data modeling</a>
+      </li>
+      
+      
+      <li class="labs">
+        <a href="/courses/bigdata/tutorials/mongodb-querying/">MongoDB queries</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="documentation" class="docs-toc-link" href="/courses/bigdata/documentation/cluster-connection/">Documentation</a>
+    
+    <div id="documentation-ddowncontent" class="documentation-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="documentation">
+        <a href="/courses/bigdata/documentation/cluster-connection/">DCE tutorial</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  
+</nav>
+
+    </div>
+
+    
+
+    <main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 docs-content" role="main">
+
+      <article class="article">
+
+        <div class="docs-article-container">
+          <div class="heading">Big Data — Lab 2</div>
+          <h1>Spark low-level programming</h1>
+          <hr>
+          <div class="logo">
+            <p><img src="/img/cs-logo.png" width="20%" style="display: block; margin: auto;" /></p>
+            </div>
+
+          <div class="article-style">
+            
+
+
+<p><link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/cloud-computing.css"></p>
+<!-- ############ IMPORTANT: CHANGE THESE VALUES BEFORE ANY LAB ############ -->
+<!-- The link to the Edunao page where the students submit their work -->
+<!-- The submission deadline -->
+<!-- The group to which users in the cluster belong-->
+<!-- User accounts are numbered from the lower to the upper limit-->
+<!-- ############ END OF MODIFICATIONS ############ -->
+<div id="introduction" class="section level1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<p>In this lab you’ll practice the Spark RDD API.</p>
+<p>You’ll run the code on the <a href="https://dce.pages.centralesupelec.fr/" target="_blank">CentraleSupélec <em>Data Centre d’Enseignement</em> (DCE)</a></p>
+<p>If you never used DCE before, <a href="/courses/bigdata/documentation/cluster-connection" target="_blank">refer to this documentation</a> to learn
+how to connect and the tools you’ll be needing in this lab.</p>
+<!-- ::: {.infobox .warning data-latex="{warning}"}
+**Assignment submission**
+
+This lab assignment will be **evaluated**.
+
+In order to finalize the submission of the assignment, 
+complete [this form available on Edunao](https://centralesupelec.edunao.com/mod/quiz/view.php?id=47098){target="_blank"}.
+
+The submission deadline is **Tuesday, March 9, 2021 8:00 AM**.
+
+:::-->
+</div>
+<div id="computing-averages" class="section level1">
+<h1><span class="header-section-number">2</span> Computing averages</h1>
+<p>We consider a collection of CSV files containing temperature measurements in the following format:</p>
+<p><code>year,month,day,hours,minutes,seconds,temperature</code></p>
+<p>you can find the files under the directory <code>hdfs://sar01:9000/data/temperatures/</code></p>
+<p>Here are the details for each file:</p>
+<ul>
+<li>File <code>temperatures_86400.csv</code> contains one measurement per day in the years 1980 - 2018.</li>
+<li>File <code>temperatures_2880.csv</code> contains one measurement every 2880 seconds in the years 1980 - 2018.</li>
+<li>File <code>temperatures_86.csv</code> contains one measurement every 86 seconds for the year 1980 alone.</li>
+<li>File <code>temperatures_10.csv</code> contains one measurement every 10 seconds for the years 1980 - 2018.</li>
+</ul>
+<p>We intend to implement a Spark algorithm to generate pairs <span class="math inline">\((y, t_{avg})\)</span>, where
+<span class="math inline">\(y\)</span> is the year and <span class="math inline">\(t_{avg}\)</span> is the average temperature in the year.</p>
+<div id="first-implementation" class="section level2">
+<h2><span class="header-section-number">2.1</span> First implementation</h2>
+<p>Copy the file <code>/usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_temperatures.py</code>
+to your home directory by typing
+the following command:</p>
+<div align="center">
+<p><code>cp /usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_temperatures.py ./avg_temperatures_slow.py</code></p>
+</div>
+<p>Open the file <code>avg_temperatures_slow.py</code>.
+The file contains the implementation of the function <code>avg_temperature_slow</code>
+that takes in an RDD, where each item is a line of the input text file, and
+returns an RDD, where each item is a key-value pair <code>(year, avg_temp)</code>.</p>
+<p>In the same file, locate the two variables <code>input_path</code> and <code>output-path</code>,
+and write the following code:</p>
+<pre><code>input_path = &quot;hdfs://sar01:9000/data/temperatures/&quot;
+output_path = &quot;hdfs://sar01:9000/hpda/hpda_XX/&quot;</code></pre>
+<p>Replace <code>XX</code> with the number corresponding to your login!
+<strong>Don’t forget the / at the end of the file paths!</strong></p>
+<p><strong>Execute the following actions:</strong></p>
+<ul>
+<li>Run the script <code>avg_temperatures_slow.py</code> by using <code>temperatures_86400.csv</code> as an input.
+To this extent, use the following command:</li>
+</ul>
+<div align="center">
+<p><code>spark-submit --master spark://sar01:7077 avg_temperatures_slow.py temperatures_86400.csv</code></p>
+</div>
+<div class="infobox warning">
+<p><strong>Good to know</strong></p>
+<ul>
+<li><p>Spark outputs a lot of log messages in the terminal.</p></li>
+<li><p>In case of errors, Spark output a series of Java exceptions. Look at these exceptions to
+find a message that hints at the source of the problem.</p></li>
+<li><p>If the program concludes without errors, you can find the total running time at a line that reads:</p></li>
+</ul>
+<p><code>INFO DAGScheduler: Job 0 finished: runJob at SparkHadoopWriter.scala:78, took xxxx s</code></p>
+</div>
+<ul>
+<li>You should find the output of the program under the folder:</li>
+</ul>
+<div align="center">
+<p><code>hdfs://sar01:9000/hpda/hpda_XX/temperatures_86400.out</code></p>
+</div>
+<ul>
+<li>To verify it, type the following command:</li>
+</ul>
+<div align="center">
+<p><code>hdfs dfs -ls hdfs://sar01:9000/hpda/hpda_XX/temperatures_86400.out</code></p>
+</div>
+<ul>
+<li>To look at the output, execute the following command:</li>
+</ul>
+<div align="center">
+<p><code>hdfs dfs -cat hdfs://sar01:9000/hpda/hpda_XX/temperatures_86400.out/*</code></p>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 2.1  </strong></span></p>
+<ol style="list-style-type: decimal">
+<li><p>What’s the execution time when running the program on file <code>temperatures_86400.csv</code>?</p></li>
+<li><p>Run the program on file <code>temperatures_2880.csv</code>. What’s the execution time?
+Does it seem reasonable compared to the execution on file <code>temmperatures_86400.csv</code>?
+Look at the size of the two files and justify the answer.</p></li>
+<li>Execute the program on file <code>temperatures_86.csv</code>. What’s the execution time? How would you justify it, knowing that
+the files <code>temperatures_2880.csv</code> and <code>temperatures_86.csv</code> have a similar size?</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="second-implementation" class="section level2">
+<h2><span class="header-section-number">2.2</span> Second implementation</h2>
+<p>Create a copy of <code>avg_temperatures_slow.py</code> and rename it as <code>avg_temperatures_fast.py</code>, with the following command:</p>
+<div align="center">
+<p><code>cp ./avg_temperatures_slow.py ./avg_temperatures_fast.py</code></p>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 2.2  </strong></span>
+Open the file and implement the function <code>avg_temperature_fast</code>.</p>
+<p><strong>NOTE.</strong> Remember to comment the call
+to <code>avg_temperature_slow</code>, and to uncomment the call to <code>avg_temperature_fast</code> at the end of the file.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 2.3  </strong></span></p>
+<ol style="list-style-type: decimal">
+<li><p>Execute the program <code>avg_temperatures_fast.py</code> on file <code>temperatures_86.csv</code>.</p></li>
+<li><p>What’s the execution time? Compare it with the execution time obtained in the previous exercise and
+comment the difference.</p></li>
+<li><p>Execute the program on file <code>temperatures_10.csv</code> (3 GB!).
+Do you think that the program takes too long? Why?</p></li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div id="common-friends-in-a-social-network" class="section level1">
+<h1><span class="header-section-number">3</span> Common friends in a social network</h1>
+<p>Consider a social network described by a graph encoded in a text file.
+Each line of the file is a list of identifiers separated by commas.
+For instance, the line <span class="math inline">\(A,B,C,D\)</span> means that <span class="math inline">\(A\)</span> is friend with <span class="math inline">\(B\)</span>, <span class="math inline">\(C\)</span> and <span class="math inline">\(D\)</span>.</p>
+<pre><code>A,B,C,D
+B,A,D
+C,A,D
+D,A,B,C</code></pre>
+<p>Note that friendship is symmetric: if <span class="math inline">\((A, B)\)</span> then
+<span class="math inline">\((B, A)\)</span>.</p>
+<p><strong>We want to obtain the list of the common friends for each pair of individuals</strong>.</p>
+<p>Given the sample file above, the output of our program will be:</p>
+<pre><code>(A, B), [D]
+(A, C), [D] 
+(A, D), [B, C] 
+(B, C), [A, D] 
+(B, D), [A] 
+(C, D), [A]</code></pre>
+<p><strong>As an additional constraint</strong>, we want to represent a couple only once and avoid
+to represent the symmetric couple.
+In other words, if we output <span class="math inline">\((A, B)\)</span>, we don’t want to output <span class="math inline">\((B, A)\)</span>.</p>
+<p><strong>Input files.</strong> They are available in folder <code>hdfs://sar01:9000/data/sn/</code>:</p>
+<ul>
+<li><p><code>sn_tiny.csv</code>. Small social network, that you can use to test your implementation.</p></li>
+<li><p><code>sn_10k_100k.csv</code>. Social network with <span class="math inline">\(10^4\)</span> individuals and <span class="math inline">\(10^5\)</span> links.</p></li>
+<li><p><code>sn_100k_100k.csv</code>. Social network with <span class="math inline">\(10^5\)</span> individuals and <span class="math inline">\(10^5\)</span> links.</p></li>
+<li><p><code>sn_1k_100k.csv</code>. Social network with <span class="math inline">\(10^3\)</span> individuals and <span class="math inline">\(10^5\)</span> links.</p></li>
+<li><p><code>sn_1m_1m.csv</code>. Social network with <span class="math inline">\(10^6\)</span> individuals and <span class="math inline">\(10^6\)</span> links.</p></li>
+</ul>
+<div id="implementation" class="section level2">
+<h2><span class="header-section-number">3.1</span> Implementation</h2>
+<p>You can copy the code template to your home directory with the following command:</p>
+<div align="center">
+<p><code>cp /usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_common_friends.py .</code></p>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:common-friends-implem" class="exercise"><strong>Exercise 3.1  </strong></span></p>
+<ol style="list-style-type: decimal">
+<li><p>Write an implementation that uses a <code>reduceByKey</code>.</p></li>
+<li><p>Write an implementation that uses a <code>groupByKey</code>.</p></li>
+<li>Test both implementations on file <code>sn_tiny.csv</code>.</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="tests-and-performance-measures" class="section level2">
+<h2><span class="header-section-number">3.2</span> Tests and performance measures</h2>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:common-friends-table" class="exercise"><strong>Exercise 3.2  </strong></span></p>
+<ol style="list-style-type: decimal">
+<li><p>Run both implementations on the other files.</p></li>
+<li><p>Fill in a table, where you indicate: the name and size of each file and
+the measured running times of both implementations.</p></li>
+<li><p>Does the file size explain the running times?</p></li>
+<li><p>What can you observe about the running times obtained with <code>reduceByKey</code> and <code>groupByKey</code>?</p></li>
+</ol>
+</div>
+</div>
+</div>
+<div id="minimum-maximum-and-average-degree" class="section level2">
+<h2><span class="header-section-number">3.3</span> Minimum, maximum and average degree</h2>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 3.3  </strong></span></p>
+<p>Write a function that takes in a social network and
+returns a tuple <code>(min_d, max_d, avg_d)</code> containing the minimum,
+maximum and average degree in the social network.</p>
+<p><strong>Requirement.</strong> Your function <strong>must</strong> use a series of Spark RDD transformations.
+Only the last instruction before <code>return</code> can be an RDD action.</p>
+<p><strong>You’re not allowed</strong> to call the action <code>collect()</code> to obtain Python lists and compute the tuple with standard
+Python functions.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 3.4  </strong></span></p>
+<ol style="list-style-type: decimal">
+<li><p>Compute the minimum, maximum and average degree for all the given input files.</p></li>
+<li><p>Add the minimum, maximum and average degree to the table that you created in Exercise <a href="#exr:common-friends-table">3.2</a>.</p></li>
+</ol>
+</div>
+</div>
+</div>
+<div id="performance-analysis" class="section level2">
+<h2><span class="header-section-number">3.4</span> Performance analysis</h2>
+<p>We want to estimate the number of key-value pairs output by the <code>flatMap</code>, in the code that you wrote in
+Exercise <a href="#exr:common-friends-implem">3.1</a>.</p>
+<p>To do so, we suppose that the degree of each node is equal to the average degree (all individuals in the social network have the
+same number of friends).</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 3.5  </strong></span></p>
+<ol style="list-style-type: decimal">
+<li><p>For each social network, compute (with pencil and paper, no with a code) the number of
+key-value pairs generated by your <code>flatMap</code>.</p></li>
+<li><p>Add the number of key-value pairs to the table that you created in Exercise <a href="#exr:common-friends-table">3.2</a>.</p></li>
+<li><p>Plot three graphs, where the y-axis has the program running times and the x-axis
+has: the number of pairs, the average degree and the file size respectively.</p></li>
+</ol>
+<ul>
+<li>Which graphs best predict the evolution of the running time?</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="average-and-standard-deviation" class="section level1">
+<h1><span class="header-section-number">4</span> Average and standard deviation</h1>
+<p>This section is <strong>optional</strong>.</p>
+<p>We use the same files as in the first question.
+Our objective is to write a Spark program that produces
+triples <span class="math inline">\((y, t_{\mu}, t_{\sigma})\)</span>, where <span class="math inline">\(y\)</span>, <span class="math inline">\(t_{\mu}\)</span> and
+<span class="math inline">\(t_{\sigma}\)</span> are the year, the average temperature in the year and the
+standard deviation respectively.</p>
+<p>We can express the standard deviation of <span class="math inline">\(n\)</span> values <span class="math inline">\(x_1 \ldots x_n\)</span> with the following formula:</p>
+<p><span class="math display">\[
+\sigma = \sqrt{\overline{x^2} - \overline{x}^2} = \sqrt{\frac{\sum_{i=1}^n (x_i)^2}{n} - \Bigg(\frac{\sum_{i=1}^n x_i}{n}\Bigg)^2} 
+\]</span></p>
+<p>Type the following command to copy the code template to your home directory:</p>
+<div align="center">
+<p><code>cp /usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_temperatures.py  ./avg_stddev_temp.py</code></p>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 4.1  </strong></span></p>
+<ol style="list-style-type: decimal">
+<li><p>Define a new function <code>avg_stddev_temperature</code> in file <code>avg_stddev_temp.py</code>.</p></li>
+<li><p>Execute the program and observe the results.</p></li>
+</ol>
+</div>
+</div>
+</div>
+
+          </div>
+
+          
+
+
+
+          
+        </div>
+
+        
+      </article>
+
+      
+
+    </main>
+  </div>
+</div>
+
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.1/anchor.min.js" integrity="sha256-pB/deHc9CGfFpJRjC43imB29Rse8tak+5eXqntO94ck=" crossorigin="anonymous"></script>
+    <script>
+      anchors.add();
+    </script>
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.8741d44cdc5fc49466a5835d1bbea364.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

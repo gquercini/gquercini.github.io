@@ -1369,6 +1369,194 @@ understand how Docker works and how to interact with Docker.&lt;/p&gt;&lt;/li&gt
     </item>
     
     <item>
+      <title>DCE tutorial</title>
+      <link>/courses/bigdata/documentation/cluster-connection/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/bigdata/documentation/cluster-connection/</guid>
+      <description>
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;!-- ############ IMPORTANT: CHANGE THESE VALUES BEFORE ANY LAB ############ --&gt;
+&lt;!-- The group to which users in the cluster belong--&gt;
+&lt;!-- User accounts are numbered from the lower to the upper limit--&gt;
+&lt;!-- The link to the Edunao page where the students can choose a username to connect to the cluster. --&gt;
+&lt;!-- ############ END OF MODIFICATIONS ############ --&gt;
+&lt;p&gt;The &lt;a href=&#34;https://dce.pages.centralesupelec.fr/&#34; target=&#34;_blank&#34;&gt;Data Centre d’Enseignement (DCE)&lt;/a&gt; is a pool of
+computing resources that have been financed
+by the Eurométropole de Metz, Region Grand Est, CentraleSupélec and
+its foundation, and the Conseil Départemental de Moselle.&lt;/p&gt;
+&lt;p&gt;This tutorial is a quick guide to:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Learn how to connect to the DCE.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Learn basic commands to manipulate files stored in HDFS.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Learn how to run a Spark program on the DCE.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;More information are available on the &lt;a href=&#34;https://dce.pages.centralesupelec.fr/&#34; target=&#34;_blank&#34;&gt;DCE official website&lt;/a&gt;.&lt;/p&gt;
+&lt;div id=&#34;overview&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Overview&lt;/h1&gt;
+&lt;p&gt;The architecture of the DCE is shown in figure &lt;a href=&#34;#fig:cluster-metz&#34;&gt;1.1&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&#34;figure&#34; style=&#34;text-align: center&#34;&gt;&lt;span id=&#34;fig:cluster-metz&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/courses/plp/tutorials/spark-dce/reseau_dce.drawio.svg&#34; alt=&#34;Cluster architecture (image credit: [DCE documentation](https://dce.pages.centralesupelec.fr/01_cluster_overview/){target=&amp;quot;_blank&amp;quot;})&#34; width=&#34;100%&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 1.1: Cluster architecture (image credit: &lt;a href=&#34;https://dce.pages.centralesupelec.fr/01_cluster_overview/&#34; target=&#34;_blank&#34;&gt;DCE documentation&lt;/a&gt;)
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;In this tutorial we only use the CPU nodes. These are divided in two groups: the cluster Sarah and the cluster Kyle.&lt;/p&gt;
+&lt;p&gt;To connect to the DCE you need:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;A valid username and a password. These are provided by your lab supervisor before the first lab session.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Visual Studio Code with the extension &lt;a href=&#34;https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.vscode-remote-extensionpack&#34; target=&#34;_blank&#34;&gt;&lt;em&gt;Remote Development&lt;/em&gt;&lt;/a&gt; installed.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;connection&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Connection&lt;/h1&gt;
+&lt;p&gt;&lt;a href=&#34;https://webtv.centralesupelec.fr/permalink/v126412a91c76zkcgyu5/&#34; target=&#34;_blank&#34;&gt;Watch this video&lt;/a&gt;
+to learn how to connect to the DCE with Visual Studio Code.&lt;/p&gt;
+&lt;p&gt;Some of the steps shown in the video are explained below:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;When you connect to the DCE for the first time, or if you need to re-initialise the connection, you’ll be
+prompted to enter a SSH command. Type the following (replace &lt;code&gt;your_username&lt;/code&gt; with the username that you received from your lab supervisor):&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;ssh your_username@chome.metz.supelec.fr&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;After executing the command, you’ll be prompted to enter your password.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Once you’re connected to &lt;code&gt;chome&lt;/code&gt;, open your home folder on &lt;code&gt;chome&lt;/code&gt; in Visual Studio Code, as shown in the video.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;allocating-resources-with-slurm&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Allocating resources with slurm&lt;/h1&gt;
+&lt;p&gt;You need to allocate computing ressources to run any jobs on the DCE.
+The command to do so depends on whether you have a reservation for the resources or not.&lt;/p&gt;
+&lt;div id=&#34;with-a-reservation&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.1&lt;/span&gt; With a reservation&lt;/h2&gt;
+&lt;p&gt;The resources are reserved by your lab supervisor before any lab session.
+Any reservation is given a code.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Good to know&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The code is only valid for a single lab session. When the lab session is over,
+the reservation code might not work any longer.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;The command to type to allocate the reserved resources is the following (replace &lt;code&gt;code&lt;/code&gt;
+with the reservation code given by your lab supervisor ).&lt;/p&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;srun -N 1 -c 2 --reservation [code] -t 02:00:00  --pty bash&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;After running the command, you should be connected to one of the Kyle machines.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;without-a-reservation&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.2&lt;/span&gt; Without a reservation&lt;/h2&gt;
+&lt;p&gt;If you don’t have a reservation code, run the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;srun -p cpu_tp -t 02:00:00 -N 1 --cpus-per-task=2 --pty bash&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Good to know&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;If you don’t have a reservation, please use the DCE only between 6PM-8AM in weekdays.
+During the weekend, you can allocate resources on the DCE all day.&lt;/p&gt;
+&lt;/div&gt;
+&lt;!--# Creating your working directory in HDFS
+
+In this section, you&#39;ll be walked through the procedure to create a directory 
+in HDFS that you&#39;ll use as your working directory in the lab sessions.
+
+You user account is: ``hpda_X``, where X is between 1 and 
+8.
+
+In order to create your working directory in HDFS, type the following command in the terminal:
+
+``
+hdfs dfs -mkdir hdfs://sar01:9000/hpda/hpda_X
+``
+
+You can verify that the directory is there by listing the content of the folder hdfs://sar01:9000/hpda/
+with the following command:
+
+``
+hdfs dfs -ls hdfs://sar01:9000/hpda/
+``
+--&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;running-a-spark-program&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Running a Spark program&lt;/h1&gt;
+&lt;p&gt;The datasets are usually available under directory &lt;code&gt;/data/&lt;/code&gt;
+stored in HDFS.&lt;/p&gt;
+&lt;p&gt;Type the following command to look at the content of the directory:&lt;/p&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;hdfs dfs -ls -h hdfs://sar01:9000/data&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;The objective is to run a Spark program that counts the number of occurrences of each word
+in file &lt;code&gt;/data/sherlock.txt&lt;/code&gt;.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Copy the file &lt;code&gt;~cpu_vialle/DCE-Spark/template_wc.py&lt;/code&gt; to your home directory by typing the
+following command:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;cp ~cpu_vialle/DCE-Spark/template_wc.py ./wc.py&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Type the command &lt;code&gt;ls&lt;/code&gt; to verify that the file &lt;code&gt;wc.py&lt;/code&gt; is in your working directory.
+This file contains the Python code of the program. The file should also appear in the
+Explorer window in Visual Studio Code; if not, click on the Explorer refresh button.&lt;/p&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Open the file &lt;code&gt;wc.py&lt;/code&gt; in Visual Studio Code.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Locate the following instruction:&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;text_file = sc.textFile(&amp;quot;hdfs://...&amp;quot;)&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+and replace it with the following:
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;text_file = sc.textFile(&amp;quot;hdfs://sar01:9000/data/sherlock.txt&amp;quot;)&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;This will create an RDD named &lt;code&gt;text_file&lt;/code&gt; with the content of the file.&lt;/p&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Similarly, locate the following instruction:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;counts.saveAsTextFile(&amp;quot;hdfs://...&amp;quot;)&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;and replace it with the following instruction:&lt;/p&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;counts.saveAsTextFile(&amp;quot;hdfs://sar01:9000/hpda/hpda_X/sherlock.out&amp;quot;)&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;This will create an output directory &lt;em&gt;sherlock.out&lt;/em&gt; that will contain the files with the output of the program.&lt;/p&gt;
+&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Run the Python program &lt;code&gt;wc.py&lt;/code&gt; with the following command:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;spark-submit --master spark://sar01:7077 wc.py&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;When the execution is over, the output will be available under the directory
+&lt;code&gt;sherlock.out&lt;/code&gt;. To verify it, run the following command:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;hdfs dfs -ls -h hdfs://sar01:9000/hpda/hpda_X/sherlock.out&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;As usual, remember to replace &lt;code&gt;hpda_X&lt;/code&gt; with your username.&lt;/p&gt;
+&lt;ol start=&#34;6&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;In order to see the result, run the following command:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;hdfs dfs -cat hdfs://sar01:9000/hpda/hpda_X/sherlock.out/*&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Output files&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;If you rerun the program by specifying an output file that &lt;strong&gt;already exists&lt;/strong&gt;,
+you’d get an error.
+If you really want to overwrite the output file, you first need to remove it
+explicitly by typing the following command:&lt;/p&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;hdfs dfs -rm -r hdfs://sar01:9000/hpda/hpda_X/sherlock.out&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Description</title>
       <link>/courses/databases/exam/project/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -6536,9 +6724,9 @@ db.rental.aggregate({$match: {rental_id: 2}},
     
     <item>
       <title>MongoDB modeling</title>
-      <link>/courses/plp/tutorials/mongodb-modeling/</link>
+      <link>/courses/bigdata/tutorials/mongodb-modeling/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/courses/plp/tutorials/mongodb-modeling/</guid>
+      <guid>/courses/bigdata/tutorials/mongodb-modeling/</guid>
       <description>
 
 
@@ -6609,21 +6797,6 @@ the &lt;a href=&#34;https://bsonspec.org/spec.html&#34; target=&#34;_blank&#34;&
 an integer, a date, a string and a boolean?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;From the specification we learn that each type is identified by a 1-byte value, for instance \x01 (that represents the binary string 0000 0001) indicates the type &lt;code&gt;double&lt;/code&gt;.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;The &lt;code&gt;integer&lt;/code&gt; type is identified by the value \x10 and the documentation specifies that we need 32 bits, that is &lt;strong&gt;4 bytes&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The &lt;code&gt;date&lt;/code&gt; type is identified by the value \x09 and the documentation specifies that we need an &lt;code&gt;int64&lt;/code&gt;, which means an integer coded
-over 64 bits, that is &lt;strong&gt;8 bytes&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The &lt;code&gt;string&lt;/code&gt; type is identified by the value \x02 and the documentation specifies that the string is encoded in UTF-8. A UTF-8 character may need &lt;strong&gt;between 1 and 4 bytes&lt;/strong&gt;.
-Therefore, the number of bytes depends on the length of the string and on the characters used.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The &lt;code&gt;boolean&lt;/code&gt; type is identified by the value \x08. We learn from the specification that the value &lt;code&gt;false&lt;/code&gt; is encoded with \x00 and
-the value &lt;code&gt;true&lt;/code&gt; is encoded with \x01. In both cases, we only need &lt;strong&gt;1 byte&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -6633,17 +6806,6 @@ The size of a document in MongoDB is limited to 16 MiB.
 Can you tell why there is such a limit?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;This choice is driven by two reasons:&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;Ensure that a single document does not use too much memory.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Ensure that a document does not use too much bandwidth when it is transmitted over the network.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;The reasons are specified in the &lt;a href=&#34;https://www.mongodb.com/docs/manual/core/document/&#34; target=&#34;_blank&#34;&gt;MongoDB manual&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;The table &lt;TT&gt;rental&lt;/TT&gt; has four integer columns (&lt;em&gt;rental_id&lt;/em&gt;, &lt;em&gt;inventory_id&lt;/em&gt;, &lt;em&gt;customer_id&lt;/em&gt;, &lt;em&gt;staff_id&lt;/em&gt;) and
 2 dates (&lt;em&gt;rental_date&lt;/em&gt;, &lt;em&gt;return_date&lt;/em&gt;).&lt;/p&gt;
 &lt;p&gt;The table &lt;TT&gt;customer&lt;/TT&gt; has three integer columns (&lt;em&gt;customer_id&lt;/em&gt;, &lt;em&gt;store_id&lt;/em&gt;, &lt;em&gt;address_id&lt;/em&gt;), three strings (&lt;em&gt;first_name&lt;/em&gt;, &lt;em&gt;last_name&lt;/em&gt; and &lt;em&gt;email&lt;/em&gt;),
@@ -6664,27 +6826,6 @@ Suppose that we want to create a MongoDB collection to list all rentals, and a s
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;A document in the collection &lt;TT&gt;rental&lt;/TT&gt; would need:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;16 bytes for the integer values (each integer needs 4 bytes, a rental has 4 integer values).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;16 bytes for the dates (each date needs 8 bytes, a rental has 2 dates).&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;In total, a document in collection &lt;TT&gt;rental&lt;/TT&gt; needs 32 bytes&lt;/strong&gt;.&lt;/p&gt;
-&lt;p&gt;A document in collection &lt;TT&gt;customer&lt;/TT&gt; would need:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;12 bytes for the integer values (each integer needs 4 bytes, a customer has 3 integer values).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(20 \times 1.5\)&lt;/span&gt; = 30 bytes for the email address.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(8 \times 1.5\)&lt;/span&gt; = 12 bytes for the last name.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(6 \times 1.5\)&lt;/span&gt; = 9 bytes for the first name.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;1 byte for the property &lt;em&gt;active&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;8 bytes for the property &lt;em&gt;create_date&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;In total, a document in collection &lt;TT&gt;customer&lt;/TT&gt; needs 72 bytes&lt;/strong&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;considerations-for-the-new-model&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Considerations for the new model&lt;/h1&gt;
@@ -6704,18 +6845,6 @@ for a customer.&lt;/p&gt;
 that the size of a document in MongoDB cannot exceed 16 MiB?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;We’ve seen before that each rental needs 32 (&lt;span class=&#34;math inline&#34;&gt;\(2^5\)&lt;/span&gt;) bytes.&lt;/p&gt;
-&lt;p&gt;Considering that 16 MiB = &lt;span class=&#34;math inline&#34;&gt;\(2^4 \times 2^{20}\)&lt;/span&gt; bytes, the maximum number of
-rentals that we can store for a given customer is given by:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
-\frac{2^4 \times 2^{20}}{2^5} = 2^{-1} \times 2^{20} = 2^{19}
-\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;This gives around 534,000 rentals.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -6733,22 +6862,6 @@ that made the rental.&lt;/p&gt;&lt;/li&gt;
 &lt;p&gt;&lt;strong&gt;Compute the size in byte&lt;/strong&gt; of a document in the two collections.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;A document describing a customer needs &lt;strong&gt;72 bytes&lt;/strong&gt;.
-A rental document needs 32 bytes, which includes &lt;em&gt;customer_id&lt;/em&gt; (an integer, 4 bytes). We might want to drop
-this property, since we’re embedding a rental document into a customer document.
-Therefore, for each rental we need &lt;strong&gt;28 bytes&lt;/strong&gt;.
-A document in the collection &lt;TT&gt;customer&lt;/TT&gt; needs: &lt;span class=&#34;math inline&#34;&gt;\(72 + 28 \times 32\)&lt;/span&gt; = &lt;strong&gt;968 bytes&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;For a rental, we need 32 bytes, which includes &lt;em&gt;customer_id&lt;/em&gt; (an integer, 4 bytes). We drop this property, since
-we’re replacing it with a property &lt;em&gt;customer&lt;/em&gt;, whose value is a document with all the information
-about a customer. Hence, we need 28 bytes to store the information on a rental and 72 bytes to store the information about
-a customer. In total: &lt;strong&gt;100 bytes&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -6764,17 +6877,6 @@ Suppose that we have in our database&lt;/p&gt;
 &lt;TT&gt;rental&lt;/TT&gt; described in the previous question.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;The size the collection &lt;TT&gt;customer&lt;/TT&gt; is &lt;span class=&#34;math inline&#34;&gt;\(512 \times 968\)&lt;/span&gt; = 495,616 bytes.
-This corresponds to 484 KiB.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The size of the collection &lt;TT&gt;rental&lt;/TT&gt; is &lt;span class=&#34;math inline&#34;&gt;\(16384 \times 100\)&lt;/span&gt; = 1,638,400 bytes.
-This corresponds to 1,56 MiB.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -6784,40 +6886,6 @@ Based on the answers in the previous questions, discuss advantages and disadvant
 having a collection &lt;TT&gt;customer&lt;/TT&gt; (solution 1) or a collection &lt;TT&gt;rental&lt;/TT&gt; (solution 2).&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Advantages of solution 1:&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;No redundancy. In fact, a rental is relative to only one customer, therefore
-the data on a rental is not duplicated across different documents.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;This also explains why the collection &lt;TT&gt;customer&lt;/TT&gt; is smaller than the
-the collection &lt;TT&gt;rental&lt;/TT&gt; (although this is also due to the fact that we’ll always have more rentals than customers).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;For each customer, we retrieve the information on all his/her rentals with only one read operation.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;Disadvantages of solution 1:&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;There is a limit (albeit an acceptable one) on the number of rentals that we can store
-for each customer.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The size of a document is not constant and it depends on the number of rentals of a customer.
-In the previous questions, we see that for a modest number of rentals a document
-in collection &lt;TT&gt;customer&lt;/TT&gt; is ten times larger than a document in
-collection &lt;TT&gt;rental&lt;/TT&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;Advantages of solution 2:&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;The size of each document is constant and small and will never exceed the 16 MiB limit.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;As a result, reading a document from the collection takes less time and memory than
-reading a document from the collection in solution 1.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;Disadvantages of solution 2:&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;There is redundancy. The information about a customer is replicated
-each time the customer makes a rental.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;As a result, the size of the collection is much higher than in solution 1.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -6840,30 +6908,6 @@ A collection &lt;TT&gt;customer&lt;/TT&gt; or a collection &lt;TT&gt;rental&lt;/
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;In collection &lt;TT&gt;customer&lt;/TT&gt;:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;We follow a denormalized schema, and we associate all this information into the
-document that describes a rental. The size of a document in this collection grows further.
-Besides, since a staff member or an inventory item may be involved in more than one rental, we lose
-one of the advantages of this solution, which was the lack of redundancy.
-Consider also that an inventory item is associated with other information (such as, the film the item is a copy of).
-In this collection, we have different layers of nested documents.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;We follow a normalized schema, we create collections &lt;TT&gt;staff&lt;/TT&gt;, &lt;TT&gt;inventory&lt;/TT&gt; and
-&lt;TT&gt;payment&lt;/TT&gt; and we add references to these collections in the customer documents.
-However, a normalized schema might not be efficient in a distributed context.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;In collection &lt;TT&gt;rental&lt;/TT&gt;:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;We follow a denormalized schema and we associate this information into the document that
-describes a rental. The size of the document grows, but it is always constant and small.
-In fact, we don’t embed any unbounded list of values.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Given these considerations, we go for solution 2.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;the-data-model-in-mongodb&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; The data model in MongoDB&lt;/h1&gt;
@@ -6883,59 +6927,6 @@ use that identifier (don’t try, for now, to further denormalize the schema).&l
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;A document in the collection &lt;TT&gt;rental&lt;/TT&gt; has the following properties:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;em&gt;rental_id&lt;/em&gt;, an integer.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;rental_date&lt;/em&gt;, a date.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;return_date&lt;/em&gt;, a date.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;inventory&lt;/em&gt;, a document with information about the inventory item being rented.
-This document has the following schema:
-&lt;ul&gt;
-&lt;li&gt;&lt;em&gt;inventory_id&lt;/em&gt;, an integer.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;film_id&lt;/em&gt;, an integer.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;store_id&lt;/em&gt;, an integer.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;customer&lt;/em&gt;, a document with information about the customer making the rental.
-This document has the following schema:
-&lt;ul&gt;
-&lt;li&gt;&lt;em&gt;customer_id&lt;/em&gt;, an integer.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;store_id&lt;/em&gt;, an integer.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;first_name&lt;/em&gt;, a string.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;last_name&lt;/em&gt;, a string.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;email&lt;/em&gt;, a string.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;address_id&lt;/em&gt;, an integer.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;active&lt;/em&gt;, a boolean.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;create_date&lt;/em&gt;, a date.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;staff&lt;/em&gt;, a document with information about the staff member who handled the rental.
-This document has the following schema:
-&lt;ul&gt;
-&lt;li&gt;&lt;em&gt;staff_id&lt;/em&gt;, an integer.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;first_name&lt;/em&gt;, a string.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;last_name&lt;/em&gt;, a string.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;address_id&lt;/em&gt;, an integer.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;picture&lt;/em&gt;, binary data.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;email&lt;/em&gt;, a string.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;store_id&lt;/em&gt;, an integer&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;active&lt;/em&gt;, a boolean&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;username&lt;/em&gt;, a string.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;password&lt;/em&gt;, a string.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;payment&lt;/em&gt;, document with information about the payment of the rental:
-&lt;ul&gt;
-&lt;li&gt;payment_id, an integer.&lt;/li&gt;
-&lt;li&gt;amount, a real number.&lt;/li&gt;
-&lt;li&gt;payment_date, a date&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Note that the &lt;TT&gt;payment&lt;/TT&gt; table in the relational model include columns
-&lt;em&gt;customer_id&lt;/em&gt;, &lt;em&gt;staff_id&lt;/em&gt; and &lt;em&gt;rental_id&lt;/em&gt;; these are not necessary in the embedded
-document &lt;em&gt;payment&lt;/em&gt;, because we already have this information.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;Let’s take a closer look at the storage requirements of the adopted solution.
 Consider that:&lt;/p&gt;
 &lt;ul&gt;
@@ -6953,21 +6944,6 @@ database for the adopted solution?
 What do you get if we set &lt;span class=&#34;math inline&#34;&gt;\(N_{rental}\)&lt;/span&gt; to &lt;span class=&#34;math inline&#34;&gt;\(10^4\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(10^5\)&lt;/span&gt; or &lt;span class=&#34;math inline&#34;&gt;\(10^6\)&lt;/span&gt; ?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;In a previous question, we saw that a document in the collection &lt;TT&gt;rental&lt;/TT&gt;, including the information about a customer,
-needs 100 bytes. We need to add the size of the documents &lt;em&gt;inventory&lt;/em&gt;, &lt;em&gt;staff&lt;/em&gt; and &lt;em&gt;payment&lt;/em&gt;.
-Therefore, we obtain: 100 + 12 + 20 + 65,536. The size of the document &lt;em&gt;staff&lt;/em&gt; is far superior than the size of the other
-documents. We can approximate the size to 64 KiB.&lt;/p&gt;
-&lt;p&gt;The size of the only collection &lt;TT&gt;rental&lt;/TT&gt; (hence, of the whole database) is: &lt;span class=&#34;math inline&#34;&gt;\(N_{rentals} \times 64 KiB\)&lt;/span&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;If &lt;span class=&#34;math inline&#34;&gt;\(N_{rentals}\)&lt;/span&gt;=10,000, the size of the database is 640 MiB (if we consider 1 MiB = 1000 KiB).&lt;/li&gt;
-&lt;li&gt;If &lt;span class=&#34;math inline&#34;&gt;\(N_{rentals}\)&lt;/span&gt;=100,000, the size of the database is 6,4 GiB (if we consider 1 GiB = 1000,000 KiB)&lt;/li&gt;
-&lt;li&gt;If &lt;span class=&#34;math inline&#34;&gt;\(N_{rentals}\)&lt;/span&gt;=1,000,000 the size of the database is 64 GiB.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;Although the size that we determined in the previous exercise, may not sound
 impressive, we still have to store other information
 (films, actors….).
@@ -6981,23 +6957,6 @@ Discuss how you could save some space in the adopted solution.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;HINT.&lt;/strong&gt; Do you really need to denormalize all data?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;While modeling data for a MongoDB database, the choice
-between a normalized and a denormalized schema
-does not need to be a black and white one.&lt;/p&gt;
-&lt;p&gt;We can have a denormalized schema, where we embed in the same documents
-information that are queried together, while storing in a separate collection
-the information that are rarely queried.&lt;/p&gt;
-&lt;p&gt;For instance, the profile picture of a staff member might not be
-an important piece of information while we’re trying to analyze
-which staff members are the more productive ones.&lt;/p&gt;
-&lt;p&gt;So, we might add another collection &lt;TT&gt;Staff&lt;/TT&gt; where each
-document only contains attributes that are not in embedded documents in the collection
-&lt;TT&gt;Rental&lt;/TT&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -7007,60 +6966,6 @@ Propose a solution for all the entities involved and
 estimate the savings in terms of storage requirements.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Here is a solution with three different collections.
-The information on inventory are completely denormalized into the
-collection &lt;TT&gt;Rental&lt;/TT&gt;. For customers and staff members we only keep
-the necessary information and we normalize the information that are less
-likely to be queried while analyzing the rentals.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-5/mongodb-sakila-first-solution.png&#34; alt=&#34;First schema MongoDB&#34;&gt;&lt;/p&gt;
-&lt;p&gt;Let’s try to estimate the savings in terms of storage.
-In a document of the collection &lt;TT&gt;Rental&lt;/TT&gt;, we have the following attributes:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;&lt;em&gt;rental_id&lt;/em&gt;: 4 bytes.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;em&gt;rental_date&lt;/em&gt; and &lt;em&gt;return_date&lt;/em&gt;: 16 bytes.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;em&gt;inventory_id&lt;/em&gt;, &lt;em&gt;film_id&lt;/em&gt; and &lt;em&gt;store_id&lt;/em&gt;: 12 bytes&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;em&gt;customer_id&lt;/em&gt;: 4 bytes&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;customer &lt;em&gt;first_name&lt;/em&gt;: 9 bytes.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;customer &lt;em&gt;last_name&lt;/em&gt;: 12 bytes.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;em&gt;country&lt;/em&gt;: 15 bytes (on average a country name has 10 characters).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;em&gt;staff_id&lt;/em&gt;: 4 bytes&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;staff &lt;em&gt;first_name&lt;/em&gt;: 9 bytes.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;staff &lt;em&gt;last_name&lt;/em&gt;: 12 bytes.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;In total a document in our collection &lt;TT&gt;rental&lt;/TT&gt; will have &lt;strong&gt;97 bytes&lt;/strong&gt;
-(a huge improvement wrt the 64KiB bytes of our first solution).&lt;/p&gt;
-&lt;p&gt;Of course, the size of a document in the &lt;TT&gt;staff&lt;/TT&gt; collection will be
-around 64 KiB (we still store the profile picture).
-However, the number of staff members &lt;span class=&#34;math inline&#34;&gt;\(N_{staff}\)&lt;/span&gt; is much lower
-than the number of rentals &lt;span class=&#34;math inline&#34;&gt;\(N_{rentals}\)&lt;/span&gt;.&lt;/p&gt;
-&lt;p&gt;It is easy to verify that the size of a document of the collection &lt;TT&gt;customer&lt;/TT&gt;
-is &lt;strong&gt;51 bytes&lt;/strong&gt;.
-Again, the number of customers &lt;span class=&#34;math inline&#34;&gt;\(N_{customers}\)&lt;/span&gt; is much lower than
-&lt;span class=&#34;math inline&#34;&gt;\(N_{rentals}\)&lt;/span&gt;.&lt;/p&gt;
-&lt;p&gt;We assume that each customer has on average 30 rentals and for 100 customers we
-have 1 staff member.
-We have that:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;$N_{customer} = N_{rental}/30 $&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;$N_{staff} = N_{customer}/100 = N_{rental}/3000 $&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;So, the size of the database will be given by:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
-97\times N_{rentals} + 65536 \times N_{rentals}/3000 + 51 \times N_{rentals}/30 \approx 120 \times N_{rental}
-\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;Let’s compare against the first solution:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;If &lt;span class=&#34;math inline&#34;&gt;\(N_{rentals}\)&lt;/span&gt; = 10,000 the size of the database is 1,2 MiB (instead of 640 MiB).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;If &lt;span class=&#34;math inline&#34;&gt;\(N_{rentals}\)&lt;/span&gt; = 100,000 the size of the database is 12 MiB (instead of 6,4 GiB).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;If &lt;span class=&#34;math inline&#34;&gt;\(N_{rentals}\)&lt;/span&gt; = 1,000,000 the size of the database is 120 MiB (instead of 64 GiB).&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;As you can see, a big improvement! And we have a (partially) denormalized schema that
-lets us take advantage of the horizontal scalability of MongoDB.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;the-new-model&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;5&lt;/span&gt; The new model&lt;/h1&gt;
@@ -7074,38 +6979,6 @@ Consider the model that we obtained at the end of the previous section.
 Which data can you further denormalize?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Collection &lt;TT&gt;Staff&lt;/TT&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;The attribute &lt;TT&gt;address_id&lt;/TT&gt; refers to a full address. We can fully
-denormalize this information into the documents of the collection.
-Although an address might be the same for two people, the level of redundancy will be very low.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The attribute &lt;TT&gt;store_id&lt;/TT&gt; refers to the store where the staff member works.
-The &lt;TT&gt;store&lt;/TT&gt; table in the original PostgreSQL database does not have
-too many columns. Therefore, it might be reasonable to fully denormalize these data.
-However, information on the stores are also linked to customers and to inventory items.
-If we need to update, say, the manager of a store, we would need to update
-three different documents.
-Hence, we prefer to create a collection &lt;TT&gt;store&lt;/TT&gt; and keep in the documents of the
-collection &lt;TT&gt;staff&lt;/TT&gt; only the city and country of a store (and its identifier of course).&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;Attribute &lt;TT&gt;inventory&lt;/TT&gt;&lt;/strong&gt; in collection &lt;TT&gt;customer&lt;/TT&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Same considerations for the attribute &lt;TT&gt;store_id&lt;/TT&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The attribute &lt;TT&gt;film_id&lt;/TT&gt; is the reference to the film the inventory item is a copy of.
-The table &lt;TT&gt;film&lt;/TT&gt; in the original PostgreSQL database contains 14 columns.
-This high number of attributes advises us against a full denormalization, considering that
-might have several inventory items for a film.
-We might only keep the film title and the film categories. The rest of the attributes are kept in documents
-of a separate collection &lt;TT&gt;film&lt;/TT&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;Collection &lt;TT&gt;customer&lt;/TT&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Same considerations for the attributes &lt;TT&gt;store_id&lt;/TT&gt; and &lt;TT&gt;address_id&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-5/mongodb-sakila-first-model-further-denormalized.png&#34; alt=&#34;Sakila MongoDB data model further normalized&#34;&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -7115,21 +6988,15 @@ Complete the diagram obtained in the previous exercise so as to obtain
 a full data model for the Sakila database.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-5/mongodb-sakila-complete.png&#34; alt=&#34;Sakila MongoDB full data model&#34;&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
     
     <item>
       <title>MongoDB queries</title>
-      <link>/courses/plp/tutorials/mongodb-querying/</link>
+      <link>/courses/bigdata/tutorials/mongodb-querying/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/courses/plp/tutorials/mongodb-querying/</guid>
+      <guid>/courses/bigdata/tutorials/mongodb-querying/</guid>
       <description>
 
 
@@ -7168,31 +7035,6 @@ the amount paid is strictly greater than 10 dollars.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.customer.find()&lt;/pre&gt;
-&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.customer.find({}, {email:1})&lt;/pre&gt;
-&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.customer.find({&#34;store.country&#34;: &#34;Canada&#34;}, {email:1});&lt;/pre&gt;
-&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.rental.find({&#34;customer.country&#34;: &#34;Iran&#34;, amount: {$gt: 10}}, {rental_id: 1, _id:0});&lt;/pre&gt;
-&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.film.find({film_id: 213}, {&#34;actors.first_name&#34;:1, &#34;actors.last_name&#34;: 1}).sort({&#34;actors.last_name&#34;: -1});&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;operations-on-arrays&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Operations on arrays&lt;/h1&gt;
@@ -7211,27 +7053,6 @@ Write the following queries in MongoDB:&lt;/p&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.film.find({special_features : {$elemMatch: {$eq: &#34;Behind the Scenes&#34;}}}, {film_id: 1, _id:0});&lt;/pre&gt;
-&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.film.find({special_features : {$all: [&#34;Commentaries&#34;, &#34;Deleted Scenes&#34;]}}, {film_id: 1, _id:0});&lt;/pre&gt;
-&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.film.find({&#34;actors.first_name&#34;: &#34;BURT&#34;, &#34;actors.last_name&#34;: &#34;POSEY&#34;}, {film_id: 1, _id:0});&lt;/pre&gt;
-&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.film.find({actors: {$size : 15}}, {film_id: 1, _id:0});&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;aggregation-framework&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Aggregation framework&lt;/h1&gt;
@@ -7254,71 +7075,6 @@ Write the following queries in MongoDB using the aggregation framework:&lt;/p&gt
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.rental.aggregate({$match: {&#34;customer.first_name&#34;: &#34;TOMMY&#34;, &#34;customer.last_name&#34;: &#34;COLLAZO&#34;}}, 
-                    {$project: {&#34;inventory.film.title&#34;: 1, _id:0}})
-&lt;/pre&gt;
-One can also express this query with the function find()
-&lt;pre&gt;
-db.rental.find({&#34;customer.first_name&#34;: &#34;TOMMY&#34;, &#34;customer.last_name&#34;: &#34;COLLAZO&#34;}, {&#34;inventory.film.title&#34;: 1, _id:0});
-&lt;/pre&gt;
-&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.rental.aggregate({$group: {&#34;_id&#34;: null, total_amount: {$sum: &#34;$amount&#34;}}})
-&lt;/pre&gt;
-&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.film.aggregate({$project: {nb_actors: {$size: &#34;$actors&#34;}}})
-&lt;/pre&gt;
-&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;If we don’t put the match condition, we get an error because for some films
-the field actors is not defined.&lt;/p&gt;
-&lt;pre&gt;db.film.aggregate({$match: {actors: {$elemMatch: {$exists: true}}}}, 
-                {$project: {film_id: 1, &#34;nb_actors&#34;: {$size: &#34;$actors&#34;}}}, 
-                {$sort: {nb_actors: -1}})
-&lt;/pre&gt;
-&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.film.aggregate({$match: {actors: {$elemMatch: {$exists: true}}}}, 
-                {$project: {film_id: 1, &#34;nb_actors&#34;: {$size: &#34;$actors&#34;}}}, 
-                {$group: {_id: null, avg_actors: {$avg: &#34;$nb_actors&#34;}}})
-&lt;/pre&gt;
-&lt;ol start=&#34;6&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.rental.aggregate({$group: {_id: &#34;$customer.customer_id&#34;, count: {$sum: 1}}}, {$sort: {count: -1}})
-&lt;/pre&gt;
-&lt;ol start=&#34;7&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.rental.aggregate({$group: {_id: {cust_id: &#34;$customer.customer_id&#34;, cust_first_name: &#34;$customer.first_name&#34;, 
-                                    cust_last_name: &#34;$customer.last_name&#34;}, count: {$sum: 1}}}, 
-                            {$sort: {count: -1}}, {$limit :1})
-&lt;/pre&gt;
-&lt;ol start=&#34;8&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.rental.aggregate({$match: {&#34;inventory.film.categories.category&#34;: &#34;Music&#34;}}, {$group: {_id: &#34;$customer.country&#34;, count: {$sum: 1}}}, {$sort:{count: -1}}, {$limit: 1})
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;join-operations&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;5&lt;/span&gt; Join Operations&lt;/h1&gt;
@@ -7335,27 +7091,6 @@ Write the following queries in MongoDB using the aggregation framework:&lt;/p&gt
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.rental.aggregate({$match: {&#34;inventory.film.title&#34;: &#34;ACE GOLDFINGER&#34;}}, 
-            {$lookup: {from: &#34;film&#34;, localField: &#34;inventory.film.film_id&#34;, foreignField:&#34;film_id&#34;, as:&#34;film&#34;}}, 
-            {$project: {&#34;film.language&#34;: 1}}, {$limit : 1})
-&lt;/pre&gt;
-&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.rental.aggregate({$match: {rental_id: 2}}, 
-                    {$lookup: {from: &#34;staff&#34;, localField: &#34;staff.staff_id&#34;, 
-                    foreignField:&#34;staff_id&#34;, as:&#34;staff_member&#34;}}, {$project: {&#34;staff_member&#34;: 1}})
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
@@ -7640,10 +7375,310 @@ You can use the template available at ``~vialle/DCE-Spark/template_inverted_inde
     </item>
     
     <item>
-      <title>Spark MLlib</title>
-      <link>/courses/plp/tutorials/mllib/</link>
+      <title>Spark low-level programming</title>
+      <link>/courses/bigdata/tutorials/spark-low-level/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/courses/plp/tutorials/mllib/</guid>
+      <guid>/courses/bigdata/tutorials/spark-low-level/</guid>
+      <description>
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;!-- ############ IMPORTANT: CHANGE THESE VALUES BEFORE ANY LAB ############ --&gt;
+&lt;!-- The link to the Edunao page where the students submit their work --&gt;
+&lt;!-- The submission deadline --&gt;
+&lt;!-- The group to which users in the cluster belong--&gt;
+&lt;!-- User accounts are numbered from the lower to the upper limit--&gt;
+&lt;!-- ############ END OF MODIFICATIONS ############ --&gt;
+&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Introduction&lt;/h1&gt;
+&lt;p&gt;In this lab you’ll practice the Spark RDD API.&lt;/p&gt;
+&lt;p&gt;You’ll run the code on the &lt;a href=&#34;https://dce.pages.centralesupelec.fr/&#34; target=&#34;_blank&#34;&gt;CentraleSupélec &lt;em&gt;Data Centre d’Enseignement&lt;/em&gt; (DCE)&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;If you never used DCE before, &lt;a href=&#34;/courses/bigdata/documentation/cluster-connection&#34; target=&#34;_blank&#34;&gt;refer to this documentation&lt;/a&gt; to learn
+how to connect and the tools you’ll be needing in this lab.&lt;/p&gt;
+&lt;!-- ::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**Assignment submission**
+
+This lab assignment will be **evaluated**.
+
+In order to finalize the submission of the assignment, 
+complete [this form available on Edunao](https://centralesupelec.edunao.com/mod/quiz/view.php?id=47098){target=&#34;_blank&#34;}.
+
+The submission deadline is **Tuesday, March 9, 2021 8:00 AM**.
+
+:::--&gt;
+&lt;/div&gt;
+&lt;div id=&#34;computing-averages&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Computing averages&lt;/h1&gt;
+&lt;p&gt;We consider a collection of CSV files containing temperature measurements in the following format:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;year,month,day,hours,minutes,seconds,temperature&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;you can find the files under the directory &lt;code&gt;hdfs://sar01:9000/data/temperatures/&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Here are the details for each file:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;File &lt;code&gt;temperatures_86400.csv&lt;/code&gt; contains one measurement per day in the years 1980 - 2018.&lt;/li&gt;
+&lt;li&gt;File &lt;code&gt;temperatures_2880.csv&lt;/code&gt; contains one measurement every 2880 seconds in the years 1980 - 2018.&lt;/li&gt;
+&lt;li&gt;File &lt;code&gt;temperatures_86.csv&lt;/code&gt; contains one measurement every 86 seconds for the year 1980 alone.&lt;/li&gt;
+&lt;li&gt;File &lt;code&gt;temperatures_10.csv&lt;/code&gt; contains one measurement every 10 seconds for the years 1980 - 2018.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We intend to implement a Spark algorithm to generate pairs &lt;span class=&#34;math inline&#34;&gt;\((y, t_{avg})\)&lt;/span&gt;, where
+&lt;span class=&#34;math inline&#34;&gt;\(y\)&lt;/span&gt; is the year and &lt;span class=&#34;math inline&#34;&gt;\(t_{avg}\)&lt;/span&gt; is the average temperature in the year.&lt;/p&gt;
+&lt;div id=&#34;first-implementation&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.1&lt;/span&gt; First implementation&lt;/h2&gt;
+&lt;p&gt;Copy the file &lt;code&gt;/usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_temperatures.py&lt;/code&gt;
+to your home directory by typing
+the following command:&lt;/p&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;cp /usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_temperatures.py ./avg_temperatures_slow.py&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Open the file &lt;code&gt;avg_temperatures_slow.py&lt;/code&gt;.
+The file contains the implementation of the function &lt;code&gt;avg_temperature_slow&lt;/code&gt;
+that takes in an RDD, where each item is a line of the input text file, and
+returns an RDD, where each item is a key-value pair &lt;code&gt;(year, avg_temp)&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;In the same file, locate the two variables &lt;code&gt;input_path&lt;/code&gt; and &lt;code&gt;output-path&lt;/code&gt;,
+and write the following code:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;input_path = &amp;quot;hdfs://sar01:9000/data/temperatures/&amp;quot;
+output_path = &amp;quot;hdfs://sar01:9000/hpda/hpda_XX/&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Replace &lt;code&gt;XX&lt;/code&gt; with the number corresponding to your login!
+&lt;strong&gt;Don’t forget the / at the end of the file paths!&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Execute the following actions:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Run the script &lt;code&gt;avg_temperatures_slow.py&lt;/code&gt; by using &lt;code&gt;temperatures_86400.csv&lt;/code&gt; as an input.
+To this extent, use the following command:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;spark-submit --master spark://sar01:7077 avg_temperatures_slow.py temperatures_86400.csv&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Good to know&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Spark outputs a lot of log messages in the terminal.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In case of errors, Spark output a series of Java exceptions. Look at these exceptions to
+find a message that hints at the source of the problem.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;If the program concludes without errors, you can find the total running time at a line that reads:&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code&gt;INFO DAGScheduler: Job 0 finished: runJob at SparkHadoopWriter.scala:78, took xxxx s&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;You should find the output of the program under the folder:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;hdfs://sar01:9000/hpda/hpda_XX/temperatures_86400.out&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;To verify it, type the following command:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;hdfs dfs -ls hdfs://sar01:9000/hpda/hpda_XX/temperatures_86400.out&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;To look at the output, execute the following command:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;hdfs dfs -cat hdfs://sar01:9000/hpda/hpda_XX/temperatures_86400.out/*&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;What’s the execution time when running the program on file &lt;code&gt;temperatures_86400.csv&lt;/code&gt;?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Run the program on file &lt;code&gt;temperatures_2880.csv&lt;/code&gt;. What’s the execution time?
+Does it seem reasonable compared to the execution on file &lt;code&gt;temmperatures_86400.csv&lt;/code&gt;?
+Look at the size of the two files and justify the answer.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Execute the program on file &lt;code&gt;temperatures_86.csv&lt;/code&gt;. What’s the execution time? How would you justify it, knowing that
+the files &lt;code&gt;temperatures_2880.csv&lt;/code&gt; and &lt;code&gt;temperatures_86.csv&lt;/code&gt; have a similar size?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;second-implementation&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.2&lt;/span&gt; Second implementation&lt;/h2&gt;
+&lt;p&gt;Create a copy of &lt;code&gt;avg_temperatures_slow.py&lt;/code&gt; and rename it as &lt;code&gt;avg_temperatures_fast.py&lt;/code&gt;, with the following command:&lt;/p&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;cp ./avg_temperatures_slow.py ./avg_temperatures_fast.py&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.2  &lt;/strong&gt;&lt;/span&gt;
+Open the file and implement the function &lt;code&gt;avg_temperature_fast&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;NOTE.&lt;/strong&gt; Remember to comment the call
+to &lt;code&gt;avg_temperature_slow&lt;/code&gt;, and to uncomment the call to &lt;code&gt;avg_temperature_fast&lt;/code&gt; at the end of the file.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.3  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Execute the program &lt;code&gt;avg_temperatures_fast.py&lt;/code&gt; on file &lt;code&gt;temperatures_86.csv&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What’s the execution time? Compare it with the execution time obtained in the previous exercise and
+comment the difference.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Execute the program on file &lt;code&gt;temperatures_10.csv&lt;/code&gt; (3 GB!).
+Do you think that the program takes too long? Why?&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;common-friends-in-a-social-network&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Common friends in a social network&lt;/h1&gt;
+&lt;p&gt;Consider a social network described by a graph encoded in a text file.
+Each line of the file is a list of identifiers separated by commas.
+For instance, the line &lt;span class=&#34;math inline&#34;&gt;\(A,B,C,D\)&lt;/span&gt; means that &lt;span class=&#34;math inline&#34;&gt;\(A\)&lt;/span&gt; is friend with &lt;span class=&#34;math inline&#34;&gt;\(B\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(C\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(D\)&lt;/span&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;A,B,C,D
+B,A,D
+C,A,D
+D,A,B,C&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Note that friendship is symmetric: if &lt;span class=&#34;math inline&#34;&gt;\((A, B)\)&lt;/span&gt; then
+&lt;span class=&#34;math inline&#34;&gt;\((B, A)\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;We want to obtain the list of the common friends for each pair of individuals&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Given the sample file above, the output of our program will be:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;(A, B), [D]
+(A, C), [D] 
+(A, D), [B, C] 
+(B, C), [A, D] 
+(B, D), [A] 
+(C, D), [A]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;As an additional constraint&lt;/strong&gt;, we want to represent a couple only once and avoid
+to represent the symmetric couple.
+In other words, if we output &lt;span class=&#34;math inline&#34;&gt;\((A, B)\)&lt;/span&gt;, we don’t want to output &lt;span class=&#34;math inline&#34;&gt;\((B, A)\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Input files.&lt;/strong&gt; They are available in folder &lt;code&gt;hdfs://sar01:9000/data/sn/&lt;/code&gt;:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;sn_tiny.csv&lt;/code&gt;. Small social network, that you can use to test your implementation.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;sn_10k_100k.csv&lt;/code&gt;. Social network with &lt;span class=&#34;math inline&#34;&gt;\(10^4\)&lt;/span&gt; individuals and &lt;span class=&#34;math inline&#34;&gt;\(10^5\)&lt;/span&gt; links.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;sn_100k_100k.csv&lt;/code&gt;. Social network with &lt;span class=&#34;math inline&#34;&gt;\(10^5\)&lt;/span&gt; individuals and &lt;span class=&#34;math inline&#34;&gt;\(10^5\)&lt;/span&gt; links.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;sn_1k_100k.csv&lt;/code&gt;. Social network with &lt;span class=&#34;math inline&#34;&gt;\(10^3\)&lt;/span&gt; individuals and &lt;span class=&#34;math inline&#34;&gt;\(10^5\)&lt;/span&gt; links.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;sn_1m_1m.csv&lt;/code&gt;. Social network with &lt;span class=&#34;math inline&#34;&gt;\(10^6\)&lt;/span&gt; individuals and &lt;span class=&#34;math inline&#34;&gt;\(10^6\)&lt;/span&gt; links.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div id=&#34;implementation&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.1&lt;/span&gt; Implementation&lt;/h2&gt;
+&lt;p&gt;You can copy the code template to your home directory with the following command:&lt;/p&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;cp /usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_common_friends.py .&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:common-friends-implem&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Write an implementation that uses a &lt;code&gt;reduceByKey&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Write an implementation that uses a &lt;code&gt;groupByKey&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Test both implementations on file &lt;code&gt;sn_tiny.csv&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;tests-and-performance-measures&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.2&lt;/span&gt; Tests and performance measures&lt;/h2&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:common-friends-table&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.2  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Run both implementations on the other files.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Fill in a table, where you indicate: the name and size of each file and
+the measured running times of both implementations.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Does the file size explain the running times?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What can you observe about the running times obtained with &lt;code&gt;reduceByKey&lt;/code&gt; and &lt;code&gt;groupByKey&lt;/code&gt;?&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;minimum-maximum-and-average-degree&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.3&lt;/span&gt; Minimum, maximum and average degree&lt;/h2&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.3  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Write a function that takes in a social network and
+returns a tuple &lt;code&gt;(min_d, max_d, avg_d)&lt;/code&gt; containing the minimum,
+maximum and average degree in the social network.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Requirement.&lt;/strong&gt; Your function &lt;strong&gt;must&lt;/strong&gt; use a series of Spark RDD transformations.
+Only the last instruction before &lt;code&gt;return&lt;/code&gt; can be an RDD action.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;You’re not allowed&lt;/strong&gt; to call the action &lt;code&gt;collect()&lt;/code&gt; to obtain Python lists and compute the tuple with standard
+Python functions.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.4  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Compute the minimum, maximum and average degree for all the given input files.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Add the minimum, maximum and average degree to the table that you created in Exercise &lt;a href=&#34;#exr:common-friends-table&#34;&gt;3.2&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;performance-analysis&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.4&lt;/span&gt; Performance analysis&lt;/h2&gt;
+&lt;p&gt;We want to estimate the number of key-value pairs output by the &lt;code&gt;flatMap&lt;/code&gt;, in the code that you wrote in
+Exercise &lt;a href=&#34;#exr:common-friends-implem&#34;&gt;3.1&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;To do so, we suppose that the degree of each node is equal to the average degree (all individuals in the social network have the
+same number of friends).&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.5  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;For each social network, compute (with pencil and paper, no with a code) the number of
+key-value pairs generated by your &lt;code&gt;flatMap&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Add the number of key-value pairs to the table that you created in Exercise &lt;a href=&#34;#exr:common-friends-table&#34;&gt;3.2&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Plot three graphs, where the y-axis has the program running times and the x-axis
+has: the number of pairs, the average degree and the file size respectively.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;Which graphs best predict the evolution of the running time?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;average-and-standard-deviation&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Average and standard deviation&lt;/h1&gt;
+&lt;p&gt;This section is &lt;strong&gt;optional&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;We use the same files as in the first question.
+Our objective is to write a Spark program that produces
+triples &lt;span class=&#34;math inline&#34;&gt;\((y, t_{\mu}, t_{\sigma})\)&lt;/span&gt;, where &lt;span class=&#34;math inline&#34;&gt;\(y\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(t_{\mu}\)&lt;/span&gt; and
+&lt;span class=&#34;math inline&#34;&gt;\(t_{\sigma}\)&lt;/span&gt; are the year, the average temperature in the year and the
+standard deviation respectively.&lt;/p&gt;
+&lt;p&gt;We can express the standard deviation of &lt;span class=&#34;math inline&#34;&gt;\(n\)&lt;/span&gt; values &lt;span class=&#34;math inline&#34;&gt;\(x_1 \ldots x_n\)&lt;/span&gt; with the following formula:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+\sigma = \sqrt{\overline{x^2} - \overline{x}^2} = \sqrt{\frac{\sum_{i=1}^n (x_i)^2}{n} - \Bigg(\frac{\sum_{i=1}^n x_i}{n}\Bigg)^2} 
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Type the following command to copy the code template to your home directory:&lt;/p&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;cp /usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_temperatures.py  ./avg_stddev_temp.py&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Define a new function &lt;code&gt;avg_stddev_temperature&lt;/code&gt; in file &lt;code&gt;avg_stddev_temp.py&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Execute the program and observe the results.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Spark MLlib</title>
+      <link>/courses/bigdata/tutorials/mllib/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/bigdata/tutorials/mllib/</guid>
       <description>
 
 
@@ -7707,17 +7742,6 @@ to nicely see the values in the columns?&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The solutions are available in file:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;
-/usr/users/cpu-prof/cpu_quercini/mllib_solutions/train_test.py
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Since the DataFrame has many columns, we need to use the option &lt;code&gt;vertical=True&lt;/code&gt; when calling the
-function &lt;code&gt;show()&lt;/code&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;We now split &lt;code&gt;airbnb_df&lt;/code&gt; into two separate DataFrames, &lt;code&gt;train_df&lt;/code&gt; and &lt;code&gt;test_df&lt;/code&gt;, containing the training and
 test instances respectively.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -7735,15 +7759,6 @@ function are you going to use?&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The solutions are available in file:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;
-/usr/users/cpu-prof/cpu_quercini/mllib_solutions/train_test.py
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;It is time to save the training and test sets to a HDFS file.
 This way, we can load them whenever we need them to build a machine learning model
 for this problem.&lt;/p&gt;
@@ -7757,15 +7772,6 @@ The paths to the two files are already available in variables &lt;code&gt;traini
 defined at Lines 40 and 43 respectively.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The solutions are available in file:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;
-/usr/users/cpu-prof/cpu_quercini/mllib_solutions/train_test.py
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;preparing-the-features&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Preparing the features&lt;/h1&gt;
@@ -7798,15 +7804,6 @@ got in the first section.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The solutions are available in file:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;
-/usr/users/cpu-prof/cpu_quercini/mllib_solutions/train_test_model.py
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;It is now time to learn how to use a transformer to put all the necessary features into a vector.
 For the time being, we’ll only be using the feature &lt;code&gt;bedrooms&lt;/code&gt; to predict the price.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -7823,15 +7820,6 @@ You’ll need to use a &lt;a href=&#34;https://spark.apache.org/docs/latest/api/
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The solutions are available in file:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;
-/usr/users/cpu-prof/cpu_quercini/mllib_solutions/train_test_model.py
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;It is now time to train a linear regression model on the given training set and the selected features.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
@@ -7847,15 +7835,6 @@ to create a linear regressor and the function that you need to invoke to train t
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The solutions are available in file:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;
-/usr/users/cpu-prof/cpu_quercini/mllib_solutions/train_test_model.py
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;We can now use the trained model to make some predictions.
 The model returned by the function that you implemented in the previous exercise
 is an object of type &lt;code&gt;LinearRegressionModel&lt;/code&gt;.
@@ -7876,18 +7855,6 @@ know the formula of the regression line?&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;&lt;code&gt;test_df&lt;/code&gt; is not a good choice. In fact, the test set DataFrame must have the same format as
-the training set DataFrame the model has been trained on.
-So, we need to transform it a &lt;code&gt;vecAssembler&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;The solutions are available in file:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;
-/usr/users/cpu-prof/cpu_quercini/mllib_solutions/train_test_model.py
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;pipelines&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Pipelines&lt;/h1&gt;
@@ -7924,13 +7891,6 @@ to train and test a linear regression model on the given training and test sets.
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Solutions available in file:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;/usr/users/cpu-prof/cpu_quercini/mllib_solutions/pipeline_example.py&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div id=&#34;from-categorical-to-numerical-features&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.1&lt;/span&gt; From categorical to numerical features&lt;/h2&gt;
 &lt;p&gt;Many machine learning models do not handle categorical values: they need all features to be numerical.
@@ -7961,13 +7921,6 @@ with &lt;code&gt;spark_submit&lt;/code&gt;. This execute the instruction at Line
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Solutions available in file:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;/usr/users/cpu-prof/cpu_quercini/mllib_solutions/onehot_playground.py&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;One example of categorical feature in our dataset is &lt;code&gt;property_type&lt;/code&gt;, which takes values such as &lt;em&gt;Apartment&lt;/em&gt;, &lt;em&gt;House&lt;/em&gt;, &lt;em&gt;Condominium&lt;/em&gt;…
 Each value of a categorical feature is also referred to as a category.&lt;/p&gt;
 &lt;p&gt;One way to turn this feature into a numerical one would be to assign a number to each category (e.g., &lt;em&gt;Apartment&lt;/em&gt; corresponds to 0, &lt;em&gt;House&lt;/em&gt; to 1….).
@@ -8001,16 +7954,6 @@ of the feature &lt;code&gt;property_type&lt;/code&gt;?&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Solutions available in file:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;/usr/users/cpu-prof/cpu_quercini/mllib_solutions/onehot_playground.py&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;We note that the most frequent property type obtains the index 0; the second most frequent will obtain
-value 1…so the indexes are attributed by frequency. Each time we run the same code, we obtain the same indexes.
-This means that we have a determinism over different executions of the same program.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;It is time to find out how one-hot encoding works.&lt;/p&gt;
 &lt;div class=&#34;infobox activitybox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
@@ -8033,21 +7976,6 @@ This estimator uses the indexes in &lt;code&gt;property_type_index&lt;/code&gt; 
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Solutions available in file:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;/usr/users/cpu-prof/cpu_quercini/mllib_solutions/onehot_playground.py&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;One-hot creates a vector with as many values as the number of categories in the feature
-property_type.
-Each category has a fixed index in this vector, given by the column property_type_index.
-If for an instance the value of the property_type is &lt;em&gt;Guest suite&lt;/em&gt; and the index of &lt;em&gt;Guest suite&lt;/em&gt; is 3,
-then the one-hot encoded vector has only a value 1 at index 3 and 0 anywhere else.
-Spark only stores a concise representation of this sparse vector: a tuple with the
-size of the vector, the index whose value is non-zero and the actual value associated to the index
-(1 in our case).&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;Now, you have all the ingredients to create a full pipeline to train and test a
 linear regression model by using all features.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -8067,13 +7995,6 @@ Create a new file &lt;code&gt;full_pipeline.py&lt;/code&gt; where:&lt;/p&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Solutions available in file:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;/usr/users/cpu-prof/cpu_quercini/mllib_solutions/full_pipeline.py&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;evaluating-a-model&#34; class=&#34;section level1&#34;&gt;
@@ -8090,15 +8011,6 @@ In order to quantify the quality of our estimator, we need some evaluation measu
 and play with the code to do model selection based on a grid search of parameters.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The solutions are available in file&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;
-/usr/users/cpu-prof/cpu_quercini/mllib_solutions/model_evaluation.py
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
@@ -8538,9 +8450,9 @@ the watermarking mechanism works on this example.
     
     <item>
       <title>Spark structured streaming</title>
-      <link>/courses/plp/tutorials/structured-streaming-lab/</link>
+      <link>/courses/bigdata/tutorials/structured-streaming-lab/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/courses/plp/tutorials/structured-streaming-lab/</guid>
+      <guid>/courses/bigdata/tutorials/structured-streaming-lab/</guid>
       <description>
 
 
@@ -13215,9 +13127,9 @@ special symbols.&lt;/p&gt;
     
     <item>
       <title>MapReduce</title>
-      <link>/courses/plp/tutorials/map-reduce/</link>
+      <link>/courses/bigdata/tutorials/map-reduce/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/courses/plp/tutorials/map-reduce/</guid>
+      <guid>/courses/bigdata/tutorials/map-reduce/</guid>
       <description>
 
 
@@ -13254,18 +13166,6 @@ Write a MapReduce algorithm that generates key-value pairs
 &lt;span class=&#34;math inline&#34;&gt;\((year, average\_temperature)\)&lt;/span&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;map: &lt;span class=&#34;math inline&#34;&gt;\((year, month, temperature) \rightarrow (year, temperature)\)&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;reduce: &lt;span class=&#34;math inline&#34;&gt;\((year, temps) \rightarrow\)&lt;/span&gt; &lt;span class=&#34;math inline&#34;&gt;\((year, sum(temps)/len(temps))\)&lt;/span&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(temps\)&lt;/span&gt; is the list of all temperatures in the same &lt;span class=&#34;math inline&#34;&gt;\(year\)&lt;/span&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(sum(temps)\)&lt;/span&gt; sums all the elements in the list &lt;span class=&#34;math inline&#34;&gt;\(temps\)&lt;/span&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(len(temps)\)&lt;/span&gt; gives the length of the list &lt;span class=&#34;math inline&#34;&gt;\(temps\)&lt;/span&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;Suppose now that we have a large CSV file
 stored in a distributed file system (e.g., HDFS),
 containing a series of measurements in the format “Year, Month, Day, Minute, Second, Temperature”.
@@ -13280,16 +13180,6 @@ a MapReduce algorithm.&lt;/p&gt;
 What is the maximum number of measurements in a year?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Since we can have up to one measurement per second, the maximum number of
-measurements &lt;span class=&#34;math inline&#34;&gt;\(M_{max}\)&lt;/span&gt; for a certain year is given by the following formula:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
-M_{max} = 365 \times 24 \times 60 \times 60 \approx 31.5 \times 10^6 
-\]&lt;/span&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -13299,17 +13189,6 @@ Considering the answer to the previous question, discuss the efficiency
 of the first implementation of the algorithm.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Since there might be up to 31 million values
-associated with a key, the bottleneck of the computation would be
-the shuffle operation, since we need to copy a high number of
-(key,value) pairs from the mappers to the reducers.&lt;/p&gt;
-&lt;p&gt;Also, a reducer might have to
-loop over a huge list of values in order to compute their average.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -13319,19 +13198,6 @@ Based on the answer to the previous question,
 propose a better implementation to handle the CSV file.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;map: &lt;span class=&#34;math inline&#34;&gt;\((year, mo, d, mi, sec, temperature) \rightarrow (year, temperature)\)&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;combine: &lt;span class=&#34;math inline&#34;&gt;\((year, temps) \rightarrow\)&lt;/span&gt; &lt;span class=&#34;math inline&#34;&gt;\((year, (sum(temps), len(temps)))\)&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;reduce: &lt;span class=&#34;math inline&#34;&gt;\((year, [(s_i, l_i),\ i=1\dots n]) \rightarrow\)&lt;/span&gt; &lt;span class=&#34;math inline&#34;&gt;\((year, \frac{\sum_{i=1}^n s_i}{\sum_{i=1}^n l_i})\)&lt;/span&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(temps\)&lt;/span&gt; is the list of all temperatures in the same &lt;span class=&#34;math inline&#34;&gt;\(year\)&lt;/span&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(sum(temps)\)&lt;/span&gt; sums all the elements in the list &lt;span class=&#34;math inline&#34;&gt;\(temps\)&lt;/span&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(len(temps)\)&lt;/span&gt; gives the length of the list &lt;span class=&#34;math inline&#34;&gt;\(temps\)&lt;/span&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;computing-average-and-standard-deviation&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Computing average and standard deviation&lt;/h1&gt;
@@ -13358,16 +13224,6 @@ is more appropriate in a Map-Reduce algorithm?
 Why?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The second equation is more appropriate because it allows the computation
-of the sum of the elements and of the square of the elements step by step
-by using map and combine together.&lt;/p&gt;
-&lt;p&gt;Instead, if we use the first equation, we need first to compute the average and then use it
-to compute the variance.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -13377,23 +13233,6 @@ Propose a MapReduce implementation to compute the average and the standard
 deviation of the temperatures for each year.
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;map: &lt;span class=&#34;math inline&#34;&gt;\((year, mo, d, mi, sec, temperature) \rightarrow (year, temperature)\)&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;combine: &lt;span class=&#34;math inline&#34;&gt;\((year, T) \rightarrow\)&lt;/span&gt; &lt;span class=&#34;math inline&#34;&gt;\((year, (sum(T), sum(T^2), len(T)))\)&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;reduce: &lt;span class=&#34;math inline&#34;&gt;\((year, [(s_{i}, sq_{i}, l_{i}),\ i=1\dots n]) \rightarrow\)&lt;/span&gt; &lt;span class=&#34;math inline&#34;&gt;\((year, (\mu, \sigma))\)&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;where:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(T\)&lt;/span&gt; is the list of all temperatures in the same &lt;span class=&#34;math inline&#34;&gt;\(year\)&lt;/span&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(sum(T)\)&lt;/span&gt; sums all the elements in the list &lt;span class=&#34;math inline&#34;&gt;\(T\)&lt;/span&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(T^2 = [x^2 | x\in T]\)&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(len(T)\)&lt;/span&gt; gives the length of the list &lt;span class=&#34;math inline&#34;&gt;\(T\)&lt;/span&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(\mu = \sum_{i=1}^n s_{i}/ \sum_{i=1}^n l_{i}\)&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(\sigma = \sqrt{ (\sum_{i=1}^n sq_{i}/ \sum_{i=1}^n l_{i}) - \mu^2 }\)&lt;/span&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;common-friends&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Common friends in a social network&lt;/h1&gt;
@@ -13427,20 +13266,6 @@ Propose a MapReduce implementation to find the common friends in a
 social network satisifying the given constraints.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;map: &lt;span class=&#34;math inline&#34;&gt;\((x, F) \rightarrow [((u, v), x)\ \forall (u, v) \in F\ |\ u &amp;lt; v ]\)&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;reduce: &lt;span class=&#34;math inline&#34;&gt;\([(u, v), LCF] \rightarrow [(u, v), LCF]\)&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;where:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(x\)&lt;/span&gt; is the first item in a line.&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(F\)&lt;/span&gt; is the list containing the items in a line except the first one (&lt;span class=&#34;math inline&#34;&gt;\(x\)&lt;/span&gt;’s friends).&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(LCF\)&lt;/span&gt; is the list of all individuals that are friends with both &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;We note that the reduce function is the identity.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;!--
 # Creating an inverted index
 
@@ -13461,32 +13286,6 @@ collection of documents.
 :::
 
 
-
-&lt;details&gt;
-&lt;summary&gt;Solution&lt;/summary&gt;
-
-::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
-
-The input to the map will be a key-value pair, where 
-the key is the name of a file $f$ and the value is the 
-content $C$ of the file.
-
-map: $(f, C) \rightarrow [(w, f)\ \forall w \in C]$
-
-reduce: $(w, L) \rightarrow (w, L)$
-
-where $L$ is the list of the files containing the word $w$.
-
-We note that the reduce function is the identity.
-
-Note also that in the map function we can add instructions 
-to preprocess the text. For example, we can eliminate some words
-that are not useful in the index (e.g., the stopwords) or remove 
-special symbols.
-
-:::
-
-&lt;/details&gt;
 
 
 --&gt;
