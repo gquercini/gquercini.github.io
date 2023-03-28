@@ -2403,7 +2403,7 @@ with the reservation code given by your lab supervisor ).&lt;/p&gt;
 &lt;div id=&#34;without-a-reservation&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.2&lt;/span&gt; Without a reservation&lt;/h2&gt;
 &lt;p&gt;If you don’t have a reservation code, run the following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;srun -p cpu_tp -t 02:00:00 -N 1 --cpus-per-task=2 --pty bash&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;srun -p cpu_inter -t 02:00:00 -N 1 --cpus-per-task=2 --pty bash&lt;/code&gt;&lt;/p&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Good to know&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;If you don’t have a reservation, please use the DCE only between 6PM-8AM in weekdays.
@@ -8589,17 +8589,6 @@ You can use the template available at ``~vialle/DCE-Spark/template_inverted_inde
 &lt;p&gt;You’ll run the code on the &lt;a href=&#34;https://dce.pages.centralesupelec.fr/&#34; target=&#34;_blank&#34;&gt;CentraleSupélec &lt;em&gt;Data Centre d’Enseignement&lt;/em&gt; (DCE)&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;If you never used DCE before, &lt;a href=&#34;/courses/bigdata/documentation/cluster-connection&#34; target=&#34;_blank&#34;&gt;refer to this documentation&lt;/a&gt; to learn
 how to connect and the tools you’ll be needing in this lab.&lt;/p&gt;
-&lt;!-- ::: {.infobox .warning data-latex=&#34;{warning}&#34;}
-**Assignment submission**
-
-This lab assignment will be **evaluated**.
-
-In order to finalize the submission of the assignment, 
-complete [this form available on Edunao](https://centralesupelec.edunao.com/mod/quiz/view.php?id=47098){target=&#34;_blank&#34;}.
-
-The submission deadline is **Tuesday, March 9, 2021 8:00 AM**.
-
-:::--&gt;
 &lt;/div&gt;
 &lt;div id=&#34;computing-averages&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Computing averages&lt;/h1&gt;
@@ -10504,10 +10493,10 @@ documentation:&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;Create a checkpoint directory for the first exercise (e.g., &lt;code&gt;checkpoint_dir&lt;/code&gt;) under your home directory
-&lt;code&gt;hdfs://sar17:9000/plpspark22/plpspark22_X&lt;/code&gt; &lt;strong&gt;in HDFS&lt;/strong&gt;. The command to do so is as follows:&lt;/li&gt;
+&lt;code&gt;hdfs://sar01:9000/hpda/hpda_X&lt;/code&gt; &lt;strong&gt;in HDFS&lt;/strong&gt;. The command to do so is as follows:&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;pre&gt;&lt;code&gt;hdfs dfs -mkdir hdfs://sar17:9000/plpspark22/plpspark22_X/checkpoint_dir&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;hdfs dfs -mkdir hdfs://sar01:9000/hpda/hpda_X/checkpoint_dir&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;&lt;p&gt;&lt;strong&gt;Complete line 21&lt;/strong&gt; of file &lt;code&gt;warmup.py&lt;/code&gt;. Choose a port number in the interval [49152, 65535].&lt;/p&gt;&lt;/li&gt;
@@ -10530,7 +10519,7 @@ Use the following command. Replace &lt;code&gt;[port_number]&lt;/code&gt; with t
 &lt;strong&gt;In case the program stops for an error, remove all files generated in the checkpoint location with the following command and restart the Spark program.&lt;/strong&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;pre&gt;&lt;code&gt;hdfs dfs -rm -r hdfs://sar17:9000/plpspark22/plpspark22_X/checkpoint_dir/*&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;hdfs dfs -rm -r hdfs://sar01:9000/hpda/hpda_X/checkpoint_dir/*&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;ol start=&#34;7&#34; style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;In the terminal window where the netcat server is running, write few lines of text.
@@ -10545,7 +10534,7 @@ typing CTRL-C in the terminal where Spark is running.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Remove all files in the checkpoint directory.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;pre&gt;&lt;code&gt;hdfs dfs -rm -r hdfs://sar17:9000/plpspark22/plpspark22_X/checkpoint_dir/*&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;hdfs dfs -rm -r hdfs://sar01:9000/hpda/hpda_X/checkpoint_dir/*&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;Don’t stop the netcat server&lt;/strong&gt;, you’ll need it in the next exercise.&lt;/li&gt;
@@ -10602,7 +10591,7 @@ following command:&lt;/li&gt;
 &lt;li&gt;Remove all files in the checkpoint location by typing the following command:&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;pre&gt;&lt;code&gt;hdfs dfs -rm -r hdfs://sar17:9000/plpspark22/plpspark22_X/checkpoint_dir/*&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;hdfs dfs -rm -r hdfs://sar01:9000/hpda/hpda_X/checkpoint_dir/*&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -10671,7 +10660,7 @@ where each file only contains exactly one line in the format
 &lt;li&gt;Create the source directory under your home directory &lt;strong&gt;in HDFS&lt;/strong&gt;, by typing the following command:&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;pre&gt;&lt;code&gt;hdfs dfs -mkdir hdfs://sar17:9000/plpspark22/plpspark22_X/source_dir&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;hdfs dfs -mkdir hdfs://sar01:9000/hpda/hpda_X/source_dir&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;Copy to your home directory the file &lt;code&gt;tempws_gen.py&lt;/code&gt; (the data source) by typing the following command:
@@ -10728,7 +10717,7 @@ in the first terminal window&lt;/strong&gt;:&lt;/li&gt;
 &lt;li&gt;Execute the data generator program by typing the following command (&lt;strong&gt;remember to replace X with your account number!&lt;/strong&gt;):&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;pre&gt;&lt;code&gt;python3 tempws_gen.py -s hdfs://sar17:9000/plpspark22/plpspark22_X/source_dir&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;python3 tempws_gen.py -s hdfs://sar01:9000/hpda/hpda_X/source_dir&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;&lt;p&gt;After launching the data generator, you should
@@ -10807,7 +10796,7 @@ and the processing time (when the word is written to the directory).&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Good to know&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;To generate data with some delay you can use the following command (&lt;strong&gt;remember to replace the X with your account number!&lt;/strong&gt;):&lt;/p&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;pre&gt;&lt;code&gt;python3 tempws_gen.py -s hdfs://sar17:9000/plpspark22/plpspark22_X/source_dir --delay 0.8&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;python3 tempws_gen.py -s hdfs://sar01:9000/hpda/hpda_X/source_dir --delay 0.8&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;p&gt;In the previous command, the 0.8 indicates that the probability that an event arrives with some delay is 80%.
 The delay is between 5 and 15 seconds.
