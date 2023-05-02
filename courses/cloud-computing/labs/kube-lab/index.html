@@ -539,19 +539,36 @@
   
   <div class="docs-toc-item">
 
-    <a onclick=open_menu_on_click(this) id="" class="docs-toc-link" href="/courses/cloud-computing/labs/kube-lab/">labs</a>
+    <a onclick=open_menu_on_click(this) id="tutorials" class="docs-toc-link" href="/courses/cloud-computing/tutorials/tutorial-docker/">Tutorials</a>
     
-    <div id="-ddowncontent" class="-ddowncontent ddowncontent">
+    <div id="tutorials-ddowncontent" class="tutorials-ddowncontent ddowncontent">
     <ul class="nav docs-sidenav">
       
-      <script>open_menu_on_load("".concat("-ddowncontent"))</script>
-      <li class="active labs">
-        <a href="/courses/cloud-computing/labs/kube-lab/">1. Multi-service applications</a>
+      
+      <li class="tutorials">
+        <a href="/courses/cloud-computing/tutorials/tutorial-docker/">1. Getting started with Docker</a>
+      </li>
+      
+      
+      <li class="tutorials">
+        <a href="/courses/cloud-computing/tutorials/tutorial-kube/">2. Multi-service applications</a>
+      </li>
+      
+      <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
+      <li class="active tutorials">
+        <a href="/courses/cloud-computing/labs/kube-lab/">3. Multi-service applications (Lab)</a>
       </li>
       
     </ul>
     </div>
     
+    
+
+  </div>
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="labs" class="docs-toc-link" >Labs</a>
     
 
   </div>
@@ -568,7 +585,7 @@
       <article class="article">
 
         <div class="docs-article-container">
-          <div class="heading">Cloud computing — Lab assignment 1</div>
+          <div class="heading">Cloud computing — Lab assignment</div>
           <h1>Multi-service applications in the Cloud</h1>
           <hr>
           <div class="logo">
@@ -597,16 +614,16 @@
 <ul>
 <li><p>Only one submission per group.</p></li>
 <li><p>In order to submit your work, you need to answer all the questions
-that you <strong><a href="https://centralesupelec.edunao.com/mod/quiz/view.php?id=80184" target="_blank">find here</a></strong>.
+that you <strong><a href="https://centralesupelec.edunao.com/mod/quiz/view.php?id=115349" target="_blank">find here</a></strong>.
 Each question corresponds to an exercise that you find in this page.</p></li>
 <li><p>You can answer either <strong>in French</strong> or <strong>in English</strong>. Your pick!</p></li>
-<li><p><strong>Deadline: 13 May 2022, 23h59</strong></p></li>
+<li><p><strong>Deadline: 16 May 2023, 23h59</strong></p></li>
 </ul>
 <div class="infobox warning">
 <p><strong>Warning</strong></p>
 <p>This lab assignment is <strong>evaluated</strong>.
 You won’t have access to the solutions.
-You <strong>can ask questions anytime</strong> (even after the Friday 29 april lab session),
+You <strong>can ask questions anytime</strong>
 should you run into problems
 with the implementation of the assignment.</p>
 </div>
@@ -627,17 +644,6 @@ The archive contains the following files:</p>
 </ul>
 <p>The application is written in Python and it <strong>requires Python 3.7</strong>.
 The application doesn’t need any third-party library, the packages included in a minimal Python environment are enough.</p>
-<div class="infobox warning">
-<p><strong>Warning</strong></p>
-<p>Only one instance of the server is running.
-Several instances of the client can run at the same time.
-Client instances might not be running on the same host.</p>
-<ul>
-<li>In order to execute the server, we need to pass the port number as a parameter.</li>
-<li>In order to execute the client, we need to pass as parameters the IP address of the server and the port
-which the server listens to.</li>
-</ul>
-</div>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -648,6 +654,15 @@ which the server listens to.</li>
 <li>Given your answer to the previous question, how many Docker images do you need to create?</li>
 </ol>
 </div>
+</div>
+<p>We now build the images for the application.</p>
+<div class="infobox curiosity">
+<p><strong>Good to know</strong></p>
+<p>If you need to inspect the file system of an
+image that you create (e.g., to verify that the files that you
+copied are actually there), you can open a terminal
+in the image by using the following command:</p>
+<p><code>docker run -it --entrypoint sh IMAGE_NAME</code></p>
 </div>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
@@ -664,26 +679,11 @@ which the server listens to.</li>
 <p>The size of the images should be kept as small as possible.
 Remember to include in the images only what you need to build and run the application.</p>
 </div>
-</div>
-<div class="infobox curiosity">
-<p><strong>Good to know</strong></p>
-<p>If you need to inspect the file system of an
-image that you create (e.g., to verify that the files that you
-copied are actually there), you can open a terminal
-in the image by using the following command:</p>
-<p><code>docker run -it --entrypoint sh IMAGE_NAME</code></p>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 1.3  </strong></span>
-If you built more than one image:</p>
-<ol style="list-style-type: decimal">
-<li><p>Do they have some common layers?</p></li>
-<li>If so, is it something that has an impact on the build time and how?</li>
+<p>If you built more than one image:</p>
+<ol start="3" style="list-style-type: lower-alpha">
+<li><p>Do they have some common layers? Which ones?</p></li>
+<li><p>If so, is it something that has an impact on the build time and how?</p></li>
 </ol>
-</div>
 </div>
 <div id="client-and-server-on-the-same-network" class="section level2">
 <h2><span class="header-section-number">1.1</span> Client and server on the same network</h2>
@@ -698,7 +698,7 @@ If you built more than one image:</p>
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 1.4  </strong></span>
+<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 1.3  </strong></span>
 We want to make sure that:</p>
 <ol style="list-style-type: decimal">
 <li><p>The server and the clients can communicate with each other.</p></li>
@@ -708,12 +708,21 @@ We want to make sure that:</p>
 and justify it.</p>
 </div>
 </div>
+<div class="infobox warning">
+<p><strong>Warning</strong></p>
+<p>Only one instance of the server is running.
+Two instances of the client run at the same time.</p>
+<ol style="list-style-type: decimal">
+<li><p>In order to execute the server, we need to <strong>pass a port number as a parameter</strong>. Choose one in the range [49152–65535].</p></li>
+<li><p>In order to execute the client, we need to <strong>pass as parameters the IP address of the server and the port</strong> which the server listens to (the one that you specified at 1.).</p></li>
+</ol>
+</div>
 <!-- NOT LIVRAISON -->
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:client-server-single-network" class="exercise"><strong>Exercise 1.5  </strong></span>
+<p><span id="exr:client-server-single-network" class="exercise"><strong>Exercise 1.4  </strong></span>
 Execute the server and the two clients by using the network configuration that you
 explained in the previous exercise.</p>
 <ul>
@@ -727,8 +736,8 @@ both configuring the network and launching the server and the clients. <strong>E
 </div>
 </div>
 <div class="infobox warning">
-<p><strong>Shut down the application!</strong></p>
-<p>Shut down both the clients and the server before you move on.</p>
+<p><strong>Shut the application down!</strong></p>
+<p>Shut both the clients and the server down before you move on.</p>
 <ul>
 <li><p>On the client-side, type <code>#quit</code> at any moment to exit the chat room.</p></li>
 <li><p>Type Ctrl-C to stop the server.</p></li>
@@ -747,18 +756,17 @@ both configuring the network and launching the server and the clients. <strong>E
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 1.6  </strong></span>
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 1.5  </strong></span>
 Why can’t you launch the containers with the same settings as
-in Exercise <a href="#exr:client-server-single-network">1.5</a>?</p>
+in Exercise <a href="#exr:client-server-single-network">1.4</a>?</p>
 <p>What do you propose as a solution instead?</p>
-<p><strong>HINT.</strong> You might want to look at <a href="https://centralesupelec.edunao.com/pluginfile.php/219281/mod_resource/content/4/cccs-lecture02-en.pdf" target="_blank">slide 64 of the second lecture</a>.</p>
 </div>
 </div>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 1.7  </strong></span>
+<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 1.6  </strong></span>
 Execute the server and the two clients by making sure that neither client is connected to the
 same network as the server.</p>
 <p>Write the <strong>exact commands</strong> that you typed
@@ -767,8 +775,8 @@ for both configuring the network and launching the server and the clients.
 </div>
 </div>
 <div class="infobox warning">
-<p><strong>Shut down the application!</strong></p>
-<p>Shut down both the clients and the server before you move on.</p>
+<p><strong>Shut the application down!</strong></p>
+<p>Shut both the clients and the server down before you move on.</p>
 <ul>
 <li><p>On the client-side, type <code>#quit</code> at any moment to exit the chat room.</p></li>
 <li><p>Type Ctrl-C to stop the server.</p></li>
@@ -793,7 +801,7 @@ Extracting the archive will create a folder named
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 2.1  </strong></span>
+<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 2.1  </strong></span>
 Explain the structure of the content of the folder <code>tripmeal_sujet</code>.</p>
 </div>
 </div>
@@ -801,7 +809,7 @@ Explain the structure of the content of the folder <code>tripmeal_sujet</code>.<
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 2.2  </strong></span>
+<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 2.2  </strong></span>
 How many services does the application have?
 Which technologies (i.e., programming languages, databases) are used in each service?</p>
 </div>
@@ -821,7 +829,7 @@ you’ll need to add to your Dockerfile an instruction:</p>
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 2.3  </strong></span>
+<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 2.3  </strong></span>
 Write the <code>Dockerfile</code> in the directory <code>web</code>.
 <strong>You need a Python 3.7 environment to run the application.</strong></p>
 <p><strong>Upload the Dockerfile to Edunao</strong>.</p>
@@ -834,7 +842,7 @@ are used in the application.</p>
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-9" class="exercise"><strong>Exercise 2.4  </strong></span>
+<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 2.4  </strong></span>
 Looking at the environment variables defined in file <code>tripmeal.env</code>:</p>
 <ul>
 <li><p>What does SERVER_PORT refer to? A port opened at one of the host network interfaces or
@@ -848,7 +856,7 @@ a port opened at one of the container’s network interfaces?</p></li>
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-10" class="exercise"><strong>Exercise 2.5  </strong></span>
+<p><span id="exr:unnamed-chunk-9" class="exercise"><strong>Exercise 2.5  </strong></span>
 What do you need to define in file <code>docker-compose.yml</code>
 to enable the communication between the different services?</p>
 </div>
@@ -857,7 +865,7 @@ to enable the communication between the different services?</p>
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-11" class="exercise"><strong>Exercise 2.6  </strong></span>
+<p><span id="exr:unnamed-chunk-10" class="exercise"><strong>Exercise 2.6  </strong></span>
 Which base image is used to build a container for the database?
 Where is this base image stored?
 Can you find the documentation of this image in the Internet?
@@ -868,7 +876,7 @@ Write down the link to the documentation page in the answer.</p>
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-12" class="exercise"><strong>Exercise 2.7  </strong></span>
+<p><span id="exr:unnamed-chunk-11" class="exercise"><strong>Exercise 2.7  </strong></span>
 By looking at the documentation of the database image,
 what do you need to define in <code>docker-compose.yml</code>
 to make sure that the data is not deleted once the application is taken down?</p>
@@ -890,18 +898,26 @@ to your application.</p>
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-13" class="exercise"><strong>Exercise 2.8  </strong></span>
+<p><span id="exr:unnamed-chunk-12" class="exercise"><strong>Exercise 2.8  </strong></span>
 Write the file <code>docker-compose.yml</code>.
 Build, deploy and test your application.</p>
 <p><strong>Upload the file <code>docker-compose.yml</code> to Edunao.</strong></p>
+<div class="infobox warning">
+<p><strong>Useful commands</strong></p>
+<ul>
+<li><p>After launching the application, you can type the command <code>docker-compose ps</code>
+to look at the details of each container. The command must be typed from folder <code>tripmeal_sujet</code>.</p></li>
+<li><p>If any error occurs, you can look at the logs by typing the command <code>docker-compose logs</code>.</p></li>
+</ul>
+</div>
 </div>
 </div>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-14" class="exercise"><strong>Exercise 2.9  </strong></span>
-Use Docker Compose to push all the images that you built in this section to
+<p><span id="exr:unnamed-chunk-13" class="exercise"><strong>Exercise 2.9  </strong></span>
+<u>Use Docker Compose</u> to push all the images that you built in this section to
 your DockerHub registry.</p>
 <p><strong>In the answer to this exercise write:</strong></p>
 <ul>
@@ -923,7 +939,7 @@ a <strong>local Kubernetes cluster</strong> (either Docker Desktop or Minikube).
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-15" class="exercise"><strong>Exercise 3.1  </strong></span>
+<p><span id="exr:unnamed-chunk-14" class="exercise"><strong>Exercise 3.1  </strong></span>
 Specify which services are <strong>stateless</strong>
 and which ones are <strong>stateful</strong>. Justify your answer.</p>
 </div>
@@ -932,7 +948,7 @@ and which ones are <strong>stateful</strong>. Justify your answer.</p>
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-16" class="exercise"><strong>Exercise 3.2  </strong></span>
+<p><span id="exr:unnamed-chunk-15" class="exercise"><strong>Exercise 3.2  </strong></span>
 For each service of the application <em>TripMeal</em>, specify
 the Kubernetes objects that you need to create and their types.
 Justify your answers.</p>
@@ -949,13 +965,15 @@ to the <a href="https://kubernetes.io/docs/reference/kubernetes-api/" target="_b
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-17" class="exercise"><strong>Exercise 3.3  </strong></span>
+<p><span id="exr:unnamed-chunk-16" class="exercise"><strong>Exercise 3.3  </strong></span>
 For each Kubernetes object:</p>
 <ol style="list-style-type: decimal">
-<li><p><strong>Configure.</strong> Write a Yaml configuration file. Remember that you need to pass the application the environment variables.</p></li>
+<li><p><strong>Configure.</strong> Write a Yaml configuration file. Remember that you need to pass the environment variables to the application.</p></li>
 <li><p><strong>Create.</strong> Create the object in Kubernetes with <code>kubectl</code>.</p></li>
 <li><p><strong>Analyze.</strong> Execute the command <code>kubectl get all</code> and explain in detail which objects appear in the output as the result of step 2.</p></li>
 </ol>
+<p><strong>In case of problems.</strong></p>
+<p>You can look at the logs of a pod with the following command: <code>kubectl logs NAME-OF-POD --previous</code></p>
 </div>
 </div>
 <div class="infobox activitybox">
@@ -970,7 +988,7 @@ For each Kubernetes object:</p>
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-18" class="exercise"><strong>Exercise 3.4  </strong></span>
+<p><span id="exr:unnamed-chunk-17" class="exercise"><strong>Exercise 3.4  </strong></span>
 Create a new file called <code>tripmeal.yml</code> that contains the
 definition of all the Kubernetes objects of the application, as we have seen
 in the <a href="/courses/cloud-computing/tutorials/tutorial-kube#conclusion" target="_blank">conclusion of the tutorial 2</a>.</p>
@@ -1052,7 +1070,7 @@ as the production servers have often no direct access to the Internet.</p>
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-20" class="exercise"><strong>Exercise 4.1  </strong></span>
+<p><span id="exr:unnamed-chunk-19" class="exercise"><strong>Exercise 4.1  </strong></span>
 In your view, why isn’t it a good idea to have production servers directly
 connected to the Internet?</p>
 </div>
@@ -1068,25 +1086,19 @@ Since we’re going to run the application on Azure, we can use the
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-21" class="exercise"><strong>Exercise 4.2  </strong></span>
+<p><span id="exr:unnamed-chunk-20" class="exercise"><strong>Exercise 4.2  </strong></span>
 What is a <strong>resource group</strong> in Azure and how is it useful?</p>
 </div>
 </div>
 <p>The command to create a new resource group is the following
 (replace RES_GRP_NAME with a name of your choice).</p>
-<pre class="bash"><code>az group create --name  RES_GRP_NAME --location eastus</code></pre>
-<!--
-::: {.infobox .exercisebox data-latex="{exercisebox}"}
-**Exercise**
-
-\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-23"><strong>(\#exr:unnamed-chunk-23) </strong></span>
-In the previous command, what does the ``location`` refer to?
-Briefly describe this notion (presented in [Lecture 1](https://centralesupelec.edunao.com/pluginfile.php/135424/mod_resource/content/5/cm1-slides.pdf){target="_blank"}).
-</div>\EndKnitrBlock{exercise}
-
-:::
-
--->
+<pre class="bash"><code>az group create --name  RES_GRP_NAME --location francecentral</code></pre>
+<div class="infobox warning">
+<p><strong>Warning</strong></p>
+<p>If <code>francecentral</code> does not work for your account, the previous command will normally suggest a possible location.
+Choose one that is near you.</p>
+</div>
+<p>You can verify that the resources are correctly created by looking <a href="https://portal.azure.com/" target="_blank">at the Azure portal</a>.</p>
 <p>Next, we need to create a <strong>container registry</strong> with the following command
 (replace RES_GRP_NAME with the name of your resource group and REG_NAME with a name of your choice for the registry).</p>
 <pre class="bash"><code>az acr create --resource-group RES_GRP_NAME --name REG_NAME --sku Basic</code></pre>
@@ -1094,7 +1106,7 @@ Briefly describe this notion (presented in [Lecture 1](https://centralesupelec.e
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-25" class="exercise"><strong>Exercise 4.3  </strong></span>
+<p><span id="exr:unnamed-chunk-23" class="exercise"><strong>Exercise 4.3  </strong></span>
 In the previous command, what does <code>sku</code> refer to?
 Feel free to look up on the Azure website to find the answer.</p>
 </div>
@@ -1119,7 +1131,7 @@ the following command:</p>
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-28" class="exercise"><strong>Exercise 4.4  </strong></span>
+<p><span id="exr:unnamed-chunk-26" class="exercise"><strong>Exercise 4.4  </strong></span>
 Tag the images that correspond to the services of the application <em>TripMeal</em> so that
 their name is similar to: <code>acrloginserver/nameofimage:latest</code></p>
 <p>Write the <strong>exact Docker command</strong> that you use to tag the images.</p>
@@ -1156,13 +1168,29 @@ and REG_NAME is the name of the container registry).</p>
     --node-count 2 \
     --generate-ssh-keys \
     --attach-acr REG_NAME</code></pre>
+<div class="infobox warning">
+<p><strong>Warning</strong></p>
+<p>If you get an error on your SSH key, then your key is not in the right format.</p>
+<p>Here is how we suggest you to proceed.</p>
+<ol style="list-style-type: decimal">
+<li><p>Open your home directory in Visual Studio.</p></li>
+<li><p>Locate the hidden folder <code>.ssh</code>.</p></li>
+<li><p>You should have a file named <code>id_rsa.pub</code> under folder <code>.ssh</code>. Open it.</p></li>
+<li><p>Copy the whole content of the file.</p></li>
+<li><p>Create a new file under folder <code>.ssh</code>. Give it a name of your choice (for instance, <code>id_kube_rsa.pub</code>).</p></li>
+<li><p>Paste the content into the new file, while making sure that you don’t have any whitespace before
+the first character.</p></li>
+<li><p>Save and close the file.</p></li>
+<li><p>Type the command <code>az aks create</code> and replace the <code>--generate--ssh-keys</code> option with <code>--ssh-key-value ~/.ssh/id_kube_rsa.pub</code>.</p></li>
+</ol>
+</div>
 <p>The cluster will take a while to start. Time for a coffee!
 But before, answer the following question!</p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-32" class="exercise"><strong>Exercise 4.5  </strong></span>
+<p><span id="exr:unnamed-chunk-30" class="exercise"><strong>Exercise 4.5  </strong></span>
 Can you tell the meaning of the options in the previous command?</p>
 </div>
 </div>
@@ -1194,7 +1222,7 @@ of the previous section.</p>
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-36" class="exercise"><strong>Exercise 4.6  </strong></span>
+<p><span id="exr:unnamed-chunk-34" class="exercise"><strong>Exercise 4.6  </strong></span>
 Look at the names of the images of each service in that file. How must these names change?
 Modify the file accordingly (<strong>no need to upload it on Edunao</strong>).</p>
 </div>
@@ -1212,7 +1240,7 @@ the conclusion of this assignment! Bravo!</p>
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-39" class="exercise"><strong>Exercise 4.7  </strong></span>
+<p><span id="exr:unnamed-chunk-37" class="exercise"><strong>Exercise 4.7  </strong></span>
 Submit a <strong>video</strong> like that the one that <a href="https://webtv.centralesupelec.fr/permalink/v1261a00b74dbbzwk2vr/" target="_blank"><strong>you can see here</strong></a>.</p>
 <p>The video must <strong>clearly</strong> show that:</p>
 <ul>
@@ -1229,7 +1257,7 @@ Before you leave, <strong>make sure to read the conclusion of this document!!</s
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-40" class="exercise"><strong>Exercise 4.8  </strong></span>
+<p><span id="exr:unnamed-chunk-38" class="exercise"><strong>Exercise 4.8  </strong></span>
 The title of this exercise is <em>Cerise sur le gâteau</em> (aka, this is <strong>optional</strong>!).</p>
 <p>At this point, you can connect to <em>TripMeal</em> by using an IP address.
 It would be nice if you could use a URL, like in the real websites.
