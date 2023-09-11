@@ -697,21 +697,6 @@ the <a href="https://bsonspec.org/spec.html" target="_blank">specification of BS
 an integer, a date, a string and a boolean?</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>From the specification we learn that each type is identified by a 1-byte value, for instance \x01 (that represents the binary string 0000 0001) indicates the type <code>double</code>.</p>
-<ul>
-<li><p>The <code>integer</code> type is identified by the value \x10 and the documentation specifies that we need 32 bits, that is <strong>4 bytes</strong>.</p></li>
-<li><p>The <code>date</code> type is identified by the value \x09 and the documentation specifies that we need an <code>int64</code>, which means an integer coded
-over 64 bits, that is <strong>8 bytes</strong>.</p></li>
-<li><p>The <code>string</code> type is identified by the value \x02 and the documentation specifies that the string is encoded in UTF-8. A UTF-8 character may need <strong>between 1 and 4 bytes</strong>.
-Therefore, the number of bytes depends on the length of the string and on the characters used.</p></li>
-<li><p>The <code>boolean</code> type is identified by the value \x08. We learn from the specification that the value <code>false</code> is encoded with \x00 and
-the value <code>true</code> is encoded with \x01. In both cases, we only need <strong>1 byte</strong>.</p></li>
-</ul>
-</div>
-</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -721,17 +706,6 @@ The size of a document in MongoDB is limited to 16 MiB.
 Can you tell why there is such a limit?</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>This choice is driven by two reasons:</p>
-<ol style="list-style-type: decimal">
-<li><p>Ensure that a single document does not use too much memory.</p></li>
-<li><p>Ensure that a document does not use too much bandwidth when it is transmitted over the network.</p></li>
-</ol>
-<p>The reasons are specified in the <a href="https://www.mongodb.com/docs/manual/core/document/" target="_blank">MongoDB manual</a>.</p>
-</div>
-</details>
 <p>The table <TT>rental</TT> has four integer columns (<em>rental_id</em>, <em>inventory_id</em>, <em>customer_id</em>, <em>staff_id</em>) and
 2 dates (<em>rental_date</em>, <em>return_date</em>).</p>
 <p>The table <TT>customer</TT> has three integer columns (<em>customer_id</em>, <em>store_id</em>, <em>address_id</em>), three strings (<em>first_name</em>, <em>last_name</em> and <em>email</em>),
@@ -752,27 +726,6 @@ Suppose that we want to create a MongoDB collection to list all rentals, and a s
 </ul>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>A document in the collection <TT>rental</TT> would need:</p>
-<ul>
-<li><p>16 bytes for the integer values (each integer needs 4 bytes, a rental has 4 integer values).</p></li>
-<li><p>16 bytes for the dates (each date needs 8 bytes, a rental has 2 dates).</p></li>
-</ul>
-<p><strong>In total, a document in collection <TT>rental</TT> needs 32 bytes</strong>.</p>
-<p>A document in collection <TT>customer</TT> would need:</p>
-<ul>
-<li><p>12 bytes for the integer values (each integer needs 4 bytes, a customer has 3 integer values).</p></li>
-<li><p><span class="math inline">\(20 \times 1.5\)</span> = 30 bytes for the email address.</p></li>
-<li><p><span class="math inline">\(8 \times 1.5\)</span> = 12 bytes for the last name.</p></li>
-<li><p><span class="math inline">\(6 \times 1.5\)</span> = 9 bytes for the first name.</p></li>
-<li><p>1 byte for the property <em>active</em>.</p></li>
-<li><p>8 bytes for the property <em>create_date</em>.</p></li>
-</ul>
-<p><strong>In total, a document in collection <TT>customer</TT> needs 72 bytes</strong>.</p>
-</div>
-</details>
 </div>
 <div id="considerations-for-the-new-model" class="section level1">
 <h1><span class="header-section-number">3</span> Considerations for the new model</h1>
@@ -792,18 +745,6 @@ for a customer.</p>
 that the size of a document in MongoDB cannot exceed 16 MiB?</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>We’ve seen before that each rental needs 32 (<span class="math inline">\(2^5\)</span>) bytes.</p>
-<p>Considering that 16 MiB = <span class="math inline">\(2^4 \times 2^{20}\)</span> bytes, the maximum number of
-rentals that we can store for a given customer is given by:</p>
-<p><span class="math display">\[
-\frac{2^4 \times 2^{20}}{2^5} = 2^{-1} \times 2^{20} = 2^{19}
-\]</span></p>
-<p>This gives around 534,000 rentals.</p>
-</div>
-</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -821,22 +762,6 @@ that made the rental.</p></li>
 <p><strong>Compute the size in byte</strong> of a document in the two collections.</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<ol style="list-style-type: decimal">
-<li><p>A document describing a customer needs <strong>72 bytes</strong>.
-A rental document needs 32 bytes, which includes <em>customer_id</em> (an integer, 4 bytes). We might want to drop
-this property, since we’re embedding a rental document into a customer document.
-Therefore, for each rental we need <strong>28 bytes</strong>.
-A document in the collection <TT>customer</TT> needs: <span class="math inline">\(72 + 28 \times 32\)</span> = <strong>968 bytes</strong>.</p></li>
-<li><p>For a rental, we need 32 bytes, which includes <em>customer_id</em> (an integer, 4 bytes). We drop this property, since
-we’re replacing it with a property <em>customer</em>, whose value is a document with all the information
-about a customer. Hence, we need 28 bytes to store the information on a rental and 72 bytes to store the information about
-a customer. In total: <strong>100 bytes</strong>.</p></li>
-</ol>
-</div>
-</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -852,17 +777,6 @@ Suppose that we have in our database</p>
 <TT>rental</TT> described in the previous question.</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<ol style="list-style-type: decimal">
-<li><p>The size the collection <TT>customer</TT> is <span class="math inline">\(512 \times 968\)</span> = 495,616 bytes.
-This corresponds to 484 KiB.</p></li>
-<li><p>The size of the collection <TT>rental</TT> is <span class="math inline">\(16384 \times 100\)</span> = 1,638,400 bytes.
-This corresponds to 1,56 MiB.</p></li>
-</ol>
-</div>
-</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -872,40 +786,6 @@ Based on the answers in the previous questions, discuss advantages and disadvant
 having a collection <TT>customer</TT> (solution 1) or a collection <TT>rental</TT> (solution 2).</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p><strong>Advantages of solution 1:</strong></p>
-<ul>
-<li><p>No redundancy. In fact, a rental is relative to only one customer, therefore
-the data on a rental is not duplicated across different documents.</p></li>
-<li><p>This also explains why the collection <TT>customer</TT> is smaller than the
-the collection <TT>rental</TT> (although this is also due to the fact that we’ll always have more rentals than customers).</p></li>
-<li><p>For each customer, we retrieve the information on all his/her rentals with only one read operation.</p></li>
-</ul>
-<p><strong>Disadvantages of solution 1:</strong></p>
-<ul>
-<li><p>There is a limit (albeit an acceptable one) on the number of rentals that we can store
-for each customer.</p></li>
-<li><p>The size of a document is not constant and it depends on the number of rentals of a customer.
-In the previous questions, we see that for a modest number of rentals a document
-in collection <TT>customer</TT> is ten times larger than a document in
-collection <TT>rental</TT>.</p></li>
-</ul>
-<p><strong>Advantages of solution 2:</strong></p>
-<ul>
-<li><p>The size of each document is constant and small and will never exceed the 16 MiB limit.</p></li>
-<li><p>As a result, reading a document from the collection takes less time and memory than
-reading a document from the collection in solution 1.</p></li>
-</ul>
-<p><strong>Disadvantages of solution 2:</strong></p>
-<ul>
-<li><p>There is redundancy. The information about a customer is replicated
-each time the customer makes a rental.</p></li>
-<li><p>As a result, the size of the collection is much higher than in solution 1.</p></li>
-</ul>
-</div>
-</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -928,30 +808,6 @@ A collection <TT>customer</TT> or a collection <TT>rental</TT>?</p></li>
 </ol>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>In collection <TT>customer</TT>:</p>
-<ul>
-<li><p>We follow a denormalized schema, and we associate all this information into the
-document that describes a rental. The size of a document in this collection grows further.
-Besides, since a staff member or an inventory item may be involved in more than one rental, we lose
-one of the advantages of this solution, which was the lack of redundancy.
-Consider also that an inventory item is associated with other information (such as, the film the item is a copy of).
-In this collection, we have different layers of nested documents.</p></li>
-<li><p>We follow a normalized schema, we create collections <TT>staff</TT>, <TT>inventory</TT> and
-<TT>payment</TT> and we add references to these collections in the customer documents.
-However, a normalized schema might not be efficient in a distributed context.</p></li>
-</ul>
-<p>In collection <TT>rental</TT>:</p>
-<ul>
-<li>We follow a denormalized schema and we associate this information into the document that
-describes a rental. The size of the document grows, but it is always constant and small.
-In fact, we don’t embed any unbounded list of values.</li>
-</ul>
-<p>Given these considerations, we go for solution 2.</p>
-</div>
-</details>
 </div>
 <div id="the-data-model-in-mongodb" class="section level1">
 <h1><span class="header-section-number">4</span> The data model in MongoDB</h1>
@@ -971,59 +827,6 @@ use that identifier (don’t try, for now, to further denormalize the schema).</
 </ul>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>A document in the collection <TT>rental</TT> has the following properties:</p>
-<ul>
-<li><em>rental_id</em>, an integer.</li>
-<li><em>rental_date</em>, a date.</li>
-<li><em>return_date</em>, a date.</li>
-<li><em>inventory</em>, a document with information about the inventory item being rented.
-This document has the following schema:
-<ul>
-<li><em>inventory_id</em>, an integer.</li>
-<li><em>film_id</em>, an integer.</li>
-<li><em>store_id</em>, an integer.</li>
-</ul></li>
-<li><em>customer</em>, a document with information about the customer making the rental.
-This document has the following schema:
-<ul>
-<li><em>customer_id</em>, an integer.</li>
-<li><em>store_id</em>, an integer.</li>
-<li><em>first_name</em>, a string.</li>
-<li><em>last_name</em>, a string.</li>
-<li><em>email</em>, a string.</li>
-<li><em>address_id</em>, an integer.</li>
-<li><em>active</em>, a boolean.</li>
-<li><em>create_date</em>, a date.</li>
-</ul></li>
-<li><em>staff</em>, a document with information about the staff member who handled the rental.
-This document has the following schema:
-<ul>
-<li><em>staff_id</em>, an integer.</li>
-<li><em>first_name</em>, a string.</li>
-<li><em>last_name</em>, a string.</li>
-<li><em>address_id</em>, an integer.</li>
-<li><em>picture</em>, binary data.</li>
-<li><em>email</em>, a string.</li>
-<li><em>store_id</em>, an integer</li>
-<li><em>active</em>, a boolean</li>
-<li><em>username</em>, a string.</li>
-<li><em>password</em>, a string.</li>
-</ul></li>
-<li><em>payment</em>, document with information about the payment of the rental:
-<ul>
-<li>payment_id, an integer.</li>
-<li>amount, a real number.</li>
-<li>payment_date, a date</li>
-</ul></li>
-</ul>
-<p>Note that the <TT>payment</TT> table in the relational model include columns
-<em>customer_id</em>, <em>staff_id</em> and <em>rental_id</em>; these are not necessary in the embedded
-document <em>payment</em>, because we already have this information.</p>
-</div>
-</details>
 <p>Let’s take a closer look at the storage requirements of the adopted solution.
 Consider that:</p>
 <ul>
@@ -1041,21 +844,6 @@ database for the adopted solution?
 What do you get if we set <span class="math inline">\(N_{rental}\)</span> to <span class="math inline">\(10^4\)</span>, <span class="math inline">\(10^5\)</span> or <span class="math inline">\(10^6\)</span> ?</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>In a previous question, we saw that a document in the collection <TT>rental</TT>, including the information about a customer,
-needs 100 bytes. We need to add the size of the documents <em>inventory</em>, <em>staff</em> and <em>payment</em>.
-Therefore, we obtain: 100 + 12 + 20 + 65,536. The size of the document <em>staff</em> is far superior than the size of the other
-documents. We can approximate the size to 64 KiB.</p>
-<p>The size of the only collection <TT>rental</TT> (hence, of the whole database) is: <span class="math inline">\(N_{rentals} \times 64 KiB\)</span></p>
-<ul>
-<li>If <span class="math inline">\(N_{rentals}\)</span>=10,000, the size of the database is 640 MiB (if we consider 1 MiB = 1000 KiB).</li>
-<li>If <span class="math inline">\(N_{rentals}\)</span>=100,000, the size of the database is 6,4 GiB (if we consider 1 GiB = 1000,000 KiB)</li>
-<li>If <span class="math inline">\(N_{rentals}\)</span>=1,000,000 the size of the database is 64 GiB.</li>
-</ul>
-</div>
-</details>
 <p>Although the size that we determined in the previous exercise, may not sound
 impressive, we still have to store other information
 (films, actors….).
@@ -1069,23 +857,6 @@ Discuss how you could save some space in the adopted solution.</p>
 <p><strong>HINT.</strong> Do you really need to denormalize all data?</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>While modeling data for a MongoDB database, the choice
-between a normalized and a denormalized schema
-does not need to be a black and white one.</p>
-<p>We can have a denormalized schema, where we embed in the same documents
-information that are queried together, while storing in a separate collection
-the information that are rarely queried.</p>
-<p>For instance, the profile picture of a staff member might not be
-an important piece of information while we’re trying to analyze
-which staff members are the more productive ones.</p>
-<p>So, we might add another collection <TT>Staff</TT> where each
-document only contains attributes that are not in embedded documents in the collection
-<TT>Rental</TT>.</p>
-</div>
-</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -1095,60 +866,6 @@ Propose a solution for all the entities involved and
 estimate the savings in terms of storage requirements.</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>Here is a solution with three different collections.
-The information on inventory are completely denormalized into the
-collection <TT>Rental</TT>. For customers and staff members we only keep
-the necessary information and we normalize the information that are less
-likely to be queried while analyzing the rentals.</p>
-<p><img src="/courses/databases/tutorial-5/mongodb-sakila-first-solution.png" alt="First schema MongoDB"></p>
-<p>Let’s try to estimate the savings in terms of storage.
-In a document of the collection <TT>Rental</TT>, we have the following attributes:</p>
-<ul>
-<li><p><em>rental_id</em>: 4 bytes.</p></li>
-<li><p><em>rental_date</em> and <em>return_date</em>: 16 bytes.</p></li>
-<li><p><em>inventory_id</em>, <em>film_id</em> and <em>store_id</em>: 12 bytes</p></li>
-<li><p><em>customer_id</em>: 4 bytes</p></li>
-<li><p>customer <em>first_name</em>: 9 bytes.</p></li>
-<li><p>customer <em>last_name</em>: 12 bytes.</p></li>
-<li><p><em>country</em>: 15 bytes (on average a country name has 10 characters).</p></li>
-<li><p><em>staff_id</em>: 4 bytes</p></li>
-<li><p>staff <em>first_name</em>: 9 bytes.</p></li>
-<li><p>staff <em>last_name</em>: 12 bytes.</p></li>
-</ul>
-<p>In total a document in our collection <TT>rental</TT> will have <strong>97 bytes</strong>
-(a huge improvement wrt the 64KiB bytes of our first solution).</p>
-<p>Of course, the size of a document in the <TT>staff</TT> collection will be
-around 64 KiB (we still store the profile picture).
-However, the number of staff members <span class="math inline">\(N_{staff}\)</span> is much lower
-than the number of rentals <span class="math inline">\(N_{rentals}\)</span>.</p>
-<p>It is easy to verify that the size of a document of the collection <TT>customer</TT>
-is <strong>51 bytes</strong>.
-Again, the number of customers <span class="math inline">\(N_{customers}\)</span> is much lower than
-<span class="math inline">\(N_{rentals}\)</span>.</p>
-<p>We assume that each customer has on average 30 rentals and for 100 customers we
-have 1 staff member.
-We have that:</p>
-<ul>
-<li><p>$N_{customer} = N_{rental}/30 $</p></li>
-<li><p>$N_{staff} = N_{customer}/100 = N_{rental}/3000 $</p></li>
-</ul>
-<p>So, the size of the database will be given by:</p>
-<p><span class="math display">\[
-97\times N_{rentals} + 65536 \times N_{rentals}/3000 + 51 \times N_{rentals}/30 \approx 120 \times N_{rental}
-\]</span></p>
-<p>Let’s compare against the first solution:</p>
-<ul>
-<li><p>If <span class="math inline">\(N_{rentals}\)</span> = 10,000 the size of the database is 1,2 MiB (instead of 640 MiB).</p></li>
-<li><p>If <span class="math inline">\(N_{rentals}\)</span> = 100,000 the size of the database is 12 MiB (instead of 6,4 GiB).</p></li>
-<li><p>If <span class="math inline">\(N_{rentals}\)</span> = 1,000,000 the size of the database is 120 MiB (instead of 64 GiB).</p></li>
-</ul>
-<p>As you can see, a big improvement! And we have a (partially) denormalized schema that
-lets us take advantage of the horizontal scalability of MongoDB.</p>
-</div>
-</details>
 </div>
 <div id="the-new-model" class="section level1">
 <h1><span class="header-section-number">5</span> The new model</h1>
@@ -1162,38 +879,6 @@ Consider the model that we obtained at the end of the previous section.
 Which data can you further denormalize?</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p><strong>Collection <TT>Staff</TT></strong></p>
-<ul>
-<li><p>The attribute <TT>address_id</TT> refers to a full address. We can fully
-denormalize this information into the documents of the collection.
-Although an address might be the same for two people, the level of redundancy will be very low.</p></li>
-<li><p>The attribute <TT>store_id</TT> refers to the store where the staff member works.
-The <TT>store</TT> table in the original PostgreSQL database does not have
-too many columns. Therefore, it might be reasonable to fully denormalize these data.
-However, information on the stores are also linked to customers and to inventory items.
-If we need to update, say, the manager of a store, we would need to update
-three different documents.
-Hence, we prefer to create a collection <TT>store</TT> and keep in the documents of the
-collection <TT>staff</TT> only the city and country of a store (and its identifier of course).</p></li>
-</ul>
-<p><strong>Attribute <TT>inventory</TT></strong> in collection <TT>customer</TT></p>
-<ul>
-<li><p>Same considerations for the attribute <TT>store_id</TT>.</p></li>
-<li><p>The attribute <TT>film_id</TT> is the reference to the film the inventory item is a copy of.
-The table <TT>film</TT> in the original PostgreSQL database contains 14 columns.
-This high number of attributes advises us against a full denormalization, considering that
-might have several inventory items for a film.
-We might only keep the film title and the film categories. The rest of the attributes are kept in documents
-of a separate collection <TT>film</TT>.</p></li>
-</ul>
-<p><strong>Collection <TT>customer</TT></strong></p>
-<p>Same considerations for the attributes <TT>store_id</TT> and <TT>address_id</TT>.</p>
-<p><img src="/courses/databases/tutorial-5/mongodb-sakila-first-model-further-denormalized.png" alt="Sakila MongoDB data model further normalized"></p>
-</div>
-</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -1203,12 +888,6 @@ Complete the diagram obtained in the previous exercise so as to obtain
 a full data model for the Sakila database.</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p><img src="/courses/databases/tutorial-5/mongodb-sakila-complete.png" alt="Sakila MongoDB full data model"></p>
-</div>
-</details>
 </div>
 
           </div>

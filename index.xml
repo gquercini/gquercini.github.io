@@ -5526,6 +5526,17 @@ The application doesn’t need any third-party library, the packages included in
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
+&lt;li&gt;One image is not enough, because the client and the server are two separate processes.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;We need to create two images, one for the client and one for the server.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;We now build the images for the application.&lt;/p&gt;
 &lt;div class=&#34;infobox curiosity&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Good to know&lt;/strong&gt;&lt;/p&gt;
@@ -5556,6 +5567,43 @@ Remember to include in the images only what you need to build and run the applic
 &lt;li&gt;&lt;p&gt;If so, is it something that has an impact on the build time and how?&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;For both the client and the server we need a Python environment.
+We use the Python environment &lt;em&gt;slim&lt;/em&gt; as a base image to minimize the size of the image.
+Students who choose this base image are rewarded.
+If they choose another (bigger) Python environment, that is fine, but they don’t get
+the totality of the points.
+If they use an OS as a base image (e.g., ubuntu), they get penalized.&lt;/p&gt;
+&lt;p&gt;The Dockerfile for the client (let’s call it &lt;em&gt;Dockerfile-client&lt;/em&gt;)
+is as follows.&lt;/p&gt;
+&lt;pre class=&#34;dockerfile&#34;&gt;&lt;code&gt;FROM python:3.7-slim
+RUN mkdir -p /app
+WORKDIR /app
+COPY ./client.py ./utils.py /app/
+ENTRYPOINT [&amp;quot;python&amp;quot;, &amp;quot;client.py&amp;quot;]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We build the image with the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker build -t chat-client -f Dockerfile-client .&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The Dockerfile for the server (let’s call it &lt;em&gt;Dockerfile-server&lt;/em&gt;)
+is as follows.&lt;/p&gt;
+&lt;pre class=&#34;dockerfile&#34;&gt;&lt;code&gt;FROM python:3.7-slim
+RUN mkdir -p /app
+WORKDIR /app
+COPY ./server.py ./utils.py /app/
+ENTRYPOINT [&amp;quot;python&amp;quot;, &amp;quot;server.py&amp;quot;]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We build the image with the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker build -t chat-server -f Dockerfile-server .&lt;/code&gt;&lt;/p&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: lower-alpha&#34;&gt;
+&lt;li&gt;&lt;p&gt;The base image is the same for both images. The layers 2 and 3 are identical&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Assuming that we build the client first, this build will take longer if
+the python-slim image has not been downloaded yet from the registry.
+Layers 2 and 3 already exist when the server is built.
+This is indicated by the phrase “Using cache” when we build the server.
+It is important that here the students talk about the build cache mechanism.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div id=&#34;client-and-server-on-the-same-network&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.1&lt;/span&gt; Client and server on the same network&lt;/h2&gt;
 &lt;p&gt;We want to execute:&lt;/p&gt;
@@ -5579,6 +5627,17 @@ We want to make sure that:&lt;/p&gt;
 and justify it.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;If we create the three containers without specifying any network configuration, then
+the three containers will be attached to the default &lt;code&gt;bridge&lt;/code&gt; network.
+This way, we can satisfy the first requirement, but not the second (other containers attached
+to &lt;code&gt;bridge&lt;/code&gt; will be able to communicate with the clients and the server).&lt;/p&gt;
+&lt;p&gt;We need to create a new network in Docker, let’s call it &lt;code&gt;chat-room&lt;/code&gt; that
+will be used exclusively for the server and the two clients.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Only one instance of the server is running.
@@ -5606,6 +5665,30 @@ Remember to launch the container with the appropriate options in order to actual
 both configuring the network and launching the server and the clients. &lt;strong&gt;Explain these commands.&lt;/strong&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;First, we create the new network &lt;code&gt;chat-room&lt;/code&gt; by typing the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker network create chat-room&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Next, we launch the server with the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker container run --rm -t --name chat-server --network chat-room chat-server 60876&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The server takes in a port number as a parameter.
+If the students launch the server without specifying it, they’ll get an error message
+that should lead them to understand what’s missing.&lt;/p&gt;
+&lt;p&gt;In another terminal, we type the following command to run the first client:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker container run --rm -it --name chat-client1 --network chat-room  chat-client chat-server 60876&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Note that we attach the client to the same network as the server.
+When we launch the client, we need to pass as parameters the server host (here we can use the
+container’s name &lt;code&gt;chat-server&lt;/code&gt; of the server or its IP address) and the port number
+(same as we specified when we launched the server).
+When we launch the client, we’ll need to specify a username and then we can start typing messages in the chat room.&lt;/p&gt;
+&lt;p&gt;Finally, we open another terminal to launch the second client with the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker container run --rm -it --name chat-client2 --network chat-room  chat-client chat-server 60876&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The only thing that changes wrt the previous command is the name that we give the new container
+(&lt;code&gt;chat-client2&lt;/code&gt;).&lt;/p&gt;
+&lt;p&gt;We can play with the chat to verify that the clients can exchange messages.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Shut the application down!&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Shut both the clients and the server down before you move on.&lt;/p&gt;
@@ -5633,6 +5716,19 @@ in Exercise &lt;a href=&#34;#exr:client-server-single-network&#34;&gt;1.4&lt;/a&
 &lt;p&gt;What do you propose as a solution instead?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The hostname &lt;code&gt;chat-server&lt;/code&gt; is not reachable from the clients, because they’re not in the
+same network as the server.
+So, the only way out is to use the mechanism of port mapping.
+That is: we launch the server on the container port 60876
+but we also use the option &lt;code&gt;-p&lt;/code&gt; to map that port to any available port
+(say, 7070) on the &lt;strong&gt;host computer&lt;/strong&gt;.
+This way, the clients can connect to the server by specifying the IP address
+of the host machine and 7070 as the port number.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -5645,6 +5741,27 @@ for both configuring the network and launching the server and the clients.
 &lt;strong&gt;Explain these commands.&lt;/strong&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;As before, we can still connect the server to the network
+&lt;code&gt;chat-room&lt;/code&gt;.
+However, since we want our server to be reachable from outside that network,
+we need to publish a port on the host.
+The option &lt;code&gt;-p&lt;/code&gt; in the following command maps the container
+internal port 60876 to the port 7070 on the host computer.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker container run --rm -it --name chat-server --network chat-room -p 7070:60876 chat-server 60876&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Now, let’s create a new network that we call &lt;code&gt;net-clients&lt;/code&gt;
+to which we’ll be attaching the two clients:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker network create net-clients&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;And we finally launch the two clients. As host of the server,
+we need to type the IP address assigned to the host.
+In my case, the IP address assigned to my host is 192.168.1.8&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker container run --rm -it --name chat-client1 --network net-clients chat-client  192.168.1.8 7070&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The second client is launched as follows:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker container run --rm -it --name chat-client2 --network net-clients chat-client  192.168.1.8 7070&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Shut the application down!&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Shut both the clients and the server down before you move on.&lt;/p&gt;
@@ -5676,6 +5793,19 @@ Extracting the archive will create a folder named
 Explain the structure of the content of the folder &lt;code&gt;tripmeal_sujet&lt;/code&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The folder contains:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;A file &lt;code&gt;docker-compose.yml&lt;/code&gt; that will contain the instructions
+to build and deploy the application.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;A subdirectory for each service composing the application. Each subdirectory
+contains the source code of the corresponding service, as well as a Dockerfile
+with the instructions to build an image for the service.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -5685,6 +5815,18 @@ How many services does the application have?
 Which technologies (i.e., programming languages, databases) are used in each service?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The application consists of two services:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;web: It is a web application, developed with a combination of HTML,
+Python and Flask&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;db: It is a relational database. From the Dockerfile, which is already given,
+we understand that the DBMS used is MySQL.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;The &lt;code&gt;Dockerfile&lt;/code&gt; in the directory &lt;code&gt;db&lt;/code&gt; is already implemented.&lt;/p&gt;
 &lt;p&gt;Your goal here is to write a &lt;code&gt;Dockerfile&lt;/code&gt; in the directory &lt;code&gt;web&lt;/code&gt;.&lt;/p&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
@@ -5706,6 +5848,26 @@ Write the &lt;code&gt;Dockerfile&lt;/code&gt; in the directory &lt;code&gt;web&l
 &lt;p&gt;&lt;strong&gt;Upload the Dockerfile to Edunao&lt;/strong&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Different solutions exist, here is a proposition.
+It is important that we build a minimal image, so
+we choose the environment python:3-7-slim.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;FROM python:3.7-slim
+RUN mkdir -p /app &amp;amp; \
+    mkdir -p /app/templates &amp;amp; \
+    mkdir -p /app/static
+RUN /usr/local/bin/python -m pip install --upgrade pip
+COPY ./static /app/static/
+COPY ./templates /app/templates/
+COPY requirements.txt /app/
+WORKDIR /app
+RUN pip install -r requirements.txt
+COPY app.py dbconnect.py /app/
+ENTRYPOINT [&amp;quot;python&amp;quot;,&amp;quot;app.py&amp;quot;]&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;In the folder &lt;code&gt;tripmeal_sujet&lt;/code&gt;, you’ll find a file named &lt;code&gt;tripmeal.env&lt;/code&gt;.
 It contains the definition of &lt;strong&gt;environment variables&lt;/strong&gt; that
 are used in the application.&lt;/p&gt;
@@ -5723,6 +5885,19 @@ a port opened at one of the container’s network interfaces?&lt;/p&gt;&lt;/li&g
 &lt;p&gt;Feel free to answer this question after deploying the application.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Variable SERVER_PORT: this is the port which the server listens to.
+This refers to a port opened at one of the container’s network interfaces!&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The variable that tells us the name of the database service is DATABASE_HOST.
+The web service connects to the database that is found at DATABASE_HOST.
+In our case, the host is a container. Evidently, Docker Compose uses the
+name of the service as the host name for the container.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -5732,6 +5907,12 @@ What do you need to define in file &lt;code&gt;docker-compose.yml&lt;/code&gt;
 to enable the communication between the different services?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;We need to define a network and attach both services to that network.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -5743,6 +5924,18 @@ Can you find the documentation of this image in the Internet?
 Write down the link to the documentation page in the answer.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The base image is &lt;code&gt;mysql&lt;/code&gt;.
+The tag of the image is &lt;code&gt;latest&lt;/code&gt; since it is not specified.
+The image is stored in the DockerHub registry.
+In order to find it, we can simply look for an image called &lt;code&gt;mysql&lt;/code&gt;
+on the DockerHub website.
+It turns out that the documentation is available
+&lt;a href=&#34;https://hub.docker.com/_/mysql&#34; target=&#34;blank&#34;&gt;at this page&lt;/a&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -5753,6 +5946,13 @@ what do you need to define in &lt;code&gt;docker-compose.yml&lt;/code&gt;
 to make sure that the data is not deleted once the application is taken down?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;We need to create a volume. Moreover, we need to mount this volume to
+the directory &lt;code&gt;/var/lib/mysql&lt;/code&gt; of the container where the database will run.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;You’re finally ready to complete the file &lt;code&gt;docker-compose.yml&lt;/code&gt;.&lt;/p&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
@@ -5783,6 +5983,36 @@ to look at the details of each container. The command must be typed from folder 
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;pre&gt;&lt;code&gt;version: &amp;quot;3&amp;quot;
+
+services:
+    web:
+        build: web
+        image: quercinigia/trip-meal-web
+        env_file: tripmeal.env
+        networks:
+            - tripmeal-network
+        ports:
+            - &amp;quot;5000:5000&amp;quot;
+    db: 
+        build: database  
+        image: quercinigia/trip-meal-db
+        env_file: tripmeal.env
+        networks:
+            - tripmeal-network
+        volumes:
+            - db-data:/var/lib/mysql
+
+volumes:
+    db-data:
+
+networks:
+    tripmeal-network:&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -5797,6 +6027,14 @@ your DockerHub registry.&lt;/p&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;We can use DockerCompose to push the images.
+The command is:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;docker-compose push&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Shut down the application!&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Shut down both the application before you move on.&lt;/p&gt;
@@ -5815,6 +6053,16 @@ Specify which services are &lt;strong&gt;stateless&lt;/strong&gt;
 and which ones are &lt;strong&gt;stateful&lt;/strong&gt;. Justify your answer.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The service &lt;code&gt;web&lt;/code&gt; is &lt;strong&gt;stateless&lt;/strong&gt;,
+because it does not directly manipulate permanent data.
+The data in fact reside in a database managed by another service.&lt;/p&gt;
+&lt;p&gt;The service &lt;code&gt;db&lt;/code&gt; is &lt;strong&gt;stateful&lt;/strong&gt; because it directly manipulates
+permanent data.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -5825,6 +6073,25 @@ the Kubernetes objects that you need to create and their types.
 Justify your answers.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;For the service &lt;code&gt;web&lt;/code&gt; we need two objects:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;A &lt;strong&gt;deployment&lt;/strong&gt;, which is collection of identical pods, each pod being an instance
+of the service. Deployments are often used for stateless services, which is the case of the
+&lt;code&gt;web&lt;/code&gt; service.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;A &lt;strong&gt;LoadBalancer service&lt;/strong&gt;. We need it in order to expose the service so that a client can connect to it.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;For the service &lt;code&gt;db&lt;/code&gt; we need two objects:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;A &lt;strong&gt;StatefulSet&lt;/strong&gt;, which is a sort of Deployment used for stateful services.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;A &lt;strong&gt;ClusterIP service&lt;/strong&gt;, used to expose the service internally in the Kubernetes cluster.
+The database is only used the by service &lt;code&gt;web&lt;/code&gt;,
+it doesn’t need to be accessed from external clients.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Help&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;In order to write the specification of each object, you can refer to the
@@ -5847,6 +6114,145 @@ For each Kubernetes object:&lt;/p&gt;
 &lt;p&gt;You can look at the logs of a pod with the following command: &lt;code&gt;kubectl logs NAME-OF-POD --previous&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The configuration of the Deployment associated to the &lt;code&gt;web&lt;/code&gt; service is
+as follows:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tripmeal
+      service: web
+  template:
+    metadata:
+      labels:
+        app: tripmeal
+        service: web
+    spec:
+      containers:
+      - image: quercinigia/trip-meal-web:latest
+        name: web
+        ports:
+        - containerPort: 5000
+          protocol: TCP
+        env:
+        - name: DATABASE_NAME
+          value: &amp;quot;tripmealdb&amp;quot;
+        - name: DATABASE_USER
+          value: &amp;quot;root&amp;quot;
+        - name: MYSQL_ROOT_PASSWORD
+          value: &amp;quot;my-secret-pw&amp;quot;
+        - name: DATABASE_HOST
+          value: &amp;quot;db&amp;quot;
+        - name: DATABASE_PORT
+          value: &amp;quot;3306&amp;quot;
+        - name: TRIPMEAL_KEY
+          value: &amp;quot;my-secret-key&amp;quot;
+        - name: SERVER_PORT
+          value: &amp;quot;5000&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;When we create the deployment with the command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl create -f web-deployment.yml&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;three objects are created in Kubernetes:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;A pod, that represents an instance of the service. Here we specified only one replica, hence we have only one pod.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;A Deployment, the object that we demanded.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;A ReplicaSet, the object that controls the collection of pods that are the instances of the service.
+The ReplicaSet is managed by the Deployment.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The configuration of the LoadBalancer service associated with the &lt;code&gt;web&lt;/code&gt; service is as follows:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;apiVersion: v1
+kind: Service
+metadata:
+  name: web
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 5000
+    targetPort: 5000
+    protocol: TCP
+  selector:
+    app: tripmeal
+    service: web&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;When we create the service with the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl create -f web-service.yml&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;A service object is created.
+The type of this service is LoadBalancer. An external IP address is associated with the service.
+It is through this IP address that we can connect to the service.&lt;/p&gt;
+&lt;p&gt;The configuration of the StatefulSet associated to the service &lt;code&gt;db&lt;/code&gt; is as follows:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db
+spec:
+  selector:
+    matchLabels:
+      app: tripmeal
+      service: db
+  serviceName: db
+  template:
+    metadata:
+      labels:
+        app: tripmeal
+        service: db
+    spec:
+      containers:
+      - image: quercinigia/trip-meal-db:latest
+        name: db
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: tripmeal-data
+        env:
+        - name: DATABASE_NAME
+          value: &amp;quot;tripmealdb&amp;quot;
+        - name: DATABASE_USER
+          value: &amp;quot;root&amp;quot; 
+        - name: MYSQL_ROOT_PASSWORD
+          value: &amp;quot;my-secret-pw&amp;quot;
+  volumeClaimTemplates:
+  - metadata:
+      name: tripmeal-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Mi&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;When we create the object with the command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl create -f db-stateful-set.yml&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;two objects are created:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;A pod, that represents one instance of the service.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;A StatefulSet, that manages the pod.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Finally, the configuration of the ClusterIP service associated with the &lt;code&gt;db&lt;/code&gt; service
+is as follows:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;apiVersion: v1
+kind: Service
+metadata:
+  name: db
+spec:
+  type: ClusterIP
+  ports:
+  - port: 3306
+    protocol: TCP
+  selector:
+    app: tripmeal
+    service: db&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;When we create the object with the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;kubectl create -f db-service.yml&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;A new service appears in the output. The service has no external IP, which is normal
+given that it is only available internally. Its cluster IP address is used
+by the service &lt;code&gt;web&lt;/code&gt; to connect to the database.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox activitybox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Play with the application in order to verify that everything works as expected.&lt;/p&gt;
@@ -5946,6 +6352,12 @@ In your view, why isn’t it a good idea to have production servers directly
 connected to the Internet?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;It is for security reasons. We want to limit the risk of having an attack on these servers.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;We need to place the images in a container registry that is in the same context
 as our production servers.
 Since we’re going to run the application on Azure, we can use the
@@ -5961,6 +6373,17 @@ Since we’re going to run the application on Azure, we can use the
 What is a &lt;strong&gt;resource group&lt;/strong&gt; in Azure and how is it useful?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;It is a logical container of resources that are managed together,
+typically because they belong to the same application.
+Resource groups are useful to manage with a single click
+the whole set of resources (e.g., the permissions).
+For instance, when we want to decommission the application, we can remove
+all the resources with just one command/one click.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;The command to create a new resource group is the following
 (replace RES_GRP_NAME with a name of your choice).&lt;/p&gt;
 &lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;az group create --name  RES_GRP_NAME --location francecentral&lt;/code&gt;&lt;/pre&gt;
@@ -5982,6 +6405,16 @@ In the previous command, what does &lt;code&gt;sku&lt;/code&gt; refer to?
 Feel free to look up on the Azure website to find the answer.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;SKU stands for &lt;em&gt;Stock Keeping Unit&lt;/em&gt;, it represents the different shapes of a product.
+Here we use a container that is &lt;em&gt;Basic&lt;/em&gt;.
+Each sku is associated with a price.
+If you look &lt;a href=&#34;https://azure.microsoft.com/en-us/pricing/details/container-registry/&#34; target=&#34;_blank&#34;&gt;at this webpage&lt;/a&gt;
+we find the price of a basic container registry.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;registry-login&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.2.2&lt;/span&gt; Registry login&lt;/h3&gt;
@@ -6008,6 +6441,16 @@ their name is similar to: &lt;code&gt;acrloginserver/nameofimage:latest&lt;/code
 &lt;p&gt;Write the &lt;strong&gt;exact Docker command&lt;/strong&gt; that you use to tag the images.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;We can use the &lt;code&gt;docker tag&lt;/code&gt; function.
+For instance, in my case I use the following two commands
+to rename my two images:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker tag quercinigia/trip-meal-web:latest tripmealacr.azurecr.io/trip-meal-web:latest&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker tag quercinigia/trip-meal-db:latest tripmealacr.azurecr.io/trip-meal-db:latest&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;pushing-the-images&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.2.4&lt;/span&gt; Pushing the images&lt;/h3&gt;
@@ -6065,6 +6508,21 @@ But before, answer the following question!&lt;/p&gt;
 Can you tell the meaning of the options in the previous command?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;resource-group: the Kubernetes cluster is a resource in Azure. It is added to the resource group that
+we created before.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;name: A name that we give our Kubernetes cluster.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;node-count: The number of nodes in the Kubernetes cluster. Here we specify 2.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;generate-ssh-keys: Generate SSH public and private key files if missing.
+The keys will be stored in the ~/.ssh directory. Used to connect to the cluster without a password.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;attach-acr: We attach the container registry that we created before. This way, we’ll be able to pull the images
+from within the cluster.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;connect-to-the-cluster&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.3.2&lt;/span&gt; Connect to the cluster&lt;/h3&gt;
@@ -6098,6 +6556,13 @@ Look at the names of the images of each service in that file. How must these nam
 Modify the file accordingly (&lt;strong&gt;no need to upload it on Edunao&lt;/strong&gt;).&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The existing names refer to the images on the DockerHub registry.
+We must change them so that they refer to the images on our Azure container registry.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;It is the moment of truth!
 Deploy your application by typing the following command:&lt;/p&gt;
 &lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;kubectl apply -f tripmeal.yml&lt;/code&gt;&lt;/pre&gt;
@@ -6136,6 +6601,34 @@ Can you find a way to assign a URL to your web service? &lt;strong&gt;Describe y
 &lt;p&gt;You need a bit of Googling here….&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;We have to modify the definition of the web service in the file &lt;code&gt;tripmeal.yml&lt;/code&gt;
+More precisely, here is the new definition:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    service.beta.kubernetes.io/azure-dns-label-name: mytripmeal
+  name: web
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 5000
+    targetPort: 5000
+    protocol: TCP
+  selector:
+    app: tripmeal
+    service: web&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We added the field &lt;code&gt;metadata.annotations&lt;/code&gt; and specify a DNS label.
+Then we need to restart the service.
+If everything goes well, the application is reachable at the following address:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;http://mytripmeal.eastus.cloudapp.azure.com:5000/&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The URL is composed by the DNS label that we specified + the region where we deployed the cluster +
+cloudapp.azure.com&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;conclusion&#34; class=&#34;section level1 unnumbered&#34;&gt;
@@ -6410,21 +6903,6 @@ the &lt;a href=&#34;https://bsonspec.org/spec.html&#34; target=&#34;_blank&#34;&
 an integer, a date, a string and a boolean?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;From the specification we learn that each type is identified by a 1-byte value, for instance \x01 (that represents the binary string 0000 0001) indicates the type &lt;code&gt;double&lt;/code&gt;.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;The &lt;code&gt;integer&lt;/code&gt; type is identified by the value \x10 and the documentation specifies that we need 32 bits, that is &lt;strong&gt;4 bytes&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The &lt;code&gt;date&lt;/code&gt; type is identified by the value \x09 and the documentation specifies that we need an &lt;code&gt;int64&lt;/code&gt;, which means an integer coded
-over 64 bits, that is &lt;strong&gt;8 bytes&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The &lt;code&gt;string&lt;/code&gt; type is identified by the value \x02 and the documentation specifies that the string is encoded in UTF-8. A UTF-8 character may need &lt;strong&gt;between 1 and 4 bytes&lt;/strong&gt;.
-Therefore, the number of bytes depends on the length of the string and on the characters used.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The &lt;code&gt;boolean&lt;/code&gt; type is identified by the value \x08. We learn from the specification that the value &lt;code&gt;false&lt;/code&gt; is encoded with \x00 and
-the value &lt;code&gt;true&lt;/code&gt; is encoded with \x01. In both cases, we only need &lt;strong&gt;1 byte&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -6434,17 +6912,6 @@ The size of a document in MongoDB is limited to 16 MiB.
 Can you tell why there is such a limit?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;This choice is driven by two reasons:&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;Ensure that a single document does not use too much memory.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Ensure that a document does not use too much bandwidth when it is transmitted over the network.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;The reasons are specified in the &lt;a href=&#34;https://www.mongodb.com/docs/manual/core/document/&#34; target=&#34;_blank&#34;&gt;MongoDB manual&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;The table &lt;TT&gt;rental&lt;/TT&gt; has four integer columns (&lt;em&gt;rental_id&lt;/em&gt;, &lt;em&gt;inventory_id&lt;/em&gt;, &lt;em&gt;customer_id&lt;/em&gt;, &lt;em&gt;staff_id&lt;/em&gt;) and
 2 dates (&lt;em&gt;rental_date&lt;/em&gt;, &lt;em&gt;return_date&lt;/em&gt;).&lt;/p&gt;
 &lt;p&gt;The table &lt;TT&gt;customer&lt;/TT&gt; has three integer columns (&lt;em&gt;customer_id&lt;/em&gt;, &lt;em&gt;store_id&lt;/em&gt;, &lt;em&gt;address_id&lt;/em&gt;), three strings (&lt;em&gt;first_name&lt;/em&gt;, &lt;em&gt;last_name&lt;/em&gt; and &lt;em&gt;email&lt;/em&gt;),
@@ -6465,27 +6932,6 @@ Suppose that we want to create a MongoDB collection to list all rentals, and a s
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;A document in the collection &lt;TT&gt;rental&lt;/TT&gt; would need:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;16 bytes for the integer values (each integer needs 4 bytes, a rental has 4 integer values).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;16 bytes for the dates (each date needs 8 bytes, a rental has 2 dates).&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;In total, a document in collection &lt;TT&gt;rental&lt;/TT&gt; needs 32 bytes&lt;/strong&gt;.&lt;/p&gt;
-&lt;p&gt;A document in collection &lt;TT&gt;customer&lt;/TT&gt; would need:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;12 bytes for the integer values (each integer needs 4 bytes, a customer has 3 integer values).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(20 \times 1.5\)&lt;/span&gt; = 30 bytes for the email address.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(8 \times 1.5\)&lt;/span&gt; = 12 bytes for the last name.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(6 \times 1.5\)&lt;/span&gt; = 9 bytes for the first name.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;1 byte for the property &lt;em&gt;active&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;8 bytes for the property &lt;em&gt;create_date&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;In total, a document in collection &lt;TT&gt;customer&lt;/TT&gt; needs 72 bytes&lt;/strong&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;considerations-for-the-new-model&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Considerations for the new model&lt;/h1&gt;
@@ -6505,18 +6951,6 @@ for a customer.&lt;/p&gt;
 that the size of a document in MongoDB cannot exceed 16 MiB?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;We’ve seen before that each rental needs 32 (&lt;span class=&#34;math inline&#34;&gt;\(2^5\)&lt;/span&gt;) bytes.&lt;/p&gt;
-&lt;p&gt;Considering that 16 MiB = &lt;span class=&#34;math inline&#34;&gt;\(2^4 \times 2^{20}\)&lt;/span&gt; bytes, the maximum number of
-rentals that we can store for a given customer is given by:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
-\frac{2^4 \times 2^{20}}{2^5} = 2^{-1} \times 2^{20} = 2^{19}
-\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;This gives around 534,000 rentals.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -6534,22 +6968,6 @@ that made the rental.&lt;/p&gt;&lt;/li&gt;
 &lt;p&gt;&lt;strong&gt;Compute the size in byte&lt;/strong&gt; of a document in the two collections.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;A document describing a customer needs &lt;strong&gt;72 bytes&lt;/strong&gt;.
-A rental document needs 32 bytes, which includes &lt;em&gt;customer_id&lt;/em&gt; (an integer, 4 bytes). We might want to drop
-this property, since we’re embedding a rental document into a customer document.
-Therefore, for each rental we need &lt;strong&gt;28 bytes&lt;/strong&gt;.
-A document in the collection &lt;TT&gt;customer&lt;/TT&gt; needs: &lt;span class=&#34;math inline&#34;&gt;\(72 + 28 \times 32\)&lt;/span&gt; = &lt;strong&gt;968 bytes&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;For a rental, we need 32 bytes, which includes &lt;em&gt;customer_id&lt;/em&gt; (an integer, 4 bytes). We drop this property, since
-we’re replacing it with a property &lt;em&gt;customer&lt;/em&gt;, whose value is a document with all the information
-about a customer. Hence, we need 28 bytes to store the information on a rental and 72 bytes to store the information about
-a customer. In total: &lt;strong&gt;100 bytes&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -6565,17 +6983,6 @@ Suppose that we have in our database&lt;/p&gt;
 &lt;TT&gt;rental&lt;/TT&gt; described in the previous question.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;The size the collection &lt;TT&gt;customer&lt;/TT&gt; is &lt;span class=&#34;math inline&#34;&gt;\(512 \times 968\)&lt;/span&gt; = 495,616 bytes.
-This corresponds to 484 KiB.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The size of the collection &lt;TT&gt;rental&lt;/TT&gt; is &lt;span class=&#34;math inline&#34;&gt;\(16384 \times 100\)&lt;/span&gt; = 1,638,400 bytes.
-This corresponds to 1,56 MiB.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -6585,40 +6992,6 @@ Based on the answers in the previous questions, discuss advantages and disadvant
 having a collection &lt;TT&gt;customer&lt;/TT&gt; (solution 1) or a collection &lt;TT&gt;rental&lt;/TT&gt; (solution 2).&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Advantages of solution 1:&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;No redundancy. In fact, a rental is relative to only one customer, therefore
-the data on a rental is not duplicated across different documents.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;This also explains why the collection &lt;TT&gt;customer&lt;/TT&gt; is smaller than the
-the collection &lt;TT&gt;rental&lt;/TT&gt; (although this is also due to the fact that we’ll always have more rentals than customers).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;For each customer, we retrieve the information on all his/her rentals with only one read operation.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;Disadvantages of solution 1:&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;There is a limit (albeit an acceptable one) on the number of rentals that we can store
-for each customer.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The size of a document is not constant and it depends on the number of rentals of a customer.
-In the previous questions, we see that for a modest number of rentals a document
-in collection &lt;TT&gt;customer&lt;/TT&gt; is ten times larger than a document in
-collection &lt;TT&gt;rental&lt;/TT&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;Advantages of solution 2:&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;The size of each document is constant and small and will never exceed the 16 MiB limit.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;As a result, reading a document from the collection takes less time and memory than
-reading a document from the collection in solution 1.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;Disadvantages of solution 2:&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;There is redundancy. The information about a customer is replicated
-each time the customer makes a rental.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;As a result, the size of the collection is much higher than in solution 1.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -6641,30 +7014,6 @@ A collection &lt;TT&gt;customer&lt;/TT&gt; or a collection &lt;TT&gt;rental&lt;/
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;In collection &lt;TT&gt;customer&lt;/TT&gt;:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;We follow a denormalized schema, and we associate all this information into the
-document that describes a rental. The size of a document in this collection grows further.
-Besides, since a staff member or an inventory item may be involved in more than one rental, we lose
-one of the advantages of this solution, which was the lack of redundancy.
-Consider also that an inventory item is associated with other information (such as, the film the item is a copy of).
-In this collection, we have different layers of nested documents.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;We follow a normalized schema, we create collections &lt;TT&gt;staff&lt;/TT&gt;, &lt;TT&gt;inventory&lt;/TT&gt; and
-&lt;TT&gt;payment&lt;/TT&gt; and we add references to these collections in the customer documents.
-However, a normalized schema might not be efficient in a distributed context.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;In collection &lt;TT&gt;rental&lt;/TT&gt;:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;We follow a denormalized schema and we associate this information into the document that
-describes a rental. The size of the document grows, but it is always constant and small.
-In fact, we don’t embed any unbounded list of values.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Given these considerations, we go for solution 2.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;the-data-model-in-mongodb&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; The data model in MongoDB&lt;/h1&gt;
@@ -6684,59 +7033,6 @@ use that identifier (don’t try, for now, to further denormalize the schema).&l
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;A document in the collection &lt;TT&gt;rental&lt;/TT&gt; has the following properties:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;em&gt;rental_id&lt;/em&gt;, an integer.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;rental_date&lt;/em&gt;, a date.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;return_date&lt;/em&gt;, a date.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;inventory&lt;/em&gt;, a document with information about the inventory item being rented.
-This document has the following schema:
-&lt;ul&gt;
-&lt;li&gt;&lt;em&gt;inventory_id&lt;/em&gt;, an integer.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;film_id&lt;/em&gt;, an integer.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;store_id&lt;/em&gt;, an integer.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;customer&lt;/em&gt;, a document with information about the customer making the rental.
-This document has the following schema:
-&lt;ul&gt;
-&lt;li&gt;&lt;em&gt;customer_id&lt;/em&gt;, an integer.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;store_id&lt;/em&gt;, an integer.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;first_name&lt;/em&gt;, a string.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;last_name&lt;/em&gt;, a string.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;email&lt;/em&gt;, a string.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;address_id&lt;/em&gt;, an integer.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;active&lt;/em&gt;, a boolean.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;create_date&lt;/em&gt;, a date.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;staff&lt;/em&gt;, a document with information about the staff member who handled the rental.
-This document has the following schema:
-&lt;ul&gt;
-&lt;li&gt;&lt;em&gt;staff_id&lt;/em&gt;, an integer.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;first_name&lt;/em&gt;, a string.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;last_name&lt;/em&gt;, a string.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;address_id&lt;/em&gt;, an integer.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;picture&lt;/em&gt;, binary data.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;email&lt;/em&gt;, a string.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;store_id&lt;/em&gt;, an integer&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;active&lt;/em&gt;, a boolean&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;username&lt;/em&gt;, a string.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;password&lt;/em&gt;, a string.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;payment&lt;/em&gt;, document with information about the payment of the rental:
-&lt;ul&gt;
-&lt;li&gt;payment_id, an integer.&lt;/li&gt;
-&lt;li&gt;amount, a real number.&lt;/li&gt;
-&lt;li&gt;payment_date, a date&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Note that the &lt;TT&gt;payment&lt;/TT&gt; table in the relational model include columns
-&lt;em&gt;customer_id&lt;/em&gt;, &lt;em&gt;staff_id&lt;/em&gt; and &lt;em&gt;rental_id&lt;/em&gt;; these are not necessary in the embedded
-document &lt;em&gt;payment&lt;/em&gt;, because we already have this information.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;Let’s take a closer look at the storage requirements of the adopted solution.
 Consider that:&lt;/p&gt;
 &lt;ul&gt;
@@ -6754,21 +7050,6 @@ database for the adopted solution?
 What do you get if we set &lt;span class=&#34;math inline&#34;&gt;\(N_{rental}\)&lt;/span&gt; to &lt;span class=&#34;math inline&#34;&gt;\(10^4\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(10^5\)&lt;/span&gt; or &lt;span class=&#34;math inline&#34;&gt;\(10^6\)&lt;/span&gt; ?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;In a previous question, we saw that a document in the collection &lt;TT&gt;rental&lt;/TT&gt;, including the information about a customer,
-needs 100 bytes. We need to add the size of the documents &lt;em&gt;inventory&lt;/em&gt;, &lt;em&gt;staff&lt;/em&gt; and &lt;em&gt;payment&lt;/em&gt;.
-Therefore, we obtain: 100 + 12 + 20 + 65,536. The size of the document &lt;em&gt;staff&lt;/em&gt; is far superior than the size of the other
-documents. We can approximate the size to 64 KiB.&lt;/p&gt;
-&lt;p&gt;The size of the only collection &lt;TT&gt;rental&lt;/TT&gt; (hence, of the whole database) is: &lt;span class=&#34;math inline&#34;&gt;\(N_{rentals} \times 64 KiB\)&lt;/span&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;If &lt;span class=&#34;math inline&#34;&gt;\(N_{rentals}\)&lt;/span&gt;=10,000, the size of the database is 640 MiB (if we consider 1 MiB = 1000 KiB).&lt;/li&gt;
-&lt;li&gt;If &lt;span class=&#34;math inline&#34;&gt;\(N_{rentals}\)&lt;/span&gt;=100,000, the size of the database is 6,4 GiB (if we consider 1 GiB = 1000,000 KiB)&lt;/li&gt;
-&lt;li&gt;If &lt;span class=&#34;math inline&#34;&gt;\(N_{rentals}\)&lt;/span&gt;=1,000,000 the size of the database is 64 GiB.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;Although the size that we determined in the previous exercise, may not sound
 impressive, we still have to store other information
 (films, actors….).
@@ -6782,23 +7063,6 @@ Discuss how you could save some space in the adopted solution.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;HINT.&lt;/strong&gt; Do you really need to denormalize all data?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;While modeling data for a MongoDB database, the choice
-between a normalized and a denormalized schema
-does not need to be a black and white one.&lt;/p&gt;
-&lt;p&gt;We can have a denormalized schema, where we embed in the same documents
-information that are queried together, while storing in a separate collection
-the information that are rarely queried.&lt;/p&gt;
-&lt;p&gt;For instance, the profile picture of a staff member might not be
-an important piece of information while we’re trying to analyze
-which staff members are the more productive ones.&lt;/p&gt;
-&lt;p&gt;So, we might add another collection &lt;TT&gt;Staff&lt;/TT&gt; where each
-document only contains attributes that are not in embedded documents in the collection
-&lt;TT&gt;Rental&lt;/TT&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -6808,60 +7072,6 @@ Propose a solution for all the entities involved and
 estimate the savings in terms of storage requirements.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Here is a solution with three different collections.
-The information on inventory are completely denormalized into the
-collection &lt;TT&gt;Rental&lt;/TT&gt;. For customers and staff members we only keep
-the necessary information and we normalize the information that are less
-likely to be queried while analyzing the rentals.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-5/mongodb-sakila-first-solution.png&#34; alt=&#34;First schema MongoDB&#34;&gt;&lt;/p&gt;
-&lt;p&gt;Let’s try to estimate the savings in terms of storage.
-In a document of the collection &lt;TT&gt;Rental&lt;/TT&gt;, we have the following attributes:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;&lt;em&gt;rental_id&lt;/em&gt;: 4 bytes.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;em&gt;rental_date&lt;/em&gt; and &lt;em&gt;return_date&lt;/em&gt;: 16 bytes.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;em&gt;inventory_id&lt;/em&gt;, &lt;em&gt;film_id&lt;/em&gt; and &lt;em&gt;store_id&lt;/em&gt;: 12 bytes&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;em&gt;customer_id&lt;/em&gt;: 4 bytes&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;customer &lt;em&gt;first_name&lt;/em&gt;: 9 bytes.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;customer &lt;em&gt;last_name&lt;/em&gt;: 12 bytes.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;em&gt;country&lt;/em&gt;: 15 bytes (on average a country name has 10 characters).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;em&gt;staff_id&lt;/em&gt;: 4 bytes&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;staff &lt;em&gt;first_name&lt;/em&gt;: 9 bytes.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;staff &lt;em&gt;last_name&lt;/em&gt;: 12 bytes.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;In total a document in our collection &lt;TT&gt;rental&lt;/TT&gt; will have &lt;strong&gt;97 bytes&lt;/strong&gt;
-(a huge improvement wrt the 64KiB bytes of our first solution).&lt;/p&gt;
-&lt;p&gt;Of course, the size of a document in the &lt;TT&gt;staff&lt;/TT&gt; collection will be
-around 64 KiB (we still store the profile picture).
-However, the number of staff members &lt;span class=&#34;math inline&#34;&gt;\(N_{staff}\)&lt;/span&gt; is much lower
-than the number of rentals &lt;span class=&#34;math inline&#34;&gt;\(N_{rentals}\)&lt;/span&gt;.&lt;/p&gt;
-&lt;p&gt;It is easy to verify that the size of a document of the collection &lt;TT&gt;customer&lt;/TT&gt;
-is &lt;strong&gt;51 bytes&lt;/strong&gt;.
-Again, the number of customers &lt;span class=&#34;math inline&#34;&gt;\(N_{customers}\)&lt;/span&gt; is much lower than
-&lt;span class=&#34;math inline&#34;&gt;\(N_{rentals}\)&lt;/span&gt;.&lt;/p&gt;
-&lt;p&gt;We assume that each customer has on average 30 rentals and for 100 customers we
-have 1 staff member.
-We have that:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;$N_{customer} = N_{rental}/30 $&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;$N_{staff} = N_{customer}/100 = N_{rental}/3000 $&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;So, the size of the database will be given by:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
-97\times N_{rentals} + 65536 \times N_{rentals}/3000 + 51 \times N_{rentals}/30 \approx 120 \times N_{rental}
-\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;Let’s compare against the first solution:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;If &lt;span class=&#34;math inline&#34;&gt;\(N_{rentals}\)&lt;/span&gt; = 10,000 the size of the database is 1,2 MiB (instead of 640 MiB).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;If &lt;span class=&#34;math inline&#34;&gt;\(N_{rentals}\)&lt;/span&gt; = 100,000 the size of the database is 12 MiB (instead of 6,4 GiB).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;If &lt;span class=&#34;math inline&#34;&gt;\(N_{rentals}\)&lt;/span&gt; = 1,000,000 the size of the database is 120 MiB (instead of 64 GiB).&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;As you can see, a big improvement! And we have a (partially) denormalized schema that
-lets us take advantage of the horizontal scalability of MongoDB.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;the-new-model&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;5&lt;/span&gt; The new model&lt;/h1&gt;
@@ -6875,38 +7085,6 @@ Consider the model that we obtained at the end of the previous section.
 Which data can you further denormalize?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Collection &lt;TT&gt;Staff&lt;/TT&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;The attribute &lt;TT&gt;address_id&lt;/TT&gt; refers to a full address. We can fully
-denormalize this information into the documents of the collection.
-Although an address might be the same for two people, the level of redundancy will be very low.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The attribute &lt;TT&gt;store_id&lt;/TT&gt; refers to the store where the staff member works.
-The &lt;TT&gt;store&lt;/TT&gt; table in the original PostgreSQL database does not have
-too many columns. Therefore, it might be reasonable to fully denormalize these data.
-However, information on the stores are also linked to customers and to inventory items.
-If we need to update, say, the manager of a store, we would need to update
-three different documents.
-Hence, we prefer to create a collection &lt;TT&gt;store&lt;/TT&gt; and keep in the documents of the
-collection &lt;TT&gt;staff&lt;/TT&gt; only the city and country of a store (and its identifier of course).&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;Attribute &lt;TT&gt;inventory&lt;/TT&gt;&lt;/strong&gt; in collection &lt;TT&gt;customer&lt;/TT&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Same considerations for the attribute &lt;TT&gt;store_id&lt;/TT&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The attribute &lt;TT&gt;film_id&lt;/TT&gt; is the reference to the film the inventory item is a copy of.
-The table &lt;TT&gt;film&lt;/TT&gt; in the original PostgreSQL database contains 14 columns.
-This high number of attributes advises us against a full denormalization, considering that
-might have several inventory items for a film.
-We might only keep the film title and the film categories. The rest of the attributes are kept in documents
-of a separate collection &lt;TT&gt;film&lt;/TT&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;Collection &lt;TT&gt;customer&lt;/TT&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Same considerations for the attributes &lt;TT&gt;store_id&lt;/TT&gt; and &lt;TT&gt;address_id&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-5/mongodb-sakila-first-model-further-denormalized.png&#34; alt=&#34;Sakila MongoDB data model further normalized&#34;&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -6916,12 +7094,6 @@ Complete the diagram obtained in the previous exercise so as to obtain
 a full data model for the Sakila database.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-5/mongodb-sakila-complete.png&#34; alt=&#34;Sakila MongoDB full data model&#34;&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
@@ -6962,31 +7134,6 @@ the amount paid is strictly greater than 10 dollars.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.customer.find()&lt;/pre&gt;
-&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.customer.find({}, {email:1})&lt;/pre&gt;
-&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.customer.find({&#34;store.country&#34;: &#34;Canada&#34;}, {email:1});&lt;/pre&gt;
-&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.rental.find({&#34;customer.country&#34;: &#34;Iran&#34;, amount: {$gt: 10}}, {rental_id: 1, _id:0});&lt;/pre&gt;
-&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.film.find({film_id: 213}, {&#34;actors.first_name&#34;:1, &#34;actors.last_name&#34;: 1}).sort({&#34;actors.last_name&#34;: -1});&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;operations-on-arrays&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Operations on arrays&lt;/h1&gt;
@@ -7005,27 +7152,6 @@ Write the following queries in MongoDB:&lt;/p&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.film.find({special_features : {$elemMatch: {$eq: &#34;Behind the Scenes&#34;}}}, {film_id: 1, _id:0});&lt;/pre&gt;
-&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.film.find({special_features : {$all: [&#34;Commentaries&#34;, &#34;Deleted Scenes&#34;]}}, {film_id: 1, _id:0});&lt;/pre&gt;
-&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.film.find({&#34;actors.first_name&#34;: &#34;BURT&#34;, &#34;actors.last_name&#34;: &#34;POSEY&#34;}, {film_id: 1, _id:0});&lt;/pre&gt;
-&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.film.find({actors: {$size : 15}}, {film_id: 1, _id:0});&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;aggregation-framework&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Aggregation framework&lt;/h1&gt;
@@ -7048,71 +7174,6 @@ Write the following queries in MongoDB using the aggregation framework:&lt;/p&gt
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.rental.aggregate({$match: {&#34;customer.first_name&#34;: &#34;TOMMY&#34;, &#34;customer.last_name&#34;: &#34;COLLAZO&#34;}}, 
-                    {$project: {&#34;inventory.film.title&#34;: 1, _id:0}})
-&lt;/pre&gt;
-One can also express this query with the function find()
-&lt;pre&gt;
-db.rental.find({&#34;customer.first_name&#34;: &#34;TOMMY&#34;, &#34;customer.last_name&#34;: &#34;COLLAZO&#34;}, {&#34;inventory.film.title&#34;: 1, _id:0});
-&lt;/pre&gt;
-&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.rental.aggregate({$group: {&#34;_id&#34;: null, total_amount: {$sum: &#34;$amount&#34;}}})
-&lt;/pre&gt;
-&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.film.aggregate({$project: {nb_actors: {$size: &#34;$actors&#34;}}})
-&lt;/pre&gt;
-&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;If we don’t put the match condition, we get an error because for some films
-the field actors is not defined.&lt;/p&gt;
-&lt;pre&gt;db.film.aggregate({$match: {actors: {$elemMatch: {$exists: true}}}}, 
-                {$project: {film_id: 1, &#34;nb_actors&#34;: {$size: &#34;$actors&#34;}}}, 
-                {$sort: {nb_actors: -1}})
-&lt;/pre&gt;
-&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.film.aggregate({$match: {actors: {$elemMatch: {$exists: true}}}}, 
-                {$project: {film_id: 1, &#34;nb_actors&#34;: {$size: &#34;$actors&#34;}}}, 
-                {$group: {_id: null, avg_actors: {$avg: &#34;$nb_actors&#34;}}})
-&lt;/pre&gt;
-&lt;ol start=&#34;6&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.rental.aggregate({$group: {_id: &#34;$customer.customer_id&#34;, count: {$sum: 1}}}, {$sort: {count: -1}})
-&lt;/pre&gt;
-&lt;ol start=&#34;7&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.rental.aggregate({$group: {_id: {cust_id: &#34;$customer.customer_id&#34;, cust_first_name: &#34;$customer.first_name&#34;, 
-                                    cust_last_name: &#34;$customer.last_name&#34;}, count: {$sum: 1}}}, 
-                            {$sort: {count: -1}}, {$limit :1})
-&lt;/pre&gt;
-&lt;ol start=&#34;8&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.rental.aggregate({$match: {&#34;inventory.film.categories.category&#34;: &#34;Music&#34;}}, {$group: {_id: &#34;$customer.country&#34;, count: {$sum: 1}}}, {$sort:{count: -1}}, {$limit: 1})
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;join-operations&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;5&lt;/span&gt; Join Operations&lt;/h1&gt;
@@ -7129,27 +7190,6 @@ Write the following queries in MongoDB using the aggregation framework:&lt;/p&gt
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.rental.aggregate({$match: {&#34;inventory.film.title&#34;: &#34;ACE GOLDFINGER&#34;}}, 
-            {$lookup: {from: &#34;film&#34;, localField: &#34;inventory.film.film_id&#34;, foreignField:&#34;film_id&#34;, as:&#34;film&#34;}}, 
-            {$project: {&#34;film.language&#34;: 1}}, {$limit : 1})
-&lt;/pre&gt;
-&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.rental.aggregate({$match: {rental_id: 2}}, 
-                    {$lookup: {from: &#34;staff&#34;, localField: &#34;staff.staff_id&#34;, 
-                    foreignField:&#34;staff_id&#34;, as:&#34;staff_member&#34;}}, {$project: {&#34;staff_member&#34;: 1}})
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
@@ -9727,6 +9767,19 @@ documentation:&lt;/p&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;The program gets its input from a TCP socket.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;lines&lt;/code&gt; is a DataFrame.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The program writes the output to the console.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Any input is copied to the output without any transformation. We didn’t call any function on the DataFrame &lt;code&gt;line&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The checkpoint location is a reference to a HDFS folder where the output of a streaming query on a micro-batch is saved.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The instruction &lt;code&gt;awaitTermination()&lt;/code&gt; waits for the user to stop the Spark program to interrupt the streaming query.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;You can now verify your answers to the previous questions by &lt;strong&gt;executing the program&lt;/strong&gt;.&lt;/p&gt;
 &lt;div class=&#34;infobox activitybox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
@@ -9765,6 +9818,13 @@ Use the following command. Replace &lt;code&gt;[port_number]&lt;/code&gt; with t
 Look at the terminal where the Spark program is running and observe the output.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The complete code is available in file:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;/usr/users/cpu-prof/cpu_quercini/structured-streaming-playground/warmup.py&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Stop the program&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -9799,6 +9859,20 @@ answer the following questions.&lt;/p&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;We didn’t specify any trigger type, therefore the default one is applied (micro-batches mode).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The complete code is available in file:&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;/usr/users/cpu-prof/cpu_quercini/structured-streaming-playground/warmup-fixed-intervals.py&lt;/code&gt;&lt;/p&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Everything that we write within 10 seconds is considered to be part of the same micro-batch, while before
+each line was a single micro-batch.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;checkpoint-location-and-output-mode&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Checkpoint location and output mode&lt;/h1&gt;
@@ -9815,6 +9889,14 @@ and check the options for the output mode.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;We didn’t specify an output mode. So the default option is considered.
+The default output mode is &lt;code&gt;append&lt;/code&gt;.
+Only the new output since the last trigger will be displayed.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;You’re now going to code a program that counts the number of occurrences of each word
 in a streaming data source. But first do the actions that you find in the following Activity.&lt;/p&gt;
 &lt;div class=&#34;infobox activitybox&#34;&gt;
@@ -9849,6 +9931,20 @@ Which output mode can’t you use? Why?&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;The output of a batch is a DataFrame with one column named &lt;code&gt;value&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;We need to use the Spark DataFrame API.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;We need to split the string in the column &lt;code&gt;value&lt;/code&gt; into its constituent words. The package &lt;code&gt;pyspark.sql.functions&lt;/code&gt; contains a function
+&lt;code&gt;split&lt;/code&gt; that allows us to do so. Then, we need to aggregate by word and count.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Append mode (the default one) cannot be used. In fact, we need to use an aggregating function (&lt;code&gt;count&lt;/code&gt;), that can update the count
+of a word seen in a previous batch.
+This is not supported in append mode.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -9872,6 +9968,25 @@ on the netcat terminal. What can you say about the word counts?&lt;/p&gt;&lt;/li
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;The instructions need to be inserted right below the &lt;code&gt;load&lt;/code&gt; instruction and before writing the result to the output stream.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The code is available in the following file:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;/usr/users/cpu-prof/cpu_quercini/structured-streaming-playground/wordcount.py&lt;/code&gt;&lt;/p&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;The output mode that is chosen in the file is &lt;code&gt;complete&lt;/code&gt;. The other possible is update.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;OK, running&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;At each micro-batch, the set of all words written up to that point is shown withe corresponding counts.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The word counts that we had in the previous execution are still available in the output. They are saved in the checkpoint directory.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Now, the words counts that we had in the previous executions are not available anymore.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Since we tried the &lt;code&gt;complete&lt;/code&gt; mode, we try the &lt;code&gt;update&lt;/code&gt; mode.
+At each micro-batch, only the word counts that change are displayed.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;window-operations-on-event-time&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;5&lt;/span&gt; Window operations on event time&lt;/h1&gt;
@@ -9942,6 +10057,13 @@ to do it.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The complete code is available in the following file in the cluster:
+&lt;code&gt;/usr/users/cpu-prof/cpu_quercini/structured-streaming-playground/win_events.py&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;We now test the Spark program.&lt;/p&gt;
 &lt;div class=&#34;infobox activitybox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
@@ -10511,12 +10633,6 @@ the platform registers the date when the relationship is established.&lt;/p&gt;
 Give the &lt;strong&gt;conceptual schema&lt;/strong&gt; of the database with an ER diagram.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-1/social-network-solution.png&#34; alt=&#34;Social network solution&#34;&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -10526,31 +10642,6 @@ Translate the conceptual schema into a logical schema.
 For each table, underline the primary key and specify the foreign keys.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The &lt;strong&gt;collection of tables&lt;/strong&gt; is the following:&lt;/p&gt;
-&lt;pre&gt;
-&lt;TT&gt;UserAccount&lt;/TT&gt;  (&lt;u&gt;nickname&lt;/u&gt;, first_name, last_name, city, country)
-
-&lt;TT&gt;Post&lt;/TT&gt;         (&lt;u&gt;post_id&lt;/u&gt;, content, date, time, lat, long, nickname)
-
-&lt;TT&gt;EmailAddress&lt;/TT&gt; (&lt;u&gt;email_address&lt;/u&gt;, nickname)
-
-&lt;TT&gt;Relationship&lt;/TT&gt; (&lt;u&gt;nickname_src&lt;/u&gt;, &lt;u&gt;nickname_dst&lt;/u&gt;, type, date)
-
-&lt;TT&gt;Tag&lt;/TT&gt;          (&lt;u&gt;post_id&lt;/u&gt;, &lt;u&gt;nickname&lt;/u&gt;)
-
-&lt;/pre&gt;
-&lt;p&gt;The &lt;strong&gt;foreign keys&lt;/strong&gt; are the following:&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Post(nickname)&lt;/TT&gt; → &lt;TT&gt;UserAccount(nickname)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;EmailAddress(nickname)&lt;/TT&gt; → &lt;TT&gt;EmailAddress(nickname)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Relationship(nickname_src)&lt;/TT&gt; → &lt;TT&gt;UserAccount(nickname)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Relationship(nickname_dst)&lt;/TT&gt; → &lt;TT&gt;UserAccount(nickname)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Tag(post_id)&lt;/TT&gt; → &lt;TT&gt;Post(post_id)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Tag(nickname)&lt;/TT&gt; → &lt;TT&gt;UserAccount(nickname)&lt;/TT&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;database-of-a-banking-system&#34; class=&#34;section level1&#34;&gt;
@@ -10583,16 +10674,6 @@ a customer can be granted several loans and open as many accounts as s/he wishes
 &lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;Which primary key would you choose for the entity Bank? Justify your answer.
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Since no
-two banks have the same &lt;em&gt;code_bank&lt;/em&gt; or &lt;em&gt;name&lt;/em&gt;,
-either property can be chosen as the primary key
-of the entity &lt;TT&gt;Bank&lt;/TT&gt;.
-Both can be considered as valid &lt;strong&gt;candidate keys&lt;/strong&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -10601,15 +10682,6 @@ Both can be considered as valid &lt;strong&gt;candidate keys&lt;/strong&gt;.&lt;
 as a valid candidate key for the entity &lt;TT&gt;Bank&lt;/TT&gt;? Justify your answer.
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The answer is &lt;strong&gt;no&lt;/strong&gt;.
-While there aren’t any banks that have
-the same value for {&lt;em&gt;code_bank&lt;/em&gt;, &lt;em&gt;name&lt;/em&gt;},
-two subsets ({&lt;em&gt;code_bank&lt;/em&gt;} and {&lt;em&gt;name&lt;/em&gt;}) are candidate keys.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -10620,12 +10692,6 @@ by adding the cardinalities to the relations.
 Justify your choices when any ambiguity arises.
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-1/banking-system-er-complete.png&#34; alt=&#34;Banking system solution&#34;&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -10634,30 +10700,6 @@ Justify your choices when any ambiguity arises.
 For each table, underline the primary keys and specify the foreign keys.
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The &lt;strong&gt;collection of tables&lt;/strong&gt; is the following:&lt;/p&gt;
-&lt;pre&gt;
-&lt;TT&gt;Bank&lt;/TT&gt;     (&lt;u&gt;code_bank&lt;/u&gt;, name, address)
-
-&lt;TT&gt;Branch&lt;/TT&gt;   (&lt;u&gt;branch_id&lt;/u&gt;, address, code_bank)
-
-&lt;TT&gt;Account&lt;/TT&gt;  (&lt;u&gt;acct_nbr&lt;/u&gt;, acct_type, balance, branch_id, ssn)
-
-&lt;TT&gt;Loan&lt;/TT&gt;     (&lt;u&gt;loan_nbr&lt;/u&gt;, loan_type, amount, branch_id, ssn)
-
-&lt;TT&gt;Customer&lt;/TT&gt; (&lt;u&gt;ssn&lt;/u&gt;, first_name, last_name, telephone, address)
-
-&lt;/pre&gt;
-&lt;p&gt;The &lt;strong&gt;foreign keys&lt;/strong&gt; are the following:&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Branch(code_bank)&lt;/TT&gt; → &lt;TT&gt;Bank(code_bank)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Account(branch_id)&lt;/TT&gt; → &lt;TT&gt;Branch(branch_id)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Account(ssn)&lt;/TT&gt; → &lt;TT&gt;Customer(ssn)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Loan(branch_id)&lt;/TT&gt; → &lt;TT&gt;Branch(branch_id)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Loan(ssn)&lt;/TT&gt; → &lt;TT&gt;Customer(ssn)&lt;/TT&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;car-dealership-database&#34; class=&#34;section level1&#34;&gt;
@@ -10693,12 +10735,6 @@ and each mechanic may work on many cars.&lt;/p&gt;
 &lt;span id=&#34;exr:command-in-guest&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;Give the &lt;strong&gt;conceptual schema&lt;/strong&gt; of the database with an ER diagram.
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-1/car-dealership.png&#34; alt=&#34;Car dealership solution&#34;&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -10708,28 +10744,6 @@ For each table, underline the primary keys and specify the foreign keys.
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The &lt;strong&gt;collection of tables&lt;/strong&gt; is the following:&lt;/p&gt;
-&lt;pre&gt;
-  Car          (&lt;u&gt;serial_number&lt;/u&gt;, make, model, colour, is_new)
-  Customer     (&lt;u&gt;cust_id&lt;/u&gt;, cust_first_name, cust_last_name, cust_phone)
-  Invoice      (&lt;u&gt;invoice_number&lt;/u&gt;, date, price, car_serial_number, sp_id, cust_id)
-  Salesperson  (&lt;u&gt;sp_id&lt;/u&gt;, sp_first_name, sp_last_name)
-  Mechanic     (&lt;u&gt;mec_id&lt;/u&gt;, mec_first_name, mec_last_name)
-  Ticket       (&lt;u&gt;ticket_number&lt;/u&gt;, date_open, date_return, car_serial_number)
-  Repair       (&lt;u&gt;ticket_number&lt;/u&gt;, &lt;u&gt;mec_id&lt;/u&gt;)&lt;/pre&gt;
-&lt;/pre&gt;
-&lt;p&gt;The &lt;strong&gt;foreign keys&lt;/strong&gt; are the following:&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Invoice(cust_id)&lt;/TT&gt; → &lt;TT&gt;Customer(cust_id)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Invoice(car_serial_number)&lt;/TT&gt; → &lt;TT&gt;Car(serial_number)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Invoice(sp_id)&lt;/TT&gt; → &lt;TT&gt;Salesperson(sp_id)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Ticket(car_serial_number)&lt;/TT&gt; → &lt;TT&gt;Car(serial_number)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Repair(ticket_number)&lt;/TT&gt; → &lt;TT&gt;Ticket(ticket_number)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Repair(mec_id)&lt;/TT&gt; → &lt;TT&gt;Mechanic(mec_id)&lt;/TT&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 </description>
@@ -16222,38 +16236,6 @@ Let &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{F}\)&lt;/span&gt; be the 
 Derive a minimal set &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{G}\)&lt;/span&gt; of functional dependencies that is equivalent to &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{F}\)&lt;/span&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;We first need to write the functional dependencies in canonical form
-(the right-side of each FD must consist of only one column).&lt;/p&gt;
-&lt;p&gt;The FD (2.) can be rewritten using the decomposition axiom.&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(AB \rightarrow C\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(D \rightarrow B\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(D \rightarrow C\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(A \rightarrow B\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;Next, we need to make sure that all functional dependencies are left-irreducible.&lt;/p&gt;
-&lt;p&gt;All functional dependencies except the first one are trivially left-irreducible (the determinant consists of
-only one column).
-The first has two columns in the determinant, therefore we need to check whether we
-can eliminate one of the two columns and still preserve an equivalent set of functional dependencies.&lt;/p&gt;
-&lt;p&gt;We apply Armstrong’s axioms to compute the closure of this set of functional dependencies.&lt;/p&gt;
-&lt;p&gt;From (1.) and (4.), we can apply the pseudotransitivity axiom and we obtain:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[A \rightarrow B \wedge AB \rightarrow C \implies AA \rightarrow C \implies A \rightarrow C\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;Since &lt;span class=&#34;math inline&#34;&gt;\(A \rightarrow C\)&lt;/span&gt; is in the closure, the column &lt;span class=&#34;math inline&#34;&gt;\(B\)&lt;/span&gt; in FD (1.) is useless
-and can therefore be omitted.&lt;/p&gt;
-&lt;p&gt;The set &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{G}\)&lt;/span&gt; consists of the following FDs:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(A \rightarrow C\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(D \rightarrow B\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(D \rightarrow C\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(A \rightarrow B\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;None of these functional dependencies are redundant.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;question-2&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Question 2&lt;/h1&gt;
@@ -16274,26 +16256,6 @@ The following set &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{F}\)&lt;/sp
 Specify the candidate keys of the table &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;A candidate key is a set of columns that imply all the other columns.&lt;/p&gt;
-&lt;p&gt;First, let’s try sets composed of only one column: &lt;span class=&#34;math inline&#34;&gt;\(\{A\}\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(\{B\}\)&lt;/span&gt;,
-&lt;span class=&#34;math inline&#34;&gt;\(\{C\}\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(\{D\}\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\{E\}\)&lt;/span&gt;.&lt;/p&gt;
-&lt;p&gt;We have the following: (&lt;span class=&#34;math inline&#34;&gt;\(\{X\}^+_{\mathcal{F}}\)&lt;/span&gt; indicates the set of all columns implied by &lt;span class=&#34;math inline&#34;&gt;\(X\)&lt;/span&gt;).&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\{A\}^+_{\mathcal{F}} = \{A\}\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\{B\}^+_{\mathcal{F}} = \{B\}\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\{C\}^+_{\mathcal{F}} = \{A, B, C, D, E\}\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\{D\}^+_{\mathcal{F}} = \{D, E\}\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\{E\}^+_{\mathcal{F}} = \{E\}\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Therefore, &lt;span class=&#34;math inline&#34;&gt;\(\{C\}\)&lt;/span&gt; is a candidate key because it implies all the other columns.&lt;/p&gt;
-&lt;p&gt;From the functional dependency (1), we obtain that &lt;span class=&#34;math inline&#34;&gt;\(AB\)&lt;/span&gt; implies &lt;span class=&#34;math inline&#34;&gt;\(C\)&lt;/span&gt;; therefore,
-by transitivity they imply all the other columns.&lt;/p&gt;
-&lt;p&gt;In conclusion, we have two candidate keys: &lt;span class=&#34;math inline&#34;&gt;\(\{C\}\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\{A, B\}\)&lt;/span&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -16307,18 +16269,6 @@ We assume that &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is in 
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is in 2NF. In fact, all non-prime columns depend
-entirely on both candidate keys.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is not in 3NF. In fact, the functional dependency &lt;span class=&#34;math inline&#34;&gt;\(D \rightarrow E\)&lt;/span&gt; is
-between two non-prime columns.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;As a result, &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is not in BCNF either.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -16330,24 +16280,6 @@ For each table, specify the primary key and the foreign keys
 linking the tables to each other.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The table is not in 3NF.
-The offending functional dependency is &lt;span class=&#34;math inline&#34;&gt;\(D \rightarrow E\)&lt;/span&gt;.&lt;/p&gt;
-&lt;p&gt;We need to create a new table &lt;span class=&#34;math inline&#34;&gt;\(R_1\)&lt;/span&gt;, where the primary key is
-the determinant in the offending functional dependency (&lt;span class=&#34;math inline&#34;&gt;\(D\)&lt;/span&gt;).
-We then move all columns that are dependent on &lt;span class=&#34;math inline&#34;&gt;\(D\)&lt;/span&gt; (only &lt;span class=&#34;math inline&#34;&gt;\(E\)&lt;/span&gt; in our case) from &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; to &lt;span class=&#34;math inline&#34;&gt;\(R_1\)&lt;/span&gt;.
-Note that &lt;span class=&#34;math inline&#34;&gt;\(D\)&lt;/span&gt; is kept in &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; so that we can use it to link
-&lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; with &lt;span class=&#34;math inline&#34;&gt;\(R_1\)&lt;/span&gt;.&lt;/p&gt;
-&lt;p&gt;In summary:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[R = \{A, B, C, D\}\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[R_1 = \{D, E\}\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;The primary key of &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is &lt;span class=&#34;math inline&#34;&gt;\(\{C\}\)&lt;/span&gt; (or, we can also choose &lt;span class=&#34;math inline&#34;&gt;\(\{A, B\}\)&lt;/span&gt; if we want).
-The primary key of &lt;span class=&#34;math inline&#34;&gt;\(R_1\)&lt;/span&gt; is &lt;span class=&#34;math inline&#34;&gt;\(\{D\}\)&lt;/span&gt;.&lt;/p&gt;
-&lt;p&gt;The column &lt;span class=&#34;math inline&#34;&gt;\(D\)&lt;/span&gt; in &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is a foreign key referencing the column &lt;span class=&#34;math inline&#34;&gt;\(D\)&lt;/span&gt; in &lt;span class=&#34;math inline&#34;&gt;\(R_1\)&lt;/span&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;question-3&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Question 3&lt;/h1&gt;
@@ -16362,19 +16294,6 @@ Identify a minimal set of functional dependencies.
 Justify your answer.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;A candidate key implies all the other columns of the table.
-Therefore we have :&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AB \rightarrow C\]&lt;/span&gt;
-&lt;span class=&#34;math display&#34;&gt;\[AB \rightarrow D\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;Both functional dependencies are in canonical form (the right side only consist of one column).
-Trivially, both functional dependencies are left-irreducible (we cannot remove any of the columns
-in the determinant without losing information).
-So, this is a minimal set of functional dependencies.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -16386,31 +16305,6 @@ Modify the minimal set of functional dependencies accordingly.
 Justify your answer.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;We consider the following functional dependencies:&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(AB \rightarrow C\)&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(AB \rightarrow D\)&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(B \rightarrow D\)&lt;/span&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;The FD (3) clearly makes FD (2) redundant.
-By using the augmentation axiom on (3) we obtain:&lt;/p&gt;
-&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(AB \rightarrow AD\)&lt;/span&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;By applying the decomposition axiom on (4) we obtain:&lt;/p&gt;
-&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(AB \rightarrow A\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(AB \rightarrow D\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;Which shows that (2) is redundant.&lt;/p&gt;
-&lt;p&gt;In summary, we have the following functional dependencies:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AB\rightarrow C \]&lt;/span&gt;
-&lt;span class=&#34;math display&#34;&gt;\[B\rightarrow D \]&lt;/span&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -16424,17 +16318,6 @@ We assume that &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is in 
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is not in 2NF. In fact, the non-prime column &lt;span class=&#34;math inline&#34;&gt;\(D\)&lt;/span&gt; is functionally dependent on
-only one part of the candidate key.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is not in 3NF, let alone BCNF, because it doesn’t fulfill the first condition, that is
-being in 2NF.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -16444,29 +16327,6 @@ Normalize &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; to the BCNF
 Justify your choices.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The functional dependency that gives a partial dependency is:
-&lt;span class=&#34;math inline&#34;&gt;\(B \rightarrow D\)&lt;/span&gt;.
-We create a new table &lt;span class=&#34;math inline&#34;&gt;\(R_1\)&lt;/span&gt;, where the determinant (&lt;span class=&#34;math inline&#34;&gt;\(B\)&lt;/span&gt;) of the
-offending functional dependency is the primary key.
-We move the columns that depend on &lt;span class=&#34;math inline&#34;&gt;\(B\)&lt;/span&gt; (here, only &lt;span class=&#34;math inline&#34;&gt;\(D\)&lt;/span&gt;) from table
-&lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; to table &lt;span class=&#34;math inline&#34;&gt;\(R_1\)&lt;/span&gt;.&lt;/p&gt;
-&lt;p&gt;In summary:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[R = (A, B, C)\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[R_1 = (B, D)\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;We can see that &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is in 3NF because:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;The only non-prime column is &lt;span class=&#34;math inline&#34;&gt;\(C\)&lt;/span&gt;, therefore there cannot be any dependency between non-prime columns.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is in BCNF because:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;The only functional dependency &lt;span class=&#34;math inline&#34;&gt;\(AB \rightarrow C\)&lt;/span&gt; has a key as its determinant.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Similarly, for &lt;span class=&#34;math inline&#34;&gt;\(R_1\)&lt;/span&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;question-4&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Question 4&lt;/h1&gt;
@@ -16485,27 +16345,6 @@ insurance_number -&amp;gt; insurance_expiration_date&lt;/code&gt;&lt;/pre&gt;
 &lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.1  &lt;/strong&gt;&lt;/span&gt;Derive a minimal set &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{G}\)&lt;/span&gt; of functional dependencies that is equivalent to &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{F}\)&lt;/span&gt;.
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;First, we need to rewrite the FDs in canonical form.&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(ssn \rightarrow first\_name\)&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(ssn \rightarrow last\_name\)&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(ssn \rightarrow phone\_number\)&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(ssn \rightarrow insurance\_number\)&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(ssn \rightarrow insurance\_expiration\_date\)&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(insurance\_number \rightarrow insurance\_expiration\_date\)&lt;/span&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;The determinant of each FD is composed of only one column, therefore
-it is already left-irreducible.
-It is easy to see that all FDs with &lt;TT&gt;ssn&lt;/TT&gt; as a determinant must be
-kept (otherwise we lose some information).&lt;/p&gt;
-&lt;p&gt;By transitivity from 4. and 6. we obtain:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ssn \rightarrow insurance\_expiration\_date\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;Therefore, &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{G}\)&lt;/span&gt; is obtained from &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{F}\)&lt;/span&gt; by removing 5.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -16513,15 +16352,6 @@ kept (otherwise we lose some information).&lt;/p&gt;
 &lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.2  &lt;/strong&gt;&lt;/span&gt;Given &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{G}\)&lt;/span&gt;, identify the candidate keys in the table &lt;TT&gt;Patient&lt;/TT&gt;.
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;From the functional dependencies in &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{F}\)&lt;/span&gt;, it’s easy to see that
-that the only column that implies all the others
-is &lt;TT&gt;ssn&lt;/TT&gt;. Therefore, {&lt;TT&gt;ssn&lt;/TT&gt;} is the only candidate key in
-this table.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -16529,19 +16359,6 @@ this table.&lt;/p&gt;
 &lt;span id=&#34;exr:unnamed-chunk-11&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.3  &lt;/strong&gt;&lt;/span&gt;Specify the normal form of the table &lt;TT&gt;Patient&lt;/TT&gt;. Justify your answer.
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;It is immediate to verify that the table is 1NF.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The table is 2NF because there is only one candidate key, which is composed of
-only one column. Therefore, there cannot be any partial dependency.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The table is not in 3NF. Indeed, there is a functional dependency
-between two non-prime columns:&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[insurance\_number \rightarrow insurance\_expiration\_date\]&lt;/span&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -16550,25 +16367,6 @@ between two non-prime columns:&lt;/p&gt;&lt;/li&gt;
 table &lt;TT&gt;Patient&lt;/TT&gt; to BCNF? Justify your answer.
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The offending functional dependency is:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[insurance\_number \rightarrow insurance\_expiration\_date\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;We need to create another table (let’s call it &lt;TT&gt;Insurance&lt;/TT&gt;) that contains
-the determinant of the offending functional dependency (insurance_number)
-as its primary key.
-We need to move the colum (insurance_expiration_date) that depends on insurance_number
-from table &lt;TT&gt;Patient&lt;/TT&gt; to table &lt;TT&gt;Insurance&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;In summary:&lt;/p&gt;
-&lt;pre&gt;
-&lt;TT&gt;Patient&lt;/TT&gt;   (&lt;u&gt;ssn&lt;/u&gt;, first_name, last_name, phone_number, insurance_number)
-&lt;TT&gt;Insurance&lt;/TT&gt; (&lt;u&gt;insurance_number&lt;/u&gt;, insurance_expiration_date)
-&lt;/pre&gt;
-&lt;p&gt;Note that the column &lt;em&gt;insurance_number&lt;/em&gt; in table &lt;TT&gt;Patient&lt;/TT&gt; is foreign key to
-the column &lt;em&gt;insurance_number&lt;/em&gt; in table &lt;TT&gt;Insurance&lt;/TT&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
@@ -17077,17 +16875,6 @@ insert into film_actor values(1, 25)
 What is the reaction of the DBMS?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;This statement should insert a new row in table &lt;TT&gt;film_actor&lt;/TT&gt;,
-where the value of &lt;TT&gt;actor_id&lt;/TT&gt; is 1 and the value of
-&lt;TT&gt;film_id&lt;/TT&gt; is 25.&lt;/p&gt;
-&lt;p&gt;The DBMS returns an error because there is already a row
-with these values and the two columns
-&lt;TT&gt;film_actor&lt;/TT&gt;, &lt;TT&gt;film_id&lt;/TT&gt; form the primary key.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -17099,17 +16886,6 @@ the table &lt;TT&gt;Film&lt;/TT&gt;.&lt;/p&gt;
 &lt;p&gt;Execute the command. What happens?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;PRE&gt;
-delete from film where film_id=1
-&lt;/PRE&gt;
-&lt;p&gt;The statement is rejected because there are rows in other tables
-that reference the row that we intend to delete.
-This is the effect of the foreign key constraint.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -17126,16 +16902,6 @@ edit button on the left of the constraint. Then look at the
 tab &lt;em&gt;Action&lt;/em&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The foreign key linking table &lt;TT&gt;film_actor&lt;/TT&gt; to table
-&lt;TT&gt;film&lt;/TT&gt; is defined with the option RESTRICT on delete.
-This is coherent with the behavior that we observed
-in the previous exercise. Referenced rows cannot be deleted if
-there are still referencing rows.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -17154,14 +16920,6 @@ WHERE  f.title=&#39;ACE GOLDFINGER&#39;
 (columns &lt;TT&gt;film_id_in_table_film&lt;/TT&gt; and &lt;TT&gt;film_id_in_table_film_actor&lt;/TT&gt;).&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The query returns the list of all actors in the film titled Ace Goldfinger.
-We note that the identifier of the film in both tables is identical (2), as it should
-because the query joins the two tables on the equality of these two values.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -17173,24 +16931,6 @@ film ACE GOLDFINGER in table &lt;TT&gt;Film&lt;/TT&gt;.&lt;/p&gt;
 What changed? Explain in details what happened.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The statement to modify the &lt;TT&gt;film_id&lt;/TT&gt; of the given film is as follows:&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;
-UPDATE film
-SET film_id=10000
-WHERE title=‘ACE GOLDFINGER’
-&lt;/TT&gt;&lt;/p&gt;
-&lt;p&gt;After executing the same query as the previous exercise, we see that
-the identifier of the film has changed in the table &lt;TT&gt;film_actor&lt;/TT&gt; too.
-This is expected, because the foreign key constraint between the
-colum &lt;TT&gt;film_id&lt;/TT&gt; in table &lt;TT&gt;film_actor&lt;/TT&gt; and the column
-&lt;TT&gt;film_id&lt;/TT&gt; in table &lt;TT&gt;film&lt;/TT&gt; has the option ON UPDATE CASCADE.
-This means that if we modify the identifier of the film in table
-&lt;TT&gt;film&lt;/TT&gt;, the modification is propagated to all the referencing columns.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -17205,19 +16945,6 @@ WHERE film_id=10000
 &lt;p&gt;What does? What happens? Explain.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The statement intends to set the identifier of the film
-titled Ace Goldfinger (in the previous exercise we gave it the identifier 10000)
-back to its original value.
-However, we execute the statement on the table &lt;TT&gt;film_actor&lt;/TT&gt;.
-The action is not allowed, as the identifier 2 does not correspond to
-any film in table &lt;TT&gt;film&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;The foreign key enforces the referential integrity constraint.
-A row cannot refer to a non-existing entity in the referenced table.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;basic-queries&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Basic queries&lt;/h1&gt;
@@ -17234,26 +16961,6 @@ Write the following SQL queries:&lt;/p&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;pre&gt;
-select * 
-from customer
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select first_name, last_name 
-from customer
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select first_name, last_name 
-from customer
-where store_id=1
-&lt;/pre&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;sorting-and-paginating&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;5&lt;/span&gt; Sorting and paginating&lt;/h1&gt;
@@ -17271,29 +16978,6 @@ Sort by last name in ascending order and by first name in descending order.&lt;/
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;pre&gt;
-select last_name, first_name 
-from customer
-order by last_name asc
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select last_name, first_name 
-from customer
-order by last_name asc
-limit 100
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select first_name, last_name 
-from customer
-where store_id=1
-&lt;/pre&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;aggregating-queries&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;6&lt;/span&gt; Aggregating queries&lt;/h1&gt;
@@ -17316,45 +17000,6 @@ greater than or equal to 3.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;pre&gt;
-select count(*) 
-from film
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select  count (distinct last_name) 
-from actor
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select sum(amount) 
-from payment
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select avg(rental_duration), min(rental_duration), max(rental_duration) 
-from film
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select film_id, count(*) as nb_actors
-from film_actor
-group by film_id
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select film_id, store_id, count(*) as nb_films
-from inventory
-group by film_id, store_id
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select film_id, store_id, count(*) as nb_films
-from inventory
-group by film_id, store_id
-having count(*) &gt;=3
-&lt;/pre&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;join-queries&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;7&lt;/span&gt; Join queries&lt;/h1&gt;
@@ -17375,51 +17020,6 @@ movies in the category &lt;em&gt;Family&lt;/em&gt;.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;pre&gt;
-select first_name, last_name
-from staff join store using(store_id)
-where store_id=1
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select first_name, last_name
-from film join film_actor using(film_id) join actor using(actor_id)
-where title=&#39;ACE GOLDFINGER&#39;
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select first_name, last_name, count(*) as nb_films
-from actor join film_actor using(actor_id)
-group by actor_id
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select first_name, last_name, count(*) as nb_films
-from actor join film_actor using(actor_id)
-group by actor_id
-order by nb_films desc
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select first_name, last_name, count(*) as nb_films
-from actor join film_actor using(actor_id)
-group by actor_id
-having count(*) &gt;= 10
-order by nb_films desc
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select cust.customer_id, first_name, last_name, count(*) as nb_films
-from customer cust join rental using(customer_id) 
-  join inventory using(inventory_id)
-    join film_category using(film_id)
-    join category cat using(category_id)
-where cat.name=&#39;Family&#39;
-group by customer_id
-having count(*) between 5 and 10
-&lt;/pre&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
@@ -17472,63 +17072,6 @@ If two or more actors are tied, the query must return the names of all of them.&
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;pre&gt;
-select last_name
-from actor
-group by last_name
-having count(*) = 1
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select distinct i.inventory_id
-from film f join inventory i using(film_id)
-join rental r using(inventory_id)
-where f.title=&#39;ACADEMY DINOSAUR&#39; 
-    and i.store_id=1 
-    and r.return_date is not null  
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select  distinct f.title, f.release_year
-from film f join film_category using(film_id)
-join category cat using(category_id)
-where cat.name in (&#39;Family&#39;, &#39;Animation&#39;, &#39;Documentary&#39;)
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select customer_id, first_name, last_name
-from customer
-where last_name LIKE &#39;L%&#39;
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select concat(first_name, &#39; &#39;, last_name), sum(amount)
-from customer join payment using (customer_id)
-group by customer_id
-order by last_name asc
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select country, sum(amount) as revenue
-from payment join rental using (rental_id)
-  join inventory using (inventory_id)
-  join store using (store_id)
-  join address using (address_id)
-  join city using (city_id)
-  join country using (country_id)
-group by country_id
-order by revenue desc
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;select actor_id, first_name, last_name, count(&lt;em&gt;)
-from film_actor join actor using(actor_id)
-group by actor_id
-having count(&lt;/em&gt;) =
-(select max(nb_films)
-from (select count(*) as nb_films
-from film_actor
-group by actor_id) t)&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 </description>
     </item>
     
