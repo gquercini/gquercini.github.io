@@ -2233,9 +2233,7 @@ model of a relational database for the given application context.&lt;/p&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;!--
-
-## Normalization
+&lt;!-- ## Normalization
 
 
 ::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
@@ -2243,7 +2241,7 @@ model of a relational database for the given application context.&lt;/p&gt;
 
 
 \BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-2&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-2) &lt;/strong&gt;&lt;/span&gt;
-Translate the logical schema into a collection of tables. For each table:
+Translate the conceptual schema into a collection of tables. For each table:
 
 * Indicate its name and the names of the columns (but not their types).
 
@@ -2251,8 +2249,6 @@ Translate the logical schema into a collection of tables. For each table:
 
 * Indicate the entity in the ER diagram to which the table corresponds.
 
-To make sure you choose the right data types for the columns, 
-you can also check the values in the dataset.
 &lt;/div&gt;\EndKnitrBlock{exercise}
 
 :::
@@ -2298,6 +2294,10 @@ Write the SQL code to create the tables. For each table:
 * Indicate the **foreign keys**.
 
 * Indicate NOT NULL and UNIQUE constraints, if needed.
+
+To make sure you choose the right data types for the columns, 
+you can also check the values in the dataset.
+
 &lt;/div&gt;\EndKnitrBlock{exercise}
 
 :::
@@ -2377,9 +2377,7 @@ Write the following queries in SQL.
 
 &lt;/div&gt;\EndKnitrBlock{exercise}
 
-:::
-
---&gt;
+:::--&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 </description>
@@ -14778,43 +14776,8 @@ propose a better implementation to handle the CSV file.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;computing-average-and-standard-deviation&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Computing average and standard deviation&lt;/h1&gt;
-&lt;p&gt;We consider again the large CSV file
-with a series of measurements in the format “Year, Month, Day, Minute, Second, Temperature”.
-We now intend to generate a series of key-value pairs (year, (avg_temperature, std_deviation)).&lt;/p&gt;
-&lt;p&gt;We can express the standard deviation of &lt;span class=&#34;math inline&#34;&gt;\(n\)&lt;/span&gt; values &lt;span class=&#34;math inline&#34;&gt;\(x_i\)&lt;/span&gt; (&lt;span class=&#34;math inline&#34;&gt;\(1 \leq i \leq n\)&lt;/span&gt;) with two different
-equations.&lt;/p&gt;
-&lt;p&gt;The first equation is as follows:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
-\sigma = \sqrt{\frac{\sum_{i=1}^n (x_i - \overline{x})^2}{n}} 
-\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;The second equation is as follows:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
-\sigma = \sqrt{\overline{x^2} - \overline{x}^2} = \sqrt{\frac{\sum_{i=1}^n (x_i)^2}{n} - \Bigg(\frac{\sum_{i=1}^n x_i}{n}\Bigg)^2} 
-\]&lt;/span&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;
-Which equation of the standard deviation
-is more appropriate in a Map-Reduce algorithm?
-Why?&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.2  &lt;/strong&gt;&lt;/span&gt;
-Propose a MapReduce implementation to compute the average and the standard
-deviation of the temperatures for each year.
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
 &lt;div id=&#34;common-friends&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Common friends in a social network&lt;/h1&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Common friends in a social network&lt;/h1&gt;
 &lt;p&gt;Consider a social network described by a graph encoded in a text file.
 Each line of the file is a list of identifiers separated by commas.
 For instance, the line &lt;span class=&#34;math inline&#34;&gt;\(A,B,C,D\)&lt;/span&gt; means that &lt;span class=&#34;math inline&#34;&gt;\(A\)&lt;/span&gt; is friend with &lt;span class=&#34;math inline&#34;&gt;\(B\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(C\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(D\)&lt;/span&gt;.
@@ -14840,9 +14803,44 @@ In other words, if we output &lt;span class=&#34;math inline&#34;&gt;\((A, B)\)&
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;
 Propose a MapReduce implementation to find the common friends in a
 social network satisifying the given constraints.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;computing-average-and-standard-deviation&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Computing average and standard deviation&lt;/h1&gt;
+&lt;p&gt;We consider again the large CSV file
+with a series of measurements in the format “Year, Month, Day, Minute, Second, Temperature”.
+We now intend to generate a series of key-value pairs (year, (avg_temperature, std_deviation)).&lt;/p&gt;
+&lt;p&gt;We can express the standard deviation of &lt;span class=&#34;math inline&#34;&gt;\(n\)&lt;/span&gt; values &lt;span class=&#34;math inline&#34;&gt;\(x_i\)&lt;/span&gt; (&lt;span class=&#34;math inline&#34;&gt;\(1 \leq i \leq n\)&lt;/span&gt;) with two different
+equations.&lt;/p&gt;
+&lt;p&gt;The first equation is as follows:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+\sigma = \sqrt{\frac{\sum_{i=1}^n (x_i - \overline{x})^2}{n}} 
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;The second equation is as follows:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+\sigma = \sqrt{\overline{x^2} - \overline{x}^2} = \sqrt{\frac{\sum_{i=1}^n (x_i)^2}{n} - \Bigg(\frac{\sum_{i=1}^n x_i}{n}\Bigg)^2} 
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;
+Which equation of the standard deviation
+is more appropriate in a Map-Reduce algorithm?
+Why?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.2  &lt;/strong&gt;&lt;/span&gt;
+Propose a MapReduce implementation to compute the average and the standard
+deviation of the temperatures for each year.
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;!--
