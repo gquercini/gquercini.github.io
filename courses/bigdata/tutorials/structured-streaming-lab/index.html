@@ -673,19 +673,6 @@ documentation:</p>
 </ol>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<ol style="list-style-type: decimal">
-<li><p>The program gets its input from a TCP socket.</p></li>
-<li><p><code>lines</code> is a DataFrame.</p></li>
-<li><p>The program writes the output to the console.</p></li>
-<li><p>Any input is copied to the output without any transformation. We didn’t call any function on the DataFrame <code>line</code>.</p></li>
-<li><p>The checkpoint location is a reference to a HDFS folder where the output of a streaming query on a micro-batch is saved.</p></li>
-<li><p>The instruction <code>awaitTermination()</code> waits for the user to stop the Spark program to interrupt the streaming query.</p></li>
-</ol>
-</div>
-</details>
 <p>You can now verify your answers to the previous questions by <strong>executing the program</strong>.</p>
 <div class="infobox activitybox">
 <p><strong>Activity</strong></p>
@@ -724,13 +711,6 @@ Use the following command. Replace <code>[port_number]</code> with the port numb
 Look at the terminal where the Spark program is running and observe the output.</li>
 </ol>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>The complete code is available in file:</p>
-<p><code>/usr/users/cpu-prof/cpu_quercini/structured-streaming-playground/warmup.py</code></p>
-</div>
-</details>
 <div class="infobox warning">
 <p><strong>Stop the program</strong></p>
 <ul>
@@ -765,20 +745,6 @@ answer the following questions.</p>
 </ol>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<ol style="list-style-type: decimal">
-<li><p>We didn’t specify any trigger type, therefore the default one is applied (micro-batches mode).</p></li>
-<li><p>The complete code is available in file:</p></li>
-</ol>
-<p><code>/usr/users/cpu-prof/cpu_quercini/structured-streaming-playground/warmup-fixed-intervals.py</code></p>
-<ol start="3" style="list-style-type: decimal">
-<li>Everything that we write within 10 seconds is considered to be part of the same micro-batch, while before
-each line was a single micro-batch.</li>
-</ol>
-</div>
-</details>
 </div>
 <div id="checkpoint-location-and-output-mode" class="section level1">
 <h1><span class="header-section-number">4</span> Checkpoint location and output mode</h1>
@@ -795,14 +761,6 @@ and check the options for the output mode.</p></li>
 </ol>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>We didn’t specify an output mode. So the default option is considered.
-The default output mode is <code>append</code>.
-Only the new output since the last trigger will be displayed.</p>
-</div>
-</details>
 <p>You’re now going to code a program that counts the number of occurrences of each word
 in a streaming data source. But first do the actions that you find in the following Activity.</p>
 <div class="infobox activitybox">
@@ -837,20 +795,6 @@ Which output mode can’t you use? Why?</li>
 </ol>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<ol style="list-style-type: decimal">
-<li><p>The output of a batch is a DataFrame with one column named <code>value</code>.</p></li>
-<li><p>We need to use the Spark DataFrame API.</p></li>
-<li><p>We need to split the string in the column <code>value</code> into its constituent words. The package <code>pyspark.sql.functions</code> contains a function
-<code>split</code> that allows us to do so. Then, we need to aggregate by word and count.</p></li>
-<li><p>Append mode (the default one) cannot be used. In fact, we need to use an aggregating function (<code>count</code>), that can update the count
-of a word seen in a previous batch.
-This is not supported in append mode.</p></li>
-</ol>
-</div>
-</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -874,25 +818,6 @@ on the netcat terminal. What can you say about the word counts?</p></li>
 </ol>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<ol style="list-style-type: decimal">
-<li>The instructions need to be inserted right below the <code>load</code> instruction and before writing the result to the output stream.</li>
-</ol>
-<p>The code is available in the following file:</p>
-<p><code>/usr/users/cpu-prof/cpu_quercini/structured-streaming-playground/wordcount.py</code></p>
-<ol start="2" style="list-style-type: decimal">
-<li><p>The output mode that is chosen in the file is <code>complete</code>. The other possible is update.</p></li>
-<li><p>OK, running</p></li>
-<li><p>At each micro-batch, the set of all words written up to that point is shown withe corresponding counts.</p></li>
-<li><p>The word counts that we had in the previous execution are still available in the output. They are saved in the checkpoint directory.</p></li>
-<li><p>Now, the words counts that we had in the previous executions are not available anymore.</p></li>
-<li><p>Since we tried the <code>complete</code> mode, we try the <code>update</code> mode.
-At each micro-batch, only the word counts that change are displayed.</p></li>
-</ol>
-</div>
-</details>
 </div>
 <div id="window-operations-on-event-time" class="section level1">
 <h1><span class="header-section-number">5</span> Window operations on event time</h1>
@@ -963,13 +888,6 @@ to do it.</p></li>
 </ol>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>The complete code is available in the following file in the cluster:
-<code>/usr/users/cpu-prof/cpu_quercini/structured-streaming-playground/win_events.py</code></p>
-</div>
-</details>
 <p>We now test the Spark program.</p>
 <div class="infobox activitybox">
 <p><strong>Activity</strong></p>
