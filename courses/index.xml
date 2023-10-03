@@ -12928,18 +12928,6 @@ Write a MapReduce algorithm that generates key-value pairs
 &lt;span class=&#34;math inline&#34;&gt;\((year, average\_temperature)\)&lt;/span&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;map: &lt;span class=&#34;math inline&#34;&gt;\((year, month, temperature) \rightarrow (year, temperature)\)&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;reduce: &lt;span class=&#34;math inline&#34;&gt;\((year, temps) \rightarrow\)&lt;/span&gt; &lt;span class=&#34;math inline&#34;&gt;\((year, sum(temps)/len(temps))\)&lt;/span&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(temps\)&lt;/span&gt; is the list of all temperatures in the same &lt;span class=&#34;math inline&#34;&gt;\(year\)&lt;/span&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(sum(temps)\)&lt;/span&gt; sums all the elements in the list &lt;span class=&#34;math inline&#34;&gt;\(temps\)&lt;/span&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(len(temps)\)&lt;/span&gt; gives the length of the list &lt;span class=&#34;math inline&#34;&gt;\(temps\)&lt;/span&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;Suppose now that we have a large CSV file
 stored in a distributed file system (e.g., HDFS),
 containing a series of measurements in the format “Year, Month, Day, Minute, Second, Temperature”.
@@ -12954,16 +12942,6 @@ a MapReduce algorithm.&lt;/p&gt;
 What is the maximum number of measurements in a year?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Since we can have up to one measurement per second, the maximum number of
-measurements &lt;span class=&#34;math inline&#34;&gt;\(M_{max}\)&lt;/span&gt; for a certain year is given by the following formula:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
-M_{max} = 365 \times 24 \times 60 \times 60 \approx 31.5 \times 10^6 
-\]&lt;/span&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -12973,17 +12951,6 @@ Considering the answer to the previous question, discuss the efficiency
 of the first implementation of the algorithm.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Since there might be up to 31 million values
-associated with a key, the bottleneck of the computation would be
-the shuffle operation, since we need to copy a high number of
-(key,value) pairs from the mappers to the reducers.&lt;/p&gt;
-&lt;p&gt;Also, a reducer might have to
-loop over a huge list of values in order to compute their average.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -12993,19 +12960,6 @@ Based on the answer to the previous question,
 propose a better implementation to handle the CSV file.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;map: &lt;span class=&#34;math inline&#34;&gt;\((year, mo, d, mi, sec, temperature) \rightarrow (year, temperature)\)&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;combine: &lt;span class=&#34;math inline&#34;&gt;\((year, temps) \rightarrow\)&lt;/span&gt; &lt;span class=&#34;math inline&#34;&gt;\((year, (sum(temps), len(temps)))\)&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;reduce: &lt;span class=&#34;math inline&#34;&gt;\((year, [(s_i, l_i),\ i=1\dots n]) \rightarrow\)&lt;/span&gt; &lt;span class=&#34;math inline&#34;&gt;\((year, \frac{\sum_{i=1}^n s_i}{\sum_{i=1}^n l_i})\)&lt;/span&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(temps\)&lt;/span&gt; is the list of all temperatures in the same &lt;span class=&#34;math inline&#34;&gt;\(year\)&lt;/span&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(sum(temps)\)&lt;/span&gt; sums all the elements in the list &lt;span class=&#34;math inline&#34;&gt;\(temps\)&lt;/span&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(len(temps)\)&lt;/span&gt; gives the length of the list &lt;span class=&#34;math inline&#34;&gt;\(temps\)&lt;/span&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;common-friends&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Common friends in a social network&lt;/h1&gt;
@@ -13039,20 +12993,6 @@ Propose a MapReduce implementation to find the common friends in a
 social network satisifying the given constraints.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;map: &lt;span class=&#34;math inline&#34;&gt;\((x, F) \rightarrow [((u, v), x)\ \forall (u, v) \in F\ |\ u &amp;lt; v ]\)&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;reduce: &lt;span class=&#34;math inline&#34;&gt;\([(u, v), LCF] \rightarrow [(u, v), LCF]\)&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;where:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(x\)&lt;/span&gt; is the first item in a line.&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(F\)&lt;/span&gt; is the list containing the items in a line except the first one (&lt;span class=&#34;math inline&#34;&gt;\(x\)&lt;/span&gt;’s friends).&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(LCF\)&lt;/span&gt; is the list of all individuals that are friends with both &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;We note that the reduce function is the identity.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;&amp;lt;!–
 # Creating an inverted index&lt;/p&gt;
 &lt;p&gt;We have a collection of &lt;span class=&#34;math inline&#34;&gt;\(n\)&lt;/span&gt; documents in a directory and we want to create
@@ -13069,22 +13009,6 @@ Propose a MapReduce implementation to create an inverted index over a
 collection of documents.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The input to the map will be a key-value pair, where
-the key is the name of a file &lt;span class=&#34;math inline&#34;&gt;\(f\)&lt;/span&gt; and the value is the
-content &lt;span class=&#34;math inline&#34;&gt;\(C\)&lt;/span&gt; of the file.&lt;/p&gt;
-&lt;p&gt;map: &lt;span class=&#34;math inline&#34;&gt;\((f, C) \rightarrow [(w, f)\ \forall w \in C]\)&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;reduce: &lt;span class=&#34;math inline&#34;&gt;\((w, L) \rightarrow (w, L)\)&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;where &lt;span class=&#34;math inline&#34;&gt;\(L\)&lt;/span&gt; is the list of the files containing the word &lt;span class=&#34;math inline&#34;&gt;\(w\)&lt;/span&gt;.&lt;/p&gt;
-&lt;p&gt;We note that the reduce function is the identity.&lt;/p&gt;
-&lt;p&gt;Note also that in the map function we can add instructions
-to preprocess the text. For example, we can eliminate some words
-that are not useful in the index (e.g., the stopwords) or remove
-special symbols.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;computing-average-and-standard-deviation&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Computing average and standard deviation&lt;/h1&gt;
@@ -13111,16 +13035,6 @@ is more appropriate in a Map-Reduce algorithm?
 Why?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The second equation is more appropriate because it allows the computation
-of the sum of the elements and of the square of the elements step by step
-by using map and combine together.&lt;/p&gt;
-&lt;p&gt;Instead, if we use the first equation, we need first to compute the average and then use it
-to compute the variance.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -13130,23 +13044,6 @@ Propose a MapReduce implementation to compute the average and the standard
 deviation of the temperatures for each year.
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;map: &lt;span class=&#34;math inline&#34;&gt;\((year, mo, d, mi, sec, temperature) \rightarrow (year, temperature)\)&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;combine: &lt;span class=&#34;math inline&#34;&gt;\((year, T) \rightarrow\)&lt;/span&gt; &lt;span class=&#34;math inline&#34;&gt;\((year, (sum(T), sum(T^2), len(T)))\)&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;reduce: &lt;span class=&#34;math inline&#34;&gt;\((year, [(s_{i}, sq_{i}, l_{i}),\ i=1\dots n]) \rightarrow\)&lt;/span&gt; &lt;span class=&#34;math inline&#34;&gt;\((year, (\mu, \sigma))\)&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;where:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(T\)&lt;/span&gt; is the list of all temperatures in the same &lt;span class=&#34;math inline&#34;&gt;\(year\)&lt;/span&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(sum(T)\)&lt;/span&gt; sums all the elements in the list &lt;span class=&#34;math inline&#34;&gt;\(T\)&lt;/span&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(T^2 = [x^2 | x\in T]\)&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(len(T)\)&lt;/span&gt; gives the length of the list &lt;span class=&#34;math inline&#34;&gt;\(T\)&lt;/span&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(\mu = \sum_{i=1}^n s_{i}/ \sum_{i=1}^n l_{i}\)&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(\sigma = \sqrt{ (\sum_{i=1}^n sq_{i}/ \sum_{i=1}^n l_{i}) - \mu^2 }\)&lt;/span&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
@@ -14046,17 +13943,6 @@ to nicely see the values in the columns?&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The solutions are available in file:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;
-/usr/users/cpu-prof/cpu_quercini/mllib_solutions/train_test.py
-&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Since the DataFrame has many columns, we need to use the option &lt;code&gt;vertical=True&lt;/code&gt; when calling the
-function &lt;code&gt;show()&lt;/code&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;We now split &lt;code&gt;airbnb_df&lt;/code&gt; into two separate DataFrames, &lt;code&gt;train_df&lt;/code&gt; and &lt;code&gt;test_df&lt;/code&gt;, containing the training and
 test instances respectively.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -14074,15 +13960,6 @@ function are you going to use?&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The solutions are available in file:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;
-/usr/users/cpu-prof/cpu_quercini/mllib_solutions/train_test.py
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;It is time to save the training and test sets to a HDFS file.
 This way, we can load them whenever we need them to build a machine learning model
 for this problem.&lt;/p&gt;
@@ -14096,15 +13973,6 @@ The paths to the two files are already available in variables &lt;code&gt;traini
 defined at Lines 40 and 43 respectively.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The solutions are available in file:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;
-/usr/users/cpu-prof/cpu_quercini/mllib_solutions/train_test.py
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;preparing-the-features&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Preparing the features&lt;/h1&gt;
@@ -14137,15 +14005,6 @@ got in the first section.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The solutions are available in file:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;
-/usr/users/cpu-prof/cpu_quercini/mllib_solutions/train_test_model.py
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;It is now time to learn how to use a transformer to put all the necessary features into a vector.
 For the time being, we’ll only be using the feature &lt;code&gt;bedrooms&lt;/code&gt; to predict the price.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -14162,15 +14021,6 @@ You’ll need to use a &lt;a href=&#34;https://spark.apache.org/docs/latest/api/
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The solutions are available in file:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;
-/usr/users/cpu-prof/cpu_quercini/mllib_solutions/train_test_model.py
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;It is now time to train a linear regression model on the given training set and the selected features.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
@@ -14186,15 +14036,6 @@ to create a linear regressor and the function that you need to invoke to train t
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The solutions are available in file:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;
-/usr/users/cpu-prof/cpu_quercini/mllib_solutions/train_test_model.py
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;We can now use the trained model to make some predictions.
 The model returned by the function that you implemented in the previous exercise
 is an object of type &lt;code&gt;LinearRegressionModel&lt;/code&gt;.
@@ -14215,18 +14056,6 @@ know the formula of the regression line?&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;&lt;code&gt;test_df&lt;/code&gt; is not a good choice. In fact, the test set DataFrame must have the same format as
-the training set DataFrame the model has been trained on.
-So, we need to transform it a &lt;code&gt;vecAssembler&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;The solutions are available in file:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;
-/usr/users/cpu-prof/cpu_quercini/mllib_solutions/train_test_model.py
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;pipelines&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Pipelines&lt;/h1&gt;
@@ -14263,13 +14092,6 @@ to train and test a linear regression model on the given training and test sets.
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Solutions available in file:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;/usr/users/cpu-prof/cpu_quercini/mllib_solutions/pipeline_example.py&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div id=&#34;from-categorical-to-numerical-features&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.1&lt;/span&gt; From categorical to numerical features&lt;/h2&gt;
 &lt;p&gt;Many machine learning models do not handle categorical values: they need all features to be numerical.
@@ -14300,13 +14122,6 @@ with &lt;code&gt;spark_submit&lt;/code&gt;. This execute the instruction at Line
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Solutions available in file:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;/usr/users/cpu-prof/cpu_quercini/mllib_solutions/onehot_playground.py&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;One example of categorical feature in our dataset is &lt;code&gt;property_type&lt;/code&gt;, which takes values such as &lt;em&gt;Apartment&lt;/em&gt;, &lt;em&gt;House&lt;/em&gt;, &lt;em&gt;Condominium&lt;/em&gt;…
 Each value of a categorical feature is also referred to as a category.&lt;/p&gt;
 &lt;p&gt;One way to turn this feature into a numerical one would be to assign a number to each category (e.g., &lt;em&gt;Apartment&lt;/em&gt; corresponds to 0, &lt;em&gt;House&lt;/em&gt; to 1….).
@@ -14340,16 +14155,6 @@ of the feature &lt;code&gt;property_type&lt;/code&gt;?&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Solutions available in file:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;/usr/users/cpu-prof/cpu_quercini/mllib_solutions/onehot_playground.py&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;We note that the most frequent property type obtains the index 0; the second most frequent will obtain
-value 1…so the indexes are attributed by frequency. Each time we run the same code, we obtain the same indexes.
-This means that we have a determinism over different executions of the same program.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;It is time to find out how one-hot encoding works.&lt;/p&gt;
 &lt;div class=&#34;infobox activitybox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
@@ -14372,21 +14177,6 @@ This estimator uses the indexes in &lt;code&gt;property_type_index&lt;/code&gt; 
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Solutions available in file:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;/usr/users/cpu-prof/cpu_quercini/mllib_solutions/onehot_playground.py&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;One-hot creates a vector with as many values as the number of categories in the feature
-property_type.
-Each category has a fixed index in this vector, given by the column property_type_index.
-If for an instance the value of the property_type is &lt;em&gt;Guest suite&lt;/em&gt; and the index of &lt;em&gt;Guest suite&lt;/em&gt; is 3,
-then the one-hot encoded vector has only a value 1 at index 3 and 0 anywhere else.
-Spark only stores a concise representation of this sparse vector: a tuple with the
-size of the vector, the index whose value is non-zero and the actual value associated to the index
-(1 in our case).&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;Now, you have all the ingredients to create a full pipeline to train and test a
 linear regression model by using all features.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -14406,13 +14196,6 @@ Create a new file &lt;code&gt;full_pipeline.py&lt;/code&gt; where:&lt;/p&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Solutions available in file:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;/usr/users/cpu-prof/cpu_quercini/mllib_solutions/full_pipeline.py&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;evaluating-a-model&#34; class=&#34;section level1&#34;&gt;
@@ -14429,15 +14212,6 @@ In order to quantify the quality of our estimator, we need some evaluation measu
 and play with the code to do model selection based on a grid search of parameters.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The solutions are available in file&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;
-/usr/users/cpu-prof/cpu_quercini/mllib_solutions/model_evaluation.py
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
@@ -14755,31 +14529,6 @@ the amount paid is strictly greater than 10 dollars.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.customer.find()&lt;/pre&gt;
-&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.customer.find({}, {email:1})&lt;/pre&gt;
-&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.customer.find({&#34;store.country&#34;: &#34;Canada&#34;}, {email:1});&lt;/pre&gt;
-&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.rental.find({&#34;customer.country&#34;: &#34;Iran&#34;, amount: {$gt: 10}}, {rental_id: 1, _id:0});&lt;/pre&gt;
-&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.film.find({film_id: 213}, {&#34;actors.first_name&#34;:1, &#34;actors.last_name&#34;: 1}).sort({&#34;actors.last_name&#34;: -1});&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;operations-on-arrays&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Operations on arrays&lt;/h1&gt;
@@ -14798,27 +14547,6 @@ Write the following queries in MongoDB:&lt;/p&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.film.find({special_features : {$elemMatch: {$eq: &#34;Behind the Scenes&#34;}}}, {film_id: 1, _id:0});&lt;/pre&gt;
-&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.film.find({special_features : {$all: [&#34;Commentaries&#34;, &#34;Deleted Scenes&#34;]}}, {film_id: 1, _id:0});&lt;/pre&gt;
-&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.film.find({&#34;actors.first_name&#34;: &#34;BURT&#34;, &#34;actors.last_name&#34;: &#34;POSEY&#34;}, {film_id: 1, _id:0});&lt;/pre&gt;
-&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;db.film.find({actors: {$size : 15}}, {film_id: 1, _id:0});&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;aggregation-framework&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Aggregation framework&lt;/h1&gt;
@@ -14841,71 +14569,6 @@ Write the following queries in MongoDB using the aggregation framework:&lt;/p&gt
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.rental.aggregate({$match: {&#34;customer.first_name&#34;: &#34;TOMMY&#34;, &#34;customer.last_name&#34;: &#34;COLLAZO&#34;}}, 
-                    {$project: {&#34;inventory.film.title&#34;: 1, _id:0}})
-&lt;/pre&gt;
-One can also express this query with the function find()
-&lt;pre&gt;
-db.rental.find({&#34;customer.first_name&#34;: &#34;TOMMY&#34;, &#34;customer.last_name&#34;: &#34;COLLAZO&#34;}, {&#34;inventory.film.title&#34;: 1, _id:0});
-&lt;/pre&gt;
-&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.rental.aggregate({$group: {&#34;_id&#34;: null, total_amount: {$sum: &#34;$amount&#34;}}})
-&lt;/pre&gt;
-&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.film.aggregate({$project: {nb_actors: {$size: &#34;$actors&#34;}}})
-&lt;/pre&gt;
-&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;If we don’t put the match condition, we get an error because for some films
-the field actors is not defined.&lt;/p&gt;
-&lt;pre&gt;db.film.aggregate({$match: {actors: {$elemMatch: {$exists: true}}}}, 
-                {$project: {film_id: 1, &#34;nb_actors&#34;: {$size: &#34;$actors&#34;}}}, 
-                {$sort: {nb_actors: -1}})
-&lt;/pre&gt;
-&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.film.aggregate({$match: {actors: {$elemMatch: {$exists: true}}}}, 
-                {$project: {film_id: 1, &#34;nb_actors&#34;: {$size: &#34;$actors&#34;}}}, 
-                {$group: {_id: null, avg_actors: {$avg: &#34;$nb_actors&#34;}}})
-&lt;/pre&gt;
-&lt;ol start=&#34;6&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.rental.aggregate({$group: {_id: &#34;$customer.customer_id&#34;, count: {$sum: 1}}}, {$sort: {count: -1}})
-&lt;/pre&gt;
-&lt;ol start=&#34;7&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.rental.aggregate({$group: {_id: {cust_id: &#34;$customer.customer_id&#34;, cust_first_name: &#34;$customer.first_name&#34;, 
-                                    cust_last_name: &#34;$customer.last_name&#34;}, count: {$sum: 1}}}, 
-                            {$sort: {count: -1}}, {$limit :1})
-&lt;/pre&gt;
-&lt;ol start=&#34;8&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.rental.aggregate({$match: {&#34;inventory.film.categories.category&#34;: &#34;Music&#34;}}, {$group: {_id: &#34;$customer.country&#34;, count: {$sum: 1}}}, {$sort:{count: -1}}, {$limit: 1})
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;join-operations&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;5&lt;/span&gt; Join Operations&lt;/h1&gt;
@@ -14922,27 +14585,6 @@ Write the following queries in MongoDB using the aggregation framework:&lt;/p&gt
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.rental.aggregate({$match: {&#34;inventory.film.title&#34;: &#34;ACE GOLDFINGER&#34;}}, 
-            {$lookup: {from: &#34;film&#34;, localField: &#34;inventory.film.film_id&#34;, foreignField:&#34;film_id&#34;, as:&#34;film&#34;}}, 
-            {$project: {&#34;film.language&#34;: 1}}, {$limit : 1})
-&lt;/pre&gt;
-&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;pre&gt;
-db.rental.aggregate({$match: {rental_id: 2}}, 
-                    {$lookup: {from: &#34;staff&#34;, localField: &#34;staff.staff_id&#34;, 
-                    foreignField:&#34;staff_id&#34;, as:&#34;staff_member&#34;}}, {$project: {&#34;staff_member&#34;: 1}})
-&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
