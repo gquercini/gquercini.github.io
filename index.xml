@@ -8185,7 +8185,7 @@ standard deviation respectively.&lt;/p&gt;
 We’ll be using a dataset of AirBnb accommodation in the San Francisco area.
 The dataset is available in HDFS at the following path:&lt;/p&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;pre&gt;&lt;code&gt;hdfs://sar17:9000/cpu_quercini/ml/sf-airbnb-clean.parquet&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;hdfs://sar01:9000/cpu-prof/cpu_quercini/sf-airbnb-clean.parquet&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Dataset source&lt;/strong&gt;&lt;/p&gt;
@@ -8193,14 +8193,23 @@ The dataset is available in HDFS at the following path:&lt;/p&gt;
 &lt;/div&gt;
 &lt;p&gt;The goal of the exercise is to predict the price per night of an apartment given all the features
 in the dataset.&lt;/p&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Changing Python interpreter of the executors&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;The default Python interpreter used by the executors in the cluster does not have the package &lt;code&gt;numpy&lt;/code&gt; installed.
-In order to use one that has &lt;code&gt;numpy&lt;/code&gt;, you need to run the following command in the terminal:&lt;/p&gt;
+&lt;!--
+::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**Changing the Python interpreter of the executors**
+
+The default Python interpreter used by the executors in the cluster does not have the package ``numpy`` installed. 
+In order to use one that has ``numpy``, you need to run the following command in the terminal:
+
 &lt;div align=&#34;center&#34;&gt;
-&lt;pre&gt;&lt;code&gt;export PYSPARK_PYTHON=/usr/bin/python3&lt;/code&gt;&lt;/pre&gt;
+
+```
+export PYSPARK_PYTHON=/usr/bin/python3
+```
+
 &lt;/div&gt;
-&lt;/div&gt;
+
+:::
+--&gt;
 &lt;div id=&#34;obtaining-a-training-and-test-set&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Obtaining a training and test set&lt;/h1&gt;
 &lt;p&gt;In order to build and evaluate a machine learning model, we need to split our dataset into
@@ -8217,7 +8226,7 @@ a &lt;strong&gt;training&lt;/strong&gt; and &lt;strong&gt;test set&lt;/strong&gt
 &lt;li&gt;&lt;strong&gt;Complete Line 9&lt;/strong&gt;, by specifying your directory in HDFS, which is as follows (&lt;strong&gt;replace X with your account number&lt;/strong&gt;).&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;pre&gt;&lt;code&gt;hdfs://sar17:9000/plpspark22/plpspark22_X&lt;/code&gt;&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;hdfs://sar01:9000/itpspark23/itpspark23_X&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -8258,7 +8267,7 @@ for this problem.&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
 &lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.3  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;From Line 47&lt;/strong&gt;. Write the code to write the training and test sets to two Parquet files in HDFS.
+&lt;p&gt;&lt;strong&gt;From Line 47&lt;/strong&gt;. Write the code to save the training and test sets to two Parquet files in HDFS.
 The paths to the two files are already available in variables &lt;code&gt;training_set_file&lt;/code&gt; and &lt;code&gt;test_set_file&lt;/code&gt;
 defined at Lines 40 and 43 respectively.&lt;/p&gt;
 &lt;/div&gt;
@@ -8277,7 +8286,7 @@ input DataFrame and additional columns that are specified as an argument to the 
 &lt;/div&gt;
 &lt;p&gt;Copy the file &lt;code&gt;train_test_model&lt;/code&gt; to your home folder in the cluster by typing the following command:&lt;/p&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;p&gt;cp /usr/users/cpu-prof/cpu_quercini/mllib/train_test_model.py .&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;cp /usr/users/cpu-prof/cpu_quercini/mllib/train_test_model.py .&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
@@ -8304,7 +8313,7 @@ For the time being, we’ll only be using the feature &lt;code&gt;bedrooms&lt;/c
 &lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.2  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Implement the function &lt;code&gt;get_vector&lt;/code&gt; at Line 55. The comments in the file describe what the function is supposed to do.
-You’ll need to use a &lt;a href=&#34;https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.feature.VectorAssembler.html#pyspark.ml.feature.VectorAssembler&#34; target=&#34;_blank&#34;&gt;VectorAssembler object&lt;/a&gt; to implement the function.&lt;/p&gt;&lt;/li&gt;
+You’ll need to use a &lt;a href=&#34;https://spark.apache.org/docs/latest/ml-features#vectorassembler&#34; target=&#34;_blank&#34;&gt;VectorAssembler object&lt;/a&gt; to implement the function.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Uncomment Lines 117 and 118 to call the function &lt;code&gt;get_vector&lt;/code&gt; and display the result.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Execute the file &lt;code&gt;train_test_model&lt;/code&gt; with &lt;code&gt;spark-submit&lt;/code&gt;. Observe the content of the the DataFrame &lt;code&gt;train_vect&lt;/code&gt;. It should have a column named
 &lt;code&gt;features&lt;/code&gt; containing a list with one value (the value of feature &lt;code&gt;bedrooms&lt;/code&gt;).&lt;/p&gt;&lt;/li&gt;
@@ -8319,7 +8328,7 @@ You’ll need to use a &lt;a href=&#34;https://spark.apache.org/docs/latest/api/
 &lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.3  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Implement the function &lt;code&gt;train_linear_regression_model&lt;/code&gt; at Line 79. The comments in the file describe what the function is supposed to do.
-&lt;a href=&#34;https://spark.apache.org/docs/latest/api/python/reference/pyspark.ml.html&#34; target=&#34;_blank&#34;&gt;Looking at the documentation&lt;/a&gt;, try to identify the object that you need to use
+&lt;a href=&#34;https://spark.apache.org/docs/latest/ml-classification-regression.html#regression&#34; target=&#34;_blank&#34;&gt;Looking at the documentation&lt;/a&gt;, identify the object that you need to use
 to create a linear regressor and the function that you need to invoke to train the linear regressor.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Uncomment Lines 121, 124, 125, 126 to call the function &lt;code&gt;train_linear_regression_model&lt;/code&gt; and display the coefficients learned by the linear regression model.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;Execute the file &lt;code&gt;train_test_model&lt;/code&gt; with &lt;code&gt;spark-submit&lt;/code&gt;.&lt;/li&gt;
@@ -8329,7 +8338,7 @@ to create a linear regressor and the function that you need to invoke to train t
 &lt;p&gt;We can now use the trained model to make some predictions.
 The model returned by the function that you implemented in the previous exercise
 is an object of type &lt;code&gt;LinearRegressionModel&lt;/code&gt;.
-&lt;a href=&#34;https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.regression.LinearRegressionModel.html#pyspark.ml.regression.LinearRegressionModel&#34; target=&#34;_true&#34;&gt;Looking at the documentation&lt;/a&gt;, we learn that there is a function &lt;code&gt;predict&lt;/code&gt; that allows us to
+&lt;a href=&#34;https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.regression.LinearRegressionModel.html#pyspark.ml.regression.LinearRegressionModel&#34; target=&#34;_true&#34;&gt;Looking at the documentation&lt;/a&gt;, we learn that there is a function &lt;code&gt;predict&lt;/code&gt; to
 make a prediction given a single instance.
 If we want to make a prediction on the whole test set, we should use the function &lt;code&gt;transform&lt;/code&gt;.
 The function takes in a DataFrame with the test set and returns the same DataFrame with an additional column &lt;code&gt;prediction&lt;/code&gt; that contains the predicted value.&lt;/p&gt;
@@ -8351,23 +8360,22 @@ know the formula of the regression line?&lt;/li&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Pipelines&lt;/h1&gt;
 &lt;p&gt;In the previous section we learned that a training and test set need to go through the same transformation steps in
 order to be fed to a machine learning model.
-When we have few transformations, it is easy to remember the ones that we applied to a training set, so as to apply them to the
-test set too.
-However, when we need to apply a series of transformations, the order of which is important, it is easy to make mistakes (applying different sets of transformations
-to the training and test instances, which leads to meaningless predictions).&lt;/p&gt;
+When we have few transformations, it is easy to remember the ones that we applied to a training set and apply them on the test set.
+However, when we apply a series of transformations, the order of which is important, mistakes are around the corner; we may very well apply
+different sets of transformations to the training and test instances, which leads to erroneous predictions.&lt;/p&gt;
 &lt;p&gt;A good practice is to use the &lt;strong&gt;Pipeline API&lt;/strong&gt;.
 A &lt;strong&gt;pipeline&lt;/strong&gt; is composed of &lt;strong&gt;stages&lt;/strong&gt;. Each stage may be a &lt;strong&gt;transformer&lt;/strong&gt; or an &lt;strong&gt;estimator&lt;/strong&gt;.
 A &lt;strong&gt;transformer&lt;/strong&gt; is an object on which we call the function &lt;code&gt;transform&lt;/code&gt; to obtain a new DataFrame from an input DataFrame.
 An &lt;strong&gt;estimator&lt;/strong&gt; is an object on which we call the function &lt;code&gt;fit&lt;/code&gt; to learn a model on a given DataFrame. The learned model is itself
 a transformer.&lt;/p&gt;
 &lt;p&gt;When the function &lt;code&gt;fit&lt;/code&gt; is called on a Pipeline, the training set goes through all the transformers and the estimators in the order in which they are declared in the pipeline;
-at last, the estimator specified in the last stage is trained on the training set.
+the estimator specified in the last stage is trained on the training set.
 The model returned by applying the function &lt;code&gt;fit&lt;/code&gt; on the pipeline is itself a transformer.
 If we invoke the function &lt;code&gt;transform&lt;/code&gt; on that model on the test set, we obtain a DataFrame that contains a column named &lt;code&gt;predictions&lt;/code&gt;.
 Implicitly, all the transformations in the pipeline will be applied to the test set too, before making the predictions.&lt;/p&gt;
 &lt;p&gt;Copy the file &lt;code&gt;pipeline_example.py&lt;/code&gt; to your home folder in the cluster by typing the following command:&lt;/p&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;pre&gt;&lt;code&gt;cp /usr/users/cpu-prof/cpu_quercini/mllib/pipeline_example.py .&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;cp /usr/users/cpu-prof/cpu_quercini/mllib/pipeline_example.py .&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
@@ -8392,7 +8400,7 @@ Linear regression is such an example.&lt;/p&gt;
 &lt;li&gt;Copy the file &lt;code&gt;onehot_playground.py&lt;/code&gt; to your home directory in the cluster by typing the following command:&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;pre&gt;&lt;code&gt;cp /usr/users/cpu-prof/cpu_quercini/mllib/onehot_playground.py .&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;cp /usr/users/cpu-prof/cpu_quercini/mllib/onehot_playground.py .&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;ul&gt;
 &lt;li&gt;Change lines 27 and 28 and write the paths to the files with the training and test sets.&lt;/li&gt;
@@ -8412,13 +8420,13 @@ with &lt;code&gt;spark_submit&lt;/code&gt;. This execute the instruction at Line
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;One example of categorical feature in our dataset is &lt;code&gt;property_type&lt;/code&gt;, which takes values such as &lt;em&gt;Apartment&lt;/em&gt;, &lt;em&gt;House&lt;/em&gt;, &lt;em&gt;Condominium&lt;/em&gt;…
+&lt;p&gt;One example of a categorical feature in our dataset is &lt;code&gt;property_type&lt;/code&gt;, which takes values such as &lt;em&gt;Apartment&lt;/em&gt;, &lt;em&gt;House&lt;/em&gt;, &lt;em&gt;Condominium&lt;/em&gt;…
 Each value of a categorical feature is also referred to as a category.&lt;/p&gt;
-&lt;p&gt;One way to turn this feature into a numerical one would be to assign a number to each category (e.g., &lt;em&gt;Apartment&lt;/em&gt; corresponds to 0, &lt;em&gt;House&lt;/em&gt; to 1….).
+&lt;p&gt;One way to turn this feature into a numerical one would be to assign a number to each category (e.g., &lt;em&gt;Apartment&lt;/em&gt; corresponds to 1, &lt;em&gt;House&lt;/em&gt; to 2….).
 However, this implicitly introduces an order among the categories: the category &lt;em&gt;House&lt;/em&gt; would be worth twice as much as the category &lt;em&gt;Apartment&lt;/em&gt;;
 this would inevitably bias the trained model.&lt;/p&gt;
 &lt;p&gt;A commonly used method is &lt;strong&gt;one-hot encoding&lt;/strong&gt;. Let’s find out how it works.
-Let’s focus only on the feature &lt;code&gt;property_type&lt;/code&gt;.&lt;/p&gt;
+Let’s only focus on the feature &lt;code&gt;property_type&lt;/code&gt;.&lt;/p&gt;
 &lt;div class=&#34;infobox activitybox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -8453,7 +8461,7 @@ of the feature &lt;code&gt;property_type&lt;/code&gt;?&lt;/p&gt;&lt;/li&gt;
 This estimator uses the indexes in &lt;code&gt;property_type_index&lt;/code&gt; and creates a new column &lt;code&gt;property_type_ohe&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;The estimator is trained on the training set and a new transformer is obtained (line 61).&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;The transformer is used on the training set to transform it into a new DataFrame, where a new column &lt;code&gt;property_type_ohe&lt;/code&gt; exists.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Line 67 prints selected columns of this transformed training set.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Line 67 prints the selected columns of this transformed training set.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -8482,15 +8490,16 @@ Create a new file &lt;code&gt;full_pipeline.py&lt;/code&gt; where:&lt;/p&gt;
 &lt;li&gt;&lt;p&gt;Set up a &lt;code&gt;VectorAssembler&lt;/code&gt; to put into a single vector the one-hot encoded features and the numerical ones.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Set up a linear regression model that takes in all features and the variable to predict (&lt;code&gt;price&lt;/code&gt;).&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Mix all these ingredients in a &lt;code&gt;Pipeline&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;Use the &lt;code&gt;Pipeline&lt;/code&gt; to train and test the model.&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Use the &lt;code&gt;Pipeline&lt;/code&gt; to train and test the model.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
+&lt;p&gt;You can display the first five rows of the DataFrame to see the predictions.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;evaluating-a-model&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Evaluating a model&lt;/h1&gt;
-&lt;p&gt;In the previous sections we visually looked at the predictions to get an vague idea of how our
+&lt;p&gt;In the previous sections we looked at the predictions to get a vague idea of how our
 estimator performs.
 In order to quantify the quality of our estimator, we need some evaluation measures.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -8498,8 +8507,9 @@ In order to quantify the quality of our estimator, we need some evaluation measu
 
 &lt;div class=&#34;exercise&#34;&gt;
 &lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-13&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.1  &lt;/strong&gt;&lt;/span&gt;
-&lt;a href=&#34;https://spark.apache.org/docs/latest/ml-tuning.html#train-validation-split&#34; target=&#34;_blank&#34;&gt;Look at the documentation&lt;/a&gt;
-and play with the code to do model selection based on a grid search of parameters.&lt;/p&gt;
+Use a &lt;a href=&#34;https://spark.apache.org/docs/latest/ml-tuning.html#train-validation-split&#34; target=&#34;_blank&#34;&gt;TrainValidationSplit object&lt;/a&gt;
+to do a model selection based on a grid search of parameters.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Warning.&lt;/strong&gt; TrainValidationSplit expects the features to be in a column named “features” and the variable to predict in a column named “label”.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
