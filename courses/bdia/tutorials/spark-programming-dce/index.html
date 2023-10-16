@@ -614,7 +614,7 @@
 <h1><span class="header-section-number">1</span> Computing averages</h1>
 <p>We consider a collection of CSV files containing temperature measurements in the following format:</p>
 <p><code>year,month,day,hours,minutes,seconds,temperature</code></p>
-<p>you can find the files under the directory <code>hdfs://sar17:9000/data/temperatures/</code></p>
+<p>you can find the files under the directory <code>hdfs://sar01:9000/data/temperatures/</code></p>
 <p>Here are the details for each file:</p>
 <ul>
 <li>File <code>temperatures_86400.csv</code> contains one measurement per day in the years 1980 - 2018.</li>
@@ -629,51 +629,56 @@
 <p>Copy the file <code>/usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_temperatures.py</code>
 to your home directory by typing
 the following command:</p>
-<div align="left">
+<div align="center">
 <p><code>cp /usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_temperatures.py ./avg_temperatures_slow.py</code></p>
 </div>
 <p>Open the file <code>avg_temperatures_slow.py</code>.
 The file contains the implementation of the function <code>avg_temperature_slow</code>
-that takes in an RDD where each item is a line of the input text file and
-returns an RDD, where each item is a key-value pair <code>(year, avg_temp)</code>.</p>
-<p>In the same file, locate the two variables <code>input_path</code> and <code>output-path</code>.
+that:</p>
+<ul>
+<li><p>takes in an RDD, where each item is a line of the input text file;</p></li>
+<li><p>returns an RDD, where each item is a key-value pair <code>(year, avg_temp)</code>.</p></li>
+</ul>
+<p>In the same file, locate the two variables <code>input_path</code> and <code>output-path</code>
 and write the following code:</p>
-<pre><code>input_path = &quot;hdfs://sar17:9000/data/temperatures/&quot;
-output_path = &quot;hdfs://sar17:9000/bdiaspark22/bdiaspark22_XX/&quot;</code></pre>
-<p>Replace <code>XX</code> with the number corresponding to your login!
+<pre><code>input_path = &quot;hdfs://sar01:9000/data/temperatures/&quot;
+output_path = &quot;hdfs://sar01:9000/bdiaspark23/bdiaspark23_X/&quot;</code></pre>
+<p>Replace <code>X</code> with the number corresponding to your account!
 <strong>Don’t forget the / at the end of the file paths!</strong></p>
 <p><strong>Execute the following actions:</strong></p>
 <ul>
 <li>Run the script <code>avg_temperatures_slow.py</code> by using <code>temperatures_86400.csv</code> as an input.
 To this extent, use the following command:</li>
 </ul>
-<div align="left">
-<p><code>spark-submit --master spark://sar17:7077 avg_temperatures_slow.py temperatures_86400.csv</code></p>
+<div align="center">
+<p><code>spark-submit --master spark://sar01:7077 avg_temperatures_slow.py temperatures_86400.csv</code></p>
 </div>
 <ul>
-<li>You should find the output of the program under the folder <code>hdfs://sar17:9000/bdiaspark22/bdiaspark22_XX/temperatures_86400.out</code>
-Type the following command to verify it :</li>
+<li>You should find the output of the program under the following folder:</li>
 </ul>
-<div align="left">
-<p><code>hdfs dfs -ls hdfs://sar17:9000/bdiaspark22/bdiaspark22_XX/temperatures_86400.out</code></p>
+<div align="center">
+<p><code>hdfs://sar01:9000/bdiaspark23/bdiaspark23_X/temperatures_86400.out</code></p>
+</div>
+<p>Type the following command to verify it :</p>
+<div align="center">
+<p><code>hdfs dfs -ls hdfs://sar01:9000/bdiaspark23/bdiaspark23_X/temperatures_86400.out</code></p>
 </div>
 <ul>
 <li>If you want to read the result of the computation, you can execute the following command:</li>
 </ul>
-<div align="left">
-<p><code>hdfs dfs -cat hdfs://sar17:9000/bdiaspark22/bdiaspark22_XX/temperatures_86400.out/*</code></p>
+<div align="center">
+<p><code>hdfs dfs -cat hdfs://sar01:9000/bdiaspark23/bdiaspark23_X/temperatures_86400.out/*</code></p>
 </div>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1.1  </strong></span></p>
+<p>In the output of Spark on the command line you should see a line that reads something similar to the following phrase:</p>
+<pre><code>   INFO DAGScheduler: Job 0 finished: runJob at SparkHadoopWriter.scala:78, took 3.478220 s 
+   </code></pre>
 <ul>
-<li>What’s the execution time?
-<ul>
-<li><p>In the output of Spark on the command line you should see a line that mentions something along the following line:</p>
-<p><code>INFO DAGScheduler: Job 0 finished: runJob at SparkHadoopWriter.scala:78, took 3.478220 s</code></p></li>
-</ul></li>
+<li><p>Note the execution time that you obtained.</p></li>
 <li><p>Run the same script by using <code>temperatures_2880.csv</code> as an input.</p></li>
 <li><p>What is the execution time? Does it seem reasonable compared with the execution time that you observed before?
 Justify your answer.</p></li>
@@ -686,9 +691,10 @@ the files <code>temperatures_2880.csv</code> and <code>temperatures_86.csv</code
 </div>
 <div id="second-implementation" class="section level2">
 <h2><span class="header-section-number">1.2</span> Second implementation</h2>
-<p>Create a copy of <code>avg_temperatures_slow.py</code> and rename it as<br />
-<code>avg_temperatures_fast.py</code>, with the following command:</p>
-<div align="left">
+<p>We want to implement a better version of the program.
+You can draft your ideas on paper before you write any code.</p>
+<p>When you’re ready, create a copy of <code>avg_temperatures_slow.py</code> and rename it as <code>avg_temperatures_fast.py</code>, with the following command:</p>
+<div align="center">
 <p><code>cp ./avg_temperatures_slow.py ./avg_temperatures_fast.py</code></p>
 </div>
 <div class="infobox exercisebox">
@@ -723,24 +729,24 @@ Do you think that the program takes too long? Why?</p></li>
 Each line of the file is a list of identifiers separated by commas.
 For instance, the line <span class="math inline">\(A,B,C,D\)</span> means that <span class="math inline">\(A\)</span> is friend with <span class="math inline">\(B\)</span>, <span class="math inline">\(C\)</span> and <span class="math inline">\(D\)</span>.
 An excerpt of the file looks like as follows:</p>
-<pre><code>A,B,C,D
-B,A,D
-C,A,D
+<pre><code>B,A,D
+A,B,C,D
 D,A,B,C
+C,A,D
 ...</code></pre>
 <p>We suppose that the friendship relation is symmetric: <span class="math inline">\((A, B)\)</span> implies
 <span class="math inline">\((B, A)\)</span>.</p>
 <p><strong>We want to obtain the list of the common friends for each pair of individuals</strong>:</p>
-<pre><code>(A, B), [D]
-(A, C), [D] 
+<pre><code>(B, C), [A, D] 
 (A, D), [B, C] 
-(B, C), [A, D] 
+(C, D), [A]
+(A, C), [D] 
 (B, D), [A] 
-(C, D), [A]</code></pre>
+(A, B), [D]</code></pre>
 <p>As an additional constraint, we want to represent a couple only once and avoid
 to represent the symmetric couple.
 In other words, if we output <span class="math inline">\((A, B)\)</span>, we don’t want to output <span class="math inline">\((B, A)\)</span>.</p>
-<p>We use the following input files available in folder <code>hdfs://sar17:9000/data/sn/</code>:</p>
+<p>We use the following input files available in folder <code>hdfs://sar01:9000/data/social-network/</code>:</p>
 <ul>
 <li><p><code>sn_tiny.csv</code>. Small social network, that you can use to test your implementation.</p></li>
 <li><p><code>sn_10k_100k.csv</code>. Social network with <span class="math inline">\(10^4\)</span> individuals and <span class="math inline">\(10^5\)</span> links.</p></li>
@@ -750,8 +756,8 @@ In other words, if we output <span class="math inline">\((A, B)\)</span>, we don
 </ul>
 <div id="implementation" class="section level2">
 <h2><span class="header-section-number">2.1</span> Implementation</h2>
-<p><strong>Get the code template with the following commands:</strong></p>
-<div align="left">
+<p><strong>Get the code template with the following command:</strong></p>
+<div align="center">
 <p><code>cp /usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_common_friends.py .</code></p>
 </div>
 <div class="infobox exercisebox">
@@ -760,8 +766,8 @@ In other words, if we output <span class="math inline">\((A, B)\)</span>, we don
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 2.1  </strong></span></p>
 <ul>
-<li><p>Write an implementation that uses a <code>reduceByKey</code>.</p></li>
 <li><p>Write an implementation that uses a <code>groupByKey</code>.</p></li>
+<li><p>Write an implementation that uses a <code>reduceByKey</code>.</p></li>
 <li>Test both implementations on file <code>sn_tiny.csv</code>.</li>
 </ul>
 </div>
@@ -790,12 +796,12 @@ the measured running times of both implementations.</p></li>
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 2.3  </strong></span></p>
 <ol style="list-style-type: decimal">
-<li><p>Write a Spark program to compute the minimum, maximum and average degree of
-a node in the social network. You should use RDDs to do so, <strong>don’t try to <code>collect()</code> the
+<li><p>Add a function to file <code>template_common_friends.py</code> that returns a tuple containing the minimum, the maximum and the average degree of
+a node in the social network. You must use RDDs to do so, <strong>don’t try to <code>collect()</code> the
 content of the RDDs and so compute the values on Python lists</strong>.</p></li>
-<li><p>Compute the minimum, maximum and average degree for all the given input files.</p></li>
-<li><p>Complete the table that you created at the previous exercise by adding the
-minimum, maximum and average number of friends.</p></li>
+<li><p>Execute the function for all the given input files.</p></li>
+<li>Complete the table that you created in the previous exercise by adding the
+minimum, maximum and average number of friends.</li>
 </ol>
 </div>
 </div>
@@ -808,7 +814,7 @@ minimum, maximum and average number of friends.</p></li>
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 2.4  </strong></span></p>
 <ul>
-<li><p>We suppose that each node has a number of friends that is equal to
+<li><p>We suppose that each node has a number of friends that is equal to the
 average number of friends.
 Compute (with pencil or paper, no need to write a code for that) the number of
 intermediate pairs <span class="math inline">\(((A, B), X)\)</span> generated by your code.</p></li>
@@ -833,7 +839,7 @@ standard deviation respectively.</p>
 \sigma = \sqrt{\overline{x^2} - \overline{x}^2} = \sqrt{\frac{\sum_{i=1}^n (x_i)^2}{n} - \Bigg(\frac{\sum_{i=1}^n x_i}{n}\Bigg)^2} 
 \]</span></p>
 <p>Type the following command to get a code template:</p>
-<div align="left">
+<div align="center">
 <p><code>cp /usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_temperatures.py  ./avg_stddev_temp.py</code></p>
 </div>
 <div class="infobox exercisebox">
