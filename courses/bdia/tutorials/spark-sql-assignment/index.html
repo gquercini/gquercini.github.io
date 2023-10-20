@@ -614,7 +614,7 @@
 <h1><span class="header-section-number">1</span> Number of partitions in a RDD</h1>
 <p>We consider a set of CSV files that contain temperature measurements over several years.
 Each line has the following content: <code>year,month,day,hour,minute,second,temperature</code>.</p>
-<p>These files are stored at the following location: <code>hdfs://sar17:9000/data/temperatures/</code>.</p>
+<p>These files are stored at the following location: <code>hdfs://sar01:9000/data/temperatures/</code>.</p>
 <p>Here is the detail for each file:</p>
 <ul>
 <li>File <code>temperatures_86400.csv</code> contains one measurement per day between 1980 and 2018.</li>
@@ -625,26 +625,31 @@ Each line has the following content: <code>year,month,day,hour,minute,second,tem
 <div class="infobox warning">
 <p><strong>Get the file <code>avg_temperatures_rdd.py</code> by typing the following command:</strong></p>
 <div align="left">
-<pre><code>cp /usr/users/cpu-prof/cpu_quercini/spark-sql-templates/avg_temperatures_rdd.py .</code></pre>
+<p><code>cp /usr/users/cpu-prof/cpu_quercini/spark-sql-templates/avg_temperatures_rdd.py .</code></p>
 </div>
 <p>This file contains an efficient implementation of the function that computes the average yearly temperature, as we have seen
-in tutorial 2.</p>
+in a previous tutorial.</p>
 </div>
 <div id="performances-and-number-of-partitions" class="section level2">
 <h2><span class="header-section-number">1.1</span> Performances and number of partitions</h2>
+<ul>
+<li><p><strong>Line 70.</strong> Replace <code>sarXX</code> with <code>sar01</code>.</p></li>
+<li><p><strong>Line 80.</strong> Replace <code>sarXX</code> with <code>sar01</code>. Replace YOUR_DIRECTORY with <code>bdiaspark23/bdiaspark23_XX/</code> (where XX corresponds to your username number).</p></li>
+<li><p>Observe the instructions at <strong>line 98</strong> and <strong>line 104</strong>. They get and show
+the number of partitions of the input RDD <code>text_file</code> and the output RDD <code>temperatures</code> respectively.</p></li>
+</ul>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1.1  </strong></span></p>
-<ul>
-<li><p>Modify the code by following the instructions that you find in the file.</p></li>
-<li><p>Observe the instructions at <strong>line 73</strong> and <strong>line 79</strong>. They get and show
-the number of partitions of the input RDD <code>text_file</code> and the output RDD <code>temperatures</code> respectively.</p></li>
-<li><strong>Complete Table 1</strong>. Run the program on file <code>temperatures_10.csv</code>. Write down the
-execution time and the number of partitions of both RDDs <code>text_file</code> and <code>temperatures</code>.</li>
-</ul>
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1.1  </strong></span>
+Complete Table 1. Run the program on file <code>temperatures_10.csv</code>. Write down the
+execution time and the number of partitions of both RDDs <code>text_file</code> and <code>temperatures</code>.</p>
 </div>
+</div>
+<p><strong>Reminder.</strong> The command to run the program is as follows:</p>
+<div align="center">
+<p><code>spark-submit --master spark://sar01:7077 avg_temperatures_rdd.py temperatures_10.csv</code></p>
 </div>
 <p>
 <table class="bigdata">
@@ -667,7 +672,7 @@ execution time and the number of partitions of both RDDs <code>text_file</code> 
 temperatures_86400.csv
 </td>
 <td>
-2.71
+3.12
 </td>
 <td>
 2
@@ -681,7 +686,7 @@ temperatures_86400.csv
 temperatures_2880.csv
 </td>
 <td>
-3.27
+3.67
 </td>
 <td>
 2
@@ -695,7 +700,7 @@ temperatures_2880.csv
 temperatures_86.csv
 </td>
 <td>
-4.33
+4.59
 </td>
 <td>
 2
@@ -720,13 +725,6 @@ temperatures_10.csv
 </caption>
 </table>
 </p>
-<div class="infobox warning">
-<p><strong>Good to know</strong></p>
-<p>You can execute the program on file <code>temperatures_10.csv</code> with the following command:</p>
-<div align="left">
-<pre><code>spark-submit --master spark://sar17:7077 avg_temperatures_rdd.py temperatures_10.csv</code></pre>
-</div>
-</div>
 </div>
 <div id="analysis-of-sparks-operation" class="section level2">
 <h2><span class="header-section-number">1.2</span> Analysis of Spark’s operation</h2>
@@ -749,8 +747,8 @@ HDFS folder. What do you notice? Is there any relation with respect to the numbe
 <div class="infobox warning">
 <p><strong>Good to know</strong></p>
 <p>In order to list the content of the folder in HDFS, you can use the following command:</p>
-<div align="left">
-<pre><code>hdfs dfs -ls hdfs://sar17:9000/bdiaspark22/bdiaspark22_XX/temperatures_10.rdd.out</code></pre>
+<div align="center">
+<p><code>hdfs dfs -ls hdfs://sar01:9000/bdiaspark23/bdiaspark23_XX/temperatures_10.rdd.out</code></p>
 </div>
 </div>
 </div>
@@ -762,14 +760,14 @@ HDFS folder. What do you notice? Is there any relation with respect to the numbe
 <ul>
 <li>Copy the code template <code>avg_temperatures_df.py</code> to your home folder by executing the following command:</li>
 </ul>
-<div align="left">
-<pre><code>cp /usr/users/cpu-prof/cpu_quercini/spark-sql-templates/avg_temperatures_df.py .</code></pre>
+<div align="center">
+<p><code>cp /usr/users/cpu-prof/cpu_quercini/spark-sql-templates/avg_temperatures_df.py .</code></p>
 </div>
+<!--* The instructions **at line 109 and 115** show the number of partitions of the RDDs
+underlying the dataframes ``df`` (input) and ``df_avg`` (output) respectively.-->
 <ul>
-<li><p>The instructions <strong>at line 84 and 90</strong> show the number of partitions of the RDDs
-underlying the dataframes <code>df</code> (input) and <code>df_avg</code> (output) respectively.</p></li>
-<li><p>The result of the computation will be stored in the folder <code>temperatures_*.df.out</code>
-under your HDFS folder <code>bdiaspark22/bdiaspark22_XX</code></p></li>
+<li>The result of the computation will be stored in the folder <code>temperatures_*.df.out</code>
+under your HDFS folder <code>bdiaspark23/bdiaspark23_XX</code>.</li>
 </ul>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
@@ -777,7 +775,13 @@ under your HDFS folder <code>bdiaspark22/bdiaspark22_XX</code></p></li>
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 2.1  </strong></span></p>
 <ul>
-<li><p>Complete the code by following the instructions that you find in file <code>avg_temperatures_df.py</code>.</p></li>
+<li><p><strong>Line 78.</strong> Replace <code>sarXX</code> with <code>sar01</code>.</p></li>
+<li><p><strong>Line 89.</strong> Replace <code>sarXX</code> with <code>sar01</code>.</p></li>
+<li><p><strong>Line 106.</strong> Complete the instruction to read from the input CSV file.
+Please note that the input CSV files <strong>do not have headers</strong>. Don’t use schema inference,
+just specify your schema manually. As a reminder, the columns are: <code>year</code>, <code>month</code>,
+<code>day</code>, <code>hour</code>, <code>minute</code>, <code>second</code>, <code>temperature</code>.</p></li>
+<li><p><strong>Line 55.</strong> Complete the definition of function <code>avg_temperature_df</code>.</p></li>
 <li>Execute your code on all the input CSV files and <strong>complete Table 2</strong>.</li>
 </ul>
 </div>
@@ -793,22 +797,15 @@ under your HDFS folder <code>bdiaspark22/bdiaspark22_XX</code></p></li>
 <td>
 <b>Execution time DataFrame<br>(sec)</b>
 </td>
-<td>
-<b>Number of partitions<br>(<code>df_avg</code>)</b>
-</td>
 </tr>
 <tr>
 <td>
 temperatures_86400.csv
 </td>
 <td>
-2.71
+3.12
 </td>
 <td>
-4.75
-</td>
-<td>
-200
 </td>
 </tr>
 <tr>
@@ -816,13 +813,9 @@ temperatures_86400.csv
 temperatures_2880.csv
 </td>
 <td>
-3.27
+3.67
 </td>
 <td>
-4.52
-</td>
-<td>
-200
 </td>
 </tr>
 <tr>
@@ -830,9 +823,7 @@ temperatures_2880.csv
 temperatures_86.csv
 </td>
 <td>
-4.33
-</td>
-<td>
+4.59
 </td>
 <td>
 </td>
@@ -846,8 +837,6 @@ Exercise 1.1
 </td>
 <td>
 </td>
-<td>
-</td>
 </tr>
 <caption>
 Table 2. RDDs vs. DataFrames.
@@ -858,92 +847,76 @@ Table 2. RDDs vs. DataFrames.
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 2.2  </strong></span></p>
-<ul>
-<li><p>Compare the execution times with the ones obtained with the implementation using the RDDs.
-What do you observe?</p></li>
-<li>What is the number of partition of the output RDD? How do you explain this value?</li>
-</ul>
+<p>Compare the execution times with the ones obtained with the implementation using the RDDs.
+What do you observe? How do you explain the differences?</p>
 </div>
 </div>
-<div id="effect-of-the-number-of-partitions" class="section level2">
-<h2><span class="header-section-number">2.1</span> Effect of the number of partitions</h2>
-<p>You’re going to study the effect of the number of partitions on the performances of the program.</p>
-<ul>
-<li>In file <code>avg_temperatures_df.py</code> add the following instruction right below the initialisation of the
-<code>SparkSession</code>. The command sets the number of <em>shuffle</em> partitions to a certain value <code>X</code>.</li>
-</ul>
-<p><code>spark.conf.set(&quot;spark.sql.shuffle.partitions&quot;, X)</code></p>
-<ul>
-<li>Execute the program with different values of <code>X</code> (say, 1, 2, 10, 50, 100, 500, 1000, 5000, 100000) <strong>only on file</strong>
-<code>temperatures_86400.csv</code> and write down the execution times.</li>
-</ul>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+<!-- ## Effect of the number of partitions
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 2.3  </strong></span></p>
-<ul>
-<li><p>Plot a graph where the x-axis contains the values of <code>X</code> and the y-axis contains the execution time.
-What do you observe?</p></li>
-<li>Execute the program on the other files by using small values of <code>X</code> (1 and 2).
-Comment on the evolution of the execution times.</li>
-</ul>
-</div>
-</div>
-</div>
+You're going to study the effect of the number of partitions on the performances of the program.
+
+* In file ``avg_temperatures_df.py`` add the following instruction right below the initialisation of the 
+``SparkSession``. The command sets the number of *shuffle* partitions to a certain value `X`.
+
+``
+spark.conf.set("spark.sql.shuffle.partitions", X)
+``
+
+* Execute the program with different values of `X` (say, 1, 2, 10, 50, 100, 500, 1000, 5000, 100000) **only on file**
+``temperatures_86400.csv`` and write down the execution times.
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-5"><strong>(\#exr:unnamed-chunk-5) </strong></span>
+
+* Plot a graph where the x-axis contains the values of `X` and the y-axis contains the execution time.
+What do you observe?
+
+
+* Execute the program on the other files by using small values of `X` (1 and 2). 
+Comment on the evolution of the execution times.
+</div>\EndKnitrBlock{exercise}
+
+:::
+-->
 <div id="caching-a-dataframe" class="section level2">
-<h2><span class="header-section-number">2.2</span> Caching a DataFrame</h2>
+<h2><span class="header-section-number">2.1</span> Caching a DataFrame</h2>
 <p>You’re now going to discover the advantages of caching a DataFrame.</p>
 <ul>
-<li>At the end of file <code>avg_temperatures_df.py</code>, add the following instruction:</li>
+<li><p>Uncomment the last two lines in file <code>avg_temperatures_df.py</code></p></li>
+<li><p>Remove the file <code>temperatures_10.df.out</code> by typing the following command:</p></li>
 </ul>
-<p><code>df_avg.show(n=5)</code></p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 2.4  </strong></span>
-What does this instruction? Is it a transformation or an action?</p>
-</div>
-</div>
-<ul>
-<li>Remove the file <code>temperatures_10.df.out</code> by typing the following command:</li>
-</ul>
-<div align="left">
-<pre><code>hdfs dfs -rm -r hdfs://sar17:9000/bdiaspark22/bdiaspark22_XX/temperatures_10.df.out</code></pre>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 2.5  </strong></span>
-Execute the code on file <code>temperatures_10.csv</code>.
-Why do we have two jobs (job 0 and 1)?
-What is the execution time of each job?</p>
-</div>
-</div>
-<ul>
-<li>Remove again the file <code>temperatures_10.df.out</code> by typing the following command:</li>
-</ul>
-<!-- ALTERNATIVE QUESTION : WHERE WOULD YOU PUT THE CACHE INSTRUCTION -->
-<ul>
-<li>Locate the instruction:<br>
 <div align="center">
-<code>df_avg.write.csv(output_folder)</code>
+<p><code>hdfs dfs -rm -r hdfs://sar01:9000/bdiaspark23/bdiaspark23_XX/temperatures_10.df.out</code></p>
 </div>
-and add the following instruction right before:
-<div align="center">
-<p><code>df_avg.cache()</code></p>
-</div></li>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 2.3  </strong></span>
+Execute the code on file <code>temperatures_10.csv</code>.
+What is the execution time of each action?
+Can you explain in detail what is going on here?</p>
+</div>
+</div>
+<ul>
+<li>Remove files <code>temperatures_10.df.out</code> and <code>temperatures_10.df.out.bis</code>.</li>
 </ul>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 2.6  </strong></span>
-Execute the code on file <code>temperatures_10.csv</code>.
-What is the execution time of the different jobs?
-Which execution model does Spark follow?</p>
+<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 2.4  </strong></span>
+Cache the DataFrame <code>df_avg</code> and
+execute the code again on file <code>temperatures_10.csv</code>.</p>
+<ul>
+<li><p>Where should you add the cache instruction?</p></li>
+<li><p>What is the execution time of each action?</p></li>
+<li><p>Can you explain in detail what is going on here?</p></li>
+</ul>
 </div>
 </div>
 </div>
@@ -957,21 +930,22 @@ Which execution model does Spark follow?</p>
 <ul>
 <li>Copy the file <code>avg_temperatures_sql_view.py</code> to your home folder by typing the following command:</li>
 </ul>
-<div align="left">
-<pre><code>cp /usr/users/cpu-prof/cpu_quercini/spark-sql-templates/avg_temperatures_sql_view.py .</code></pre>
+<div align="center">
+<p><code>cp /usr/users/cpu-prof/cpu_quercini/spark-sql-templates/avg_temperatures_sql_view.py .</code></p>
 </div>
 <ul>
-<li>Complete the code by following the instructions that you find in the file.</li>
+<li><p>Complete the code in lines 90, 101, 118.</p></li>
+<li><p>Implement the function <code>avg_temperature_sql</code> (line 57).</p></li>
 </ul>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-9" class="exercise"><strong>Exercise 3.1  </strong></span></p>
+<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 3.1  </strong></span></p>
 <ul>
-<li><p>Execute the code on all CSV files and <strong>complete Table 3</strong>. As the number of shuffle partitions, just use
-the default value.</p></li>
-<li>Compare the running times with those that you obtained in the previous exercises.</li>
+<li><p>Execute the code on all CSV files and <strong>complete Table 3</strong>.</p></li>
+<li>What can you tell about the the running times ? Do you find significant differences between using SQL on a view and
+DataFrame functions?</li>
 </ul>
 </div>
 </div>
@@ -995,13 +969,12 @@ the default value.</p></li>
 temperatures_86400.csv
 </td>
 <td>
-2.71
+3.12
 </td>
 <td>
-4.75
+Exercise 2.1
 </td>
 <td>
-4.59
 </td>
 </tr>
 <tr>
@@ -1009,13 +982,12 @@ temperatures_86400.csv
 temperatures_2880.csv
 </td>
 <td>
-3.27
+3.67
 </td>
 <td>
-4.52
+Exercise 2.1
 </td>
 <td>
-4.54
 </td>
 </tr>
 <tr>
@@ -1023,7 +995,7 @@ temperatures_2880.csv
 temperatures_86.csv
 </td>
 <td>
-4.33
+4.59
 </td>
 <td>
 Exercise 2.1
@@ -1055,42 +1027,46 @@ Table 3. RDDs vs DataFrames with views.
 <ul>
 <li>Copy the file <code>avg_temperatures_sql_table.py</code> to your home directory by typing the following command:</li>
 </ul>
-<div align="left">
-<pre><code>cp /usr/users/cpu-prof/cpu_quercini/spark-sql-templates/avg_temperatures_sql_table.py .</code></pre>
+<div align="center">
+<p><code>cp /usr/users/cpu-prof/cpu_quercini/spark-sql-templates/avg_temperatures_sql_table.py .</code></p>
 </div>
 <ul>
-<li><p>Complete the code by following the instructions that you find in the file.</p></li>
-<li><p>Remove all the folders <code>*.sql.out</code>.</p></li>
+<li><p>Complete lines 107, 118 and 135.</p></li>
+<li><p>Implement the function <code>avg_temperature_sql</code> (line 76).</p></li>
 </ul>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-10" class="exercise"><strong>Exercise 3.2  </strong></span></p>
+<p><span id="exr:unnamed-chunk-9" class="exercise"><strong>Exercise 3.2  </strong></span></p>
 <ul>
-<li><p>Execute the code on file <code>temperatures_86400.csv</code>. How many jobs do you have?</p></li>
-<li><p>What does each job correspond to? What is the execution time of each job?</p></li>
-<li>How do you explain that we only got one job when we used a view?</li>
+<li><p>Execute the code on all files.</p></li>
+<li><p>Complete Table 4.</p></li>
+<li>Compare the execution times with the ones that you obtained. Discuss the results.</li>
 </ul>
 </div>
 </div>
-<p>While reading the code in file <code>avg_temperatures_sql_table.py</code>, you probably noticed that we have specified
-the path to a HDFS folder for the <strong>Hive metastore warehouse</strong>. This folder will contain the data of each table
-that we create.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+<!--While reading the code in file ``avg_temperatures_sql_table.py``, you probably noticed that we have specified 
+the path to a HDFS folder for the **Hive metastore warehouse**. This folder will contain the data of each table 
+that we create.-->
+<!--::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-11" class="exercise"><strong>Exercise 3.3  </strong></span></p>
-<ul>
-<li><p>Look at the files in your home folder (in the local file system, not HDFS) by using the command <code>ls</code>.</p></li>
-<li><p>Do you notice the presence of new files?</p></li>
-<li><p>Can you explain what these files are?</p></li>
-<li><p>Execute the code on all CSV files and <strong>complete Table 4</strong>.</p></li>
-<li>Compare the execution times against the ones that you obtained in the previous exercises.</li>
-</ul>
-</div>
-</div>
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-10"><strong>(\#exr:unnamed-chunk-10) </strong></span>
+
+* Look at the files in your home folder (in the local file system, not HDFS) by using the command ``ls``. 
+
+* Do you notice the presence of new files?
+
+* Can you explain what these files are?
+
+* Execute the code on all CSV files and **complete Table 4**. 
+
+* Compare the execution times against the ones that you obtained in the previous exercises.
+</div>\EndKnitrBlock{exercise}
+
+:::-->
 <table class="bigdata">
 <tr>
 <td>
@@ -1114,16 +1090,15 @@ that we create.</p>
 temperatures_86400.csv
 </td>
 <td>
-2.71
+3.12
 </td>
 <td>
-4.75
+Exercise 2.1
 </td>
 <td>
-4.59
+Exercise 3.1
 </td>
 <td>
-4.66
 </td>
 </tr>
 <tr>
@@ -1131,16 +1106,15 @@ temperatures_86400.csv
 temperatures_2880.csv
 </td>
 <td>
-3.27
+3.67
 </td>
 <td>
-4.52
+Exercise 2.1
 </td>
 <td>
-4.54
+Exercise 3.1
 </td>
 <td>
-4.36
 </td>
 </tr>
 <tr>
@@ -1148,7 +1122,7 @@ temperatures_2880.csv
 temperatures_86.csv
 </td>
 <td>
-4.33
+4.59
 </td>
 <td>
 Exercise 2.1
@@ -1180,24 +1154,23 @@ Table 4. RDDs vs DataFrames with views and tables.
 </caption>
 </table>
 <ul>
-<li>Remove the file <code>temperatures_10.sql.out</code> and execute the code again on file <code>temperatures_10.csv</code>.</li>
+<li><p>Remove the file <code>temperatures_10.sql.table.out</code></p></li>
+<li><p>Change the option <code>mode</code> in function <code>saveAsTable</code> from <code>overwrite</code> to <code>ignore</code>.</p></li>
+<li><p>Execute the code again on file <code>temperatures_10.csv</code>.</p></li>
 </ul>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-12" class="exercise"><strong>Exercise 3.4  </strong></span></p>
-<ul>
-<li><p>How many jobs do we have? Why?</p></li>
-<li>What is the execution time of each job?</li>
-</ul>
+<p><span id="exr:unnamed-chunk-11" class="exercise"><strong>Exercise 3.3  </strong></span>
+What is the execution time that you obtain now?</p>
 </div>
 </div>
 </div>
 </div>
 <div id="using-the-dataframe-api-on-large-files" class="section level1">
 <h1><span class="header-section-number">4</span> Using the DataFrame API on large files</h1>
-<p>We now consider the files stored under <code>hdfs://sar17:9000/data/sales/</code>.</p>
+<p>We now consider the files stored under <code>hdfs://sar01:9000/data/sales/</code>.</p>
 <p>These files contain tabular data related to the sale of products in a chain of stores.
 We consider two tables: <code>store_sales</code> and <code>customer</code>.
 In the first table we find information about each sale,
@@ -1268,7 +1241,7 @@ at the last iteration.</p>
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-13" class="exercise"><strong>Exercise 4.1  </strong></span></p>
+<p><span id="exr:unnamed-chunk-12" class="exercise"><strong>Exercise 4.1  </strong></span></p>
 <ul>
 <li><p><strong>Complete Table 5</strong> and write down the execution time of each query for each file.</p></li>
 <li><p>Why the execution time of the queries Q1 and Q2 is large at the iteration 0?</p></li>
