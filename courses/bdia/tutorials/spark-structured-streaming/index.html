@@ -1,0 +1,1125 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Gianluca Quercini">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Spark structured streaming">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/courses/bdia/tutorials/spark-structured-streaming/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="rgb(0, 136, 204)">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_3.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_3.png">
+
+  <link rel="canonical" href="/courses/bdia/tutorials/spark-structured-streaming/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="Gianluca Quercini">
+  <meta property="og:url" content="/courses/bdia/tutorials/spark-structured-streaming/">
+  <meta property="og:title" content="Spark structured streaming | Gianluca Quercini">
+  <meta property="og:description" content="Spark structured streaming"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
+  
+    
+    
+  
+
+  
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Spark structured streaming | Gianluca Quercini</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#experience"><span>Experience</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#publications"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  
+
+  
+
+<div class="container-fluid docs">
+  <div class="row flex-xl-nowrap">
+    <div class="col-12 col-md-3 col-xl-2 docs-sidebar">
+      
+
+
+<script src="/js/toggle-menu.js"></script>
+
+
+
+
+
+
+
+  
+    
+  
+
+
+
+
+<form class="docs-search d-flex align-items-center">
+  <button class="btn docs-toggle d-md-none p-0 mr-3" type="button" data-toggle="collapse" data-target="#docs-nav" aria-controls="docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    <span><i class="fas fa-bars"></i></span>
+  </button>
+
+  
+</form>
+
+<nav class="collapse docs-links" id="docs-nav">
+  
+
+  
+  
+  
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="tutorials" class="docs-toc-link" href="/courses/bdia/tutorials/map-reduce/">Tutorials and labs</a>
+    
+    <div id="tutorials-ddowncontent" class="tutorials-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="tutorials">
+        <a href="/courses/bdia/tutorials/map-reduce/">MapReduce</a>
+      </li>
+      
+      
+      <li class="tutorials">
+        <a href="/courses/bdia/tutorials/spark-programming-dce/">Spark on a cluster</a>
+      </li>
+      
+      
+      <li class="tutorials">
+        <a href="/courses/bdia/tutorials/spark-sql-assignment/">Spark SQL</a>
+      </li>
+      
+      
+      <li class="tutorials">
+        <a href="/courses/bdia/tutorials/mllib/">Spark MLlib</a>
+      </li>
+      
+      <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
+      <li class="active tutorials">
+        <a href="/courses/bdia/tutorials/spark-structured-streaming/">Spark structured streaming</a>
+      </li>
+      
+      
+      <li class="tutorials">
+        <a href="/courses/bdia/tutorials/mongodb-modeling/">MongoDB data modeling</a>
+      </li>
+      
+      
+      <li class="tutorials">
+        <a href="/courses/bdia/tutorials/mongodb-queries/">MongoDB queries</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  
+</nav>
+
+    </div>
+
+    
+
+    <main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 docs-content" role="main">
+
+      <article class="article">
+
+        <div class="docs-article-container">
+          <div class="heading">Big data for AI — Tutorial 4</div>
+          <h1>Spark structured streaming</h1>
+          <hr>
+          <div class="logo">
+            <p><img src="/img/cs-logo.png" width="20%" style="display: block; margin: auto;" /></p>
+            </div>
+
+          <div class="article-style">
+            
+
+
+<p><link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/cloud-computing.css"></p>
+<!-- ############ IMPORTANT: CHANGE THESE VALUES BEFORE ANY LAB ############ -->
+<!-- The link to the Edunao page where the students submit their work -->
+<!-- The submission deadline -->
+<!-- The group to which users in the cluster belong-->
+<!-- User accounts are numbered from the lower to the upper limit-->
+<!-- ############ END OF MODIFICATIONS ############ -->
+<div id="introduction" class="section level1">
+<h1><span class="header-section-number">1</span> Introduction</h1>
+<p>The goal of this tutorial is to learn how to analyze streams of data with the Spark Structured Streaming API.</p>
+<div class="infobox warning">
+<p><strong>Documentation</strong></p>
+<p>In order to answer the questions and do the exercises, you might want to refer to the following
+documentation:</p>
+<ul>
+<li><p>The <a href="https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html" target="_blank">Structured Streaming programming guide</a>.</p></li>
+<li><p>The <a href="https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/index.html" target="_blank">Spark SQL API reference</a>.</p></li>
+</ul>
+</div>
+</div>
+<div id="warming-up" class="section level1">
+<h1><span class="header-section-number">2</span> Warming up</h1>
+<ul>
+<li>Copy the file <code>warmup.py</code> to your home folder by typing the following command:</li>
+</ul>
+<div align="center">
+<p><code>cp /usr/users/cpu-prof/cpu_quercini/structured_streaming/warmup.py .</code></p>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 2.1  </strong></span></p>
+<p><strong>Read the code and answer the following questions.</strong></p>
+<ol style="list-style-type: decimal">
+<li><p>Where does this program get its input from?</p></li>
+<li><p>What object type does the variable <code>lines</code> contain (instruction at <strong>Line 28</strong>)?</p></li>
+<li><p>Where does this program write its output?</p></li>
+<li><p>What is the output of this program?</p></li>
+<li><p>What is the option <code>checkpointLocation</code> intended for?</p></li>
+<li><p>What does the instruction <code>streamingQuery.awaitTermination()</code>?</p></li>
+</ol>
+</div>
+</div>
+<p>You can now verify your answers to the previous questions by <strong>executing the program</strong>.</p>
+<div class="infobox activitybox">
+<p><strong>Activity</strong></p>
+<ol style="list-style-type: decimal">
+<li>Create a checkpoint directory for the first exercise (e.g., <code>checkpoint_dir</code>) under your home directory
+<code>hdfs://sar01:9000/bdiaspark23/bdiaspark23_X</code> <strong>in HDFS</strong>. The command to do so is as follows:</li>
+</ol>
+<div align="center">
+<p><code>hdfs dfs -mkdir hdfs://sar01:9000/bdiaspark23/bdiaspark23_X/checkpoint_dir</code></p>
+</div>
+<ol start="2" style="list-style-type: decimal">
+<li><p><strong>Complete line 21</strong> of file <code>warmup.py</code>. Choose a port number in the interval [49152, 65535].</p></li>
+<li><p><strong>Complete line 25</strong> of file <code>warmup.py</code>. Write the path to the checkpoint location that you created on step 1.</p></li>
+<li><p>Open a new terminal window and connect <strong>to the same kyle machine to which you’re connected
+in the first terminal window</strong>:</p></li>
+</ol>
+<div align="center">
+<p><code>ssh kyleXX</code></p>
+</div>
+<ol start="5" style="list-style-type: decimal">
+<li>In the new terminal window, start a <strong>netcat server</strong>.
+Use the following command. Replace <code>[port_number]</code> with the port number that you chose on step 2. <strong>The command will hang waiting for some input. This is normal.</strong></li>
+</ol>
+<div align="center">
+<p><code>nc -lk [port_number]</code></p>
+</div>
+<ol start="6" style="list-style-type: decimal">
+<li>In the old terminal window, execute the Spark program with <code>spark-submit</code>. <strong>Wait until Spark displays the content of the first micro-batch</strong>.
+<strong>In case the program stops for an error, remove all files generated in the checkpoint location with the following command and restart the Spark program.</strong></li>
+</ol>
+<div align="center">
+<p><code>hdfs dfs -rm -r hdfs://sar01:9000/bdiaspark23/bdiaspark23_X/checkpoint_dir/*</code></p>
+</div>
+<ol start="7" style="list-style-type: decimal">
+<li>In the terminal window where the netcat server is running, write few lines of text.
+Look at the terminal where the Spark program is running and observe the output.</li>
+</ol>
+</div>
+<div class="infobox warning">
+<p><strong>Stop the program</strong></p>
+<ul>
+<li><p>When you’re done with your experiments, you can stop the Spark program by simply
+typing CTRL-C in the terminal where Spark is running.</p></li>
+<li><p>Remove all files in the checkpoint directory.</p></li>
+</ul>
+<div align="center">
+<p><code>hdfs dfs -rm -r hdfs://sar01:9000/bdiaspark23/bdiaspark23_X/checkpoint_dir/*</code></p>
+</div>
+<ul>
+<li><strong>Don’t stop the netcat server</strong>, you’ll need it in the next exercise.</li>
+</ul>
+</div>
+</div>
+<div id="triggers" class="section level1">
+<h1><span class="header-section-number">3</span> Triggers</h1>
+<p>In a Structured Streaming program we can choose a <strong>trigger type</strong>.
+A trigger determines when the streaming source is checked for new data.</p>
+<p>By looking at the <a href="https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html" target="_blank">Structured Streaming programming guide</a>,
+answer the following questions.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 3.1  </strong></span></p>
+<ol style="list-style-type: decimal">
+<li><p>What is the trigger type in the previous program?</p></li>
+<li><p>Modify the code of the previous program in order to set the
+<code>Fixed interval micro-batches</code> trigger type. Set an interval of 10 seconds.</p></li>
+<li><p>Run the program. Write many lines back to back on the netcat server. How is the behavior of this program different from before?</p></li>
+</ol>
+</div>
+</div>
+</div>
+<div id="checkpoint-location-and-output-mode" class="section level1">
+<h1><span class="header-section-number">4</span> Checkpoint location and output mode</h1>
+<p>We’re now going to see the impact of the checkpoint location and the output modes on a streaming query.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 4.1  </strong></span></p>
+<ol style="list-style-type: decimal">
+<li><p>Look again at the <a href="https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html" target="_blank">Structured Streaming programming guide</a>,
+and check the options for the output mode.</p></li>
+<li>What is the output mode of the previous program?</li>
+</ol>
+</div>
+</div>
+<p>You’re now going to code a program that counts the number of occurrences of each word
+in a streaming data source. But first do the actions that you find in the following Activity.</p>
+<div class="infobox activitybox">
+<p><strong>Activity</strong></p>
+<ul>
+<li>Create a copy of the file <code>warmup.py</code> and rename it to <code>wordcount.py</code> by typing the
+following command:</li>
+</ul>
+<div align="center">
+<p><code>cp warmup.py wordcount.py</code></p>
+</div>
+<ul>
+<li>Remove all files in the checkpoint location by typing the following command:</li>
+</ul>
+<div align="center">
+<p><code>hdfs dfs -rm -r hdfs://sar01:9000/bdiaspark23/bdiaspark23_X/checkpoint_dir/*</code></p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 4.2  </strong></span></p>
+<p>Before you code the program, you should first answer the following questions:</p>
+<ol style="list-style-type: decimal">
+<li><p>Observe the output of a batch in the previous executions of the Spark programs. What is the type of the output?</p></li>
+<li><p>Given the type of the output, which Spark API are you going to use to code the program?</p></li>
+<li><p>Which operations do you need to execute to count the number of occurrences of each word across batches? For the moment, don’t worry about
+the specific functions you need to use, just think in abstract terms.</p></li>
+<li>Look at the <a href="https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html" target="_blank">Structured Streaming programming guide</a>.
+Which output mode can’t you use? Why?</li>
+</ol>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 4.3  </strong></span></p>
+<ol style="list-style-type: decimal">
+<li><p>Add to the file <code>wordcount.py</code> the instructions to count the number of occurrences of each word in
+the stream. Where are you going to add the new instructions?</p></li>
+<li><p>Based on the answer to the previous exercises, set the appropriate output mode. You have two choices.
+Try one of them.</p></li>
+<li><p>Make sure that the netcat server is still running.</p></li>
+<li><p>Run the program with <code>spark-submit</code>. In the netcat terminal, write few lines and observe the output of
+the Spark program.</p></li>
+<li><p>Stop the Spark program and run it again with no modifications.
+<strong>The first time you get a java.lang.IndexOutOfBoundsException. Don’t lose your hope and run it again.</strong></p></li>
+<li><p>Write few lines in the netcat terminal and observe the output of the Spark program.
+What can you say about the word counts?</p></li>
+<li><p>Stop the program and remove the files in the checkpoint location. Run the program again and write few lines
+on the netcat terminal. What can you say about the word counts?</p></li>
+<li><p>Run the program again with a different output mode and observe the result.</p></li>
+</ol>
+</div>
+</div>
+</div>
+<div id="window-operations-on-event-time" class="section level1">
+<h1><span class="header-section-number">5</span> Window operations on event time</h1>
+<div class="infobox warning">
+<p><strong>Netcat and checkpoint</strong></p>
+<p><strong>Important actions to do!</strong></p>
+<ol style="list-style-type: decimal">
+<li><p>Stop the netcat server now.</p></li>
+<li><p>Remove all files from the checkpoint directory.</p></li>
+</ol>
+</div>
+<p>We’re now going to find out how to perform aggregations over a sliding event-time window.</p>
+<p>A given <strong>data source</strong> generates two words every second for a certain amount of time.
+Each word is accompanied with a timestamp that indicates the exact moment when the word is
+generated. This timestamp is the <strong>event time</strong>.</p>
+<p>After generating a word, the data source saves the word and its timestamp into
+a CSV file in a directory on HDFS.
+For convenience, we’ll refer to this directory as the <strong>source directory</strong>.</p>
+<p>At any given moment, the source will contain zero to many CSV files,
+where each file only contains exactly one line in the format
+<code>word,timestamp</code> (no whitespace before nor after the comma).</p>
+<div class="infobox activitybox">
+<p><strong>Activity</strong></p>
+<ol style="list-style-type: decimal">
+<li>Create the source directory under your home directory <strong>in HDFS</strong>, by typing the following command:</li>
+</ol>
+<div align="center">
+<p><code>hdfs dfs -mkdir hdfs://sar01:9000/bdiaspark23/bdiaspark23_X/source_dir</code></p>
+</div>
+<ol start="2" style="list-style-type: decimal">
+<li>Copy to your home directory the file <code>tempws_gen.py</code> (the data source) by typing the following command:
+the data generator that you find at the following path</li>
+</ol>
+<div align="center">
+<p><code>cp /usr/users/cpu-prof/cpu_quercini/structured_streaming/tempws_gen.py .</code></p>
+</div>
+<ol start="3" style="list-style-type: decimal">
+<li>Copy to your home directory the file <code>win_events.py</code> by typing the following command:</li>
+</ol>
+<div align="center">
+<p><code>cp /usr/users/cpu-prof/cpu_quercini/structured_streaming/win_events.py .</code></p>
+</div>
+</div>
+<p>You now need to complete the code in file <code>win_events.py</code>.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 5.1  </strong></span></p>
+<ol style="list-style-type: decimal">
+<li><p>Open the file <code>win_events.py</code>.</p></li>
+<li><p><strong>Complete Line 19.</strong> Specify the path to the source directory that you created in the previous activity.</p></li>
+<li><p><strong>Complete Line 31.</strong> Write the query to count the number of occurrences of each word within a 10 second window that slides every 5 seconds.
+Look at the <a href="https://spark.apache.org/docs/3.1.1/api/python/reference/api/pyspark.sql.functions.window.html#pyspark.sql.functions.window" target="_blank">documentation of the window function</a> to learn how
+to do it.</p></li>
+<li><p><strong>Complete Line 34.</strong> Specify the path to the checkpoint directory.</p></li>
+<li><strong>Complete Line 40.</strong> Write the code to write the output of the streaming query to console.
+<ul>
+<li>Use triggers of 5 seconds.</li>
+<li>Use the output mode <code>update</code>.</li>
+<li>Don’t forget to specify the location of the checkpoint directory.</li>
+</ul></li>
+<li>Execute <code>win_events.py</code> with <code>spark-submit</code>.
+<ul>
+<li>If you get some errors, stop the program. Correct the errors in the code and then re-execute the program again.</li>
+<li>If no error arises, the program should hang waiting for some input. Let the program wait and go on to the next exercise.</li>
+</ul></li>
+</ol>
+</div>
+</div>
+<p>We now test the Spark program.</p>
+<div class="infobox activitybox">
+<p><strong>Activity</strong></p>
+<ol style="list-style-type: decimal">
+<li>Open a new terminal window and type the following command to connect <strong>to the same kyle machine where you’re connected
+in the first terminal window</strong>:</li>
+</ol>
+<div align="center">
+<p><code>ssh kyleXX</code></p>
+</div>
+<ol start="2" style="list-style-type: decimal">
+<li>Execute the data generator program by typing the following command (<strong>remember to replace X with your account number!</strong>):</li>
+</ol>
+<div align="center">
+<p><code>python3 tempws_gen.py -s hdfs://sar01:9000/bdiaspark23/bdiaspark23_X/source_dir</code></p>
+</div>
+<ol start="4" style="list-style-type: decimal">
+<li><p>After launching the data generator, the generated words are shown in the terminalyou should
+see some output in the terminal window where you launched the Spark program.
+<strong>Wait for the script <code>tempws_gen.py</code> to terminate the data generation</strong>.</p></li>
+<li><p>If you need to rerun the Spark program and the data generator, make sure you <strong>delete all the files in the
+checkpoint location and the source directory</strong>.</p></li>
+</ol>
+</div>
+<p>We now want to analyze the output of the program.</p>
+<div class="infobox activitybox">
+<p><strong>Activity</strong></p>
+<ul>
+<li><p>Create a new folder on your own computer (not the computers in the cluster) and open it in a new Visual Studio Code window.
+For the sake of simplicity, let’s call this folder <code>window_analysis</code>.</p></li>
+<li><p>The script <code>tempws_gen.py</code> has generated a file <code>gen_words.csv</code> in your home directory in the cluster.
+This file contains the list of all words generated with the relative timestamps.</p></li>
+<li><p>Open <code>gen_words.csv</code> and copy the whole content.</p></li>
+<li><p>Create a new file <code>gen_words.csv</code> under <code>window_analysis</code> and paste the content that you
+copied on the previous step.</p></li>
+<li><p>Copy the file <code>timeline_visualization.py</code> into your home folder in the cluster by typing the following command:</p></li>
+</ul>
+<div align="center">
+<p><code>cp /usr/users/cpu-prof/cpu_quercini/structured_streaming/timeline_visualization.py .</code></p>
+</div>
+<ul>
+<li><p>Open the file <code>timeline_visualization.py</code> and copy all its content.</p></li>
+<li><p>Create a new file <code>timeline_visualization.py</code> under <code>window_analysis</code> and
+paste the content that you copied on the previous step.</p></li>
+<li><p>In the Visual Studio Code window where you opened <code>window_analysis</code>, open a terminal and run the following command:
+<strong>WARNING.</strong> If you’re on macOS, you should type <code>python3</code> instead of <code>python</code>.</p></li>
+</ul>
+<div align="center">
+<p><code>python timeline_visualization.py -i gen_words.csv -ft [first timestamp] -lt [last timestamp] -it 5 --slide 5</code></p>
+</div>
+<p>where:</p>
+<ul>
+<li><p><code>gen_words.csv</code> is the file that you previously created.</p></li>
+<li><p>Replace <code>first timestamp</code> with the timestamp of the left boundary of the first window (look at the output of your Spark program).</p></li>
+<li><p>Replace <code>last timestamp</code> with the timestamp of the right boundary of the last window (look at the output of your Spark program).</p></li>
+<li><p>The option <code>-it</code> is used to specify the interval between two consecutive triggers.</p></li>
+<li><p>The option <code>--slide</code> is used to specify the window slide frequency.</p></li>
+</ul>
+<p>The plot will show a grid line at each trigger and a blue line at each window boundary.</p>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 5.2  </strong></span></p>
+<ol style="list-style-type: decimal">
+<li><p>Analyze the output of your Spark program and the timeline of the generated words.</p></li>
+<li>Describe how the counts are updated by the Spark program.</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="late-data-and-watermarking" class="section level1">
+<h1><span class="header-section-number">6</span> Late data and watermarking</h1>
+<p>We’re now going to learn how Structured Streaming handles
+late data in windowed aggregations.</p>
+<div class="infobox warning">
+<p><strong>Remove generated files</strong></p>
+<ul>
+<li><p>Remove all the files in the source directory.</p></li>
+<li><p>Remove all the files in the checkpoint directory.</p></li>
+</ul>
+</div>
+<p>The data generator <code>tempws_gen.py</code>
+can generate a stream of words, some of which
+might be written to the directory <code>tempws</code> with some amount of
+delay. In other words, there is a gap between the event time (when the word is generated)
+and the processing time (when the word is written to the directory).</p>
+<div class="infobox warning">
+<p><strong>Good to know</strong></p>
+<p>To generate data with some delay you can use the following command (<strong>remember to replace the X with your account number!</strong>):</p>
+<div align="center">
+<p><code>python3 tempws_gen.py -s hdfs://sar01:9000/bdiaspark23/bdiaspark23_X/source_dir --delay 0.8</code></p>
+</div>
+<p>In the previous command, the 0.8 indicates that the probability that an event arrives with some delay is 80%.
+The delay is between 5 and 15 seconds.
+You can adjust these values by using the appropriate options. To learn more, type the following command:</p>
+<div align="center">
+<p><code>python3 tempws_gen.py --help</code></p>
+</div>
+</div>
+<p>Spark uses a mechanism called <strong>watermarking</strong> to specify the maximum delay that an event can take to be
+counted. If the difference between the arrival time and the event time
+is higher than a certain threshold (the watermark), the delayed data will be discarded.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 6.1  </strong></span></p>
+<ol style="list-style-type: decimal">
+<li><p>Write a Spark program that does the same aggregation as in the previous exercise.
+Additionally, the program must use watermarking to handle late data.
+You can <a href="https://spark.apache.org/docs/latest/structured-streaming-programming-guide.html#handling-late-data-and-watermarking" target="_blank">look at the programming guide to learn how to do it</a></p></li>
+<li><p>Start the Spark program.</p></li>
+<li><p>Generate some data with delay with the program <code>tempws_gen.py</code>.
+Once the data generation stops, you can stop the Spark program.</p></li>
+<li><p>Visualize the generated words with the visualization tool.
+Late words have the delay indicated between parentheses.</p></li>
+<li>Observe the output of the Spark program and describe how
+the watermarking mechanism works on this example.</li>
+</ol>
+</div>
+</div>
+</div>
+
+          </div>
+
+          
+
+
+
+          
+        </div>
+
+        
+      </article>
+
+      
+
+    </main>
+  </div>
+</div>
+
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.1/anchor.min.js" integrity="sha256-pB/deHc9CGfFpJRjC43imB29Rse8tak+5eXqntO94ck=" crossorigin="anonymous"></script>
+    <script>
+      anchors.add();
+    </script>
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.8741d44cdc5fc49466a5835d1bbea364.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
