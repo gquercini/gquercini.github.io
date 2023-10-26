@@ -9439,6 +9439,19 @@ documentation:&lt;/p&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;The program gets its input from a TCP socket.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;lines&lt;/code&gt; is a DataFrame.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The program writes the output to the console.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Any input is copied to the output without any transformation. We didn’t call any function on the DataFrame &lt;code&gt;line&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The checkpoint location is a reference to a HDFS folder where the output of a streaming query on a micro-batch is saved.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The instruction &lt;code&gt;awaitTermination()&lt;/code&gt; waits for the user to stop the Spark program to interrupt the streaming query.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;You can now verify your answers to the previous questions by &lt;strong&gt;executing the program&lt;/strong&gt;.&lt;/p&gt;
 &lt;div class=&#34;infobox activitybox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
@@ -9477,6 +9490,13 @@ Use the following command. Replace &lt;code&gt;[port_number]&lt;/code&gt; with t
 Look at the terminal where the Spark program is running and observe the output.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The complete code is available in file:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;/usr/users/cpu-prof/cpu_quercini/structured-streaming-playground/warmup.py&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Stop the program&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -9511,6 +9531,20 @@ answer the following questions.&lt;/p&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;We didn’t specify any trigger type, therefore the default one is applied (micro-batches mode).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The complete code is available in file:&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;/usr/users/cpu-prof/cpu_quercini/structured-streaming-playground/warmup-fixed-intervals.py&lt;/code&gt;&lt;/p&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Everything that we write within 10 seconds is considered to be part of the same micro-batch, while before
+each line was a single micro-batch.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;checkpoint-location-and-output-mode&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Checkpoint location and output mode&lt;/h1&gt;
@@ -9527,6 +9561,14 @@ and check the options for the output mode.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;We didn’t specify any output mode. So the default option is considered.
+The default output mode is &lt;code&gt;append&lt;/code&gt;.
+Only the new output since the last trigger will be displayed.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;You’re now going to code a program that counts the number of occurrences of each word
 in a streaming data source. But first do the actions that you find in the following Activity.&lt;/p&gt;
 &lt;div class=&#34;infobox activitybox&#34;&gt;
@@ -9561,6 +9603,20 @@ Which output mode can’t you use? Why?&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;The output of a batch is a DataFrame with one column named &lt;code&gt;value&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;We need to use the Spark DataFrame API.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;We need to split the string in the column &lt;code&gt;value&lt;/code&gt; into its constituent words. The package &lt;code&gt;pyspark.sql.functions&lt;/code&gt; contains a function
+&lt;code&gt;split&lt;/code&gt; that allows us to do so. Then, we need to aggregate by word and count.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Append mode (the default one) cannot be used. In fact, we need to use an aggregating function (&lt;code&gt;count&lt;/code&gt;), that can update the count
+of a word seen in a previous batch.
+This is not supported in append mode.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -9584,6 +9640,25 @@ on the netcat terminal. What can you say about the word counts?&lt;/p&gt;&lt;/li
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;The instructions need to be inserted right below the &lt;code&gt;load&lt;/code&gt; instruction and before writing the result to the output stream.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The code is available in the following file:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;/usr/users/cpu-prof/cpu_quercini/structured-streaming-playground/wordcount.py&lt;/code&gt;&lt;/p&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;The output mode that is chosen in the file is &lt;code&gt;complete&lt;/code&gt;. The other possible is update.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;OK, running&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;At each micro-batch, the set of all words written up to that point is shown withe corresponding counts.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The word counts that we had in the previous execution are still available in the output. They are saved in the checkpoint directory.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Now, the words counts that we had in the previous executions are not available anymore.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Since we tried the &lt;code&gt;complete&lt;/code&gt; mode, we try the &lt;code&gt;update&lt;/code&gt; mode.
+At each micro-batch, only the word counts that change are displayed.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;window-operations-on-event-time&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;5&lt;/span&gt; Window operations on event time&lt;/h1&gt;
@@ -9654,6 +9729,13 @@ to do it.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The complete code is available in the following file in the cluster:
+&lt;code&gt;/usr/users/cpu-prof/cpu_quercini/structured-streaming-playground/win_events.py&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;We now test the Spark program.&lt;/p&gt;
 &lt;div class=&#34;infobox activitybox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
@@ -9777,6 +9859,13 @@ the watermarking mechanism works on this example.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The complete code is available in the following file in the cluster:
+&lt;code&gt;/usr/users/cpu-prof/cpu_quercini/structured-streaming-playground/win_event_watermarking.py&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
