@@ -28,10 +28,10 @@
   
     
   
-  <meta name="description" content="Data modeling.">
+  <meta name="description" content="MapReduce programming">
 
   
-  <link rel="alternate" hreflang="en-us" href="/courses/bdalbert/tutorials/data-modeling/">
+  <link rel="alternate" hreflang="en-us" href="/courses/bdalbert/tutorials/mapreduce/">
 
   
 
@@ -219,7 +219,7 @@
   <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_3.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_3.png">
 
-  <link rel="canonical" href="/courses/bdalbert/tutorials/data-modeling/">
+  <link rel="canonical" href="/courses/bdalbert/tutorials/mapreduce/">
 
   
   
@@ -233,9 +233,9 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Gianluca Quercini">
-  <meta property="og:url" content="/courses/bdalbert/tutorials/data-modeling/">
-  <meta property="og:title" content="Data modeling | Gianluca Quercini">
-  <meta property="og:description" content="Data modeling."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:url" content="/courses/bdalbert/tutorials/mapreduce/">
+  <meta property="og:title" content="Programming with MapReduce | Gianluca Quercini">
+  <meta property="og:description" content="MapReduce programming"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
   
     
@@ -258,7 +258,7 @@
 
 
 
-  <title>Data modeling | Gianluca Quercini</title>
+  <title>Programming with MapReduce | Gianluca Quercini</title>
 
 </head>
 
@@ -554,8 +554,8 @@
         <a href="/courses/bdalbert/tutorials/sql-advanced/">2. Advanced SQL queries</a>
       </li>
       
-      <script>open_menu_on_load("".concat("-ddowncontent"))</script>
-      <li class="active Tutorials">
+      
+      <li class="Tutorials">
         <a href="/courses/bdalbert/tutorials/data-modeling/">3. Data modeling</a>
       </li>
       
@@ -564,8 +564,8 @@
         <a href="/courses/bdalbert/tutorials/mongodb-queries/">4. Queries in MongoDB</a>
       </li>
       
-      
-      <li class="Tutorials">
+      <script>open_menu_on_load("".concat("-ddowncontent"))</script>
+      <li class="active Tutorials">
         <a href="/courses/bdalbert/tutorials/mapreduce/">5. Programming with MapReduce</a>
       </li>
       
@@ -588,8 +588,8 @@
       <article class="article">
 
         <div class="docs-article-container">
-          <div class="heading">Tools for Big Data — Tutorial 3</div>
-          <h1>Data modeling</h1>
+          <div class="heading">Tools for Big Data — Tutorial 5</div>
+          <h1>Programming with MapReduce</h1>
           <hr>
           <div class="logo">
             
@@ -601,148 +601,100 @@
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<p>In this tutorial you’ll learn:</p>
-<ul>
-<li>How to <strong>create a conceptual schema</strong> of a database.</li>
-<li>How to <strong>draw an entity-relationship</strong> (ER) diagram.</li>
-<li>How to <strong>translate</strong> a <strong>conceptual model</strong> into a <strong>logical model</strong>.</li>
-</ul>
-<div id="database-of-a-social-network-platform" class="section level1">
-<h1><span class="header-section-number">1</span> Database of a social network platform</h1>
-<p>A social network platform wants to design a relational database
-to store information on its users.
-For each user, the platform keeps its nickname,
-that uniquely identifies the user in the platform, first and family name,
-geographic location (city and country) and email address;
-the user can register as many email addresses as s/he wishes.
-Any user can share content on the platform; each post is characterized by its content,
-date, time and, when available, the geolocation (latitude, longitude).
-Optionally, users can tag one or more friends in their posts.</p>
-<p>Two users are linked by a friendship relationship
-if both agree on befriending each other;
-a user can also follow another user without necessarily befriending her.
-For any type of relationship (friendship or follower),
-the platform registers the date when the relationship is established.</p>
-<div id="exercises" class="section level2">
-<h2><span class="header-section-number">1.1</span> Exercises</h2>
+<div id="computing-averages" class="section level1">
+<h1><span class="header-section-number">1</span> Computing averages</h1>
+<p>We are given a dataset that
+contains the average monthly
+temperature measurements
+over the course of some years.
+More precisely, the dataset is stored in a CSV file,
+where each row corresponds to a monthly
+measurement and the columns contain the following values:
+year, month, average temperature in the month.</p>
+<pre><code>1980,1,5
+1980,2,2
+1980,3,10
+1980,4,14
+1980,5,17
+....
+1981,1,2
+1981,2,1
+1981,3,3
+1981,4,10
+....</code></pre>
+<p>We intend to get the average monthly temperature for each year.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1.1  </strong></span>
-Give the <strong>conceptual schema</strong> of the database with an ER diagram.</p>
+Write a MapReduce algorithm that generates key-value pairs
+<span class="math inline">\((year, average\_temperature)\)</span>.</p>
 </div>
 </div>
+<p>Suppose now that we have a large CSV file
+stored in a distributed file system (e.g., HDFS),
+containing a series of measurements in the format “Year, Month, Day, Minute, Second, Temperature”.
+We can have up to one measurement per second in some years.
+Like before, we’d like to compute key-value pairs (year, average_temperature) by using
+a MapReduce algorithm.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 1.2  </strong></span>
-Translate the conceptual schema into a logical schema.
-For each table, underline the primary key and specify the foreign keys.</p>
-</div>
-</div>
-</div>
-</div>
-<div id="database-of-a-banking-system" class="section level1">
-<h1><span class="header-section-number">2</span> Database of a banking system</h1>
-<p>The following figure shows the ER diagram with the
-conceptual schema of a banking system database.</p>
-<div class="figure" style="text-align: center"><span id="fig:banking-system-db"></span>
-<img src="/courses/databases/tutorial-1/banking-system-er.png" alt="The conceptual schema of the bank database" width="100%" />
-<p class="caption">
-Figure 2.1: The conceptual schema of the bank database
-</p>
-</div>
-<p>Each bank is identified by a unique code and name,
-and has one or several branches.
-A branch is responsible for opening accounts and
-granting loans to customers.
-Each account is identified by
-a number (<em>acct_nbr</em>)
-and is either a checking or savings account
-(property <em>acct_type</em>).
-Each customer is identified by its social
-security number (<em>ssn</em>);
-a customer can be granted several loans and open as many accounts as s/he wishes.</p>
-<div id="exercises-1" class="section level2">
-<h2><span class="header-section-number">2.1</span> Exercises</h2>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 2.1  </strong></span>Which primary key would you choose for the entity Bank? Justify your answer.
+What is the maximum number of measurements in a year?</p>
 </div>
 </div>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 2.2  </strong></span>Would you consider {<em>code_bank</em>, <em>name</em>}
-as a valid candidate key for the entity <TT>Bank</TT>? Justify your answer.
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 1.3  </strong></span>
+Considering the answer to the previous question, discuss the efficiency
+of the first implementation of the algorithm.</p>
 </div>
 </div>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 2.3  </strong></span>Complete the
-diagram in the figure
-by adding the cardinalities to the relations.
-Justify your choices when any ambiguity arises.
+<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 1.4  </strong></span>
+Based on the answer to the previous question,
+propose a better implementation to handle the CSV file.</p>
 </div>
 </div>
+</div>
+<div id="common-friends" class="section level1">
+<h1><span class="header-section-number">2</span> Common friends in a social network</h1>
+<p>Consider a social network described by a graph encoded in a text file.
+Each line of the file is a list of identifiers separated by commas.
+For instance, the line <span class="math inline">\(A,B,C,D\)</span> means that <span class="math inline">\(A\)</span> is friend with <span class="math inline">\(B\)</span>, <span class="math inline">\(C\)</span> and <span class="math inline">\(D\)</span>.
+An excerpt of the file looks like as follows:</p>
+<pre><code>A,B,C,D
+B,A,D
+C,A,D
+D,A,B,C
+...</code></pre>
+<p>We suppose that the friendship relation is symmetric: <span class="math inline">\((A, B)\)</span> implies
+<span class="math inline">\((B, A)\)</span>.</p>
+<p>We want to obtain the list of the common friends for each pair of individuals:</p>
+<pre><code>(A, B), [D]
+(A, C), [D] 
+(A, D), [B, C] 
+(B, C), [D] 
+(B, D), [A] 
+(C, D), [A]</code></pre>
+<p>As an additional constraint, we want to represent a couple only once and avoid
+to represent the symmetric couple.
+In other words, if we output <span class="math inline">\((A, B)\)</span>, we don’t want to output <span class="math inline">\((B, A)\)</span>.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 2.4  </strong></span>Translate the conceptual schema into a logical schema.
-For each table, underline the primary keys and specify the foreign keys.
-</div>
-</div>
-</div>
-</div>
-<div id="car-dealership-database" class="section level1">
-<h1><span class="header-section-number">3</span> Car dealership database</h1>
-<p>We want to design the database of a car dealership.
-The dealership sells both new and used cars,
-and it operates a service facility.
-The database should keep data about the cars
-(serial number, make, model, colour, whether it is new or used),
-the salespeople (first and family name)
-and the customers (first and family name, phone number, address).
-Also, the following business rules hold:</p>
-<ul>
-<li>A salesperson may sell many cars, but each car is sold by only one salesperson.</li>
-<li>A customer may buy many cars, but each car is bought by only one customer.</li>
-<li>A salesperson writes a single invoice for each car s/he sells.
-The invoice is identified by a number and indicates the sale date and the price.</li>
-<li>A customer gets an invoice for each car s/he buys.</li>
-</ul>
-<p>When a customer takes one or more cars in for repair,
-one service ticket is written for each car.
-The ticket is identified by a number and
-indicates the date on which the car is received from the customer,
-as well as the date on which the car should be returned to the customer.
-A car brought in for service can be worked on by many mechanics,
-and each mechanic may work on many cars.</p>
-<div id="exercises-2" class="section level2">
-<h2><span class="header-section-number">3.1</span> Exercises</h2>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<span id="exr:command-in-guest" class="exercise"><strong>Exercise 3.1  </strong></span>Give the <strong>conceptual schema</strong> of the database with an ER diagram.
-</div>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 3.2  </strong></span>Translate the conceptual schema into a logical schema.
-For each table, underline the primary keys and specify the foreign keys.
-</div>
-</div>
+<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 2.1  </strong></span>
+Propose a MapReduce implementation to find the common friends in a
+social network satisifying the given constraints.</p>
 </div>
 </div>
 </div>
