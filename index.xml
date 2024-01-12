@@ -5498,17 +5498,6 @@ The application doesn’t need any third-party library, the packages included in
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
-&lt;li&gt;One image is not enough, because the client and the server are two separate processes.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;We need to create two images, one for the client and one for the server.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;We now build the images for the application.&lt;/p&gt;
 &lt;div class=&#34;infobox curiosity&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Good to know&lt;/strong&gt;&lt;/p&gt;
@@ -5539,43 +5528,6 @@ Remember to include in the images only what you need to build and run the applic
 &lt;li&gt;&lt;p&gt;If so, is it something that has an impact on the build time and how?&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;For both the client and the server we need a Python environment.
-We use the Python environment &lt;em&gt;slim&lt;/em&gt; as a base image to minimize the size of the image.
-Students who choose this base image are rewarded.
-If they choose another (bigger) Python environment, that is fine, but they don’t get
-the totality of the points.
-If they use an OS as a base image (e.g., ubuntu), they get penalized.&lt;/p&gt;
-&lt;p&gt;The Dockerfile for the client (let’s call it &lt;em&gt;Dockerfile-client&lt;/em&gt;)
-is as follows.&lt;/p&gt;
-&lt;pre class=&#34;dockerfile&#34;&gt;&lt;code&gt;FROM python:3.7-slim
-RUN mkdir -p /app
-WORKDIR /app
-COPY ./client.py ./utils.py /app/
-ENTRYPOINT [&amp;quot;python&amp;quot;, &amp;quot;client.py&amp;quot;]&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;We build the image with the following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker build -t chat-client -f Dockerfile-client .&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;The Dockerfile for the server (let’s call it &lt;em&gt;Dockerfile-server&lt;/em&gt;)
-is as follows.&lt;/p&gt;
-&lt;pre class=&#34;dockerfile&#34;&gt;&lt;code&gt;FROM python:3.7-slim
-RUN mkdir -p /app
-WORKDIR /app
-COPY ./server.py ./utils.py /app/
-ENTRYPOINT [&amp;quot;python&amp;quot;, &amp;quot;server.py&amp;quot;]&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;We build the image with the following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker build -t chat-server -f Dockerfile-server .&lt;/code&gt;&lt;/p&gt;
-&lt;ol start=&#34;3&#34; style=&#34;list-style-type: lower-alpha&#34;&gt;
-&lt;li&gt;&lt;p&gt;The base image is the same for both images. The layers 2 and 3 are identical&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Assuming that we build the client first, this build will take longer if
-the python-slim image has not been downloaded yet from the registry.
-Layers 2 and 3 already exist when the server is built.
-This is indicated by the phrase “Using cache” when we build the server.
-It is important that here the students talk about the build cache mechanism.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div id=&#34;client-and-server-on-the-same-network&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.1&lt;/span&gt; Client and server on the same network&lt;/h2&gt;
 &lt;p&gt;We want to execute:&lt;/p&gt;
@@ -5599,17 +5551,6 @@ We want to make sure that:&lt;/p&gt;
 and justify it.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;If we create the three containers without specifying any network configuration, then
-the three containers will be attached to the default &lt;code&gt;bridge&lt;/code&gt; network.
-This way, we can satisfy the first requirement, but not the second (other containers attached
-to &lt;code&gt;bridge&lt;/code&gt; will be able to communicate with the clients and the server).&lt;/p&gt;
-&lt;p&gt;We need to create a new network in Docker, let’s call it &lt;code&gt;chat-room&lt;/code&gt; that
-will be used exclusively for the server and the two clients.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Only one instance of the server is running.
@@ -5637,30 +5578,6 @@ Remember to launch the container with the appropriate options in order to actual
 both configuring the network and launching the server and the clients. &lt;strong&gt;Explain these commands.&lt;/strong&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;First, we create the new network &lt;code&gt;chat-room&lt;/code&gt; by typing the following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker network create chat-room&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;Next, we launch the server with the following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker container run --rm -t --name chat-server --network chat-room chat-server 60876&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;The server takes in a port number as a parameter.
-If the students launch the server without specifying it, they’ll get an error message
-that should lead them to understand what’s missing.&lt;/p&gt;
-&lt;p&gt;In another terminal, we type the following command to run the first client:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker container run --rm -it --name chat-client1 --network chat-room  chat-client chat-server 60876&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;Note that we attach the client to the same network as the server.
-When we launch the client, we need to pass as parameters the server host (here we can use the
-container’s name &lt;code&gt;chat-server&lt;/code&gt; of the server or its IP address) and the port number
-(same as we specified when we launched the server).
-When we launch the client, we’ll need to specify a username and then we can start typing messages in the chat room.&lt;/p&gt;
-&lt;p&gt;Finally, we open another terminal to launch the second client with the following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker container run --rm -it --name chat-client2 --network chat-room  chat-client chat-server 60876&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;The only thing that changes wrt the previous command is the name that we give the new container
-(&lt;code&gt;chat-client2&lt;/code&gt;).&lt;/p&gt;
-&lt;p&gt;We can play with the chat to verify that the clients can exchange messages.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Shut the application down!&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Shut both the clients and the server down before you move on.&lt;/p&gt;
@@ -5688,19 +5605,6 @@ in Exercise &lt;a href=&#34;#exr:client-server-single-network&#34;&gt;1.4&lt;/a&
 &lt;p&gt;What do you propose as a solution instead?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The hostname &lt;code&gt;chat-server&lt;/code&gt; is not reachable from the clients, because they’re not in the
-same network as the server.
-So, the only way out is to use the mechanism of port mapping.
-That is: we launch the server on the container port 60876
-but we also use the option &lt;code&gt;-p&lt;/code&gt; to map that port to any available port
-(say, 7070) on the &lt;strong&gt;host computer&lt;/strong&gt;.
-This way, the clients can connect to the server by specifying the IP address
-of the host machine and 7070 as the port number.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -5713,27 +5617,6 @@ for both configuring the network and launching the server and the clients.
 &lt;strong&gt;Explain these commands.&lt;/strong&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;As before, we can still connect the server to the network
-&lt;code&gt;chat-room&lt;/code&gt;.
-However, since we want our server to be reachable from outside that network,
-we need to publish a port on the host.
-The option &lt;code&gt;-p&lt;/code&gt; in the following command maps the container
-internal port 60876 to the port 7070 on the host computer.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker container run --rm -it --name chat-server --network chat-room -p 7070:60876 chat-server 60876&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;Now, let’s create a new network that we call &lt;code&gt;net-clients&lt;/code&gt;
-to which we’ll be attaching the two clients:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker network create net-clients&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;And we finally launch the two clients. As host of the server,
-we need to type the IP address assigned to the host.
-In my case, the IP address assigned to my host is 192.168.1.8&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker container run --rm -it --name chat-client1 --network net-clients chat-client  192.168.1.8 7070&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;The second client is launched as follows:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker container run --rm -it --name chat-client2 --network net-clients chat-client  192.168.1.8 7070&lt;/code&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Shut the application down!&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Shut both the clients and the server down before you move on.&lt;/p&gt;
@@ -5765,19 +5648,6 @@ Extracting the archive will create a folder named
 Explain the structure of the content of the folder &lt;code&gt;tripmeal_sujet&lt;/code&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The folder contains:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;A file &lt;code&gt;docker-compose.yml&lt;/code&gt; that will contain the instructions
-to build and deploy the application.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;A subdirectory for each service composing the application. Each subdirectory
-contains the source code of the corresponding service, as well as a Dockerfile
-with the instructions to build an image for the service.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -5787,18 +5657,6 @@ How many services does the application have?
 Which technologies (i.e., programming languages, databases) are used in each service?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The application consists of two services:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;web: It is a web application, developed with a combination of HTML,
-Python and Flask&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;db: It is a relational database. From the Dockerfile, which is already given,
-we understand that the DBMS used is MySQL.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;The &lt;code&gt;Dockerfile&lt;/code&gt; in the directory &lt;code&gt;db&lt;/code&gt; is already implemented.&lt;/p&gt;
 &lt;p&gt;Your goal here is to write a &lt;code&gt;Dockerfile&lt;/code&gt; in the directory &lt;code&gt;web&lt;/code&gt;.&lt;/p&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
@@ -5820,26 +5678,6 @@ Write the &lt;code&gt;Dockerfile&lt;/code&gt; in the directory &lt;code&gt;web&l
 &lt;p&gt;&lt;strong&gt;Upload the Dockerfile to Edunao&lt;/strong&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Different solutions exist, here is a proposition.
-It is important that we build a minimal image, so
-we choose the environment python:3-7-slim.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;FROM python:3.7-slim
-RUN mkdir -p /app &amp;amp; \
-    mkdir -p /app/templates &amp;amp; \
-    mkdir -p /app/static
-RUN /usr/local/bin/python -m pip install --upgrade pip
-COPY ./static /app/static/
-COPY ./templates /app/templates/
-COPY requirements.txt /app/
-WORKDIR /app
-RUN pip install -r requirements.txt
-COPY app.py dbconnect.py /app/
-ENTRYPOINT [&amp;quot;python&amp;quot;,&amp;quot;app.py&amp;quot;]&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;In the folder &lt;code&gt;tripmeal_sujet&lt;/code&gt;, you’ll find a file named &lt;code&gt;tripmeal.env&lt;/code&gt;.
 It contains the definition of &lt;strong&gt;environment variables&lt;/strong&gt; that
 are used in the application.&lt;/p&gt;
@@ -5857,19 +5695,6 @@ a port opened at one of the container’s network interfaces?&lt;/p&gt;&lt;/li&g
 &lt;p&gt;Feel free to answer this question after deploying the application.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Variable SERVER_PORT: this is the port which the server listens to.
-This refers to a port opened at one of the container’s network interfaces!&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The variable that tells us the name of the database service is DATABASE_HOST.
-The web service connects to the database that is found at DATABASE_HOST.
-In our case, the host is a container. Evidently, Docker Compose uses the
-name of the service as the host name for the container.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -5879,12 +5704,6 @@ What do you need to define in file &lt;code&gt;docker-compose.yml&lt;/code&gt;
 to enable the communication between the different services?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;We need to define a network and attach both services to that network.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -5896,18 +5715,6 @@ Can you find the documentation of this image in the Internet?
 Write down the link to the documentation page in the answer.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The base image is &lt;code&gt;mysql&lt;/code&gt;.
-The tag of the image is &lt;code&gt;latest&lt;/code&gt; since it is not specified.
-The image is stored in the DockerHub registry.
-In order to find it, we can simply look for an image called &lt;code&gt;mysql&lt;/code&gt;
-on the DockerHub website.
-It turns out that the documentation is available
-&lt;a href=&#34;https://hub.docker.com/_/mysql&#34; target=&#34;blank&#34;&gt;at this page&lt;/a&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -5918,13 +5725,6 @@ what do you need to define in &lt;code&gt;docker-compose.yml&lt;/code&gt;
 to make sure that the data is not deleted once the application is taken down?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;We need to create a volume. Moreover, we need to mount this volume to
-the directory &lt;code&gt;/var/lib/mysql&lt;/code&gt; of the container where the database will run.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;You’re finally ready to complete the file &lt;code&gt;docker-compose.yml&lt;/code&gt;.&lt;/p&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
@@ -5955,36 +5755,6 @@ to look at the details of each container. The command must be typed from folder 
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;pre&gt;&lt;code&gt;version: &amp;quot;3&amp;quot;
-
-services:
-    web:
-        build: web
-        image: quercinigia/trip-meal-web
-        env_file: tripmeal.env
-        networks:
-            - tripmeal-network
-        ports:
-            - &amp;quot;5000:5000&amp;quot;
-    db: 
-        build: database  
-        image: quercinigia/trip-meal-db
-        env_file: tripmeal.env
-        networks:
-            - tripmeal-network
-        volumes:
-            - db-data:/var/lib/mysql
-
-volumes:
-    db-data:
-
-networks:
-    tripmeal-network:&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -5999,14 +5769,6 @@ your DockerHub registry.&lt;/p&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;We can use DockerCompose to push the images.
-The command is:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;docker-compose push&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Shut down the application!&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Shut down both the application before you move on.&lt;/p&gt;
@@ -6025,16 +5787,6 @@ Specify which services are &lt;strong&gt;stateless&lt;/strong&gt;
 and which ones are &lt;strong&gt;stateful&lt;/strong&gt;. Justify your answer.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The service &lt;code&gt;web&lt;/code&gt; is &lt;strong&gt;stateless&lt;/strong&gt;,
-because it does not directly manipulate permanent data.
-The data in fact reside in a database managed by another service.&lt;/p&gt;
-&lt;p&gt;The service &lt;code&gt;db&lt;/code&gt; is &lt;strong&gt;stateful&lt;/strong&gt; because it directly manipulates
-permanent data.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -6045,25 +5797,6 @@ the Kubernetes objects that you need to create and their types.
 Justify your answers.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;For the service &lt;code&gt;web&lt;/code&gt; we need two objects:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;A &lt;strong&gt;deployment&lt;/strong&gt;, which is collection of identical pods, each pod being an instance
-of the service. Deployments are often used for stateless services, which is the case of the
-&lt;code&gt;web&lt;/code&gt; service.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;A &lt;strong&gt;LoadBalancer service&lt;/strong&gt;. We need it in order to expose the service so that a client can connect to it.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;For the service &lt;code&gt;db&lt;/code&gt; we need two objects:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;A &lt;strong&gt;StatefulSet&lt;/strong&gt;, which is a sort of Deployment used for stateful services.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;A &lt;strong&gt;ClusterIP service&lt;/strong&gt;, used to expose the service internally in the Kubernetes cluster.
-The database is only used the by service &lt;code&gt;web&lt;/code&gt;,
-it doesn’t need to be accessed from external clients.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Help&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;In order to write the specification of each object, you can refer to the
@@ -6086,145 +5819,6 @@ For each Kubernetes object:&lt;/p&gt;
 &lt;p&gt;You can look at the logs of a pod with the following command: &lt;code&gt;kubectl logs NAME-OF-POD --previous&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The configuration of the Deployment associated to the &lt;code&gt;web&lt;/code&gt; service is
-as follows:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: web
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: tripmeal
-      service: web
-  template:
-    metadata:
-      labels:
-        app: tripmeal
-        service: web
-    spec:
-      containers:
-      - image: quercinigia/trip-meal-web:latest
-        name: web
-        ports:
-        - containerPort: 5000
-          protocol: TCP
-        env:
-        - name: DATABASE_NAME
-          value: &amp;quot;tripmealdb&amp;quot;
-        - name: DATABASE_USER
-          value: &amp;quot;root&amp;quot;
-        - name: MYSQL_ROOT_PASSWORD
-          value: &amp;quot;my-secret-pw&amp;quot;
-        - name: DATABASE_HOST
-          value: &amp;quot;db&amp;quot;
-        - name: DATABASE_PORT
-          value: &amp;quot;3306&amp;quot;
-        - name: TRIPMEAL_KEY
-          value: &amp;quot;my-secret-key&amp;quot;
-        - name: SERVER_PORT
-          value: &amp;quot;5000&amp;quot;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;When we create the deployment with the command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;kubectl create -f web-deployment.yml&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;three objects are created in Kubernetes:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;A pod, that represents an instance of the service. Here we specified only one replica, hence we have only one pod.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;A Deployment, the object that we demanded.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;A ReplicaSet, the object that controls the collection of pods that are the instances of the service.
-The ReplicaSet is managed by the Deployment.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The configuration of the LoadBalancer service associated with the &lt;code&gt;web&lt;/code&gt; service is as follows:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;apiVersion: v1
-kind: Service
-metadata:
-  name: web
-spec:
-  type: LoadBalancer
-  ports:
-  - port: 5000
-    targetPort: 5000
-    protocol: TCP
-  selector:
-    app: tripmeal
-    service: web&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;When we create the service with the following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;kubectl create -f web-service.yml&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;A service object is created.
-The type of this service is LoadBalancer. An external IP address is associated with the service.
-It is through this IP address that we can connect to the service.&lt;/p&gt;
-&lt;p&gt;The configuration of the StatefulSet associated to the service &lt;code&gt;db&lt;/code&gt; is as follows:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: db
-spec:
-  selector:
-    matchLabels:
-      app: tripmeal
-      service: db
-  serviceName: db
-  template:
-    metadata:
-      labels:
-        app: tripmeal
-        service: db
-    spec:
-      containers:
-      - image: quercinigia/trip-meal-db:latest
-        name: db
-        ports:
-        - containerPort: 3306
-        volumeMounts:
-        - mountPath: /var/lib/mysql
-          name: tripmeal-data
-        env:
-        - name: DATABASE_NAME
-          value: &amp;quot;tripmealdb&amp;quot;
-        - name: DATABASE_USER
-          value: &amp;quot;root&amp;quot; 
-        - name: MYSQL_ROOT_PASSWORD
-          value: &amp;quot;my-secret-pw&amp;quot;
-  volumeClaimTemplates:
-  - metadata:
-      name: tripmeal-data
-    spec:
-      accessModes:
-      - ReadWriteOnce
-      resources:
-        requests:
-          storage: 100Mi&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;When we create the object with the command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;kubectl create -f db-stateful-set.yml&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;two objects are created:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;A pod, that represents one instance of the service.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;A StatefulSet, that manages the pod.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Finally, the configuration of the ClusterIP service associated with the &lt;code&gt;db&lt;/code&gt; service
-is as follows:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;apiVersion: v1
-kind: Service
-metadata:
-  name: db
-spec:
-  type: ClusterIP
-  ports:
-  - port: 3306
-    protocol: TCP
-  selector:
-    app: tripmeal
-    service: db&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;When we create the object with the following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;kubectl create -f db-service.yml&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;A new service appears in the output. The service has no external IP, which is normal
-given that it is only available internally. Its cluster IP address is used
-by the service &lt;code&gt;web&lt;/code&gt; to connect to the database.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox activitybox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Play with the application in order to verify that everything works as expected.&lt;/p&gt;
@@ -6324,12 +5918,6 @@ In your view, why isn’t it a good idea to have production servers directly
 connected to the Internet?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;It is for security reasons. We want to limit the risk of having an attack on these servers.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;We need to place the images in a container registry that is in the same context
 as our production servers.
 Since we’re going to run the application on Azure, we can use the
@@ -6345,17 +5933,6 @@ Since we’re going to run the application on Azure, we can use the
 What is a &lt;strong&gt;resource group&lt;/strong&gt; in Azure and how is it useful?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;It is a logical container of resources that are managed together,
-typically because they belong to the same application.
-Resource groups are useful to manage with a single click
-the whole set of resources (e.g., the permissions).
-For instance, when we want to decommission the application, we can remove
-all the resources with just one command/one click.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;The command to create a new resource group is the following
 (replace RES_GRP_NAME with a name of your choice).&lt;/p&gt;
 &lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;az group create --name  RES_GRP_NAME --location francecentral&lt;/code&gt;&lt;/pre&gt;
@@ -6377,16 +5954,6 @@ In the previous command, what does &lt;code&gt;sku&lt;/code&gt; refer to?
 Feel free to look up on the Azure website to find the answer.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;SKU stands for &lt;em&gt;Stock Keeping Unit&lt;/em&gt;, it represents the different shapes of a product.
-Here we use a container that is &lt;em&gt;Basic&lt;/em&gt;.
-Each sku is associated with a price.
-If you look &lt;a href=&#34;https://azure.microsoft.com/en-us/pricing/details/container-registry/&#34; target=&#34;_blank&#34;&gt;at this webpage&lt;/a&gt;
-we find the price of a basic container registry.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;registry-login&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.2.2&lt;/span&gt; Registry login&lt;/h3&gt;
@@ -6413,16 +5980,6 @@ their name is similar to: &lt;code&gt;acrloginserver/nameofimage:latest&lt;/code
 &lt;p&gt;Write the &lt;strong&gt;exact Docker command&lt;/strong&gt; that you use to tag the images.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;We can use the &lt;code&gt;docker tag&lt;/code&gt; function.
-For instance, in my case I use the following two commands
-to rename my two images:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker tag quercinigia/trip-meal-web:latest tripmealacr.azurecr.io/trip-meal-web:latest&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker tag quercinigia/trip-meal-db:latest tripmealacr.azurecr.io/trip-meal-db:latest&lt;/code&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;pushing-the-images&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.2.4&lt;/span&gt; Pushing the images&lt;/h3&gt;
@@ -6480,21 +6037,6 @@ But before, answer the following question!&lt;/p&gt;
 Can you tell the meaning of the options in the previous command?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;resource-group: the Kubernetes cluster is a resource in Azure. It is added to the resource group that
-we created before.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;name: A name that we give our Kubernetes cluster.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;node-count: The number of nodes in the Kubernetes cluster. Here we specify 2.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;generate-ssh-keys: Generate SSH public and private key files if missing.
-The keys will be stored in the ~/.ssh directory. Used to connect to the cluster without a password.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;attach-acr: We attach the container registry that we created before. This way, we’ll be able to pull the images
-from within the cluster.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;connect-to-the-cluster&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.3.2&lt;/span&gt; Connect to the cluster&lt;/h3&gt;
@@ -6528,13 +6070,6 @@ Look at the names of the images of each service in that file. How must these nam
 Modify the file accordingly (&lt;strong&gt;no need to upload it on Edunao&lt;/strong&gt;).&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The existing names refer to the images on the DockerHub registry.
-We must change them so that they refer to the images on our Azure container registry.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;It is the moment of truth!
 Deploy your application by typing the following command:&lt;/p&gt;
 &lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;kubectl apply -f tripmeal.yml&lt;/code&gt;&lt;/pre&gt;
@@ -6573,34 +6108,6 @@ Can you find a way to assign a URL to your web service? &lt;strong&gt;Describe y
 &lt;p&gt;You need a bit of Googling here….&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;We have to modify the definition of the web service in the file &lt;code&gt;tripmeal.yml&lt;/code&gt;
-More precisely, here is the new definition:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;apiVersion: v1
-kind: Service
-metadata:
-  annotations:
-    service.beta.kubernetes.io/azure-dns-label-name: mytripmeal
-  name: web
-spec:
-  type: LoadBalancer
-  ports:
-  - port: 5000
-    targetPort: 5000
-    protocol: TCP
-  selector:
-    app: tripmeal
-    service: web&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;We added the field &lt;code&gt;metadata.annotations&lt;/code&gt; and specify a DNS label.
-Then we need to restart the service.
-If everything goes well, the application is reachable at the following address:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;http://mytripmeal.eastus.cloudapp.azure.com:5000/&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;The URL is composed by the DNS label that we specified + the region where we deployed the cluster +
-cloudapp.azure.com&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;conclusion&#34; class=&#34;section level1 unnumbered&#34;&gt;
