@@ -1,0 +1,1629 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Gianluca Quercini">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Docker">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/courses/cloudalbert/tutorials/docker-tutorial/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="rgb(0, 136, 204)">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_3.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_3.png">
+
+  <link rel="canonical" href="/courses/cloudalbert/tutorials/docker-tutorial/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="Gianluca Quercini">
+  <meta property="og:url" content="/courses/cloudalbert/tutorials/docker-tutorial/">
+  <meta property="og:title" content="Introduction to Docker | Gianluca Quercini">
+  <meta property="og:description" content="Docker"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
+  
+    
+    
+  
+
+  
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Introduction to Docker | Gianluca Quercini</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#experience"><span>Experience</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#publications"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  
+
+  
+
+<div class="container-fluid docs">
+  <div class="row flex-xl-nowrap">
+    <div class="col-12 col-md-3 col-xl-2 docs-sidebar">
+      
+
+
+<script src="/js/toggle-menu.js"></script>
+
+
+
+
+
+
+
+  
+    
+  
+
+
+
+
+<form class="docs-search d-flex align-items-center">
+  <button class="btn docs-toggle d-md-none p-0 mr-3" type="button" data-toggle="collapse" data-target="#docs-nav" aria-controls="docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    <span><i class="fas fa-bars"></i></span>
+  </button>
+
+  
+</form>
+
+<nav class="collapse docs-links" id="docs-nav">
+  
+
+  
+  
+  
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="Tutorials" class="docs-toc-link" href="/courses/cloudalbert/tutorials/docker-tutorial/">Tutorials</a>
+    
+    <div id="Tutorials-ddowncontent" class="Tutorials-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      <script>open_menu_on_load("Tutorials".concat("-ddowncontent"))</script>
+      <li class="active Tutorials">
+        <a href="/courses/cloudalbert/tutorials/docker-tutorial/">1. Introduction to Docker</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  
+</nav>
+
+    </div>
+
+    
+
+    <main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 docs-content" role="main">
+
+      <article class="article">
+
+        <div class="docs-article-container">
+          <div class="heading">Cloud computing — Tutorial 1</div>
+          <h1>Introduction to Docker</h1>
+          <hr>
+          <div class="logo">
+            
+            </div>
+
+          <div class="article-style">
+            
+
+
+<p><link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/cloud-computing.css"></p>
+<p>In this tutorial you’ll learn:</p>
+<ul>
+<li>How to run <strong>containers</strong>.</li>
+<li>How to define and build <strong>images</strong>.</li>
+<li>How to create and use <strong>volumes</strong>.</li>
+<li>How to define and use <strong>networks</strong>.</li>
+</ul>
+<div class="infobox warning">
+<p><strong>Terminology</strong></p>
+<ul>
+<li><p>You’ll use the <strong>terminal</strong> to run Docker commands.
+Referring to the Docker architecture,
+the terminal is the <strong>client</strong> that communicates with
+the Docker daemon (the <strong>server</strong>).</p></li>
+<li><p>Docker runs <strong>containers</strong> on your computer.
+We’ll refer to your computer as the <strong>host</strong>,
+the containers being the <strong>guests</strong>.</p></li>
+</ul>
+<div class="last-child">
+<ul>
+<li>A <strong>containerized application</strong>
+is an application running in a container.</li>
+</ul>
+</div>
+</div>
+<div id="running" class="section level1">
+<h1><span class="header-section-number">1</span> Running containers</h1>
+<!--The command used to run a container 
+is ``docker run`` followed by four parameters:
+
+```shell
+docker run [options] image-name [command] [arg]
+```
+
+The four parameters are:
+
+* *options*. List of options. 
+* *image-name*. The fully qualified name of the image used to run the container. 
+* *command*. The command to be executed in the container.
+* *arg*. The arguments taken by the command executed in the container.
+
+Only the parameter *image-name* is mandatory. 
+The fully qualified name of an image is specified as a sequence of four fields, 
+formatted as follows:
+
+```shell
+registry_url/user/name:tag
+```
+
+where:
+
+* *registry_url* (optional). The URL of the registry that provides the image. 
+If its value is not specified, the image 
+will be looked up for in the 
+[DockerHub registry](https://hub.docker.com){target="_blank"}.
+* *user* (optional).  The identifier of the user or organization that created the image. 
+The default value is *library*.
+* *name* (mandatory). The name of the image. 
+* *tag* (optional). It specifies the image version.
+If its value is not specified, 
+the tag *latest* is used, pointing to the latest image version. -->
+<!--
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-1"><strong>(\#exr:unnamed-chunk-1) </strong></span>
+For each of the following images, 
+specify the registry name, the user, the name and the tag.
+
+1. registry.redhat.io/rhel8/mysql-80
+
+2. alpine:3.11
+
+::::: {.last-child}
+3. alpine
+:::::
+</div>\EndKnitrBlock{exercise}
+:::
+
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-2"><strong>(\#exr:unnamed-chunk-2) </strong></span>What's the difference between the following image names?
+
+1. alpine:latest
+
+2. registry.hub.docker.com/library/alpine
+
+::::: {.last-child}
+3. alpine
+:::::
+</div>\EndKnitrBlock{exercise}
+
+
+:::
+
+-->
+<p>We now learn how to use the command <code>docker run</code> and some of
+its options.
+In the following exercises, we’ll run containers from the image named
+<em>alpine</em> that is
+<a href="https://hub.docker.com/_/alpine" target="_blank">available on the DockerHub registry</a>.
+This image provides a lightweight distribution
+(i.e., it doesn’t contain many features) of Linux.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 1.1  </strong></span>You want to run the container from the latest version of
+the image <em>alpine</em>.
+Which command would you write in the terminal?
+Execute it.
+</div>
+</div>
+<!--::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-4"><strong>(\#exr:unnamed-chunk-4) </strong></span>Execute the command that you proposed in the previous exercise, 
+observe the output in the terminal and explain the actions 
+taken by Docker to run the container.</div>\EndKnitrBlock{exercise}
+
+
+:::
+
+-->
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 1.2  </strong></span>Is the container still running?
+</div>
+</div>
+<!--::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-6"><strong>(\#exr:unnamed-chunk-6) </strong></span>What information is displayed for each container?</div>\EndKnitrBlock{exercise}
+
+:::
+
+-->
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 1.3  </strong></span>By looking at the command executed within the container (<code>/bin/sh</code>),
+can you tell why the container stopped without giving any output?
+</div>
+</div>
+<p>We’re now going to do something useful with the image <em>alpine</em>.
+Make sure you read the <strong>good practices</strong> that you should
+adopt while playing with images and containers.</p>
+<div class="infobox curiosity">
+<p><strong>Good practices</strong></p>
+<ol style="list-style-type: decimal">
+<li><strong>Name your containers.</strong> Although Docker assigns a default name to a new container,
+it’s usually a good practice to give a container a name of your
+choice to make it easily distinguishable. You can do it by using the option
+<code>--name</code>. Try the following:</li>
+</ol>
+<p><code>docker run --name my-alpine alpine</code></p>
+<p>As before, the container stops immediately.
+If you list all your containers by typing again:</p>
+<p><code>docker container ls -a</code></p>
+<p>you should see a container named <em>my-alpine</em>.</p>
+<ol start="2" style="list-style-type: decimal">
+<li><strong>Remove automatically a container if you use it once.</strong>
+Unless you want to reuse your container later, you can ask Docker to automatically remove it
+when it stops by using the option <code>--rm</code>.
+This will prevent unused containers from taking up too much disk space.</li>
+</ol>
+<p>Try the following:</p>
+<p><code>docker run --rm --name container-to-remove alpine</code></p>
+<p>If you list all the containers you should see that there is no container
+named <em>container-to-remove</em>.</p>
+<ol start="3" style="list-style-type: decimal">
+<li><strong>Remove unused containers.</strong> Stopped containers that have been run without
+using the option <code>--rm</code> are still stored in the host.
+If you want to remove a specific
+container (e.g., <em>my-alpine</em>), use the following command:</li>
+</ol>
+<p><code>docker container rm my-alpine</code></p>
+<p>If you want to remove all stopped containers, use the
+following command:</p>
+<p><code>docker container prune</code></p>
+<ol start="4" style="list-style-type: decimal">
+<li><strong>Remove unused images.</strong> Images can take up a lot of disk space.
+As a result, you should remember to remove those that you don’t intend to use
+any longer.
+The commands to remove a specific image
+and prune unused ones are <code>docker image rm</code>
+and <code>docker image prune -a</code> respectively.</li>
+</ol>
+</div>
+<div id="pass-a-command-to-the-containerized-application" class="section level2">
+<h2><span class="header-section-number">1.1</span> Pass a command to the containerized application</h2>
+<p>Remember that the template of <code>docker run</code> is the following:</p>
+<p><code>docker run [options] image-name [command] [arg]</code></p>
+<p>The optional parameter <em>command</em> refers to a command
+that you can pass the containerized application, possibly with some arguments
+(parameter <em>arg</em>).</p>
+<p>Let’s see an example.
+As we saw before, when we run a container from the image <em>alpine</em>,
+a Linux terminal <code>/bin/sh</code> is launched.</p>
+<div class="infobox warning">
+<p><strong>Notice</strong></p>
+<p>The Linux terminal <code>/bin/sh</code> is run within the
+container.
+Henceforth, we’ll use the following terms:</p>
+<ul>
+<li><strong>Host terminal.</strong> The terminal that you use to
+interact with the operating system of your computer.</li>
+</ul>
+<div class="last-child">
+<ul>
+<li><strong>Guest terminal.</strong> The terminal that is run within
+the container.</li>
+</ul>
+</div>
+</div>
+<p>By using the optional parameter <em>command</em>, we can run
+a command in the guest terminal.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:command-in-guest" class="exercise"><strong>Exercise 1.4  </strong></span>
+Run a container from the image <em>alpine</em> and execute the
+Linux command <code>ls</code> that lists the content of the current directory.</p>
+<div class="last-child">
+<ul>
+<li>Where are the listed files stored?
+In the host or in the container?</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="infobox warning">
+<p><strong>Notice</strong></p>
+<p>In Exercise <a href="#exr:command-in-guest">1.4</a> the command
+<code>ls</code> is executed in the guest terminal, but its
+output is redirected to the host terminal.</p>
+<p>In other words, when we run the container, we
+don’t interact directly with the guest terminal;
+we just send a command and the output is redirected
+to the host terminal.</p>
+</div>
+<p>Now let’s see how to execute a command in the guest terminal
+that also requires an argument.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 1.5  </strong></span>By using the Linux utility <code>ping</code>, check
+whether the Web site <code>en.albertschool.com</code> is reachable.
+</div>
+</div>
+</div>
+<!--An application running in a container might need to interact 
+with the user. 
+For instance, the Linux 
+command ``rev`` reverses whatever 
+the user types on the keyboard.
+In order to interact with a container, you should use the option
+``-it`` of ``docker run``.
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-9"><strong>(\#exr:unnamed-chunk-9) </strong></span>Run a container from the image *alpine* to execute the 
+Linux command `rev` and interact with it.
+You can stop interacting with ``rev`` by typing Ctrl+C at any time.</div>\EndKnitrBlock{exercise}
+
+
+:::
+-->
+<p>Now run the following command:</p>
+<p><code>docker run  --name my-alpine -it alpine</code></p>
+<p><strong>Note:</strong> we didn’t use the option <code>--rm</code> (the container will not be removed
+when we stop it, we’re going to use it again).
+Moreover, we didn’t specify any command to run in the guest terminal.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<span id="exr:unnamed-chunk-10" class="exercise"><strong>Exercise 1.6  </strong></span>What do you obtain?
+</div>
+</div>
+</div>
+<div id="starting-and-stopping-containers." class="section level2">
+<h2><span class="header-section-number">1.2</span> Starting and stopping containers.</h2>
+<p><code>docker run</code> is a shorthand for two Docker commands, namely
+<code>docker create</code>, that creates a container from an image,
+and <code>docker start</code>, that starts the container after its creation.</p>
+<p>Suppose now that you want to download a Web page
+by using Linux Alpine.
+You can use the Linux command <code>wget</code> followed by the URL of the page
+that you want to download.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:wget-exo" class="exercise"><strong>Exercise 1.7  </strong></span>By using the guest terminal
+in the container <em>my-alpine</em>,
+download
+<a href="https://en.albertschool.com/formulaire" target="_blank">this Web page</a>.</p>
+<div class="last-child">
+<ul>
+<li>Where will the Web page be saved? The host computer or the container?</li>
+</ul>
+</div>
+</div>
+</div>
+<details>
+<p><summary>Want to copy the donwloaded file from the container to your computer?</summary></p>
+<p>To copy the file <code>formulaire</code> to your working directory, type the following command in
+the host terminal:</p>
+<pre><code>  docker cp &lt;containerId&gt;:/formulaire .</code></pre>
+<p>In the previous command, replace <code>&lt;containerId&gt;</code> with the identifier of your container. You can obtain
+the identifier of the container from the output of the command <code>docker container ls</code>.</p>
+</details>
+<div class="infobox warning">
+<p><strong>Where are the containers and image files stored?</strong></p>
+<details>
+<p><summary>If you use MacOS or Windows</summary></p>
+<p>The files managed by Docker are not stored directly in your computer, but
+in the Linux virtual machine installed and operated by Docker Desktop (remember, Docker always need Linux to be executed).</p>
+<p>Therefore, you need to open a terminal inside that Linux virtual machine by typing the following command:</p>
+<pre><code>docker run -it --rm --privileged --pid=host justincormack/nsenter1</code></pre>
+<p>Once the terminal is opened, you can follow the instructions given below for Linux users.</p>
+</details>
+<details>
+<p><summary>If you use Docker on Linux</summary></p>
+<ul>
+<li><p>All files managed by Docker are stored under folder <code>/var/lib/docker</code>.</p></li>
+<li><p>To access that folder, you need to be root (i.e., administrator). Type the command <code>sudo su</code>.</p></li>
+<li><p>If you type <code>ls /var/lib/docker</code> you can look at the folders stored under this directory. You’ll see that there are
+folders corresponding to the different objects managed by Docker (containers, images, volumes and networks).</p></li>
+<li><p>To locate the files of a specific container, you first need to get the <strong>container identifier</strong> by typing <code>docker container ls -a</code>.</p></li>
+<li><p>Type the command <code>docker inspect &lt;container-id&gt;</code> (replace <code>&lt;container-id&gt;</code> with the identifier of the container that you intend to inspect).</p></li>
+<li><p>Locate the field <code>UpperDir</code>. The value of this field is the path to the directory (let’s call it <code>CONTAINER_DIR</code>) that contains the upper layer of the container (the writable layer).
+It should be a path that ends by <code>/diff</code>.</p></li>
+<li><p>If you type <code>cd CONTAINER_DIR</code> (replace <code>CONTAINER_DIR</code> with the value of the field <code>UpperDir</code>) you can finally see the files stored in
+your container.</p></li>
+</ul>
+</details>
+</div>
+<p>In <em>my-alpine</em> guest terminal type <code>exit</code>.
+This closes the guest terminal and, as a result, stops the
+container.</p>
+<div class="infobox warning">
+<p><strong>NOTICE</strong></p>
+<p>Stopping the container will not erase any of the files
+stored in the container. Removing the container will.</p>
+</div>
+<p>If you want to start the container <em>my-alpine</em> again, you can
+use the following command:</p>
+<p><code>docker container start -ai my-alpine</code></p>
+<p>This will open the guest terminal of the container again;
+type <code>ls</code> to verify that
+the Web page that you downloaded before is still there.</p>
+</div>
+</div>
+<div id="creating-images" class="section level1">
+<h1><span class="header-section-number">2</span> Creating Images</h1>
+<p>A Docker image can be thought of as a template to create and run a container.
+An image is a file that contains a <strong>layered filesystem</strong> with each layer being <strong>immutable</strong>;
+this means that the files that belong to a layer cannot be
+modified or deleted, nor can files be added to a layer.</p>
+<p>When a container is created from an image, it
+will be composed of all the image read-only layers and, on top of
+them, a writable layer (termed the <strong>container layer</strong>),
+where all the new files created in the container will be written.
+For example, the Web page that you downloaded in Exercise <a href="#exr:wget-exo">1.7</a>
+were stored in the writable layer of that container.</p>
+<!--## Interactive image creation
+
+When we run the container *dl-figures*  in Section \@ref(simple-use-case), 
+we modified the container to
+install the command ``wget``. 
+You can see the modifications by typing the 
+following command:
+
+``
+docker diff dl-figures
+``
+
+The output consists of a list of files tagged with the letter A, C or D, indicating 
+respectively that the file has been added (A), changed (C) or deleted (D). 
+In this list you'll find the downloaded figures, as well as 
+other files that have been added or modified or deleted 
+when we installed ``wget``.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-11"><strong>(\#exr:unnamed-chunk-11) </strong></span>If layers, except the top one, are immutable, 
+how can files that belong to the lower layers be modified or deleted?</div>\EndKnitrBlock{exercise}
+:::
+
+
+
+We can create a new image from the container *dl-figures*, one that provides
+a Ubuntu distribution with the command ``wget`` already installed, 
+with the following command:
+
+
+```shell
+docker commit dl-figures ubuntu-with-wget
+```
+
+The command creates a new image called *ubuntu-with-wget*.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-13"><strong>(\#exr:unnamed-chunk-13) </strong></span>Run a container from the image *ubuntu-with-wget* and verify that the command
+*wget* is actually installed. </div>\EndKnitrBlock{exercise}
+
+:::
+
+-->
+<div id="dockerfiles" class="section level2">
+<h2><span class="header-section-number">2.1</span> Dockerfiles</h2>
+<p>The most common way to create an image is to use a <strong>Dockerfile</strong>, a
+text file that contains all the instructions necessary to
+build the image.
+The advantage of the Dockerfile is that it can be interpreted
+by the Docker engine, which makes the creation of images an automated
+and repeatable task.</p>
+<p>Suppose that you want a quick way to download all the images from a Web page.
+You learn that a quick way is to use the almighty Linux commands and you find
+on the Web a Bash script that does exactly what you want:</p>
+<pre class="bash"><code>#!/bin/bash
+wget $1 -O page.html
+grep -E &quot;(https?:)?//[^/\s]+/\S+\.(jpg|png|gif|svg)&quot; page.html -o | sed &quot;s/(^https?)?\/\//https\:\/\//g&quot; -r &gt; urls.txt
+sed -E &quot;s/\/thumb//g; s/\/[0-9]+px-.+\.(jpg|png)$//g&quot; urls.txt | uniq &gt; urls-new.txt
+wget -i urls-new.txt -P downloads/</code></pre>
+<p>Don’t worry if you don’t understand these instructions. Suffices to say that:</p>
+<ul>
+<li><p>The first instruction gets an URL as an argument (<code>$1</code>) and downloads the page pointed by the URL into a file called <code>page.html</code>.</p></li>
+<li><p>The second instruction extracts from <code>page.html</code> all the URLs pointing to images. The URLs are saved to a file called <code>url.txt</code>.</p></li>
+<li><p>The third instruction filters the URLs that point to full-size images. It saves the filtered URLs to a file called <code>urls-new.txt</code>.</p></li>
+<li><p>The fourth instruction downloads the full-size images to a folder named <code>downloads</code>.</p></li>
+</ul>
+<p>You now create a folder in your computer named <code>myfigures</code>;
+you create a new text file that you name <code>dlimages.sh</code> and you save it under folder <code>myfigures</code>;
+you copy the above Bash script into the new file and you save it.</p>
+<p>But now you wonder: how can you execute this script if you’re not using Linux?</p>
+<p>The answer is: you can create a new Docker image (let’s call it <code>dlimages</code>)
+from the official Ubuntu image!</p>
+<p>The Dockerfile containing the instructions to build the image
+<em>dlimages</em> is as follows:</p>
+<pre class="dockerfile"><code>FROM ubuntu
+RUN apt-get update
+RUN apt-get install -y wget
+RUN mkdir -p /scripts
+COPY dlimages.sh /scripts/dlimages.sh
+RUN chmod +x /scripts/dlimages.sh
+ENTRYPOINT [&quot;/scripts/dlimages.sh&quot;]
+CMD [&quot;https://en.wikipedia.org/wiki/Cat&quot;]</code></pre>
+<p>Here’s the explanation:</p>
+<ol style="list-style-type: decimal">
+<li><p>We use the image <em>ubuntu</em> as the <strong>base image</strong>.
+This corresponds to the instruction <code>FROM ubuntu</code>.</p></li>
+<li><p>We install the utility <code>wget</code> in the base image.
+This corresponds to the
+instructions <code>RUN apt-get update</code> and <code>RUN apt-get install -y wget</code>.</p></li>
+<li><p>We create a directory <code>scripts</code> under the root directory of the image.
+This corresponds to the instruction <code>RUN mkdir -p /scripts</code>.</p></li>
+<li><p>We copy the file <code>dlimages.sh</code> to the folder <code>scripts</code> in the image. This corresponds to the <code>COPY</code> instruction.</p></li>
+<li><p>We specify that <code>dlimages.sh</code> can be executed. This corresponds to the <code>RUN chmod -x</code> instruction.</p></li>
+<li><p>We specify the command to be executed when a container is run from this image.
+This corresponds to the instruction <code>ENTRYPOINT</code>.
+When we run a container from this image, we execute the script <code>dlimages.sh</code>.</p></li>
+<li><p>We specify a default argument to be passed to the script. This corresponds to the instruction <code>CMD</code>.</p></li>
+</ol>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<span id="exr:unnamed-chunk-14" class="exercise"><strong>Exercise 2.1  </strong></span>What’s the relation between the Dockerfile lines and the image layers?
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<span id="exr:dockerfile-creation" class="exercise"><strong>Exercise 2.2  </strong></span>Could you identify a problem in this Dockerfile?
+Modify the Dockerfile accordingly.
+</div>
+</div>
+</div>
+<div id="building-an-image" class="section level2">
+<h2><span class="header-section-number">2.2</span> Building an image</h2>
+<p>We’re now going to build an image from a Dockerfile.</p>
+<ol style="list-style-type: decimal">
+<li><p>Create a new file named <code>Dockerfile</code> under the folder <code>myfigures</code>.</p></li>
+<li><p>In the <em>Dockerfile</em> write the set of instructions that
+you proposed in Exercise <a href="#exr:dockerfile-creation">2.2</a>.</p></li>
+<li><p>In the terminal, set the working directory to <em>myfigures</em>.</p></li>
+<li><p>Build an image called <em>dlimages</em> by executing the following command:</p></li>
+</ol>
+<p><code>docker build -t dlimages .</code></p>
+<p>The <code>.</code> at the end of the command means that the Docker engine will
+look for a file named <em>Dockerfile</em> in the working directory.</p>
+<!--
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-15"><strong>(\#exr:unnamed-chunk-15) </strong></span>Once the image is built, type the command ``docker image ls -a``. 
+What are the images with repository and tag ``<none>``?
+Why are there three of such images?</div>\EndKnitrBlock{exercise}
+
+
+:::
+
+</div>
+
+-->
+<p>In order to verify that the new image has been created, type the following command:</p>
+<p><code>docker images</code></p>
+<!-- Let's dive deeper into the anatomy of an image.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-16"><strong>(\#exr:unnamed-chunk-16) </strong></span>Run the following command:
+
+``
+docker history fig-downloader
+`` 
+
+and analyze the layers of the new image. 
+
+* Why do some layers have an ID, while others 
+are marked as <i>missing</i>?
+
+::::: {.last-child}
+* Can you find the identifiers of the intermediate images?
+:::::
+</div>\EndKnitrBlock{exercise}
+
+
+:::
+
+-->
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:dl-1-container" class="exercise"><strong>Exercise 2.3  </strong></span>Run the following command:</p>
+<p><code>docker run --name dl1 dlimages</code></p>
+What does it do? Where are the downloaded pictures?
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-17" class="exercise"><strong>Exercise 2.4  </strong></span>Run the following command:</p>
+<pre><code>docker run --name dl2 dlimages https://en.wikipedia.org/wiki/Dog</code></pre>
+What does it do? Where are the downloaded pictures?
+</div>
+</div>
+</div>
+<div id="containerized-python-application" class="section level2">
+<h2><span class="header-section-number">2.3</span> Containerized Python application</h2>
+<p>Download <a href="/courses/cloud-computing/tutorial-docker/word-frequency.zip">this archive file</a>
+and unzip it into your working directory.
+In this archive you’ll find:</p>
+<ul>
+<li>A Dockerfile.</li>
+<li>A Python script <em>main.py</em> that asks the user to enter the URL and the language of a Web page,
+and prints the 10 most frequent words occurring in that page.</li>
+<li>A file <em>requirements.txt</em> with the list of the Python packages
+needed to run the given script.</li>
+</ul>
+<p>The content of the Dockerfile is as follows:</p>
+<pre class="dockerfile"><code>FROM python:3.7-slim
+RUN mkdir -p /app
+WORKDIR /app
+COPY ./main.py ./requirements.txt /app/
+RUN pip install -r requirements.txt
+ENTRYPOINT [&quot;python&quot;, &quot;main.py&quot;]</code></pre>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<span id="exr:unnamed-chunk-18" class="exercise"><strong>Exercise 2.5  </strong></span>Describe what this Dockerfile does.
+</div>
+</div>
+<div class="infobox exercisebox" word-latex="{exercisebox}">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<span id="exr:unnamed-chunk-19" class="exercise"><strong>Exercise 2.6  </strong></span>Build an image called <em>wordfreq</em> from this Dockerfile.
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<span id="exr:unnamed-chunk-20" class="exercise"><strong>Exercise 2.7  </strong></span>Without changing the Dockerfile, rebuild the same image.
+What do you notice?
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<span id="exr:unnamed-chunk-21" class="exercise"><strong>Exercise 2.8  </strong></span>What happens if you modify a line in the Python script and
+you rebuild the image?
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<span id="exr:unnamed-chunk-22" class="exercise"><strong>Exercise 2.9  </strong></span>Based on the previous considerations,
+can you tell what’s wrong with this Dockerfile?
+Modify the Dockerfile accordingly and rebuild the image.
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<span id="exr:unnamed-chunk-23" class="exercise"><strong>Exercise 2.10  </strong></span>Modify <em>main.py</em> by adding a new line of code and rebuild the image.
+What changed?
+</div>
+</div>
+<p>Play with the application by running the following command:</p>
+<p><code>docker run --rm -it  wordfreq</code></p>
+<p>The containerized application will prompt you to insert the URL of a webpage and
+the language of the page (in English).
+The output will be the 20 most used words in the webpage.</p>
+</div>
+</div>
+<div id="data-volumes" class="section level1">
+<h1><span class="header-section-number">3</span> Data Volumes</h1>
+<p>In Exercise <a href="#exr:dl-1-container">2.3</a> you’ve been asked to run a container named
+<em>dl1</em> to download images from a Web page.
+The figures were downloaded into the
+directory <em>/downloads</em> of the container.
+But we left a question unanswered.</p>
+<p><strong>How do we transfer those figures from the container to the host computer?</strong></p>
+<p>Yes, we can use the command <code>docker cp</code>, but there is still a problem left: if we remove the container <code>dl1</code>, we also lose all
+the images. In other words, any file created within the container has a lifetime that depends on the container itself.
+This is not a good option in production.</p>
+<p>The solution is to use <strong>volumes</strong> to decouple the application from the the data.</p>
+<!--One way to go about that is to run the following command in the host terminal:
+
+``
+docker cp dl-1:/my-figures .
+``
+
+This will copy the directory */my-figures* from the container *dl-1* to
+the host computer working directory.
+You can verify it by yourself.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-24"><strong>(\#exr:unnamed-chunk-24) </strong></span>Can you tell why this solution is less than ideal?</div>\EndKnitrBlock{exercise}
+
+
+:::
+
+
+## Using a host volume
+
+A better solution is to **mount** (i.e., attach) 
+a directory of the host computer at the container's directory 
+*/my-figures* when we run it.
+Let's see how it works.
+
+**Step 1.** Create a directory named *figs-volume* in your working directory.
+
+**Step 2.** Type and execute the following command:
+
+```shell
+docker run --rm -v $(pwd)/figs-volume:/my-figures fig-downloader
+```
+
+This command runs a container from the image *fig-downloader*. 
+
+* With the option ``-v`` we specify  that we want to mount the directory
+*\$(pwd)/figs-volume* (*\$(pwd)* indicates the host working directory)
+at the directory *figs-volume* in the container;
+
+* The option ``--rm`` indicates that we want the container to be 
+removed when its execution is over.
+
+**Step 3.** Verify that the pictures are in the folder *figs-volume*.
+
+In this example, we've used the directory *figs-volume* as a 
+**volume** (essentially, an external storage area) of the container;
+when the container is destroyed, the volume remains with all its data.-->
+<div id="docker-volumes" class="section level2">
+<h2><span class="header-section-number">3.1</span> Docker volumes</h2>
+<p>A volume can be seen as a virtual storage device attached to a container.
+All files there are written to a volume survive the containerized application that
+created them. In other words, when a container is destroyed,
+all the files created by the application in the container remain in the volume.</p>
+<p>Let’s create a new Docker volume called <em>data-volume</em>:</p>
+<p><code>docker volume create data-volume</code></p>
+<div class="infobox curiosity">
+<p><strong>Good to know (advanced notion)</strong></p>
+<p><strong>Where the data will be actually stored?</strong></p>
+<p>You can inspect the new volume by typing the
+following command:</p>
+<p><code>docker volume inspect data-volume</code></p>
+<p>A <em>mount point</em> is indicated; that’s the folder where the data
+will be actually stored.
+If your computer runs Linux, that folder will be available
+on the host; if your computer runs Windows or MacOS,
+you’ll not find that folder on your computer.
+Instead, it will be available in the virtual machine
+that Docker use on MacOS and Windows.</p>
+<p><strong>Do you want to see the directory? (Instructions for Windows and MacOS)</strong></p>
+<p>One way to look into the hidden VM is to run
+the following containerized application:</p>
+<p><code>docker run -it --rm --privileged --pid=host justincormack/nsenter1</code></p>
+<p>This application will open a guest terminal into the VM.
+You can then use the commands <code>cd</code> and <code>ls</code>
+to browse to the directory indicated as the mount path
+of the new volume.</p>
+</div>
+<div id="sharing-data" class="section level3">
+<h3><span class="header-section-number">3.1.1</span> Sharing data</h3>
+<p>A Docker volume can be used to share data between containers.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-25" class="exercise"><strong>Exercise 3.1  </strong></span>Run a container from the image <code>ubuntu</code>,
+specifying the options to:</p>
+<ul>
+<li><p>Remove the container once its execution is over.</p></li>
+<li><p>Interact with the guest Linux terminal in the container.</p></li>
+</ul>
+<div class="last-child">
+<ul>
+<li>Mount the volume <em>data-volume</em> at the container’s directory <em>/data</em>.</li>
+</ul>
+</div>
+<p>Feel free to use the Web to find the answer.</p>
+</div>
+</div>
+<ol style="list-style-type: decimal">
+<li>Type the following command in the guest Linux terminal to create a file
+<em>test-file.txt</em> in the directory <em>/data</em>:</li>
+</ol>
+<p><code>echo &quot;This is a new file&quot; &gt; /data/test-file.txt</code></p>
+<ol start="2" style="list-style-type: decimal">
+<li>Print to the console the content of the file with the following command:</li>
+</ol>
+<p><code>cat /data/test-file.txt</code></p>
+<ol start="3" style="list-style-type: decimal">
+<li>Type <code>exit</code> to leave the guest terminal. Since we’ve specified the option <code>--rm</code>, the container
+is <strong>destroyed</strong>. Now we’re going to verify that <code>test-file.txt</code> is still accessible.</li>
+</ol>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-26" class="exercise"><strong>Exercise 3.2  </strong></span>Run a container from the image <em>alpine:latest</em>,
+specifying the options to:</p>
+<ul>
+<li><p>Remove the container once its execution is over.</p></li>
+<li><p>Interact with the guest Linux terminal in the container.</p></li>
+</ul>
+<div class="last-child">
+<ul>
+<li>Mount the volume <em>data-volume</em> to the directory <em>/my-data</em>
+of the container.</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<span id="exr:unnamed-chunk-27" class="exercise"><strong>Exercise 3.3  </strong></span>Verify that you can read the file <em>test-file.txt</em>.
+Which folder would you look in?
+</div>
+</div>
+<p>Type <code>exit</code> to exit the guest terminal and terminate the container.</p>
+</div>
+</div>
+</div>
+<div id="single-host-networking" class="section level1">
+<h1><span class="header-section-number">4</span> Single-Host Networking</h1>
+<p>In order to let containers communicate and, therefore, co-operate,
+Docker defines a simple networking model known as
+the <strong>container network model</strong>.</p>
+<div class="figure" style="text-align: center"><span id="fig:docker-cnm"></span>
+<img src="/courses/cloud-computing/docker-primer/cnm.png" alt="Container network model" width="100%" />
+<p class="caption">
+Figure 4.1: Container network model
+</p>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-28" class="exercise"><strong>Exercise 4.1  </strong></span>Describe the output of the following command:</p>
+<p><code>docker network ls</code></p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-29" class="exercise"><strong>Exercise 4.2  </strong></span>The following command:</p>
+<p><code>docker network inspect bridge</code></p>
+outputs the configuration of the network <strong>bridge</strong>.
+By looking at this configuration, can you tell
+what IP addresses will be given to the containers attached to this
+network? What’s the IP address of the router of this network?
+</div>
+</div>
+<div id="creating-networks" class="section level2">
+<h2><span class="header-section-number">4.1</span> Creating networks</h2>
+<p>By default, any new container is attached to the network named <em>bridge</em>.</p>
+<div class="infobox exercisebox">
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-30" class="exercise"><strong>Exercise 4.3  </strong></span>
+Explain why it is not a good practice to
+attach all our containers to the same network.</p>
+</div>
+</div>
+<p>In order to create a new network, you can use the following command:</p>
+<p><code>docker network create network_name</code></p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<span id="exr:unnamed-chunk-31" class="exercise"><strong>Exercise 4.4  </strong></span>Create two networks named <em>buckingham</em> and <em>rochefort</em> that
+use the driver <em>bridge</em>.
+By using the <code>docker network inspect</code> command,
+look at the IP addresses of the new networks and write them down.
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-32" class="exercise"><strong>Exercise 4.5  </strong></span>Create three containers <em>athos</em>, <em>porthos</em> and <em>aramis</em> and attach them
+to the two networks <em>buckingham</em> and <em>rochefort</em> as displayed in figure.
+<strong>The three containers will open a Linux Alpine shell</strong>.
+You’ll need to launch the commands in three separate tabs of your terminal window.</p>
+<ul>
+<li>What will the IP addresses of the three containers be in the two networks?
+Remember that <em>porthos</em> is attached to two networks, therefore it’ll have two
+network interfaces (endpoints) and, as a result, two IP addresses.</li>
+</ul>
+<div class="last-child">
+<ul>
+<li>Verify your answers by inspecting the two networks (use the
+command <code>docker network inspect</code>).</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="communication-between-containers" class="section level2">
+<h2><span class="header-section-number">4.2</span> Communication between containers</h2>
+<p>Let’s see if and when the three containers can communicate.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<span id="exr:unnamed-chunk-33" class="exercise"><strong>Exercise 4.6  </strong></span>Which containers are able to communicate?
+Justify your answer.
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-34" class="exercise"><strong>Exercise 4.7  </strong></span>Try to ping <em>porthos</em> from <em>athos</em> by using its IP address.</p>
+<div class="last-child">
+<ul>
+<li>Which IP address of <em>porthos</em> would you use?</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<span id="exr:unnamed-chunk-35" class="exercise"><strong>Exercise 4.8  </strong></span>Try to ping <em>porthos</em> from <em>athos</em> by using its name.
+Do you succeed? Are you surprised?
+</div>
+</div>
+<p>You can now exit the three containers.</p>
+</div>
+</div>
+
+          </div>
+
+          
+
+
+
+          
+        </div>
+
+        
+      </article>
+
+      
+
+    </main>
+  </div>
+</div>
+
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.1/anchor.min.js" integrity="sha256-pB/deHc9CGfFpJRjC43imB29Rse8tak+5eXqntO94ck=" crossorigin="anonymous"></script>
+    <script>
+      anchors.add();
+    </script>
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.3da86581634ab22d5bb3fc4505df30a5.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
