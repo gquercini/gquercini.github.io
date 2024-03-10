@@ -1,0 +1,893 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Gianluca Quercini">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="icmp-usecase">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/courses/network/labs/icmp-lab/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="rgb(0, 136, 204)">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_3.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_3.png">
+
+  <link rel="canonical" href="/courses/network/labs/icmp-lab/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="Gianluca Quercini">
+  <meta property="og:url" content="/courses/network/labs/icmp-lab/">
+  <meta property="og:title" content="Etude de cas: ICMP | Gianluca Quercini">
+  <meta property="og:description" content="icmp-usecase"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
+  
+    
+    
+  
+
+  
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Etude de cas: ICMP | Gianluca Quercini</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#experience"><span>Experience</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#publications"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  
+
+  
+
+<div class="container-fluid docs">
+  <div class="row flex-xl-nowrap">
+    <div class="col-12 col-md-3 col-xl-2 docs-sidebar">
+      
+
+
+<script src="/js/toggle-menu.js"></script>
+
+
+
+
+
+
+
+  
+    
+  
+
+
+
+
+<form class="docs-search d-flex align-items-center">
+  <button class="btn docs-toggle d-md-none p-0 mr-3" type="button" data-toggle="collapse" data-target="#docs-nav" aria-controls="docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    <span><i class="fas fa-bars"></i></span>
+  </button>
+
+  
+</form>
+
+<nav class="collapse docs-links" id="docs-nav">
+  
+
+  
+  
+  
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="Labs" class="docs-toc-link" href="/courses/network/labs/http-lab/">Labs</a>
+    
+    <div id="Labs-ddowncontent" class="Labs-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="Labs">
+        <a href="/courses/network/labs/http-lab/">1. Etude de cas: HTTP</a>
+      </li>
+      
+      
+      <li class="Labs">
+        <a href="/courses/network/labs/dhcp-lab/">2. Etude de cas: DHCP</a>
+      </li>
+      
+      <script>open_menu_on_load("Labs".concat("-ddowncontent"))</script>
+      <li class="active Labs">
+        <a href="/courses/network/labs/icmp-lab/">3. Etude de cas: ICMP</a>
+      </li>
+      
+      
+      <li class="Labs">
+        <a href="/courses/network/labs/netbasics/">2. Networking basics</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  
+</nav>
+
+    </div>
+
+    
+
+    <main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 docs-content" role="main">
+
+      <article class="article">
+
+        <div class="docs-article-container">
+          <div class="heading">Etude de cas: ICMP</div>
+          <h1>Etude de cas: ICMP</h1>
+          <hr>
+          <div class="logo">
+            
+            </div>
+
+          <div class="article-style">
+            
+
+
+<p><link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/cloud-computing.css"></p>
+<p>Source: <a href="https://gaia.cs.umass.edu/kurose_ross/wireshark.php" target="_blank">Jim Kurose, Keith Ross: Computer networking: A Top-Down Approach</a></p>
+<p>Dans ce TP, nous allons explorer plusieurs aspects du protocole ICMP (Internet Control Message Protocol) :</p>
+<ul>
+<li>Les messages ICMP générés par le programme <code>Ping</code> ;</li>
+<li>les messages ICMP générés par le programme <code>Traceroute</code> ;</li>
+<li>le format et le contenu d’un message <code>ICMP</code>.</li>
+</ul>
+<p>Pour rappel, le protocole ICMP est utilisé par les hôtes et
+les routeurs pour se communiquer des informations au niveau de la couche réseau.
+L’utilisation la plus courante de l’ICMP
+est le signalement d’erreurs.
+Par exemple, lors de l’exécution d’une session HTTP,
+vous avez peut-être rencontré un message d’erreur tel
+que “Destination network unreachable” (réseau de destination inaccessible).
+Ce message trouve son origine dans l’ICMP.
+À un moment donné, un routeur n’a pas été en mesure de trouver
+un chemin vers l’hôte spécifié dans votre requête HTTP.
+Ce routeur a créé et envoyé un message ICMP à votre hôte pour lui signaler l’erreur.</p>
+<div id="icmp-et-ping" class="section level1">
+<h1><span class="header-section-number">1</span> ICMP et Ping</h1>
+<p>Commençons notre étude sur ICMP
+en capturant les paquets générés par le programme <code>Ping</code>.
+<code>Ping</code> est un outil simple qui permet à n’importe qui
+(par exemple, un administrateur réseau)
+de vérifier si un hôte est actif ou non.
+Le programme <code>Ping</code> de l’hôte source
+envoie un paquet ICMP à l’adresse IP cible ;
+si la cible est active,
+le programme <code>Ping</code> de l’hôte cible répond
+en renvoyant un paquet ICMP à l’hôte source.</p>
+<ul>
+<li><p>Ouvrez un terminal.</p></li>
+<li><p>Démarrez Wireshark et commencez la capture de paquets.</p></li>
+<li><p>Saisissez la commande <code>ping www.ust.hk</code> dans le terminal pour solliciter une réponse ICMP du serveur Web de l’Université des sciences et technologies de Hong Kong.
+Exécutez ensuite le programme Ping en tapant la touche “Entrée”.</p></li>
+<li><p>Au bout d’une dizaine de réponses, arrêtez <code>ping</code> avec la combinaison de touches CTRL+C.</p></li>
+<li><p>Arrêtez la capture de paquets dans Wireshark.</p></li>
+<li><p>Saisissez <code>icmp</code> dans la fenêtre d’affichage du filtre pour n’afficher que les paquets ICMP dans Wireshark.</p></li>
+</ul>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1.1  </strong></span>
+Quel est le RTT que vous voyez à chaque réponse ICMP ?
+Vous pouvez rechercher l’information sur Internet.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 1.2  </strong></span>
+Quelle est l’adresse IP de votre hôte ? Quelle est l’adresse IP de l’hôte de destination ?</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 1.3  </strong></span>
+Pourquoi un paquet ICMP n’a-t-il pas de numéros de port source et de port de destination ?</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 1.4  </strong></span>
+Examinez l’un des paquets de requête ping envoyés par votre hôte.
+Quels sont les numéros de type et de code ICMP ?
+Quels sont les autres champs de ce paquet ICMP ? Combien d’octets représentent les champs somme de contrôle, numéro de séquence et identifiant ?</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 1.5  </strong></span>
+Examinez le paquet de réponse ping correspondant.
+Quels sont les numéros de type et de code ICMP ?
+Quels sont les autres champs de ce paquet ICMP ?
+Combien d’octets représentent les champs somme de contrôle, numéro de séquence et identifiant ?</p>
+</div>
+</div>
+</div>
+<div id="icmp-et-traceroute" class="section level1">
+<h1><span class="header-section-number">2</span> ICMP et Traceroute</h1>
+<p>Poursuivons notre étude de ICMP
+en capturant les paquets générés par le programme <code>Traceroute</code>.</p>
+<p><code>Traceroute</code> peut être utilisé pour déterminer le chemin emprunté par un paquet de la source à la destination.</p>
+<p><code>Traceroute</code> est implémenté de différentes manières sous Unix/Linux/MacOS et sous Windows.
+Sous Unix/Linux, la source envoie une série de paquets UDP à la destination cible en utilisant
+un numéro de port de destination improbable ;
+sous Windows, la source envoie une série de paquets ICMP à la destination cible.
+Pour les deux systèmes d’exploitation, le programme envoie le premier paquet avec TTL=1,
+le deuxième avec TTL=2, et ainsi de suite.
+Rappelons qu’un routeur décrémente la valeur TTL d’un paquet au fur et à mesure que celui-ci le traverse.
+Lorsqu’un paquet arrive à un routeur avec TTL=1, le routeur envoie
+un paquet d’erreur ICMP à la source.</p>
+<details>
+<p><summary>Si vous travaillez sous Windows</summary></p>
+<p>Vous pourrez utiliser <code>Traceroute</code> en ouvrant une fenêtre de PowerShell et saisissant la commande <code>tracert</code>.</p>
+</details>
+<details>
+<p><summary>Si vous travaillez sous macOS/Linux</summary></p>
+<p>Vous pourrez utiliser <code>Traceroute</code> en ouvrant une fenêtre de terminal et saisissant la commande <code>traceroute</code>.</p>
+</details>
+<ul>
+<li><p>Commencez par ouvrir une fenêtre de terminal.</p></li>
+<li><p>Démarrez Wireshark et commencez la capture de paquets.</p></li>
+<li><p>Saisissez la commande appropriée de <code>Traceroute</code> suivie par <code>www.ust.hk</code>.</p></li>
+<li><p>Lorsque le programme <code>Traceroute</code> se termine, arrêtez la capture de paquets dans Wireshark.</p></li>
+</ul>
+<p>Dans Wireshark utilisez le filtre <code>icmp</code> ou <code>udp</code> pour n’afficher que les paquets de <code>Traceroute</code>.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 2.1  </strong></span>
+Quelle est l’adresse IP de votre hôte ? Quelle est l’adresse IP de l’hôte cible ?</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 2.2  </strong></span>
+Si ICMP envoyait des paquets UDP à la place (comme dans Unix/Linux), le numéro de protocole IP serait-il toujours 01 pour les paquets de sonde ? Si ce n’est pas le cas, quel serait-il ?</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 2.3  </strong></span>
+Examinez le paquet ICMP echo dans votre capture d’écran. Est-il différent des paquets ICMP ping query de la première moitié de ce laboratoire ? Si oui, en quoi ?</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-9" class="exercise"><strong>Exercise 2.4  </strong></span>
+Examinez le paquet ICMP error dans votre capture d’écran. Il comporte plus de champs que le paquet ICMP echo. Que contiennent ces champs ?</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-10" class="exercise"><strong>Exercise 2.5  </strong></span>
+Examinez les trois derniers paquets ICMP reçus par l’hôte source. En quoi ces paquets sont-ils différents des paquets d’erreur ICMP ? Pourquoi sont-ils différents ?</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-11" class="exercise"><strong>Exercise 2.6  </strong></span>
+Dans les mesures de tracert, y a-t-il un lien dont le délai est significativement plus long que les autres ?<br />
+Sur la base des noms de routeurs, pouvez-vous deviner l’emplacement des deux routeurs à l’extrémité de ce lien ?</p>
+</div>
+</div>
+</div>
+
+          </div>
+
+          
+
+
+
+          
+        </div>
+
+        
+      </article>
+
+      
+
+    </main>
+  </div>
+</div>
+
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.1/anchor.min.js" integrity="sha256-pB/deHc9CGfFpJRjC43imB29Rse8tak+5eXqntO94ck=" crossorigin="anonymous"></script>
+    <script>
+      anchors.add();
+    </script>
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.3da86581634ab22d5bb3fc4505df30a5.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Gianluca Quercini">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="dhcp-usecase">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/courses/network/labs/dhcp-lab/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="rgb(0, 136, 204)">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_3.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_3.png">
+
+  <link rel="canonical" href="/courses/network/labs/dhcp-lab/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="Gianluca Quercini">
+  <meta property="og:url" content="/courses/network/labs/dhcp-lab/">
+  <meta property="og:title" content="Etude de cas: DHCP | Gianluca Quercini">
+  <meta property="og:description" content="dhcp-usecase"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
+  
+    
+    
+  
+
+  
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Etude de cas: DHCP | Gianluca Quercini</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#experience"><span>Experience</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#publications"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  
+
+  
+
+<div class="container-fluid docs">
+  <div class="row flex-xl-nowrap">
+    <div class="col-12 col-md-3 col-xl-2 docs-sidebar">
+      
+
+
+<script src="/js/toggle-menu.js"></script>
+
+
+
+
+
+
+
+  
+    
+  
+
+
+
+
+<form class="docs-search d-flex align-items-center">
+  <button class="btn docs-toggle d-md-none p-0 mr-3" type="button" data-toggle="collapse" data-target="#docs-nav" aria-controls="docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    <span><i class="fas fa-bars"></i></span>
+  </button>
+
+  
+</form>
+
+<nav class="collapse docs-links" id="docs-nav">
+  
+
+  
+  
+  
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="Labs" class="docs-toc-link" href="/courses/network/labs/http-lab/">Labs</a>
+    
+    <div id="Labs-ddowncontent" class="Labs-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="Labs">
+        <a href="/courses/network/labs/http-lab/">1. Etude de cas: HTTP</a>
+      </li>
+      
+      <script>open_menu_on_load("Labs".concat("-ddowncontent"))</script>
+      <li class="active Labs">
+        <a href="/courses/network/labs/dhcp-lab/">2. Etude de cas: DHCP</a>
+      </li>
+      
+      
+      <li class="Labs">
+        <a href="/courses/network/labs/icmp-lab/">3. Etude de cas: ICMP</a>
+      </li>
+      
+      
+      <li class="Labs">
+        <a href="/courses/network/labs/netbasics/">2. Networking basics</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  
+</nav>
+
+    </div>
+
+    
+
+    <main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 docs-content" role="main">
+
+      <article class="article">
+
+        <div class="docs-article-container">
+          <div class="heading">Etude de cas: DHCP</div>
+          <h1>Etude de cas: DHCP</h1>
+          <hr>
+          <div class="logo">
+            
+            </div>
+
+          <div class="article-style">
+            
+
+
+<p><link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/cloud-computing.css"></p>
+<p>Source: <a href="https://gaia.cs.umass.edu/kurose_ross/wireshark.php" target="_blank">Jim Kurose, Keith Ross: Computer networking: A Top-Down Approach</a></p>
+<p>Dans ce TP,
+nous allons jeter un coup d’œil rapide au protocole DHCP.
+Rappelons que le DHCP est largement utilisé dans les réseaux locaux câblés
+et sans fil des entreprises, des universités et des particuliers pour attribuer dynamiquement des adresses IP aux hôtes,
+ainsi que pour configurer d’autres informations relatives à la configuration du réseau.</p>
+<div id="utilisation-de-dhcp-pour-configurer-une-interface-réseau" class="section level1">
+<h1><span class="header-section-number">1</span> Utilisation de DHCP pour configurer une interface réseau</h1>
+<p>Dans cette section, nous forçons notre ordinateur à reconfigurer l’une de ses interfaces réseau à l’aide de DHCP.
+La manière pour ce faire dépend du système d’exploitation utilisé.</p>
+<details>
+<p><summary>Si vous travaillez sous Windows</summary></p>
+<ol style="list-style-type: decimal">
+<li>Ouvrez une fenêtre de PowerShell et entrez la commande suivante :</li>
+</ol>
+<center>
+<pre><code>ipconfig /release</code></pre>
+</center>
+<p>Cette commande permet à votre PC d’abandonner son adresse IP.</p>
+<ol start="2" style="list-style-type: decimal">
+<li><p>Démarrez Wireshark.</p></li>
+<li><p>Dans PowerShell, entrez la commande suivante :</p></li>
+</ol>
+<center>
+<pre><code>ipconfig /renew</code></pre>
+</center>
+<p>Le protocole DHCP demandera et recevra alors une adresse IP et d’autres informations d’un serveur DHCP.</p>
+<ol start="4" style="list-style-type: decimal">
+<li>Après avoir attendu quelques secondes, arrêtez la capture Wireshark.</li>
+</ol>
+</details>
+<details>
+<p><summary>Si vous travaillez sous macOS</summary></p>
+<ol style="list-style-type: decimal">
+<li>Dans une fenêtre de terminal, entrez la commande suivante :</li>
+</ol>
+<center>
+<pre><code>sudo ipconfig set en0 none</code></pre>
+</center>
+<p>Cette commande déconfigurera l’interface réseau <code>en0</code>.</p>
+<p><code>en0</code> (dans cet exemple) est l’interface sur laquelle vous souhaitez capturer des paquets à l’aide de Wireshark.<br />
+Vous pouvez facilement trouver la liste des noms d’interface dans Wireshark en choisissant Capture-&gt;options.</p>
+<ol start="2" style="list-style-type: decimal">
+<li><p>Démarrez Wireshark, en capturant des paquets sur l’interface que vous avez déconfigurée à l’étape 1.</p></li>
+<li><p>Dans la fenêtre de terminal, entrez la commande suivante :</p></li>
+</ol>
+<center>
+<pre><code>sudo ipconfig set en0 dhcp</code></pre>
+</center>
+<p>Le protocole DHCP demandera et recevra une adresse IP et d’autres informations du serveur DHCP.</p>
+<ol start="4" style="list-style-type: decimal">
+<li>Après avoir attendu quelques secondes, arrêtez la capture Wireshark.</li>
+</ol>
+</details>
+<details>
+<p><summary>Si vous travaillez sous Linux</summary></p>
+<ol style="list-style-type: decimal">
+<li>Dans une fenêtre de terminal, entrez les commandes suivantes :</li>
+</ol>
+<center>
+<pre><code>sudo ip addr flush en0 
+sudo dhclient -r </code></pre>
+</center>
+<p>Cette commande supprimera l’adresse IP existante de l’interface et libérera tous les baux d’adresses DHCP existants.
+<code>en0</code> (dans cet exemple) est l’interface sur laquelle vous souhaitez capturer des paquets à l’aide de Wireshark.
+Vous pouvez facilement trouver la liste des noms d’interface dans Wireshark en choisissant Capture -&gt; Options.</p>
+<ol start="2" style="list-style-type: decimal">
+<li><p>Démarrez Wireshark, en capturant des paquets dans l’interface que vous avez déconfigurée à l’étape 1.</p></li>
+<li><p>Dans la fenêtre de terminal, entrez la commande suivante :</p></li>
+</ol>
+<center>
+<pre><code>sudo dhclient en0</code></pre>
+</center>
+<p>où, comme ci-dessus, <code>en0</code> est l’interface sur laquelle vous capturez actuellement des paquets.
+Le protocole DHCP demandera et recevra alors une adresse IP et d’autres informations du serveur DHCP.</p>
+<ol start="4" style="list-style-type: decimal">
+<li>Après avoir attendu quelques secondes, arrêtez la capture Wireshark.</li>
+</ol>
+</details>
+<p>Après avoir arrêté la capture Wireshark à l’étape 4,
+vous devriez jeter un coup d’œil dans votre fenêtre Wireshark pour vous assurer que vous avez bien capturé les paquets que nous recherchons.<br />
+Entrez <em>dhcp</em> dans le champ du filtre d’affichage pour n’afficher que les paquets DHCP.</p>
+</div>
+<div id="questions-sur-dhcp" class="section level1">
+<h1><span class="header-section-number">2</span> Questions sur DHCP</h1>
+<p>Commençons par examiner le message <code>DHCP Discover</code>.<br />
+Localisez le datagramme IP contenant le premier message <code>Discover</code> dans votre trace.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 2.1  </strong></span>
+Ce message DHCP Discover est-il envoyé en utilisant UDP ou TCP comme protocole de transport sous-jacent ?</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 2.2  </strong></span>
+Quelle est l’adresse IP source utilisée dans le datagramme IP contenant le message <code>Discover</code> ? Cette adresse a-t-elle quelque chose de particulier ? Expliquez pourquoi.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 2.3  </strong></span>
+Quelle est l’adresse IP de destination utilisée dans le datagramme contenant le message <code>Discover</code> ? Cette adresse a-t-elle quelque chose de particulier ? Expliquez.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 2.4  </strong></span>
+Quelle est la valeur du champ ID de transaction de ce message DHCP Discover ?</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 2.5  </strong></span>
+Examinez maintenant le champ des options du message DHCP Discover. Quelles sont les cinq informations (en plus d’une adresse IP) que le client suggère ou demande de recevoir du serveur DHCP dans le cadre de cette transaction DHCP ?</p>
+</div>
+</div>
+<p>Examinons maintenant le message <code>DHCP Offer</code>.<br />
+Localisez dans votre trace le datagramme IP contenant le message <code>DHCP Offer</code> qui a été envoyé par un serveur DHCP
+en réponse au message <code>DHCP Discover</code> que vous avez étudié dans les questions précédentes.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 2.6  </strong></span>
+Comment savez-vous que ce message <code>Offer</code> est envoyé en réponse au message <code>DHCP Discover</code> que vous avez étudié dans les questions précédentes ?</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 2.7  </strong></span>
+Quelle est l’adresse IP source utilisée dans le datagramme IP contenant le message Offer ? Cette adresse a-t-elle quelque chose de particulier ? Expliquez.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 2.8  </strong></span>
+Quelle est l’adresse IP de destination utilisée dans le datagramme contenant le message d’offre ?
+Cette adresse présente-t-elle des particularités ? Expliquez.</p>
+<p>Regardez attentivement votre trace. La réponse à cette question peut différer de ce que vous avez vu en cours.<br />
+Si vous voulez vraiment approfondir cette question, consultez la <a href="https://www.ietf.org/rfc/rfc2131.txt" target="_blank">RFC 2131, page 24</a>.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-9" class="exercise"><strong>Exercise 2.9  </strong></span>
+Examinez maintenant le champ des options dans le message d’offre DHCP.
+Quelles sont les cinq informations que le serveur DHCP fournit au client DHCP dans le message d’offre DHCP ?</p>
+</div>
+</div>
+<p>Il semblerait qu’une fois le message d’offre DHCP reçu,
+le client dispose de toutes les informations dont il a besoin pour continuer.<br />
+Cependant, le client peut avoir reçu des offres de plusieurs serveurs DHCP
+et une deuxième phase est donc nécessaire,
+avec deux autres messages obligatoires - le message <code>DHCP Request</code> du client
+au serveur et le message <code>DHCP ACK</code> du serveur au client.
+Mais au moins, le client sait qu’il existe au moins un serveur DHCP !</p>
+<p>Examinons le message <code>DHCP Request</code>,
+en nous rappelant que, bien que nous ayons déjà vu un message <code>Discover</code> dans notre trace,
+ce n’est pas toujours le cas lorsqu’un message <code>DHCP Request</code> est envoyé.</p>
+<p>Localisez le datagramme IP contenant le premier message DHCP Request dans votre trace, et répondez aux questions suivantes.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-10" class="exercise"><strong>Exercise 2.10  </strong></span>
+Quel est le numéro de port source UDP dans le datagramme IP contenant le premier message DHCP Request de votre trace ?<br />
+Quel est le numéro de port de destination UDP utilisé ?</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-11" class="exercise"><strong>Exercise 2.11  </strong></span>
+Quelle est l’adresse IP source dans le datagramme IP contenant ce message de requête ? Cette adresse a-t-elle quelque chose de particulier ? Expliquez.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-12" class="exercise"><strong>Exercise 2.12  </strong></span>
+Quelle est l’adresse IP de destination utilisée dans le datagramme contenant ce message de demande. Cette adresse présente-t-elle des particularités ? Expliquez.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-13" class="exercise"><strong>Exercise 2.13  </strong></span>
+Quelle est la valeur du champ ID de transaction de ce message DHCP Request ? Correspond-elle aux ID de transaction des messages Discover et Offer précédents ?</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-14" class="exercise"><strong>Exercise 2.14  </strong></span>
+Examinez maintenant le champ des options dans le message <code>DHCP Discover</code> et regardez attentivement
+la “Parameter Request List”.
+La <a href="https://www.ietf.org/rfc/rfc2131.txt" target="_blank">RFC 2131, page 24</a> indique
+que le client peut informer le serveur des paramètres de configuration qui l’intéressent en incluant
+l’option “parameter request list”. La partie données de cette option énumère explicitement les options demandées par numéro de balise.
+Quelles différences voyez-vous entre les entrées de l’option “parameter request list” dans ce message <code>Request</code> et la même option de liste dans le message <code>Discover</code> précédent ?</p>
+</div>
+</div>
+<p>Locate the IP datagram containing the first DHCP ACK message in your trace, and answer the following questions.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-15" class="exercise"><strong>Exercise 2.15  </strong></span>
+Quelle est l’adresse IP source du datagramme IP contenant ce message ACK ? Cette adresse a-t-elle quelque chose de particulier ? Expliquez.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-16" class="exercise"><strong>Exercise 2.16  </strong></span>
+Quelle est l’adresse IP de destination utilisée dans le datagramme contenant ce message ACK. Cette adresse a-t-elle quelque chose de particulier ? Expliquez.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-17" class="exercise"><strong>Exercise 2.17  </strong></span>
+Quel est le nom du champ du message DHCP ACK (comme indiqué dans la fenêtre Wireshark) qui contient l’adresse IP assignée au client ?</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-18" class="exercise"><strong>Exercise 2.18  </strong></span>
+Depuis combien de temps (le “bail”) le serveur DHPC a-t-il attribué cette adresse IP au client ?</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-19" class="exercise"><strong>Exercise 2.19  </strong></span>
+Quelle est l’adresse IP (renvoyée par le serveur DHCP au client DHCP dans ce message DHCP ACK) du routeur de premier saut sur le chemin par défaut entre le client et le reste de l’Internet ?</p>
+</div>
+</div>
+</div>
+
+          </div>
+
+          
+
+
+
+          
+        </div>
+
+        
+      </article>
+
+      
+
+    </main>
+  </div>
+</div>
+
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.1/anchor.min.js" integrity="sha256-pB/deHc9CGfFpJRjC43imB29Rse8tak+5eXqntO94ck=" crossorigin="anonymous"></script>
+    <script>
+      anchors.add();
+    </script>
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.3da86581634ab22d5bb3fc4505df30a5.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

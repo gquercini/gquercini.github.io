@@ -1643,6 +1643,284 @@ the previous exercise. Import the data into the tables.&lt;/p&gt;
     </item>
     
     <item>
+      <title>Etude de cas: DHCP</title>
+      <link>/courses/network/labs/dhcp-lab/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/network/labs/dhcp-lab/</guid>
+      <description>
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Source: &lt;a href=&#34;https://gaia.cs.umass.edu/kurose_ross/wireshark.php&#34; target=&#34;_blank&#34;&gt;Jim Kurose, Keith Ross: Computer networking: A Top-Down Approach&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Dans ce TP,
+nous allons jeter un coup d’œil rapide au protocole DHCP.
+Rappelons que le DHCP est largement utilisé dans les réseaux locaux câblés
+et sans fil des entreprises, des universités et des particuliers pour attribuer dynamiquement des adresses IP aux hôtes,
+ainsi que pour configurer d’autres informations relatives à la configuration du réseau.&lt;/p&gt;
+&lt;div id=&#34;utilisation-de-dhcp-pour-configurer-une-interface-réseau&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Utilisation de DHCP pour configurer une interface réseau&lt;/h1&gt;
+&lt;p&gt;Dans cette section, nous forçons notre ordinateur à reconfigurer l’une de ses interfaces réseau à l’aide de DHCP.
+La manière pour ce faire dépend du système d’exploitation utilisé.&lt;/p&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Si vous travaillez sous Windows&lt;/summary&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Ouvrez une fenêtre de PowerShell et entrez la commande suivante :&lt;/li&gt;
+&lt;/ol&gt;
+&lt;center&gt;
+&lt;pre&gt;&lt;code&gt;ipconfig /release&lt;/code&gt;&lt;/pre&gt;
+&lt;/center&gt;
+&lt;p&gt;Cette commande permet à votre PC d’abandonner son adresse IP.&lt;/p&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Démarrez Wireshark.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Dans PowerShell, entrez la commande suivante :&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;center&gt;
+&lt;pre&gt;&lt;code&gt;ipconfig /renew&lt;/code&gt;&lt;/pre&gt;
+&lt;/center&gt;
+&lt;p&gt;Le protocole DHCP demandera et recevra alors une adresse IP et d’autres informations d’un serveur DHCP.&lt;/p&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Après avoir attendu quelques secondes, arrêtez la capture Wireshark.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Si vous travaillez sous macOS&lt;/summary&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Dans une fenêtre de terminal, entrez la commande suivante :&lt;/li&gt;
+&lt;/ol&gt;
+&lt;center&gt;
+&lt;pre&gt;&lt;code&gt;sudo ipconfig set en0 none&lt;/code&gt;&lt;/pre&gt;
+&lt;/center&gt;
+&lt;p&gt;Cette commande déconfigurera l’interface réseau &lt;code&gt;en0&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;en0&lt;/code&gt; (dans cet exemple) est l’interface sur laquelle vous souhaitez capturer des paquets à l’aide de Wireshark.&lt;br /&gt;
+Vous pouvez facilement trouver la liste des noms d’interface dans Wireshark en choisissant Capture-&amp;gt;options.&lt;/p&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Démarrez Wireshark, en capturant des paquets sur l’interface que vous avez déconfigurée à l’étape 1.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Dans la fenêtre de terminal, entrez la commande suivante :&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;center&gt;
+&lt;pre&gt;&lt;code&gt;sudo ipconfig set en0 dhcp&lt;/code&gt;&lt;/pre&gt;
+&lt;/center&gt;
+&lt;p&gt;Le protocole DHCP demandera et recevra une adresse IP et d’autres informations du serveur DHCP.&lt;/p&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Après avoir attendu quelques secondes, arrêtez la capture Wireshark.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Si vous travaillez sous Linux&lt;/summary&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Dans une fenêtre de terminal, entrez les commandes suivantes :&lt;/li&gt;
+&lt;/ol&gt;
+&lt;center&gt;
+&lt;pre&gt;&lt;code&gt;sudo ip addr flush en0 
+sudo dhclient -r &lt;/code&gt;&lt;/pre&gt;
+&lt;/center&gt;
+&lt;p&gt;Cette commande supprimera l’adresse IP existante de l’interface et libérera tous les baux d’adresses DHCP existants.
+&lt;code&gt;en0&lt;/code&gt; (dans cet exemple) est l’interface sur laquelle vous souhaitez capturer des paquets à l’aide de Wireshark.
+Vous pouvez facilement trouver la liste des noms d’interface dans Wireshark en choisissant Capture -&amp;gt; Options.&lt;/p&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Démarrez Wireshark, en capturant des paquets dans l’interface que vous avez déconfigurée à l’étape 1.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Dans la fenêtre de terminal, entrez la commande suivante :&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;center&gt;
+&lt;pre&gt;&lt;code&gt;sudo dhclient en0&lt;/code&gt;&lt;/pre&gt;
+&lt;/center&gt;
+&lt;p&gt;où, comme ci-dessus, &lt;code&gt;en0&lt;/code&gt; est l’interface sur laquelle vous capturez actuellement des paquets.
+Le protocole DHCP demandera et recevra alors une adresse IP et d’autres informations du serveur DHCP.&lt;/p&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Après avoir attendu quelques secondes, arrêtez la capture Wireshark.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/details&gt;
+&lt;p&gt;Après avoir arrêté la capture Wireshark à l’étape 4,
+vous devriez jeter un coup d’œil dans votre fenêtre Wireshark pour vous assurer que vous avez bien capturé les paquets que nous recherchons.&lt;br /&gt;
+Entrez &lt;em&gt;dhcp&lt;/em&gt; dans le champ du filtre d’affichage pour n’afficher que les paquets DHCP.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;questions-sur-dhcp&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Questions sur DHCP&lt;/h1&gt;
+&lt;p&gt;Commençons par examiner le message &lt;code&gt;DHCP Discover&lt;/code&gt;.&lt;br /&gt;
+Localisez le datagramme IP contenant le premier message &lt;code&gt;Discover&lt;/code&gt; dans votre trace.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;
+Ce message DHCP Discover est-il envoyé en utilisant UDP ou TCP comme protocole de transport sous-jacent ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.2  &lt;/strong&gt;&lt;/span&gt;
+Quelle est l’adresse IP source utilisée dans le datagramme IP contenant le message &lt;code&gt;Discover&lt;/code&gt; ? Cette adresse a-t-elle quelque chose de particulier ? Expliquez pourquoi.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.3  &lt;/strong&gt;&lt;/span&gt;
+Quelle est l’adresse IP de destination utilisée dans le datagramme contenant le message &lt;code&gt;Discover&lt;/code&gt; ? Cette adresse a-t-elle quelque chose de particulier ? Expliquez.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.4  &lt;/strong&gt;&lt;/span&gt;
+Quelle est la valeur du champ ID de transaction de ce message DHCP Discover ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.5  &lt;/strong&gt;&lt;/span&gt;
+Examinez maintenant le champ des options du message DHCP Discover. Quelles sont les cinq informations (en plus d’une adresse IP) que le client suggère ou demande de recevoir du serveur DHCP dans le cadre de cette transaction DHCP ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Examinons maintenant le message &lt;code&gt;DHCP Offer&lt;/code&gt;.&lt;br /&gt;
+Localisez dans votre trace le datagramme IP contenant le message &lt;code&gt;DHCP Offer&lt;/code&gt; qui a été envoyé par un serveur DHCP
+en réponse au message &lt;code&gt;DHCP Discover&lt;/code&gt; que vous avez étudié dans les questions précédentes.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.6  &lt;/strong&gt;&lt;/span&gt;
+Comment savez-vous que ce message &lt;code&gt;Offer&lt;/code&gt; est envoyé en réponse au message &lt;code&gt;DHCP Discover&lt;/code&gt; que vous avez étudié dans les questions précédentes ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.7  &lt;/strong&gt;&lt;/span&gt;
+Quelle est l’adresse IP source utilisée dans le datagramme IP contenant le message Offer ? Cette adresse a-t-elle quelque chose de particulier ? Expliquez.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.8  &lt;/strong&gt;&lt;/span&gt;
+Quelle est l’adresse IP de destination utilisée dans le datagramme contenant le message d’offre ?
+Cette adresse présente-t-elle des particularités ? Expliquez.&lt;/p&gt;
+&lt;p&gt;Regardez attentivement votre trace. La réponse à cette question peut différer de ce que vous avez vu en cours.&lt;br /&gt;
+Si vous voulez vraiment approfondir cette question, consultez la &lt;a href=&#34;https://www.ietf.org/rfc/rfc2131.txt&#34; target=&#34;_blank&#34;&gt;RFC 2131, page 24&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.9  &lt;/strong&gt;&lt;/span&gt;
+Examinez maintenant le champ des options dans le message d’offre DHCP.
+Quelles sont les cinq informations que le serveur DHCP fournit au client DHCP dans le message d’offre DHCP ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Il semblerait qu’une fois le message d’offre DHCP reçu,
+le client dispose de toutes les informations dont il a besoin pour continuer.&lt;br /&gt;
+Cependant, le client peut avoir reçu des offres de plusieurs serveurs DHCP
+et une deuxième phase est donc nécessaire,
+avec deux autres messages obligatoires - le message &lt;code&gt;DHCP Request&lt;/code&gt; du client
+au serveur et le message &lt;code&gt;DHCP ACK&lt;/code&gt; du serveur au client.
+Mais au moins, le client sait qu’il existe au moins un serveur DHCP !&lt;/p&gt;
+&lt;p&gt;Examinons le message &lt;code&gt;DHCP Request&lt;/code&gt;,
+en nous rappelant que, bien que nous ayons déjà vu un message &lt;code&gt;Discover&lt;/code&gt; dans notre trace,
+ce n’est pas toujours le cas lorsqu’un message &lt;code&gt;DHCP Request&lt;/code&gt; est envoyé.&lt;/p&gt;
+&lt;p&gt;Localisez le datagramme IP contenant le premier message DHCP Request dans votre trace, et répondez aux questions suivantes.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.10  &lt;/strong&gt;&lt;/span&gt;
+Quel est le numéro de port source UDP dans le datagramme IP contenant le premier message DHCP Request de votre trace ?&lt;br /&gt;
+Quel est le numéro de port de destination UDP utilisé ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-11&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.11  &lt;/strong&gt;&lt;/span&gt;
+Quelle est l’adresse IP source dans le datagramme IP contenant ce message de requête ? Cette adresse a-t-elle quelque chose de particulier ? Expliquez.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-12&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.12  &lt;/strong&gt;&lt;/span&gt;
+Quelle est l’adresse IP de destination utilisée dans le datagramme contenant ce message de demande. Cette adresse présente-t-elle des particularités ? Expliquez.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-13&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.13  &lt;/strong&gt;&lt;/span&gt;
+Quelle est la valeur du champ ID de transaction de ce message DHCP Request ? Correspond-elle aux ID de transaction des messages Discover et Offer précédents ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-14&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.14  &lt;/strong&gt;&lt;/span&gt;
+Examinez maintenant le champ des options dans le message &lt;code&gt;DHCP Discover&lt;/code&gt; et regardez attentivement
+la “Parameter Request List”.
+La &lt;a href=&#34;https://www.ietf.org/rfc/rfc2131.txt&#34; target=&#34;_blank&#34;&gt;RFC 2131, page 24&lt;/a&gt; indique
+que le client peut informer le serveur des paramètres de configuration qui l’intéressent en incluant
+l’option “parameter request list”. La partie données de cette option énumère explicitement les options demandées par numéro de balise.
+Quelles différences voyez-vous entre les entrées de l’option “parameter request list” dans ce message &lt;code&gt;Request&lt;/code&gt; et la même option de liste dans le message &lt;code&gt;Discover&lt;/code&gt; précédent ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Locate the IP datagram containing the first DHCP ACK message in your trace, and answer the following questions.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-15&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.15  &lt;/strong&gt;&lt;/span&gt;
+Quelle est l’adresse IP source du datagramme IP contenant ce message ACK ? Cette adresse a-t-elle quelque chose de particulier ? Expliquez.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-16&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.16  &lt;/strong&gt;&lt;/span&gt;
+Quelle est l’adresse IP de destination utilisée dans le datagramme contenant ce message ACK. Cette adresse a-t-elle quelque chose de particulier ? Expliquez.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-17&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.17  &lt;/strong&gt;&lt;/span&gt;
+Quel est le nom du champ du message DHCP ACK (comme indiqué dans la fenêtre Wireshark) qui contient l’adresse IP assignée au client ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-18&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.18  &lt;/strong&gt;&lt;/span&gt;
+Depuis combien de temps (le “bail”) le serveur DHPC a-t-il attribué cette adresse IP au client ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-19&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.19  &lt;/strong&gt;&lt;/span&gt;
+Quelle est l’adresse IP (renvoyée par le serveur DHCP au client DHCP dans ce message DHCP ACK) du routeur de premier saut sur le chemin par défaut entre le client et le reste de l’Internet ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Data modeling in Cassandra</title>
       <link>/courses/gadexed/tutorials/cassandra-data-modeling/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -4511,6 +4789,444 @@ group by actor_id) t)&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/details&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Etude de cas: HTTP</title>
+      <link>/courses/network/labs/http-lab/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/network/labs/http-lab/</guid>
+      <description>
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Source: &lt;a href=&#34;https://gaia.cs.umass.edu/kurose_ross/wireshark.php&#34; target=&#34;_blank&#34;&gt;Jim Kurose, Keith Ross: Computer networking: A Top-Down Approach&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;L’objectif de ce TD est d’explorer le protocole HTTP et avoir un aperçu des principales caractéristiques des protocoles des couches inférieures.&lt;/p&gt;
+&lt;div id=&#34;http-requêtes-et-réponses-simples&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; HTTP: requêtes et réponses simples&lt;/h1&gt;
+&lt;p&gt;Nous commençons notre exploration du protocole HTTP en téléchargeant un fichier HTML très simple et court et ne contenant pas d’objets intégrés, comme par exemple des images.&lt;/p&gt;
+&lt;p&gt;Procédez comme suit :&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Démarrez votre navigateur web.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Démarrez Wireshark, mais sans commencer encore la capture de paquets.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Saisissez &lt;em&gt;http&lt;/em&gt; dans la fenêtre de spécification du filtre d’affichage,
+afin que seuls les messages HTTP capturés soient affichés plus tard dans la fenêtre de liste de paquets.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Commencez la capture de paquets Wireshark.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Cliquez sur l’URL suivant : &lt;a href=&#34;http://gaia.cs.umass.edu/wireshark-labs/HTTP-wireshark-file1.html&#34; target=&#34;_blank&#34;&gt;lien vers la page HTML&lt;/a&gt;. Votre navigateur devrait afficher le fichier HTML très simple d’une ligne.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Arrêtez la capture de paquets Wireshark.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.1  &lt;/strong&gt;&lt;/span&gt;
+Votre navigateur utilise-t-il la version 1.0, 1.1 ou 2 du protocole HTTP ? Quelle est la version de HTTP utilisée par le serveur ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.2  &lt;/strong&gt;&lt;/span&gt;
+Quelles langues (le cas échéant) votre navigateur indique-t-il qu’il peut accepter sur le serveur ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.3  &lt;/strong&gt;&lt;/span&gt;
+Quelle est l’adresse IP de votre ordinateur ? Quelle est l’adresse IP du serveur &lt;em&gt;gaia.cs.umass.edu&lt;/em&gt; ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.4  &lt;/strong&gt;&lt;/span&gt;
+Quel est le code d’état renvoyé par le serveur à votre navigateur ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.5  &lt;/strong&gt;&lt;/span&gt;
+Quand le fichier HTML que vous récupérez a-t-il été modifié pour la dernière fois sur le serveur ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.6  &lt;/strong&gt;&lt;/span&gt;
+Combien d’octets de contenu sont renvoyés à votre navigateur ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;!-- ::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-7&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-7) &lt;/strong&gt;&lt;/span&gt;
+En inspectant les données brutes dans la fenêtre de contenu des paquets, voyez-vous des en-têtes dans les données qui ne sont pas affichées dans la fenêtre de liste des paquets ?  
+Dans l&#39;affirmative, citez-en un.
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+::: --&gt;
+&lt;/div&gt;
+&lt;div id=&#34;http-requêtes-conditionnelles&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; HTTP: requêtes conditionnelles&lt;/h1&gt;
+&lt;p&gt;La plupart des navigateurs Web mettent en cache les objets téléchargés (pages HTML, images.. )
+et effectuent donc souvent une requête conditionnalle lors de la récupération d’un objet HTTP.&lt;/p&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Assurez-vous que le cache de votre navigateur est vide.
+&lt;a href=&#34;https://www.howtogeek.com/304218/how-to-clear-your-history-in-any-browser/&#34; target=&#34;_blank&#34;&gt;Cette page&lt;/a&gt; vous expliquera comment faire.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Procédez maintenant comme suit :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Assurez-vous que le cache de votre navigateur est vidé, comme indiqué ci-dessus.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Démarrez la capture des paquets dans Wireshark.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Cliquez sur &lt;a href=&#34;http://gaia.cs.umass.edu/wireshark-labs/HTTP-wireshark-file2.html&#34; target=&#34;_blank&#34;&gt;ce lien&lt;/a&gt;. Votre navigateur doit afficher un fichier HTML très simple de cinq lignes.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Cliquez simplement sur le bouton “rafraîchir” de votre navigateur.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Arrêtez la capture de paquets Wireshark et saisissez &lt;em&gt;http&lt;/em&gt; dans la fenêtre de spécification du filtre d’affichage.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;!-- ideally, you should see an If-Modified-Since header since you’ve just downloaded this page a few seconds ago.  However, depending on the browser you’re using, and the format of the server’s earlier response to your initial GET, your browser may not include an If-Modified-Since even if the document has been downloaded and caches. The Chrome browser is pretty good at regularly using If-Modified-Since.  But Safari and Firefox are much more finicky about when to use If-Modified-Since. Life isn’t always as easy in practice as it is in theory! --&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;
+Examinez le contenu de la première requête HTTP GET envoyée par votre navigateur au serveur. Voyez-vous une ligne “IF-MODIFIED-SINCE” dans la requête HTTP GET ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.2  &lt;/strong&gt;&lt;/span&gt;
+Examinez le contenu de la réponse du serveur. Le serveur a-t-il explicitement renvoyé le contenu du fichier ? Comment pouvez-vous le savoir ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.3  &lt;/strong&gt;&lt;/span&gt;
+Inspectez maintenant le contenu de la deuxième requête HTTP GET envoyée par votre navigateur au serveur. Voyez-vous une ligne “IF-MODIFIED-SINCE :” dans la requête HTTP GET ? Si oui, quelles informations suivent l’en-tête “IF-MODIFIED-SINCE :”?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-11&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.4  &lt;/strong&gt;&lt;/span&gt;
+Quel est le code d’état HTTP et la phrase renvoyée par le serveur en réponse à ce deuxième HTTP GET ? Le serveur a-t-il explicitement renvoyé le contenu du fichier ? Expliquez.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;récupération-de-documents-longs&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Récupération de documents longs&lt;/h1&gt;
+&lt;p&gt;Dans nos exemples jusqu’à présent, les documents récupérés étaient des fichiers HTML simples et courts.
+Voyons maintenant ce qui se passe lorsque nous téléchargeons un long fichier HTML. Procédez comme suit :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Démarrez votre navigateur web et assurez-vous que le cache de votre navigateur a été vidé, comme nous l’avons vu plus haut.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Démarrez la capture de paquets Wireshark.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Cliquez sur &lt;a href=&#34;http://gaia.cs.umass.edu/wireshark-labs/HTTP-wireshark-file3.html&#34; target=&#34;_blank&#34;&gt;ce lien&lt;/a&gt;. Votre navigateur devrait afficher l’assez longue Déclaration des droits des États-Unis.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Arrêtez la capture de paquets Wireshark.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Dans la fenêtre de listage des paquets, vous devriez voir votre message HTTP GET,
+suivi de plusieurs segments TCP.&lt;br /&gt;
+Assurez-vous que le filtre d’affichage de Wireshark est désactivé pour que les segments TCP soient affichés dans la liste des paquets.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-12&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;
+Pourquoi obtenez-vous autant de segments TCP ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-13&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.2  &lt;/strong&gt;&lt;/span&gt;
+Combien de messages de requête HTTP GET votre navigateur a-t-il envoyés ? Quel numéro de paquet dans la trace contient le message GET pour la Déclaration des droits ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-14&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.3  &lt;/strong&gt;&lt;/span&gt;
+Quel numéro de paquet dans la trace contient le code d’état et la phrase associés à la réponse à la requête HTTP GET ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-15&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.4  &lt;/strong&gt;&lt;/span&gt;
+Quel est le code d’état et la phrase de la réponse ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-16&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.5  &lt;/strong&gt;&lt;/span&gt;
+Combien de segments TCP contenant des données ont été nécessaires pour transporter la réponse HTTP unique et le texte de la Déclaration des droits ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;documents-html-avec-objets-intégrés&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Documents HTML avec objets intégrés&lt;/h1&gt;
+&lt;p&gt;Maintenant que nous avons vu comment Wireshark affiche le trafic de paquets capturés pour de gros fichiers HTML,
+nous pouvons examiner ce qui se passe lorsque votre navigateur télécharge un fichier avec des objets intégrés,
+c’est-à-dire un fichier qui inclut d’autres objets (dans l’exemple ci-dessous, des fichiers images) qui sont stockés sur un ou plusieurs autres serveurs.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Démarrez votre navigateur web, et assurez-vous que le cache de votre navigateur est vidé, comme indiqué ci-dessus.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Démarrez la capture de paquets Wireshark.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Cliquez sur &lt;a href=&#34;http://gaia.cs.umass.edu/wireshark-labs/HTTP-wireshark-file4.html&#34; target=&#34;_blank&#34;&gt;ce lien&lt;/a&gt;.
+Votre navigateur doit afficher un court fichier HTML contenant deux images.
+Ces deux images sont référencées dans le fichier HTML de base.&lt;br /&gt;
+En d’autres termes, les images elles-mêmes ne sont pas contenues dans le fichier HTML,
+mais les URL des images sont contenues dans le fichier HTML téléchargé.
+Comme indiqué dans le manuel, votre navigateur devra récupérer ces logos sur les sites web indiqués.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Arrêtez la capture de paquets Wireshark.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-17&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.1  &lt;/strong&gt;&lt;/span&gt;
+Combien de requêtes HTTP GET votre navigateur a-t-il envoyées ? À quelles adresses Internet ces requêtes GET ont-elles été envoyées ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-18&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.2  &lt;/strong&gt;&lt;/span&gt;
+Pouvez-vous dire si votre navigateur a téléchargé les deux images en série ou si elles ont été téléchargées en parallèle à partir des deux sites web ? Expliquez.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;authentification-http&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;5&lt;/span&gt; Authentification HTTP&lt;/h1&gt;
+&lt;p&gt;Nous essayons maintenant de visiter un site web protégé par un mot de passe et examinons la séquence de messages HTTP échangés pour un tel site.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Assurez-vous que le cache de votre navigateur est vidé, comme indiqué ci-dessus, et fermez votre navigateur. Ensuite, redémarrez votre navigateur&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Démarrez la capture de paquets dans Wireshark.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Cliquez sur &lt;a href=&#34;http://gaia.cs.umass.edu/wireshark-labs/protected_pages/HTTP-wireshark-file5.html&#34; target=&#34;_blank&#34;&gt;ce lien&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Saisissez le nom d’utilisateur (&lt;em&gt;wireshark-students&lt;/em&gt;) et le mot de passe (&lt;em&gt;network&lt;/em&gt;) demandés dans la fenêtre contextuelle.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Arrêtez la capture de paquets Wireshark.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-19&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5.1  &lt;/strong&gt;&lt;/span&gt;
+Quelle est la réponse du serveur (code d’état et phrase) au message HTTP GET initial de votre navigateur ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-20&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5.2  &lt;/strong&gt;&lt;/span&gt;
+Lorsque votre navigateur envoie le message HTTP GET pour la deuxième fois, quel nouveau champ est inclus dans le message HTTP GET ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Le nom d’utilisateur (&lt;em&gt;wireshark-students&lt;/em&gt;) et le mot de passe (&lt;em&gt;network&lt;/em&gt;)
+que vous avez saisis sont encodés dans la chaîne de caractères
+&lt;em&gt;d2lyZXNoYXJrLXN0dWRlbnRzOm5ldHdvcms=&lt;/em&gt; qui suit l’en-tête “Authorization : Basic”
+dans le message HTTP GET du client.&lt;br /&gt;
+Bien qu’il puisse sembler que votre nom d’utilisateur et votre mot de passe soient cryptés,
+ils sont simplement encodés dans un format connu sous le nom de format Base64.
+Le nom d’utilisateur et le mot de passe ne sont pas cryptés !&lt;br /&gt;
+D’ailleurs Wireshark décode la chaine dans le champs “Credentials”.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Etude de cas: ICMP</title>
+      <link>/courses/network/labs/icmp-lab/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/network/labs/icmp-lab/</guid>
+      <description>
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Source: &lt;a href=&#34;https://gaia.cs.umass.edu/kurose_ross/wireshark.php&#34; target=&#34;_blank&#34;&gt;Jim Kurose, Keith Ross: Computer networking: A Top-Down Approach&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;Dans ce TP, nous allons explorer plusieurs aspects du protocole ICMP (Internet Control Message Protocol) :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Les messages ICMP générés par le programme &lt;code&gt;Ping&lt;/code&gt; ;&lt;/li&gt;
+&lt;li&gt;les messages ICMP générés par le programme &lt;code&gt;Traceroute&lt;/code&gt; ;&lt;/li&gt;
+&lt;li&gt;le format et le contenu d’un message &lt;code&gt;ICMP&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Pour rappel, le protocole ICMP est utilisé par les hôtes et
+les routeurs pour se communiquer des informations au niveau de la couche réseau.
+L’utilisation la plus courante de l’ICMP
+est le signalement d’erreurs.
+Par exemple, lors de l’exécution d’une session HTTP,
+vous avez peut-être rencontré un message d’erreur tel
+que “Destination network unreachable” (réseau de destination inaccessible).
+Ce message trouve son origine dans l’ICMP.
+À un moment donné, un routeur n’a pas été en mesure de trouver
+un chemin vers l’hôte spécifié dans votre requête HTTP.
+Ce routeur a créé et envoyé un message ICMP à votre hôte pour lui signaler l’erreur.&lt;/p&gt;
+&lt;div id=&#34;icmp-et-ping&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; ICMP et Ping&lt;/h1&gt;
+&lt;p&gt;Commençons notre étude sur ICMP
+en capturant les paquets générés par le programme &lt;code&gt;Ping&lt;/code&gt;.
+&lt;code&gt;Ping&lt;/code&gt; est un outil simple qui permet à n’importe qui
+(par exemple, un administrateur réseau)
+de vérifier si un hôte est actif ou non.
+Le programme &lt;code&gt;Ping&lt;/code&gt; de l’hôte source
+envoie un paquet ICMP à l’adresse IP cible ;
+si la cible est active,
+le programme &lt;code&gt;Ping&lt;/code&gt; de l’hôte cible répond
+en renvoyant un paquet ICMP à l’hôte source.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Ouvrez un terminal.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Démarrez Wireshark et commencez la capture de paquets.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Saisissez la commande &lt;code&gt;ping www.ust.hk&lt;/code&gt; dans le terminal pour solliciter une réponse ICMP du serveur Web de l’Université des sciences et technologies de Hong Kong.
+Exécutez ensuite le programme Ping en tapant la touche “Entrée”.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Au bout d’une dizaine de réponses, arrêtez &lt;code&gt;ping&lt;/code&gt; avec la combinaison de touches CTRL+C.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Arrêtez la capture de paquets dans Wireshark.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Saisissez &lt;code&gt;icmp&lt;/code&gt; dans la fenêtre d’affichage du filtre pour n’afficher que les paquets ICMP dans Wireshark.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.1  &lt;/strong&gt;&lt;/span&gt;
+Quel est le RTT que vous voyez à chaque réponse ICMP ?
+Vous pouvez rechercher l’information sur Internet.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.2  &lt;/strong&gt;&lt;/span&gt;
+Quelle est l’adresse IP de votre hôte ? Quelle est l’adresse IP de l’hôte de destination ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.3  &lt;/strong&gt;&lt;/span&gt;
+Pourquoi un paquet ICMP n’a-t-il pas de numéros de port source et de port de destination ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.4  &lt;/strong&gt;&lt;/span&gt;
+Examinez l’un des paquets de requête ping envoyés par votre hôte.
+Quels sont les numéros de type et de code ICMP ?
+Quels sont les autres champs de ce paquet ICMP ? Combien d’octets représentent les champs somme de contrôle, numéro de séquence et identifiant ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.5  &lt;/strong&gt;&lt;/span&gt;
+Examinez le paquet de réponse ping correspondant.
+Quels sont les numéros de type et de code ICMP ?
+Quels sont les autres champs de ce paquet ICMP ?
+Combien d’octets représentent les champs somme de contrôle, numéro de séquence et identifiant ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;icmp-et-traceroute&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; ICMP et Traceroute&lt;/h1&gt;
+&lt;p&gt;Poursuivons notre étude de ICMP
+en capturant les paquets générés par le programme &lt;code&gt;Traceroute&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Traceroute&lt;/code&gt; peut être utilisé pour déterminer le chemin emprunté par un paquet de la source à la destination.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;Traceroute&lt;/code&gt; est implémenté de différentes manières sous Unix/Linux/MacOS et sous Windows.
+Sous Unix/Linux, la source envoie une série de paquets UDP à la destination cible en utilisant
+un numéro de port de destination improbable ;
+sous Windows, la source envoie une série de paquets ICMP à la destination cible.
+Pour les deux systèmes d’exploitation, le programme envoie le premier paquet avec TTL=1,
+le deuxième avec TTL=2, et ainsi de suite.
+Rappelons qu’un routeur décrémente la valeur TTL d’un paquet au fur et à mesure que celui-ci le traverse.
+Lorsqu’un paquet arrive à un routeur avec TTL=1, le routeur envoie
+un paquet d’erreur ICMP à la source.&lt;/p&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Si vous travaillez sous Windows&lt;/summary&gt;&lt;/p&gt;
+&lt;p&gt;Vous pourrez utiliser &lt;code&gt;Traceroute&lt;/code&gt; en ouvrant une fenêtre de PowerShell et saisissant la commande &lt;code&gt;tracert&lt;/code&gt;.&lt;/p&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Si vous travaillez sous macOS/Linux&lt;/summary&gt;&lt;/p&gt;
+&lt;p&gt;Vous pourrez utiliser &lt;code&gt;Traceroute&lt;/code&gt; en ouvrant une fenêtre de terminal et saisissant la commande &lt;code&gt;traceroute&lt;/code&gt;.&lt;/p&gt;
+&lt;/details&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Commencez par ouvrir une fenêtre de terminal.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Démarrez Wireshark et commencez la capture de paquets.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Saisissez la commande appropriée de &lt;code&gt;Traceroute&lt;/code&gt; suivie par &lt;code&gt;www.ust.hk&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Lorsque le programme &lt;code&gt;Traceroute&lt;/code&gt; se termine, arrêtez la capture de paquets dans Wireshark.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Dans Wireshark utilisez le filtre &lt;code&gt;icmp&lt;/code&gt; ou &lt;code&gt;udp&lt;/code&gt; pour n’afficher que les paquets de &lt;code&gt;Traceroute&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;
+Quelle est l’adresse IP de votre hôte ? Quelle est l’adresse IP de l’hôte cible ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.2  &lt;/strong&gt;&lt;/span&gt;
+Si ICMP envoyait des paquets UDP à la place (comme dans Unix/Linux), le numéro de protocole IP serait-il toujours 01 pour les paquets de sonde ? Si ce n’est pas le cas, quel serait-il ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.3  &lt;/strong&gt;&lt;/span&gt;
+Examinez le paquet ICMP echo dans votre capture d’écran. Est-il différent des paquets ICMP ping query de la première moitié de ce laboratoire ? Si oui, en quoi ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.4  &lt;/strong&gt;&lt;/span&gt;
+Examinez le paquet ICMP error dans votre capture d’écran. Il comporte plus de champs que le paquet ICMP echo. Que contiennent ces champs ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.5  &lt;/strong&gt;&lt;/span&gt;
+Examinez les trois derniers paquets ICMP reçus par l’hôte source. En quoi ces paquets sont-ils différents des paquets d’erreur ICMP ? Pourquoi sont-ils différents ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-11&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.6  &lt;/strong&gt;&lt;/span&gt;
+Dans les mesures de tracert, y a-t-il un lien dont le délai est significativement plus long que les autres ?&lt;br /&gt;
+Sur la base des noms de routeurs, pouvez-vous deviner l’emplacement des deux routeurs à l’extrémité de ce lien ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
 &lt;/div&gt;
 </description>
     </item>
@@ -14223,6 +14939,22 @@ answer the two following questions:&lt;/p&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The directory already exists in the base image.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;By looking at the documentation, we learn that
+we can put any initialization script in this directory.
+In other words, at the startup the database will execute the
+SQL queries in file &lt;code&gt;init-db.sql&lt;/code&gt; so that the database
+is populated with new data.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;From the documentation, we also learn that the script is not executed
+if the data directory is not empty. This means that already existing databases
+will not be touched.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;The last three lines of the Dockerfile contain a keyword (&lt;code&gt;ENV&lt;/code&gt;)
 that we never came across before.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -14234,6 +14966,22 @@ Look again at the documentation of the image &lt;code&gt;postgres:10-2-alpine&lt
 and try to explain the meaning of the last three lines of the Dockerfile.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;These lines set the value of three &lt;strong&gt;environment variables&lt;/strong&gt;, useful
+to pass some parameters to the database.
+From the documentation we learn that:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;POSTGRES_USER&lt;/code&gt; is the name of the database user. If not set,
+the default is the user &lt;code&gt;postgres&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;POSTGRES_PASSWORD&lt;/code&gt; is the password associated with the
+user. This is the only mandatory variable.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;POSTGRES_DB&lt;/code&gt; is the name given to the database.
+If not specified, the database name would be the same as the username.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;The Dockerfile of the web application is as follows:&lt;/p&gt;
 &lt;pre class=&#34;dockerfile&#34;&gt;&lt;code&gt;FROM node:9.6-alpine
 RUN mkdir /app
@@ -14319,6 +15067,16 @@ What key informs &lt;code&gt;docker compose&lt;/code&gt; where to find the
 Dockerfile of the two services?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The value of the key &lt;code&gt;build&lt;/code&gt; is the name of the directory that contains
+the Dockefile. For the service &lt;code&gt;web&lt;/code&gt;, this is the directory
+&lt;code&gt;web&lt;/code&gt;; for the service &lt;code&gt;db&lt;/code&gt;, it is the directory &lt;code&gt;database&lt;/code&gt;.
+All paths are relative to the position of the file &lt;code&gt;docker-compose.yml&lt;/code&gt;
+itself.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;When we’ll build the application from the file &lt;code&gt;docker-compose.yml&lt;/code&gt;,
 two images will be created, one for each service.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -14330,6 +15088,17 @@ What will the name of the two images be?
 What key in the file &lt;code&gt;docker-compose.yml&lt;/code&gt; gives you this information?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The name of the image corresponding to the service &lt;code&gt;web&lt;/code&gt;
+will be &lt;code&gt;pet-store-web&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;The name of the image corresponding to the service &lt;code&gt;db&lt;/code&gt;
+will be &lt;code&gt;pet-store-db&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;This information is given by the key &lt;code&gt;image&lt;/code&gt;
+in the file &lt;code&gt;docker-compose.yml&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;building-the-application&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.2&lt;/span&gt; Building the application&lt;/h2&gt;
@@ -14346,6 +15115,12 @@ position yourself in the root directory
 &lt;li&gt;&lt;p&gt;When the build is complete, verify that the two images corresponding
 to the two services have been created (which docker command do you need here?).&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;docker images&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;executing-the-application&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.3&lt;/span&gt; Executing the application&lt;/h2&gt;
@@ -14384,6 +15159,16 @@ Verify that the network and the volumes associated with the
 application have been correctly created.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Type the commands:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker volume ls&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;and&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker network ls&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;to verify respectively that the volumes and the networks have been created&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -14393,6 +15178,19 @@ How many containers do you expect to be associated to
 the application?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Each &lt;strong&gt;image&lt;/strong&gt; corresponds to a &lt;strong&gt;service&lt;/strong&gt;.
+Here we have two.
+Each &lt;strong&gt;container&lt;/strong&gt; corresponds to a &lt;strong&gt;service instance&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;We didn’t specify any parameter when we launched the application,
+so by default one instance of each service is executed.&lt;/p&gt;
+&lt;p&gt;So, we expect to have &lt;strong&gt;two containers&lt;/strong&gt; associated to the application:
+one container for the service &lt;code&gt;web&lt;/code&gt; and one for the
+service &lt;code&gt;db&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;You can verify the answer to the previous question by typing the following command:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;docker-compose ps&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;This command is exactly equivalent to &lt;code&gt;docker container ls&lt;/code&gt;, except that
@@ -14408,6 +15206,19 @@ the meaning of the following?&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;0.0.0.0:5000-&amp;gt;3000/tcp&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The notation 5000-&amp;gt;3000 means that the port
+5000 of the host computer is &lt;strong&gt;mapped&lt;/strong&gt;
+to the port 3000 of the container.
+More specifically,
+when a client application connects to the port 5000 of the host computer,
+the connection is redirected to the port 3000 of the container.&lt;/p&gt;
+&lt;p&gt;The IP address 0.0.0.0 means that we can connect to the container by
+using any IP address on the host computer.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -14418,6 +15229,17 @@ tell which URL you have to type in your web browser
 to access the application?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;code&gt;http://localhost:5000&lt;/code&gt; or &lt;code&gt;http://127.0.0.1:5000/&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;In the network settings of you computer, you can also
+get the IP address associated by the DHCP server of your&lt;br /&gt;
+local network and use that address to connect to the application
+from another device &lt;strong&gt;connected to the same network&lt;/strong&gt;
+(for instance, your mobile phone).&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;If you want to see the cats, you need to append
@@ -14439,6 +15261,22 @@ for the application?
 What about the volumes?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Just type the command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker network ls&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;and you’ll see that the network &lt;code&gt;backend&lt;/code&gt; is not there anymore.&lt;/p&gt;
+&lt;p&gt;Type the command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker volume ls&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;and you’ll see that the volume &lt;code&gt;pet-store_pets-data&lt;/code&gt; is still there.&lt;/p&gt;
+&lt;p&gt;By default volumes are not removed, to avoid the risk of permanently deleting
+data that might still be useful later.
+If you wish to remove the volumes when shutting down the application,
+you can type:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker-compose down -v&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;scaling-a-service&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.5&lt;/span&gt; Scaling a service&lt;/h2&gt;
@@ -14460,6 +15298,18 @@ Running the previous command results in an error.&lt;/p&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;We’re trying to bind three instances to the port 5000 on the host computer. This is not
+possible.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In the section &lt;code&gt;ports&lt;/code&gt; of file
+&lt;code&gt;docker-compose.yml&lt;/code&gt; we need to remove 5000 and we only leave 3000. This way, each time we run a container, a random port will be chosen on the host computer to bind it
+with port 3000 of the container.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;You need to shut down the application before relaunching it again.
@@ -14701,6 +15551,18 @@ Open a web browser and type &lt;code&gt;http://localhost:80&lt;/code&gt;.&lt;/p&
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The connection is refused both when using &lt;code&gt;localhost&lt;/code&gt; and
+the IP address of the pod.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In order to connect to the service instance, we need to
+define a &lt;strong&gt;Service&lt;/strong&gt; object in Kubernetes, that exposes an IP address
+that client applications can use.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;The following configuration
 defines a Service object of type &lt;strong&gt;LoadBalancer&lt;/strong&gt;:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;apiVersion: v1
@@ -14732,6 +15594,17 @@ the service.&lt;/p&gt;
 What is the field &lt;code&gt;selector&lt;/code&gt; in the definition of the service?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The selector is used internally by Kubernetes to identify the pods that
+are the instances of the service.
+If you look at the specification of the pod above, the field &lt;code&gt;metadata&lt;/code&gt;
+contains a field &lt;code&gt;labels&lt;/code&gt;.
+One of the labels is &lt;code&gt;app: web-pod&lt;/code&gt; ;
+the selector matches this label.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -14740,6 +15613,15 @@ What is the field &lt;code&gt;selector&lt;/code&gt; in the definition of the ser
 In the specification of the service, what &lt;code&gt;port&lt;/code&gt; and &lt;code&gt;targetPort&lt;/code&gt; mean?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;port&lt;/code&gt; specifies the port number where the service will be available.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;targetPort&lt;/code&gt; specifies the port number opened at the pods that are instances of the service.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox activitybox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -14771,6 +15653,37 @@ By looking at the output of the command &lt;code&gt;kubectl get svc/nginx-servic
 which URL do you need to type in the Web browser in order to access the service?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The &lt;code&gt;CLUSTER-IP&lt;/code&gt; is an IP address that is only visible &lt;strong&gt;within the cluster&lt;/strong&gt;.
+In other words, only the services running within the cluster can connect to our
+&lt;code&gt;nginx-service&lt;/code&gt; by using this IP address.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What we need to use is the IP address specified under &lt;code&gt;EXTERNAL-IP&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;If you’re using Docker Desktop&lt;/summary&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;EXTERNAL-IP&lt;/code&gt; is likely to be &lt;code&gt;localhost&lt;/code&gt;
+or &lt;code&gt;127.0.0.1&lt;/code&gt;&lt;/p&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;If you’re using Minikube&lt;/summary&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;EXTERNAL-IP&lt;/code&gt; will be whatever IP address assigned to the service.&lt;/p&gt;
+&lt;/details&gt;
+&lt;ul&gt;
+&lt;li&gt;As for the port number, under PORT(S) you should see something like 8080:30548
+(the second number is likely different, but it should be something in the range [30000-32767]).
+The port 30548 is opened on each node of the Kubernetes cluster.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In practice, when we type &lt;code&gt;http://localhost:8080&lt;/code&gt;, the load balancer replaces it
+with the IP address of a node in the cluster,
+followed by port number 30548.
+When the &lt;code&gt;kube-proxy&lt;/code&gt; on that node receives this request,
+it forwards it to an instance of the service,
+even if that instance runs in another node.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Stop the pod and the service before moving on. Here are the commands to do so:&lt;/p&gt;
@@ -14810,6 +15723,19 @@ itself: &lt;strong&gt;stateless&lt;/strong&gt; or &lt;strong&gt;stateful&lt;/str
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Stateful&lt;/strong&gt; service: one that manages permanent data and is bound to that data.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Stateless&lt;/strong&gt; service: one that is not bound to permanent data.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The service &lt;code&gt;web&lt;/code&gt; is &lt;strong&gt;stateless&lt;/strong&gt; because it does not have to be tightly bound to the data.
+In other words, the service &lt;code&gt;web&lt;/code&gt; uses the data that is stored in the backend database, but
+it can be scheduled on any node of the cluster independently of that data.&lt;/p&gt;
+&lt;p&gt;The service &lt;code&gt;db&lt;/code&gt; is &lt;strong&gt;stateful&lt;/strong&gt; because it directly manages permanent data.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div id=&#34;the-web-service-deployment&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.1&lt;/span&gt; The &lt;code&gt;web&lt;/code&gt; service: deployment&lt;/h2&gt;
 &lt;p&gt;For &lt;strong&gt;stateless application services&lt;/strong&gt;, we can use
@@ -14883,6 +15809,20 @@ Type the following command:&lt;/p&gt;
 Deployment?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;We can clearly see three types of objects:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Three pods, that correspond to the three replicas that we specified in the configuration.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;One deployment. Note that the 3/3 indicates that the deployment has
+3 identical pods, of which 3 are running.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;One ReplicaSet. The Deployment creates a ReplicaSet, that is the actual object that
+controls the three pods. The Deployment provides some additional services (i.e., updates)
+on top of a ReplicaSet.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -14898,6 +15838,20 @@ get back control of the terminal.&lt;/p&gt;
 &lt;p&gt;How many pods do you see? Is it surprising?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;If we type the command right after deleting the pod, it is likely that we’ll see
+four pods, one that is &lt;em&gt;terminating&lt;/em&gt; and another one that is &lt;em&gt;running&lt;/em&gt;.
+Try to type the command until you see three running pods.&lt;/p&gt;
+&lt;p&gt;This is not surprising.
+If we kill the pod, the orchestrator detects a
+deviation from the &lt;strong&gt;desired state&lt;/strong&gt; (which is, we want three replicas) and
+reschedules immediately another pod.
+This is what we mean by a &lt;strong&gt;self-healing system&lt;/strong&gt;. This is one of the major roles
+of an orchestrator.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;the-web-service-service&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.2&lt;/span&gt; The &lt;code&gt;web&lt;/code&gt; service: service&lt;/h2&gt;
@@ -14924,6 +15878,23 @@ spec:
 Describe the specification of this service.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;We create a service named &lt;code&gt;web&lt;/code&gt;. This indicated in the field
+&lt;code&gt;metadata.name&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The service has type &lt;code&gt;LoadBalancer&lt;/code&gt;. This is indicated in the field
+&lt;code&gt;spec.type&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The service listens on port 8080 and uses the TCP protocol.
+Each service instance (i.e., pod) listens on port 3000.
+This is indicated in the field &lt;code&gt;spec.ports&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The instances of the service (i.e., the pods) are those with labels
+&lt;code&gt;app: pets&lt;/code&gt; and &lt;code&gt;service: web&lt;/code&gt;.
+This is indicated in the field &lt;code&gt;spec.selector&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox activitybox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -15025,6 +15996,17 @@ Type the command:&lt;/p&gt;
 &lt;p&gt;Which objects have been created when you deployed the StatefulSet?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;A pod (likely to be called &lt;code&gt;pod/db-0&lt;/code&gt;)&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;A new StatefulSet that governs the pod.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Note that the StatefulSet has only one pod, which is normal,
+since we didn’t specify a higher number of replicas.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -15045,6 +16027,19 @@ Open the Web browser and type the following URL:&lt;/p&gt;
 What do you observe? Can you explain the reason?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;We cannot access the application.
+If you type the command &lt;code&gt;kubectl get all&lt;/code&gt; quickly, you should show that the
+three pods that are instances of the service &lt;code&gt;web&lt;/code&gt; are in an error state.
+If you were too slow, you should see that the restart count of each pod has changed.
+This means that the pods have been restarted because of an error.&lt;/p&gt;
+&lt;p&gt;What happens here is that we launched the database,
+but we didn’t create the Service that lets the clients
+access the database.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;In the output of the command &lt;code&gt;get kubectl all&lt;/code&gt;, look at the names of the
 pods that are instances of the &lt;code&gt;web&lt;/code&gt; service.
 &lt;!-- in the TP you can even ask why all the three instances got an error--&gt;
@@ -15060,6 +16055,13 @@ Does the output of the previous command confirm the explanation
 given in the previous question?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Yes, we can clearly read ENOTFOUND db db:5432.
+This means that Kubernetes cannot resolve the name &lt;code&gt;db&lt;/code&gt; to an IP address.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;the-db-service-service-object&#34; class=&#34;section level1&#34;&gt;
@@ -15075,6 +16077,14 @@ Should the &lt;code&gt;db&lt;/code&gt; service be accessible to client applicati
 the Kubernetes cluster?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;No, this component is the backend of the application. The only client
+that needs to access the database is the frontend, that is the
+&lt;code&gt;web&lt;/code&gt; service, that runs inside the cluster.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -15083,6 +16093,13 @@ the Kubernetes cluster?&lt;/p&gt;
 Given the answer to the previous question, what should the type of this service be?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;strong&gt;ClusterIP&lt;/strong&gt;; this is the type of a service that does not need to
+be exposed to the outside world.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -15094,6 +16111,23 @@ named &lt;code&gt;db-service.yaml&lt;/code&gt; (or any other name of your liking
 that the service must have.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;pre&gt;&lt;code&gt;apiVersion: v1
+kind: Service
+metadata:
+  name: db
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5432
+    protocol: TCP
+  selector:
+    app: pets
+    service: db&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox activitybox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
