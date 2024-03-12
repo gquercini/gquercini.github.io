@@ -600,8 +600,9 @@
 <p>Dans ce TP,
 nous allons jeter un coup d’œil rapide au protocole DHCP.
 Rappelons que le DHCP est largement utilisé dans les réseaux locaux câblés
-et sans fil des entreprises, des universités et des particuliers pour attribuer dynamiquement des adresses IP aux hôtes,
-ainsi que pour configurer d’autres informations relatives à la configuration du réseau.</p>
+et sans fil des entreprises, des universités et
+des particuliers pour attribuer dynamiquement des adresses IP aux hôtes,
+ainsi que pour configurer d’autres informations relatives au réseau.</p>
 <div id="utilisation-de-dhcp-pour-configurer-une-interface-réseau" class="section level1">
 <h1><span class="header-section-number">1</span> Utilisation de DHCP pour configurer une interface réseau</h1>
 <p>Dans cette section, nous forçons notre ordinateur à reconfigurer l’une de ses interfaces réseau à l’aide de DHCP.
@@ -616,7 +617,7 @@ La manière pour ce faire dépend du système d’exploitation utilisé.</p>
 </center>
 <p>Cette commande permet à votre PC d’abandonner son adresse IP.</p>
 <ol start="2" style="list-style-type: decimal">
-<li><p>Démarrez Wireshark.</p></li>
+<li><p>Démarrez la capture Wireshark.</p></li>
 <li><p>Dans PowerShell, entrez la commande suivante :</p></li>
 </ol>
 <center>
@@ -630,24 +631,10 @@ La manière pour ce faire dépend du système d’exploitation utilisé.</p>
 <details>
 <p><summary>Si vous travaillez sous macOS</summary></p>
 <ol style="list-style-type: decimal">
-<li>Dans une fenêtre de terminal, entrez la commande suivante :</li>
-</ol>
-<center>
-<pre><code>sudo ipconfig set en0 none</code></pre>
-</center>
-<p>Cette commande déconfigurera l’interface réseau <code>en0</code>.</p>
-<p><code>en0</code> (dans cet exemple) est l’interface sur laquelle vous souhaitez capturer des paquets à l’aide de Wireshark.<br />
-Vous pouvez facilement trouver la liste des noms d’interface dans Wireshark en choisissant Capture-&gt;options.</p>
-<ol start="2" style="list-style-type: decimal">
-<li><p>Démarrez Wireshark, en capturant des paquets sur l’interface que vous avez déconfigurée à l’étape 1.</p></li>
-<li><p>Dans la fenêtre de terminal, entrez la commande suivante :</p></li>
-</ol>
-<center>
-<pre><code>sudo ipconfig set en0 dhcp</code></pre>
-</center>
-<p>Le protocole DHCP demandera et recevra une adresse IP et d’autres informations du serveur DHCP.</p>
-<ol start="4" style="list-style-type: decimal">
-<li>Après avoir attendu quelques secondes, arrêtez la capture Wireshark.</li>
+<li><p>Démarrez la capture Wireshark.</p></li>
+<li><p>Dans les paramètres réseau sélectionnez “Avancé” puis “Renouveler le bail dhcp”.
+Le protocole DHCP demandera et recevra une adresse IP et d’autres informations du serveur DHCP.</p></li>
+<li><p>Après avoir attendu quelques secondes, arrêtez la capture Wireshark.</p></li>
 </ol>
 </details>
 <details>
@@ -720,7 +707,11 @@ Quelle est la valeur du champ ID de transaction de ce message DHCP Discover ?</p
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 2.5  </strong></span>
-Examinez maintenant le champ des options du message DHCP Discover. Quelles sont les cinq informations (en plus d’une adresse IP) que le client suggère ou demande de recevoir du serveur DHCP dans le cadre de cette transaction DHCP ?</p>
+Examinez maintenant le champ des options du message DHCP Discover. Quelles sont
+les informations (en plus d’une adresse IP) que le client
+suggère ou demande de recevoir du serveur DHCP dans le cadre de cette transaction DHCP ?</p>
+<p>Pour connaître la signification des options,
+vous pouvez <a href="https://www.iana.org/assignments/bootp-dhcp-parameters/bootp-dhcp-parameters.xhtml" target="_blank">consulter cette page</a>.</p>
 </div>
 </div>
 <p>Examinons maintenant le message <code>DHCP Offer</code>.<br />
@@ -759,7 +750,7 @@ Si vous voulez vraiment approfondir cette question, consultez la <a href="https:
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-9" class="exercise"><strong>Exercise 2.9  </strong></span>
 Examinez maintenant le champ des options dans le message d’offre DHCP.
-Quelles sont les cinq informations que le serveur DHCP fournit au client DHCP dans le message d’offre DHCP ?</p>
+Quelles sont les informations que le serveur DHCP fournit au client DHCP dans le message d’offre DHCP ?</p>
 </div>
 </div>
 <p>Il semblerait qu’une fois le message d’offre DHCP reçu,
@@ -795,7 +786,7 @@ Quelle est l’adresse IP source dans le datagramme IP contenant ce message de r
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-12" class="exercise"><strong>Exercise 2.12  </strong></span>
-Quelle est l’adresse IP de destination utilisée dans le datagramme contenant ce message de demande. Cette adresse présente-t-elle des particularités ? Expliquez.</p>
+Quelle est l’adresse IP de destination utilisée dans le datagramme contenant ce message ? Cette adresse présente-t-elle des particularités ? Expliquez.</p>
 </div>
 </div>
 <div class="infobox exercisebox">
@@ -815,11 +806,12 @@ Examinez maintenant le champ des options dans le message <code>DHCP Discover</co
 la “Parameter Request List”.
 La <a href="https://www.ietf.org/rfc/rfc2131.txt" target="_blank">RFC 2131, page 24</a> indique
 que le client peut informer le serveur des paramètres de configuration qui l’intéressent en incluant
-l’option “parameter request list”. La partie données de cette option énumère explicitement les options demandées par numéro de balise.
+l’option “parameter request list”. La partie données de cette option énumère explicitement les options demandées.
 Quelles différences voyez-vous entre les entrées de l’option “parameter request list” dans ce message <code>Request</code> et la même option de liste dans le message <code>Discover</code> précédent ?</p>
 </div>
 </div>
-<p>Locate the IP datagram containing the first DHCP ACK message in your trace, and answer the following questions.</p>
+<p>Identifiez le datagramme IP contenant le premier message DHCP ACK
+et répondez aux questions suivantes.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -841,7 +833,7 @@ Quelle est l’adresse IP de destination utilisée dans le datagramme contenant 
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-17" class="exercise"><strong>Exercise 2.17  </strong></span>
-Quel est le nom du champ du message DHCP ACK (comme indiqué dans la fenêtre Wireshark) qui contient l’adresse IP assignée au client ?</p>
+Quel est le nom de la proprieté du message DHCP ACK qui contient l’adresse IP assignée au client ?</p>
 </div>
 </div>
 <div class="infobox exercisebox">
@@ -849,7 +841,7 @@ Quel est le nom du champ du message DHCP ACK (comme indiqué dans la fenêtre Wi
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-18" class="exercise"><strong>Exercise 2.18  </strong></span>
-Depuis combien de temps (le “bail”) le serveur DHPC a-t-il attribué cette adresse IP au client ?</p>
+Pour combien de temps (le “bail”) le serveur DHPC a-t-il attribué cette adresse IP au client ?</p>
 </div>
 </div>
 <div class="infobox exercisebox">
@@ -857,7 +849,8 @@ Depuis combien de temps (le “bail”) le serveur DHPC a-t-il attribué cette a
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-19" class="exercise"><strong>Exercise 2.19  </strong></span>
-Quelle est l’adresse IP (renvoyée par le serveur DHCP au client DHCP dans ce message DHCP ACK) du routeur de premier saut sur le chemin par défaut entre le client et le reste de l’Internet ?</p>
+Quelle est l’adresse IP (renvoyée par le serveur DHCP au client DHCP dans ce message DHCP ACK)
+de la passerelle par défaut ?</p>
 </div>
 </div>
 </div>

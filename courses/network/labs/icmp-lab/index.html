@@ -633,17 +633,18 @@ en renvoyant un paquet ICMP à l’hôte source.</p>
 Exécutez ensuite le programme Ping en tapant la touche “Entrée”.</p></li>
 <li><p>Au bout d’une dizaine de réponses, arrêtez <code>ping</code> avec la combinaison de touches CTRL+C.</p></li>
 <li><p>Arrêtez la capture de paquets dans Wireshark.</p></li>
-<li><p>Saisissez <code>icmp</code> dans la fenêtre d’affichage du filtre pour n’afficher que les paquets ICMP dans Wireshark.</p></li>
 </ul>
+<p>Regardez la sortie dans le terminal.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1.1  </strong></span>
-Quel est le RTT que vous voyez à chaque réponse ICMP ?
+Que signfie le mot RTT que vous voyez à chaque réponse ICMP dans le terminal ?
 Vous pouvez rechercher l’information sur Internet.</p>
 </div>
 </div>
+<p>Saisissez <code>icmp</code> dans la fenêtre de filtres Wireshark pour n’afficher que les paquets ICMP dans Wireshark.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -657,7 +658,8 @@ Quelle est l’adresse IP de votre hôte ? Quelle est l’adresse IP de l’hôt
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 1.3  </strong></span>
-Pourquoi un paquet ICMP n’a-t-il pas de numéros de port source et de port de destination ?</p>
+Quelle est la valeur de TTL utilisée par votre système d’exploitation lors de la préparation
+d’un datagramme IP ?</p>
 </div>
 </div>
 <div class="infobox exercisebox">
@@ -665,9 +667,7 @@ Pourquoi un paquet ICMP n’a-t-il pas de numéros de port source et de port de 
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 1.4  </strong></span>
-Examinez l’un des paquets de requête ping envoyés par votre hôte.
-Quels sont les numéros de type et de code ICMP ?
-Quels sont les autres champs de ce paquet ICMP ? Combien d’octets représentent les champs somme de contrôle, numéro de séquence et identifiant ?</p>
+Pourquoi un paquet ICMP n’a-t-il pas de numéros de port source et de port de destination ?</p>
 </div>
 </div>
 <div class="infobox exercisebox">
@@ -675,10 +675,22 @@ Quels sont les autres champs de ce paquet ICMP ? Combien d’octets représenten
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 1.5  </strong></span>
-Examinez le paquet de réponse ping correspondant.
+Examinez l’un des paquets de requête ping envoyés par votre hôte.
 Quels sont les numéros de type et de code ICMP ?
 Quels sont les autres champs de ce paquet ICMP ?
-Combien d’octets représentent les champs somme de contrôle, numéro de séquence et identifiant ?</p>
+Combien d’octets représentent les champs somme de contrôle (<em>checksum</em>),
+numéro de séquence (<em>sequence number</em>) et identifiant (<em>identifier</em>) ?</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 1.6  </strong></span>
+Examinez le paquet de réponse ping correspondant.
+Quels sont les numéros de type et de code ICMP ?
+Quel est le numéro de séquence ? Est-ce que cette valeur correspond à celle que vous avez vue
+dans le message ping envoyé par votre ordinateur ?</p>
 </div>
 </div>
 </div>
@@ -708,14 +720,22 @@ un paquet d’erreur ICMP à la source.</p>
 <li><p>Commencez par ouvrir une fenêtre de terminal.</p></li>
 <li><p>Démarrez Wireshark et commencez la capture de paquets.</p></li>
 <li><p>Saisissez la commande appropriée de <code>Traceroute</code> suivie par <code>www.ust.hk</code>.</p></li>
-<li><p>Lorsque le programme <code>Traceroute</code> se termine, arrêtez la capture de paquets dans Wireshark.</p></li>
+<li><p>Lorsque le programme <code>Traceroute</code> se termine, arrêtez la capture de paquets dans Wireshark.
+Il est possible que le programme ne termine pas, dans ce cas, arrêtez-le avec CTRL-C.</p></li>
 </ul>
-<p>Dans Wireshark utilisez le filtre <code>icmp</code> ou <code>udp</code> pour n’afficher que les paquets de <code>Traceroute</code>.</p>
+<p>Dans Wireshark utilisez le filtre <code>icmp</code> ou <code>udp</code> (<code>icmp || udp</code>)
+pour n’afficher que les paquets de <code>Traceroute</code>.</p>
+<div class="infobox curiosity">
+<p><strong>Bon à savoir</strong></p>
+<p>Pour obtenir des informations sur des adresses IP, vous pouvez toujours
+un moteur de recherche mis à disposition par le RIPE : rendez-vous sur
+<a href="https://stat.ripe.net/app/launchpad" target="_blank">cette page</a>.</p>
+</div>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 2.1  </strong></span>
+<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 2.1  </strong></span>
 Quelle est l’adresse IP de votre hôte ? Quelle est l’adresse IP de l’hôte cible ?</p>
 </div>
 </div>
@@ -723,41 +743,25 @@ Quelle est l’adresse IP de votre hôte ? Quelle est l’adresse IP de l’hôt
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 2.2  </strong></span>
-Si ICMP envoyait des paquets UDP à la place (comme dans Unix/Linux), le numéro de protocole IP serait-il toujours 01 pour les paquets de sonde ? Si ce n’est pas le cas, quel serait-il ?</p>
+<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 2.2  </strong></span>
+Pouvez-vous determiner la route géographique suivie par le paquet ? Observez notamment les délais associés aux réponses.</p>
 </div>
 </div>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 2.3  </strong></span>
-Examinez le paquet ICMP echo dans votre capture d’écran. Est-il différent des paquets ICMP ping query de la première moitié de ce laboratoire ? Si oui, en quoi ?</p>
+<p><span id="exr:unnamed-chunk-9" class="exercise"><strong>Exercise 2.3  </strong></span>
+Quelle est la valeur du champ <em>Protocol</em> dans l’en-tête IP ?</p>
 </div>
 </div>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-9" class="exercise"><strong>Exercise 2.4  </strong></span>
-Examinez le paquet ICMP error dans votre capture d’écran. Il comporte plus de champs que le paquet ICMP echo. Que contiennent ces champs ?</p>
-</div>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-10" class="exercise"><strong>Exercise 2.5  </strong></span>
-Examinez les trois derniers paquets ICMP reçus par l’hôte source. En quoi ces paquets sont-ils différents des paquets d’erreur ICMP ? Pourquoi sont-ils différents ?</p>
-</div>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-11" class="exercise"><strong>Exercise 2.6  </strong></span>
-Dans les mesures de tracert, y a-t-il un lien dont le délai est significativement plus long que les autres ?<br />
-Sur la base des noms de routeurs, pouvez-vous deviner l’emplacement des deux routeurs à l’extrémité de ce lien ?</p>
+<p><span id="exr:unnamed-chunk-10" class="exercise"><strong>Exercise 2.4  </strong></span>
+Examinez le paquet ICMP error dans votre capture d’écran.
+Quels champs/propriétés apparaîssent ?</p>
 </div>
 </div>
 </div>
