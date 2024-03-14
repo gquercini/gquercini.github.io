@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Gianluca Quercini">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="GKE">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/courses/cloudalbert/tutorials/cloud-deploy/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="rgb(0, 136, 204)">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_3.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_3.png">
+
+  <link rel="canonical" href="/courses/cloudalbert/tutorials/cloud-deploy/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="Gianluca Quercini">
+  <meta property="og:url" content="/courses/cloudalbert/tutorials/cloud-deploy/">
+  <meta property="og:title" content="Deploying to GKE | Gianluca Quercini">
+  <meta property="og:description" content="GKE"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
+  
+    
+    
+  
+
+  
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Deploying to GKE | Gianluca Quercini</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#experience"><span>Experience</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#publications"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  
+
+  
+
+<div class="container-fluid docs">
+  <div class="row flex-xl-nowrap">
+    <div class="col-12 col-md-3 col-xl-2 docs-sidebar">
+      
+
+
+<script src="/js/toggle-menu.js"></script>
+
+
+
+
+
+
+
+  
+    
+  
+
+
+
+
+<form class="docs-search d-flex align-items-center">
+  <button class="btn docs-toggle d-md-none p-0 mr-3" type="button" data-toggle="collapse" data-target="#docs-nav" aria-controls="docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    <span><i class="fas fa-bars"></i></span>
+  </button>
+
+  
+</form>
+
+<nav class="collapse docs-links" id="docs-nav">
+  
+
+  
+  
+  
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="Tutorials" class="docs-toc-link" href="/courses/cloudalbert/tutorials/docker-tutorial/">Tutorials</a>
+    
+    <div id="Tutorials-ddowncontent" class="Tutorials-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="Tutorials">
+        <a href="/courses/cloudalbert/tutorials/docker-tutorial/">1. Introduction to Docker</a>
+      </li>
+      
+      
+      <li class="Tutorials">
+        <a href="/courses/cloudalbert/tutorials/kube-tutorial/">2. Introduction to Kubernetes</a>
+      </li>
+      
+      <script>open_menu_on_load("Tutorials".concat("-ddowncontent"))</script>
+      <li class="active Tutorials">
+        <a href="/courses/cloudalbert/tutorials/cloud-deploy/">3. Deploying to GKE</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  
+</nav>
+
+    </div>
+
+    
+
+    <main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 docs-content" role="main">
+
+      <article class="article">
+
+        <div class="docs-article-container">
+          <div class="heading">Cloud computing — Assignment</div>
+          <h1>Deploying to GKE</h1>
+          <hr>
+          <div class="logo">
+            
+            </div>
+
+          <div class="article-style">
+            
+
+
+<p><link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/cloud-computing.css"></p>
+<p>The goal of this assignment is to deploy a containerized application
+to <strong>Google Kubernetes Engine (GKE)</strong>.</p>
+<p>The lab consists of the following activities:</p>
+<ol style="list-style-type: decimal">
+<li><p>Get a Web application from GitHub.</p></li>
+<li><p>Complete the <em>Dockerfile</em> of the front-end.</p></li>
+<li><p>Deploy and test of the application to your local Kubernetes cluster.</p></li>
+<li><p>Deploy the application to the Google Kubernetes Engine (GKE).</p></li>
+<li><p>Write a report describing the application and the deployment procedure.
+You’ll find detailed information about the report <a href="#report">in the last section</a>.</p></li>
+</ol>
+<div class="infobox warning">
+<p><strong>Submission information</strong></p>
+<p>You have a submit a <strong>single zip file</strong> containing:</p>
+<ul>
+<li><p>The report in PDF format.</p></li>
+<li><p>The <em>Dockerfile</em> of the front-end.</p></li>
+</ul>
+<p><strong>Submission deadline:</strong> March, 22nd, 2024, 11:59 PM.</p>
+</div>
+<div id="getapp" class="section level1">
+<h1><span class="header-section-number">1</span> Get the application</h1>
+<p>You can download the application
+<a href="https://github.com/gquercini/tripmeal-cloud">here</a>.</p>
+<p>If you have <strong>git</strong> installed on your computer you can simply open a terminal and type
+the following command:</p>
+<center>
+<p><code>git clone https://github.com/gquercini/tripmeal-cloud.git</code></p>
+</center>
+</div>
+<div id="dockerfile-of-the-front-end" class="section level1">
+<h1><span class="header-section-number">2</span> Dockerfile of the front-end</h1>
+<p>The application folder has the same structure as we have seen in the previous labs.
+You should be able to understand the role of each file and folder.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 2.1  </strong></span>
+Locate the <em>Dockerfile</em> of the front-end and complete it.</p>
+<p><strong>You need a Python 3.7 environment to run the application.</strong></p>
+</div>
+</div>
+</div>
+<div id="local-deployment" class="section level1">
+<h1><span class="header-section-number">3</span> Local deployment</h1>
+<p>You need to deploy and test the application <em>TripMeal</em> on
+a <strong>local Kubernetes cluster</strong> (either Docker Desktop or Minikube).</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 3.1  </strong></span>
+Build the images of <strong>all services</strong> of the application.</p>
+</div>
+</div>
+<p>Now, specify the names of the images in the file <code>tripmeal.yml</code>.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3.2  </strong></span>
+Open the file <code>tripmeal.yml</code> and add the names of the created Docker images
+to the appropriate fields.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 3.3  </strong></span></p>
+<ul>
+<li>Execute the application by typing the following command:</li>
+</ul>
+<p><code>kubectl apply -f tripmeal.yml</code></p>
+<ul>
+<li>Wait a minute and then check whether the state of the pods with the following command:</li>
+</ul>
+<p><code>kubectl get all</code></p>
+<ul>
+<li>If any of the pods is not ready yet, wait a moment and then type the previous command again.</li>
+</ul>
+<details>
+<p><summary>If one or more pods are in an <strong>error state</strong> </summary></p>
+<ul>
+<li>Check the logs with the following commands:</li>
+</ul>
+<p><code>kubectl logs NAME-OF-POD --previous</code></p>
+<ul>
+<li><strong>In case you get Exec format error</strong>, add to your Dockerfile the following instruction:</li>
+</ul>
+<p><code>RUN chmod -x path_to_file_app</code></p>
+<p>where <code>path_to_file_app</code> is the path to the file <code>app.py</code>
+<strong>inside the image</strong>. Rebuild the image.</p>
+<ul>
+<li>After fixing the error, before executing the application again, run the following command
+to delete all previously created resources:</li>
+</ul>
+<p><code>kubectl delete -f tripmeal.yml</code></p>
+</details>
+<details>
+<p><summary>If all pods are in running state</summary></p>
+<ul>
+<li><p>Open a web browser window.</p></li>
+<li><p>Type the public IP and port of your application.</p></li>
+<li><p>Confirm that the application works correctly.</p></li>
+</ul>
+</details>
+</div>
+</div>
+<p>After confirming that the application works, you can shut down the application.</p>
+<p><code>kubectl delete -f tripmeal.yml</code></p>
+</div>
+<div id="deploy-to-gke" class="section level1">
+<h1><span class="header-section-number">4</span> Deploy to GKE</h1>
+<p>In this section, you’re going to deploy your application to GKE.</p>
+<p>Here are the main steps:</p>
+<ol style="list-style-type: decimal">
+<li><p>Make the code available to a public repository so that it can be easily imported into your cloud environment.</p></li>
+<li><p>Open the Google Cloud Shell to access your cloud environment.</p></li>
+<li><p>Deploy the application.</p></li>
+</ol>
+<p>The next subsections will describe these steps in greater detail.</p>
+<div id="upload-the-code-to-github" class="section level2">
+<h2><span class="header-section-number">4.1</span> Upload the code to GitHub</h2>
+<p>The easiest way to import your application into your cloud environment is to
+make it available to a Git repository, such as GitHub or any other Git service
+for which you already have an account.
+If necessary, the teacher will guide you in this step.</p>
+</div>
+<div id="open-the-google-cloud-shell" class="section level2">
+<h2><span class="header-section-number">4.2</span> Open the Google Cloud Shell</h2>
+<p>Open the <a href="https://console.cloud.google.com/welcome?project=gq-cloud-computing" target="_blank">Google Cloud Console</a>.
+Make sure you log in with your school account.</p>
+<p>You’ll see in this page an overview of the project created to let you deploy the application to GKE.
+In particular, you should take note of:</p>
+<ul>
+<li><p>the project number (<em>124930651186</em>).</p></li>
+<li><p>the project ID (<em>gq-cloud-computing</em>).</p></li>
+</ul>
+<p>You’ll need this information later when you’ll set up the deployment.</p>
+<p>In the top-right corner of the window, you should see a small icon with a prompt (<em>&gt;</em>).
+When you click on it, a Google Cloud Shell will open at the bottom of the screen.
+The shell will be automatically connected to your project environment.</p>
+</div>
+<div id="deployment" class="section level2">
+<h2><span class="header-section-number">4.3</span> Deployment</h2>
+<p>You’ll now have to type few commands in the Google Cloud Shell to deploy the application to Kubernetes.</p>
+<div id="create-a-repository" class="section level3">
+<h3><span class="header-section-number">4.3.1</span> Create a repository</h3>
+<p>Create a repository where you’ll be storing the Docker images of your application.
+The repository is stored in the <em>Artifact Registry</em>, the Google container registry.</p>
+<ol style="list-style-type: decimal">
+<li>It is convenient to create an environment variable PROJECT_ID with the following command:</li>
+</ol>
+<p><code>export PROJECT_ID=gq-cloud-computing</code></p>
+<ol start="2" style="list-style-type: decimal">
+<li>Verify that the value of the environment variable is correct:</li>
+</ol>
+<p><code>echo $PROJECT_ID</code></p>
+<ol start="3" style="list-style-type: decimal">
+<li><p>Create an environment variable PROJECT_NUMBER whose value is 124930651186.</p></li>
+<li><p>Create an environment variable REPO_NAME whose value is a name of your choice for the container
+repository.</p></li>
+<li><p>Create an environment variable APP_NAME whose value is a name of your choice for the
+application.</p></li>
+<li><p>Create an environment variable APP_VERSION whose value is the version of the app. You can choose
+<code>1.0</code> or <code>latest</code>, or any other value of your choice.</p></li>
+<li><p>Create your repository with the following command:</p></li>
+</ol>
+<pre><code>gcloud artifacts repositories create ${REPO_NAME} \
+   --repository-format=docker \
+   --location=europe-west2 \
+   --description=&quot;Docker repository&quot;</code></pre>
+</div>
+<div id="building-the-docker-images" class="section level3">
+<h3><span class="header-section-number">4.3.2</span> Building the Docker images</h3>
+<ol style="list-style-type: decimal">
+<li><p>Download the application from your Git repository with the command <code>git clone</code>.</p></li>
+<li><p>Build and tag the Docker images of your application.</p></li>
+</ol>
+<div class="infobox warning">
+<p><strong>Names of the images</strong></p>
+<p>You have to give your images names that are consistent with the names of images stored
+in the container repository.</p>
+<p>In the case of your repository, the name of an image should be as follows:</p>
+<p><code>europe-west2-docker.pkg.dev/${PROJECT_ID}/{$REPO_NAME}/{$APP_NAME}:{$APP_VERSION}</code></p>
+</div>
+<div class="infobox warning">
+<p><strong>Warning</strong></p>
+<p>Note: If prompted, authorize Cloud Shell to make Google Cloud API calls.</p>
+</div>
+<ol start="3" style="list-style-type: decimal">
+<li>Verify that the images have been created with the following command:</li>
+</ol>
+<pre><code>docker images</code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li>Add IAM policy bindings (basically, some authorization configurations) to your service account:</li>
+</ol>
+<pre><code>gcloud artifacts repositories add-iam-policy-binding ${REPO_NAME}$ \
+    --location=europe-west2 \
+    --member=serviceAccount:{$PROJECT_NUMBER}-compute@developer.gserviceaccount.com \
+    --role=&quot;roles/artifactregistry.reader&quot;</code></pre>
+</div>
+<div id="pushing-the-images-to-the-artifact-registry" class="section level3">
+<h3><span class="header-section-number">4.3.3</span> Pushing the images to the Artifact registry</h3>
+<p>You must upload the images to a registry so that your GKE cluster can download and run the images.
+Here we use the repository that we created above.</p>
+<ol style="list-style-type: decimal">
+<li>Configure the <code>docker</code> command to authenticate to the Artifact Registry.</li>
+</ol>
+<pre><code>gcloud auth configure-docker europe-west2-docker.pkg.dev</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Push the images that you created with the command <code>docker push</code>. Make
+sure that you use the correct image names, as discussed above.</li>
+</ol>
+</div>
+<div id="creating-a-gke-cluster" class="section level3">
+<h3><span class="header-section-number">4.3.4</span> Creating a GKE cluster</h3>
+<p>You need now to create a Kubernetes cluster using the Google Kubernetes Engine.
+When you create a cluster, you’ll also specify the option to create the network
+over which the cluster nodes communicate.</p>
+<ol style="list-style-type: decimal">
+<li><p>Define a new environment variable CLUSTER_NAME whose value is a name of your choice for the cluster.</p></li>
+<li><p>Define a new environment variable NET_NAME whose value is a name of your choice for the network.</p></li>
+<li><p>Set your compute engine region.</p></li>
+</ol>
+<pre><code>gcloud config set compute/region europe-west2</code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li>Create the cluster with the following command:</li>
+</ol>
+<pre><code>gcloud container clusters create-auto ${CLUSTER_NAME} \
+    --create-subnetwork name=${NET_NAME} \
+    --no-enable-master-authorized-networks \
+    --enable-private-nodes</code></pre>
+<div class="infobox warning">
+<p><strong>Warning</strong></p>
+<p>The creation of the cluster might take several minutes.</p>
+</div>
+</div>
+<div id="deploy-the-application" class="section level3">
+<h3><span class="header-section-number">4.3.5</span> Deploy the application</h3>
+<p>You’re now ready to deploy your application!</p>
+<ol style="list-style-type: decimal">
+<li><p>In your GitHub repository, modify the file <code>tripmeal.yml</code> to change the names of the images.
+Use the names of the images that you pushed to the the artifact registry.</p></li>
+<li><p>Ensure that you are connected to your GKE cluster with the following command:</p></li>
+</ol>
+<p><code>gcloud container clusters get-credentials $CLUSTER_NAME --region europe-west2</code></p>
+<ol start="3" style="list-style-type: decimal">
+<li>Type the following command to deploy your application:</li>
+</ol>
+<p><code>kubectl apply -f tripmeal.yml</code></p>
+<ol start="4" style="list-style-type: decimal">
+<li>Wait 30 seconds and then type the following command:</li>
+</ol>
+<p><code>kubectl get all</code></p>
+<p>You should get some information about the state of the deployment.
+Keep typing this command until the state of all pods is READY.</p>
+<ol start="4" style="list-style-type: decimal">
+<li>Get the public IP address where your application is available and the port number
+and type them in your browser to confirm that you can access and use the application.</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="report" class="section level1">
+<h1><span class="header-section-number">5</span> Report</h1>
+<p>In the report you need to include the following elements.</p>
+<ul>
+<li><p>A high-level description of the application. What is the application intended for?</p></li>
+<li><p>The architecture of the application. How are files organized? How many services is the application composed of?
+What is the meaning of each file?</p></li>
+<li><p>The technologies used in the application. Which programming languages are used for each service?
+Which libraries and databases?</p></li>
+<li><p>In which file can you get the information about the port number of the front end?</p></li>
+<li><p>Look at the file <code>tripmeal.yml</code>. Can you explain the content of this file? Can you explain the meaning
+of each object created in this file? In particular explain: what is a service and a deployment?
+What is a stateful set? Why is a deployment used and for which service?
+Why is a stateful set used and for which service?</p></li>
+</ul>
+<p>Don’t hesitate to add figures to your report, should you need them to better explain the different notions.</p>
+</div>
+
+          </div>
+
+          
+
+
+
+          
+        </div>
+
+        
+      </article>
+
+      
+
+    </main>
+  </div>
+</div>
+
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.1/anchor.min.js" integrity="sha256-pB/deHc9CGfFpJRjC43imB29Rse8tak+5eXqntO94ck=" crossorigin="anonymous"></script>
+    <script>
+      anchors.add();
+    </script>
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.3da86581634ab22d5bb3fc4505df30a5.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
