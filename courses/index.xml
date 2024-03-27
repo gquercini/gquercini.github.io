@@ -1124,12 +1124,6 @@ store_sales_1_4.800.dat
 Table 5. Execution times of the queries on the sales dataset.
 &lt;/caption&gt;
 &lt;/table&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Good to know&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Compared with the previous exercises, you’ll notice that Spark prints out less messages.
-This is the effect of the instruction on line 46 (Spark only prints out some of the information messages at the beginning of the
-computation and any error message). You’ll be able to easily find the execution times of the queries.&lt;/p&gt;
-&lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 </description>
@@ -8196,15 +8190,8 @@ to do a model selection based on a grid search of parameters.&lt;/p&gt;
 &lt;!-- The group to which users in the cluster belong--&gt;
 &lt;!-- User accounts are numbered from the lower to the upper limit--&gt;
 &lt;!-- ############ END OF MODIFICATIONS ############ --&gt;
-&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Introduction&lt;/h1&gt;
-&lt;p&gt;In this lab you’ll practice the Spark Structured API.&lt;/p&gt;
-&lt;p&gt;You’ll run the code on the &lt;a href=&#34;https://dce.pages.centralesupelec.fr/&#34; target=&#34;_blank&#34;&gt;CentraleSupélec &lt;em&gt;Data Centre d’Enseignement&lt;/em&gt; (DCE)&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;If you never used DCE before, &lt;a href=&#34;/courses/bigdata/documentation/cluster-connection&#34; target=&#34;_blank&#34;&gt;refer to this documentation&lt;/a&gt; to learn
-how to connect and the tools you’ll be needing in this lab.&lt;/p&gt;
-&lt;/div&gt;
 &lt;div id=&#34;number-of-partitions-in-a-rdd&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Number of partitions in a RDD&lt;/h1&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Number of partitions in a RDD&lt;/h1&gt;
 &lt;p&gt;We consider a set of CSV files that contain temperature measurements over several years.
 Each line has the following content: &lt;code&gt;year,month,day,hour,minute,second,temperature&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;These files are stored at the following location: &lt;code&gt;hdfs://sar01:9000/data/temperatures/&lt;/code&gt;.&lt;/p&gt;
@@ -8217,27 +8204,32 @@ Each line has the following content: &lt;code&gt;year,month,day,hour,minute,seco
 &lt;/ul&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Get the file &lt;code&gt;avg_temperatures_rdd.py&lt;/code&gt; by typing the following command:&lt;/strong&gt;&lt;/p&gt;
-&lt;div align=&#34;center&#34;&gt;
-&lt;p&gt;&lt;code&gt;cp /usr/users/cpu-prof/cpu_quercini/spark-sql-templates/avg_temperatures_rdd.py .&lt;/code&gt;&lt;/p&gt;
+&lt;div align=&#34;left&#34;&gt;
+&lt;p&gt;&lt;code&gt;cp /usr/users/prof/cpu_quercini/spark-sql-templates/avg_temperatures_rdd.py .&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;p&gt;This file contains an efficient implementation of the function that computes the average yearly temperature, as we have seen
-in tutorial 2.&lt;/p&gt;
+in a previous tutorial.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;performances-and-number-of-partitions&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.1&lt;/span&gt; Performances and number of partitions&lt;/h2&gt;
+&lt;div id=&#34;about-the-number-of-partitions&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.1&lt;/span&gt; About the number of partitions&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Line 70.&lt;/strong&gt; Replace &lt;code&gt;sarXX&lt;/code&gt; with &lt;code&gt;sar01&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Line 80.&lt;/strong&gt; Replace &lt;code&gt;sarXX&lt;/code&gt; with &lt;code&gt;sar01&lt;/code&gt;. Replace YOUR_DIRECTORY with &lt;code&gt;hpdaspark24/hpdaspark24_XX/&lt;/code&gt; (where XX corresponds to your username number).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Observe the instructions at &lt;strong&gt;line 98&lt;/strong&gt; and &lt;strong&gt;line 104&lt;/strong&gt;. They get and show
+the number of partitions of the input RDD &lt;code&gt;text_file&lt;/code&gt; and the output RDD &lt;code&gt;temperatures&lt;/code&gt; respectively.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Modify the code by following the instructions that you find in the file.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Observe the instructions at &lt;strong&gt;line 73&lt;/strong&gt; and &lt;strong&gt;line 79&lt;/strong&gt;. They get and show
-the number of partitions of the input RDD &lt;code&gt;text_file&lt;/code&gt; and the output RDD &lt;code&gt;temperatures&lt;/code&gt; respectively.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Complete Table 1&lt;/strong&gt;. Run the program on file &lt;code&gt;temperatures_10.csv&lt;/code&gt;. Write down the
-execution time and the number of partitions of both RDDs &lt;code&gt;text_file&lt;/code&gt; and &lt;code&gt;temperatures&lt;/code&gt;.&lt;/li&gt;
-&lt;/ul&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.1  &lt;/strong&gt;&lt;/span&gt;
+Complete Table 1. Run the program on file &lt;code&gt;temperatures_10.csv&lt;/code&gt;. Write down the
+execution time and the number of partitions of both RDDs &lt;code&gt;text_file&lt;/code&gt; and &lt;code&gt;temperatures&lt;/code&gt;.&lt;/p&gt;
 &lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;Reminder.&lt;/strong&gt; The command to run the program is as follows:&lt;/p&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;spark-submit --master spark://sar01:7077 avg_temperatures_rdd.py temperatures_10.csv&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;p&gt;
 &lt;table class=&#34;bigdata&#34;&gt;
@@ -8260,7 +8252,7 @@ execution time and the number of partitions of both RDDs &lt;code&gt;text_file&l
 temperatures_86400.csv
 &lt;/td&gt;
 &lt;td&gt;
-2.71
+3.12
 &lt;/td&gt;
 &lt;td&gt;
 2
@@ -8274,7 +8266,7 @@ temperatures_86400.csv
 temperatures_2880.csv
 &lt;/td&gt;
 &lt;td&gt;
-3.27
+3.67
 &lt;/td&gt;
 &lt;td&gt;
 2
@@ -8288,7 +8280,7 @@ temperatures_2880.csv
 temperatures_86.csv
 &lt;/td&gt;
 &lt;td&gt;
-4.33
+4.59
 &lt;/td&gt;
 &lt;td&gt;
 2
@@ -8313,21 +8305,14 @@ temperatures_10.csv
 &lt;/caption&gt;
 &lt;/table&gt;
 &lt;/p&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Good to know&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;You can execute the program on file &lt;code&gt;temperatures_10.csv&lt;/code&gt; with the following command:&lt;/p&gt;
-&lt;div align=&#34;center&#34;&gt;
-&lt;p&gt;&lt;code&gt;spark-submit --master spark://sar01:7077 avg_temperatures_rdd.py temperatures_10.csv&lt;/code&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;analysis-of-sparks-operation&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.2&lt;/span&gt; Analysis of Spark’s operation&lt;/h2&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.2&lt;/span&gt; Analysis of Spark’s operation&lt;/h2&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.2  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.2  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Could you understand how Spark determines the number of partitions of the RDD &lt;code&gt;text_file&lt;/code&gt;
 by looking at the size of the input files?
@@ -8343,34 +8328,40 @@ HDFS folder. What do you notice? Is there any relation with respect to the numbe
 &lt;p&gt;&lt;strong&gt;Good to know&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;In order to list the content of the folder in HDFS, you can use the following command:&lt;/p&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;p&gt;&lt;code&gt;hdfs dfs -ls hdfs://sar01:9000/hpda/hpda_XX/temperatures_10.rdd.out&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;hdfs dfs -ls hdfs://sar01:9000/hpdaspark24/hpdaspark24_XX/temperatures_10.rdd.out&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;using-the-dataframe-api-to-compute-the-average-temperatures&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Using the DataFrame API to compute the average temperatures&lt;/h1&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Using the DataFrame API to compute the average temperatures&lt;/h1&gt;
 &lt;p&gt;You’re now going to implement a Spark program to compute the average temperatures by using the Spark DataFrame API.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Go through the following steps:&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Copy the code template &lt;code&gt;avg_temperatures_df.py&lt;/code&gt; to your home folder by executing the following command:&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;p&gt;&lt;code&gt;cp /usr/users/cpu-prof/cpu_quercini/spark-sql-templates/avg_temperatures_df.py .&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;cp /usr/users/prof/cpu_quercini/spark-sql-templates/avg_temperatures_df.py .&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
+&lt;!--* The instructions **at line 109 and 115** show the number of partitions of the RDDs
+underlying the dataframes ``df`` (input) and ``df_avg`` (output) respectively.--&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;p&gt;The instructions &lt;strong&gt;at line 84 and 90&lt;/strong&gt; show the number of partitions of the RDDs
-underlying the dataframes &lt;code&gt;df&lt;/code&gt; (input) and &lt;code&gt;df_avg&lt;/code&gt; (output) respectively.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The result of the computation will be stored in the folder &lt;code&gt;temperatures_*.df.out&lt;/code&gt;
-under your HDFS folder &lt;code&gt;hpda/hpda_XX&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;The result of the computation will be stored in the folder &lt;code&gt;temperatures_*.df.out&lt;/code&gt;
+under your HDFS folder &lt;code&gt;hpdaspark24/hpdaspark24_XX&lt;/code&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Complete the code by following the instructions that you find in file &lt;code&gt;avg_temperatures_df.py&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Line 78.&lt;/strong&gt; Replace &lt;code&gt;sarXX&lt;/code&gt; with &lt;code&gt;sar01&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Line 89.&lt;/strong&gt; Replace &lt;code&gt;sarXX&lt;/code&gt; with &lt;code&gt;sar01&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Line 106.&lt;/strong&gt; Complete the instruction to read from the input CSV file.
+Please note that the input CSV files &lt;strong&gt;do not have headers&lt;/strong&gt;. Don’t use schema inference,
+just specify your schema manually. As a reminder, the columns are: &lt;code&gt;year&lt;/code&gt;, &lt;code&gt;month&lt;/code&gt;,
+&lt;code&gt;day&lt;/code&gt;, &lt;code&gt;hour&lt;/code&gt;, &lt;code&gt;minute&lt;/code&gt;, &lt;code&gt;second&lt;/code&gt;, &lt;code&gt;temperature&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Line 55.&lt;/strong&gt; Complete the definition of function &lt;code&gt;avg_temperature_df&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;Execute your code on all the input CSV files and &lt;strong&gt;complete Table 2&lt;/strong&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
@@ -8386,22 +8377,15 @@ under your HDFS folder &lt;code&gt;hpda/hpda_XX&lt;/code&gt;&lt;/p&gt;&lt;/li&gt
 &lt;td&gt;
 &lt;b&gt;Execution time DataFrame&lt;br&gt;(sec)&lt;/b&gt;
 &lt;/td&gt;
-&lt;td&gt;
-&lt;b&gt;Number of partitions&lt;br&gt;(&lt;code&gt;df_avg&lt;/code&gt;)&lt;/b&gt;
-&lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
 &lt;td&gt;
 temperatures_86400.csv
 &lt;/td&gt;
 &lt;td&gt;
-2.71
+3.12
 &lt;/td&gt;
 &lt;td&gt;
-4.75
-&lt;/td&gt;
-&lt;td&gt;
-200
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
@@ -8409,13 +8393,9 @@ temperatures_86400.csv
 temperatures_2880.csv
 &lt;/td&gt;
 &lt;td&gt;
-3.27
+3.67
 &lt;/td&gt;
 &lt;td&gt;
-4.52
-&lt;/td&gt;
-&lt;td&gt;
-200
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
@@ -8423,9 +8403,7 @@ temperatures_2880.csv
 temperatures_86.csv
 &lt;/td&gt;
 &lt;td&gt;
-4.33
-&lt;/td&gt;
-&lt;td&gt;
+4.59
 &lt;/td&gt;
 &lt;td&gt;
 &lt;/td&gt;
@@ -8439,8 +8417,6 @@ Exercise 1.1
 &lt;/td&gt;
 &lt;td&gt;
 &lt;/td&gt;
-&lt;td&gt;
-&lt;/td&gt;
 &lt;/tr&gt;
 &lt;caption&gt;
 Table 2. RDDs vs. DataFrames.
@@ -8450,125 +8426,106 @@ Table 2. RDDs vs. DataFrames.
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.2  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Compare the execution times with the ones obtained with the implementation using the RDDs.
-What do you observe?&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;What is the number of partition of the output RDD? How do you explain this value?&lt;/li&gt;
-&lt;/ul&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.2  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Compare the execution times with the ones obtained with the implementation using the RDDs.
+What do you observe? How do you explain the differences?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;effect-of-the-number-of-partitions&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.1&lt;/span&gt; Effect of the number of partitions&lt;/h2&gt;
-&lt;p&gt;You’re going to study the effect of the number of partitions on the performances of the program.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;In file &lt;code&gt;avg_temperatures_df.py&lt;/code&gt; add the following instruction right below the initialisation of the
-&lt;code&gt;SparkSession&lt;/code&gt;. The command sets the number of &lt;em&gt;shuffle&lt;/em&gt; partitions to a certain value &lt;code&gt;X&lt;/code&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div align=&#34;center&#34;&gt;
-&lt;p&gt;&lt;code&gt;spark.conf.set(&amp;quot;spark.sql.shuffle.partitions&amp;quot;, X)&lt;/code&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;ul&gt;
-&lt;li&gt;Execute the program with different values of &lt;code&gt;X&lt;/code&gt; (say, 1, 2, 10, 50, 100, 500, 1000, 5000, 100000) &lt;strong&gt;only on file&lt;/strong&gt;
-&lt;code&gt;temperatures_86400.csv&lt;/code&gt;, and write down the execution times.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;!-- ## Effect of the number of partitions
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.3  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Plot a graph where the x-axis contains the values of &lt;code&gt;X&lt;/code&gt; and the y-axis contains the execution time.
-What do you observe?&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;Execute the program on the other files by using small values of &lt;code&gt;X&lt;/code&gt; (1 and 2).
-Comment on the evolution of the execution times.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
+You&#39;re going to study the effect of the number of partitions on the performances of the program.
+
+* In file ``avg_temperatures_df.py`` add the following instruction right below the initialisation of the 
+``SparkSession``. The command sets the number of *shuffle* partitions to a certain value `X`.
+
+``
+spark.conf.set(&#34;spark.sql.shuffle.partitions&#34;, X)
+``
+
+* Execute the program with different values of `X` (say, 1, 2, 10, 50, 100, 500, 1000, 5000, 100000) **only on file**
+``temperatures_86400.csv`` and write down the execution times.
+
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-5&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-5) &lt;/strong&gt;&lt;/span&gt;
+
+* Plot a graph where the x-axis contains the values of `X` and the y-axis contains the execution time.
+What do you observe?
+
+
+* Execute the program on the other files by using small values of `X` (1 and 2). 
+Comment on the evolution of the execution times.
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+--&gt;
 &lt;div id=&#34;caching-a-dataframe&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.2&lt;/span&gt; Caching a DataFrame&lt;/h2&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.1&lt;/span&gt; Caching a DataFrame&lt;/h2&gt;
 &lt;p&gt;You’re now going to discover the advantages of caching a DataFrame.&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;At the end of file &lt;code&gt;avg_temperatures_df.py&lt;/code&gt;, add the following instruction:&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Uncomment the last two lines in file &lt;code&gt;avg_temperatures_df.py&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Remove the file &lt;code&gt;temperatures_10.df.out&lt;/code&gt; by typing the following command:&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;p&gt;&lt;code&gt;df_avg.show(n=5)&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;hdfs dfs -rm -r hdfs://sar01:9000/hpdaspark24/hpdaspark24_XX/temperatures_10.df.out&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.4  &lt;/strong&gt;&lt;/span&gt;
-What does this instruction? Is it a transformation or an action?&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;ul&gt;
-&lt;li&gt;Remove the file &lt;code&gt;temperatures_10.df.out&lt;/code&gt; by typing the following command:&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div align=&#34;center&#34;&gt;
-&lt;p&gt;&lt;code&gt;hdfs dfs -rm -r hdfs://sar01:9000/hpda/hpda_XX/temperatures_10.df.out&lt;/code&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.5  &lt;/strong&gt;&lt;/span&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.3  &lt;/strong&gt;&lt;/span&gt;
 Execute the code on file &lt;code&gt;temperatures_10.csv&lt;/code&gt;.
-Why do we have two jobs (job 0 and 1)?
-What is the execution time of each job?&lt;/p&gt;
+What is the execution time of each action?
+Can you explain in detail what is going on here?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;ul&gt;
-&lt;li&gt;Remove again the file &lt;code&gt;temperatures_10.df.out&lt;/code&gt; by typing the following command:&lt;/li&gt;
-&lt;/ul&gt;
-&lt;!-- ALTERNATIVE QUESTION : WHERE WOULD YOU PUT THE CACHE INSTRUCTION --&gt;
-&lt;ul&gt;
-&lt;li&gt;Locate the instruction:&lt;br&gt;
-&lt;div align=&#34;center&#34;&gt;
-&lt;code&gt;df_avg.write.csv(output_folder)&lt;/code&gt;
-&lt;/div&gt;
-and add the following instruction right before:
-&lt;div align=&#34;center&#34;&gt;
-&lt;p&gt;&lt;code&gt;df_avg.cache()&lt;/code&gt;&lt;/p&gt;
-&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;Remove files &lt;code&gt;temperatures_10.df.out&lt;/code&gt; and &lt;code&gt;temperatures_10.df.out.bis&lt;/code&gt;.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.6  &lt;/strong&gt;&lt;/span&gt;
-Execute the code on file &lt;code&gt;temperatures_10.csv&lt;/code&gt;.
-What is the execution time of the different jobs?
-Which execution model does Spark follow?&lt;/p&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.4  &lt;/strong&gt;&lt;/span&gt;
+Cache the DataFrame &lt;code&gt;df_avg&lt;/code&gt; and
+execute the code again on file &lt;code&gt;temperatures_10.csv&lt;/code&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Where should you add the cache instruction?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What is the execution time of each action?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Can you explain in detail what is going on here?&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;computing-averages-with-sql&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Computing averages with SQL&lt;/h1&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Computing averages with SQL&lt;/h1&gt;
 &lt;p&gt;You’re now going to implement the computation of the yearly average temperatures by using SQL on Spark DataFrames.&lt;/p&gt;
 &lt;div id=&#34;using-a-view&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.1&lt;/span&gt; Using a view&lt;/h2&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.1&lt;/span&gt; Using a view&lt;/h2&gt;
 &lt;p&gt;A first option to query a DataFrame with SQL is to create a &lt;strong&gt;view&lt;/strong&gt;.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Copy the file &lt;code&gt;avg_temperatures_sql_view.py&lt;/code&gt; to your home folder by typing the following command:&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;p&gt;&lt;code&gt;cp /usr/users/cpu-prof/cpu_quercini/spark-sql-templates/avg_temperatures_sql_view.py .&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;cp /usr/users/prof/cpu_quercini/spark-sql-templates/avg_temperatures_sql_view.py .&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;ul&gt;
-&lt;li&gt;Complete the code by following the instructions that you find in the file.&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Complete the code in lines 90, 101, 118.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Implement the function &lt;code&gt;avg_temperature_sql&lt;/code&gt; (line 57).&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Execute the code on all CSV files and &lt;strong&gt;complete Table 3&lt;/strong&gt;. As the number of shuffle partitions, just use
-the default value.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;Compare the running times with those that you obtained in the previous exercises.&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Execute the code on all CSV files and &lt;strong&gt;complete Table 3&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;What can you tell about the the running times ? Do you find significant differences between using SQL on a view and
+DataFrame functions?&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -8592,13 +8549,12 @@ the default value.&lt;/p&gt;&lt;/li&gt;
 temperatures_86400.csv
 &lt;/td&gt;
 &lt;td&gt;
-2.71
+3.12
 &lt;/td&gt;
 &lt;td&gt;
-4.75
+Exercise 2.1
 &lt;/td&gt;
 &lt;td&gt;
-4.59
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
@@ -8606,13 +8562,12 @@ temperatures_86400.csv
 temperatures_2880.csv
 &lt;/td&gt;
 &lt;td&gt;
-3.27
+3.67
 &lt;/td&gt;
 &lt;td&gt;
-4.52
+Exercise 2.1
 &lt;/td&gt;
 &lt;td&gt;
-4.54
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
@@ -8620,7 +8575,7 @@ temperatures_2880.csv
 temperatures_86.csv
 &lt;/td&gt;
 &lt;td&gt;
-4.33
+4.59
 &lt;/td&gt;
 &lt;td&gt;
 Exercise 2.1
@@ -8647,47 +8602,51 @@ Table 3. RDDs vs DataFrames with views.
 &lt;/table&gt;
 &lt;/div&gt;
 &lt;div id=&#34;using-a-table&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.2&lt;/span&gt; Using a table&lt;/h2&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.2&lt;/span&gt; Using a table&lt;/h2&gt;
 &lt;p&gt;A second option to query a DataFrame with SQL is to create a &lt;strong&gt;table&lt;/strong&gt;.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Copy the file &lt;code&gt;avg_temperatures_sql_table.py&lt;/code&gt; to your home directory by typing the following command:&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;p&gt;&lt;code&gt;cp /usr/users/cpu-prof/cpu_quercini/spark-sql-templates/avg_temperatures_sql_table.py .&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;cp /usr/users/prof/cpu_quercini/spark-sql-templates/avg_temperatures_sql_table.py .&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Complete the code by following the instructions that you find in the file.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Remove all the folders &lt;code&gt;*.sql.out&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Complete lines 50, 112, 123 and 140.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Implement the function &lt;code&gt;avg_temperature_sql&lt;/code&gt; (line 76).&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.2  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.2  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Execute the code on file &lt;code&gt;temperatures_86400.csv&lt;/code&gt;. How many jobs do you have?&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;What does each job correspond to? What is the execution time of each job?&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;How do you explain that we only got one job when we used a view?&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Execute the code on all files.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Complete Table 4.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;Compare the execution times with the ones that you obtained. Discuss the results.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;p&gt;While reading the code in file &lt;code&gt;avg_temperatures_sql_table.py&lt;/code&gt;, you probably noticed that we have specified
-the path to a HDFS folder for the &lt;strong&gt;Hive metastore warehouse&lt;/strong&gt;. This folder will contain the data of each table
-that we create.&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;!--While reading the code in file ``avg_temperatures_sql_table.py``, you probably noticed that we have specified 
+the path to a HDFS folder for the **Hive metastore warehouse**. This folder will contain the data of each table 
+that we create.--&gt;
+&lt;!--::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-11&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.3  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Look at the files in your home folder (in the local file system, not HDFS) by using the command &lt;code&gt;ls&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Do you notice the presence of new files?&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Can you explain what these files are?&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Execute the code on all CSV files and &lt;strong&gt;complete Table 4&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;Compare the execution times against the ones that you obtained in the previous exercises.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/div&gt;
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-10&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-10) &lt;/strong&gt;&lt;/span&gt;
+
+* Look at the files in your home folder (in the local file system, not HDFS) by using the command ``ls``. 
+
+* Do you notice the presence of new files?
+
+* Can you explain what these files are?
+
+* Execute the code on all CSV files and **complete Table 4**. 
+
+* Compare the execution times against the ones that you obtained in the previous exercises.
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::--&gt;
 &lt;table class=&#34;bigdata&#34;&gt;
 &lt;tr&gt;
 &lt;td&gt;
@@ -8711,16 +8670,15 @@ that we create.&lt;/p&gt;
 temperatures_86400.csv
 &lt;/td&gt;
 &lt;td&gt;
-2.71
+3.12
 &lt;/td&gt;
 &lt;td&gt;
-4.75
+Exercise 2.1
 &lt;/td&gt;
 &lt;td&gt;
-4.59
+Exercise 3.1
 &lt;/td&gt;
 &lt;td&gt;
-4.66
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
@@ -8728,16 +8686,15 @@ temperatures_86400.csv
 temperatures_2880.csv
 &lt;/td&gt;
 &lt;td&gt;
-3.27
+3.67
 &lt;/td&gt;
 &lt;td&gt;
-4.52
+Exercise 2.1
 &lt;/td&gt;
 &lt;td&gt;
-4.54
+Exercise 3.1
 &lt;/td&gt;
 &lt;td&gt;
-4.36
 &lt;/td&gt;
 &lt;/tr&gt;
 &lt;tr&gt;
@@ -8745,7 +8702,7 @@ temperatures_2880.csv
 temperatures_86.csv
 &lt;/td&gt;
 &lt;td&gt;
-4.33
+4.59
 &lt;/td&gt;
 &lt;td&gt;
 Exercise 2.1
@@ -8777,23 +8734,21 @@ Table 4. RDDs vs DataFrames with views and tables.
 &lt;/caption&gt;
 &lt;/table&gt;
 &lt;ul&gt;
-&lt;li&gt;Remove the file &lt;code&gt;temperatures_10.sql.out&lt;/code&gt; and execute the code again on file &lt;code&gt;temperatures_10.csv&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Remove the file &lt;code&gt;temperatures_10.sql.table.out&lt;/code&gt;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Execute the code again on file &lt;code&gt;temperatures_10.csv&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-12&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.4  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;How many jobs do we have? Why?&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;What is the execution time of each job?&lt;/li&gt;
-&lt;/ul&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-11&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.3  &lt;/strong&gt;&lt;/span&gt;
+What is the execution time that you obtain now?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;using-the-dataframe-api-on-large-files&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;5&lt;/span&gt; Using the DataFrame API on large files&lt;/h1&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Using the DataFrame API on large files&lt;/h1&gt;
 &lt;p&gt;We now consider the files stored under &lt;code&gt;hdfs://sar01:9000/data/sales/&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;These files contain tabular data related to the sale of products in a chain of stores.
 We consider two tables: &lt;code&gt;store_sales&lt;/code&gt; and &lt;code&gt;customer&lt;/code&gt;.
@@ -8840,12 +8795,12 @@ FROM store_sales s JOIN customer c ON s.ss_customer_sk = c.c_customer_sk
 GROUP BY ss_customer_sk
 ORDER BY amountSpent DESC&lt;/code&gt;&lt;/pre&gt;
 &lt;div id=&#34;development-of-the-code-using-the-dataframe-api.&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;5.1&lt;/span&gt; Development of the code using the DataFrame API.&lt;/h2&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.1&lt;/span&gt; Development of the code using the DataFrame API.&lt;/h2&gt;
 &lt;ul&gt;
 &lt;li&gt;Copy the file &lt;code&gt;dataframe_api_benchmark.py&lt;/code&gt; to your home directory by typing the following command:&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;p&gt;&lt;code&gt;cp /usr/users/cpu-prof/cpu_quercini/spark-sql-templates/dataframe_api_benchmark.py .&lt;/code&gt;&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;cp /usr/users/prof/cpu_quercini/spark-sql-templates/dataframe_api_benchmark.py .&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Modify the code by following the instructions in the file.&lt;/p&gt;&lt;/li&gt;
@@ -8865,7 +8820,7 @@ at the last iteration.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-13&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5.1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-12&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;&lt;strong&gt;Complete Table 5&lt;/strong&gt; and write down the execution time of each query for each file.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Why the execution time of the queries Q1 and Q2 is large at the iteration 0?&lt;/p&gt;&lt;/li&gt;
@@ -8976,12 +8931,6 @@ store_sales_1_4.800.dat
 Table 5. Execution times of the queries on the sales dataset.
 &lt;/caption&gt;
 &lt;/table&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Good to know&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Compared with the previous exercises, you’ll notice that Spark prints out less messages.
-This is the effect of the instruction on line 46 (Spark only prints out some of the information messages at the beginning of the
-computation and any error message). You’ll be able to easily find the execution times of the queries.&lt;/p&gt;
-&lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 </description>
