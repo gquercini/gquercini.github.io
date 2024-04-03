@@ -5540,706 +5540,1048 @@ Quels champs/propriétés apparaîssent ?&lt;/p&gt;
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>/courses/cloud-computing/labs/kube-lab/</guid>
       <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
-&lt;!-- merge 1.2 with 1.3, so that we can ask students to point out exactly the common layers --&gt;
 &lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
 &lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
-&lt;div id=&#34;objectives&#34; class=&#34;section level1 unnumbered&#34;&gt;
-&lt;h1&gt;Objectives&lt;/h1&gt;
-&lt;p&gt;In this lab assignment you will:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Gain a deeper understanding of the &lt;strong&gt;Docker networking model&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Build and deploy a multi-service application with &lt;strong&gt;Docker Compose&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Deploy a multi-service application on a &lt;strong&gt;local Kubernetes cluster&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Deploy a multi-service application on a &lt;strong&gt;Kubernetes cluster&lt;/strong&gt; in &lt;strong&gt;Microsoft Azure&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;div id=&#34;submission&#34; class=&#34;section level1 unnumbered&#34;&gt;
-&lt;h1&gt;Submission&lt;/h1&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Only one submission per group.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;In order to submit your work, you need to answer all the questions
-that you &lt;strong&gt;&lt;a href=&#34;https://centralesupelec.edunao.com/mod/quiz/view.php?id=115349&#34; target=&#34;_blank&#34;&gt;find here&lt;/a&gt;&lt;/strong&gt;.
-Each question corresponds to an exercise that you find in this page.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;You can answer either &lt;strong&gt;in French&lt;/strong&gt; or &lt;strong&gt;in English&lt;/strong&gt;. Your pick!&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;strong&gt;Deadline: 16 May 2023, 23h59&lt;/strong&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;This lab assignment is &lt;strong&gt;evaluated&lt;/strong&gt;.
-You won’t have access to the solutions.
-You &lt;strong&gt;can ask questions anytime&lt;/strong&gt;
-should you run into problems
-with the implementation of the assignment.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;docker-networking-model&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Docker networking model&lt;/h1&gt;
-&lt;p&gt;We developed a simple chat room in Python that you can download
-&lt;a href=&#34;/courses/cloud-computing/kube-lab/chat-room.zip&#34;&gt;here&lt;/a&gt;.
-The code has been adapted from &lt;a href=&#34;https://github.com/pricheal/python-client-server/&#34; target=&#34;_blank&#34;&gt;this GitHub project&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Participants use a &lt;em&gt;client&lt;/em&gt; program to connect to the chat room;
-the chat room is managed by a &lt;em&gt;server&lt;/em&gt; application that receives the
+&lt;!-- # Objectives {-}
+
+In this lab assignment you will:
+
+* Gain a deeper understanding of the **Docker networking model**.
+
+* Build and deploy a multi-service application with **Docker Compose**.
+
+* Deploy a multi-service application on a **local Kubernetes cluster**.
+
+* Deploy a multi-service application on a **Kubernetes cluster** in **Microsoft Azure**.
+
+
+# Submission {-}
+
+* Only one submission per group. 
+
+* In order to submit your work, you need to answer all the questions 
+that you **[find here](https://centralesupelec.edunao.com/mod/quiz/view.php?id=115349){target=_blank}**.
+Each question corresponds to an exercise that you find in this page.
+
+* You can answer either **in French** or **in English**. Your pick!
+
+* **Deadline: 16 May 2023, 23h59**
+
+::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**Warning**
+
+This lab assignment is **evaluated**. 
+You won&#39;t have access to the solutions.
+You **can ask questions anytime**
+should you run into problems 
+with the implementation of the assignment.
+
+:::
+
+
+# Docker networking model
+
+We developed a simple chat room in Python that you can download 
+[here](/courses/cloud-computing/kube-lab/chat-room.zip). 
+The code has been adapted from [this GitHub project](https://github.com/pricheal/python-client-server/){target=&#34;_blank&#34;}.
+
+Participants use a *client* program to connect to the chat room;
+the chat room is managed by a *server* application  that receives the 
 client connections and forwards the messages between the users.
-The archive contains the following files:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;em&gt;client.py&lt;/em&gt;. Implementation of the chat room client.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;server.py&lt;/em&gt;. Implementation of the chat room server.&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;utils.py&lt;/em&gt;. Library with utility functions used in both &lt;em&gt;client.py&lt;/em&gt; and &lt;em&gt;server.py&lt;/em&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The application is written in Python and it &lt;strong&gt;requires Python 3.7&lt;/strong&gt;.
-The application doesn’t need any third-party library, the packages included in a minimal Python environment are enough.&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+The archive contains the following files:
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:client-server-methodology&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
-&lt;li&gt;&lt;p&gt;Is a single Docker image for this application enough? Justify your answer.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;Given your answer to the previous question, how many Docker images do you need to create?&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;We now build the images for the application.&lt;/p&gt;
-&lt;div class=&#34;infobox curiosity&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Good to know&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;If you need to inspect the file system of an
-image that you create (e.g., to verify that the files that you
-copied are actually there), you can open a terminal
-in the image by using the following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker run -it --entrypoint sh IMAGE_NAME&lt;/code&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+* *client.py*. Implementation of the chat room client.
+* *server.py*. Implementation of the chat room server.
+* *utils.py*. Library with utility functions used in both *client.py* and *server.py*.
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.2  &lt;/strong&gt;&lt;/span&gt;Build the image(s) for the application. For each image:&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
-&lt;li&gt;Upload the Dockerfile to Edunao.&lt;/li&gt;
-&lt;li&gt;Write the &lt;strong&gt;exact&lt;/strong&gt; command that you used to build the image.&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;The size of the images should be kept as small as possible.
-Remember to include in the images only what you need to build and run the application.&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;If you built more than one image:&lt;/p&gt;
-&lt;ol start=&#34;3&#34; style=&#34;list-style-type: lower-alpha&#34;&gt;
-&lt;li&gt;&lt;p&gt;Do they have some common layers? Which ones?&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;If so, is it something that has an impact on the build time and how?&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;div id=&#34;client-and-server-on-the-same-network&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.1&lt;/span&gt; Client and server on the same network&lt;/h2&gt;
-&lt;p&gt;We want to execute:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;One instance of the server.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Two instances of the client.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The server, as well as the clients, will
-&lt;strong&gt;run in Docker containers attached to the same network&lt;/strong&gt;.&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+The application is written in Python and it **requires Python 3.7**. 
+The application doesn&#39;t need any third-party library, the packages included in a minimal Python environment are enough.
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.3  &lt;/strong&gt;&lt;/span&gt;
-We want to make sure that:&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;The server and the clients can communicate with each other.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Other Docker containers &lt;strong&gt;cannot&lt;/strong&gt; communicate neither with the server nor with the clients.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;How can you satisfy both requirements in Docker? Explain your solution
-and justify it.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Only one instance of the server is running.
-Two instances of the client run at the same time.&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;In order to execute the server, we need to &lt;strong&gt;pass a port number as a parameter&lt;/strong&gt;. Choose one in the range [49152–65535].&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;In order to execute the client, we need to &lt;strong&gt;pass as parameters the IP address of the server and the port&lt;/strong&gt; which the server listens to (the one that you specified at 1.).&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;!-- NOT LIVRAISON --&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:client-server-single-network&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.4  &lt;/strong&gt;&lt;/span&gt;
+
+
+::: {.infobox .exercisebox  data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:client-server-methodology&#34;&gt;&lt;strong&gt;(\#exr:client-server-methodology) &lt;/strong&gt;&lt;/span&gt; 
+
+a. Is a single Docker image for this application enough? Justify your answer.
+
+b. Given your answer to the previous question, how many Docker images do you need to create? 
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+
+:::
+
+
+
+We now build the images for the application.
+
+:::{.infobox .curiosity data-latex=&#34;curiosity&#34;}
+**Good to know**
+
+If you need to inspect the file system of an
+image that you create (e.g., to verify that the files that you 
+copied are actually there), you can open a terminal 
+in the image by using the following command:
+
+``
+docker run -it --entrypoint sh IMAGE_NAME
+``
+
+:::
+
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-1&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-1) &lt;/strong&gt;&lt;/span&gt;Build the image(s) for the application. For each image:
+
+a. Upload the Dockerfile to Edunao.
+b. Write the **exact** command that you used to build the image.
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**Warning**
+
+The size of the images should be kept as small as possible.
+Remember to include in the images only what you need to build and run the application.
+
+:::
+
+If you built more than one image:
+
+c. Do they have some common layers? Which ones?
+
+d. If so, is it something that has an impact on the build time and how?
+
+:::
+
+
+
+
+
+
+
+
+## Client and server on the same network
+
+We want to execute:
+
+* One instance of the server.
+
+* Two instances of the client.
+
+The server, as well as the clients, will 
+**run in Docker containers attached to the same network**.
+
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-2&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-2) &lt;/strong&gt;&lt;/span&gt;
+We want to make sure that:
+
+1. The server and the clients can communicate with each other.
+
+2. Other Docker containers **cannot** communicate neither with the server nor with the clients.  
+
+How can you satisfy both requirements in Docker? Explain your solution 
+and justify it.
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+
+::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**Warning**
+
+Only one instance of the server is running. 
+Two instances of the client run at the same time.
+
+1. In order to execute the server, we need to **pass a port number as a parameter**. Choose one in the range [49152–65535].
+
+2. In order to execute the client, we need to **pass as parameters the IP address of the server and the port** which the server listens to (the one that you specified at 1.).
+
+:::
+
+
+
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:client-server-single-network&#34;&gt;&lt;strong&gt;(\#exr:client-server-single-network) &lt;/strong&gt;&lt;/span&gt;
 Execute the server and the two clients by using the network configuration that you
-explained in the previous exercise.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;The server writes messages on the terminal. Remember to launch the container with the appropriate
-options in order to actually see those messages.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Users need to interact with the client, that is: read and write messages.
-Remember to launch the container with the appropriate options in order to actually see those messages.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Write the &lt;strong&gt;exact commands&lt;/strong&gt; that you typed for
-both configuring the network and launching the server and the clients. &lt;strong&gt;Explain these commands.&lt;/strong&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Shut the application down!&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Shut both the clients and the server down before you move on.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;On the client-side, type &lt;code&gt;#quit&lt;/code&gt; at any moment to exit the chat room.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Type Ctrl-C to stop the server.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;client-and-server-on-different-networks&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.2&lt;/span&gt; Client and server on different networks&lt;/h2&gt;
-&lt;p&gt;We want to execute:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;One instance of the server.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Two instances of the client.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;However, &lt;strong&gt;neither client&lt;/strong&gt; is connected to the same network as the server.&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+explained in the previous exercise.
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.5  &lt;/strong&gt;&lt;/span&gt;
-Why can’t you launch the containers with the same settings as
-in Exercise &lt;a href=&#34;#exr:client-server-single-network&#34;&gt;1.4&lt;/a&gt;?&lt;/p&gt;
-&lt;p&gt;What do you propose as a solution instead?&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+* The server writes messages on the terminal. Remember to launch the container with the appropriate 
+options in order to actually see those messages.
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.6  &lt;/strong&gt;&lt;/span&gt;
-Execute the server and the two clients by making sure that neither client is connected to the
-same network as the server.&lt;/p&gt;
-&lt;p&gt;Write the &lt;strong&gt;exact commands&lt;/strong&gt; that you typed
+* Users need to interact with the client, that is: read and write messages. 
+Remember to launch the container with the appropriate options in order to actually see those messages.
+
+Write the **exact commands** that you typed for 
+both configuring the network and launching the server and the clients.  **Explain these commands.**
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+
+::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**Shut the application down!**
+
+Shut both the clients and the server down  before you move on.
+
+* On the client-side, type ``#quit`` at any moment to exit the chat room.
+
+* Type Ctrl-C to stop the server.
+
+:::
+
+
+## Client and server on different networks
+
+We want to execute:
+
+* One instance of the server.
+
+* Two instances of the client.
+
+However, **neither client** is connected to the same network as the server.
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-3&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-3) &lt;/strong&gt;&lt;/span&gt;
+Why can&#39;t you launch the containers with the same settings as 
+in Exercise \@ref(exr:client-server-single-network)?
+
+What do you propose as a solution instead?
+
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+
+
+
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-4&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-4) &lt;/strong&gt;&lt;/span&gt;
+Execute the server and the two clients by making sure that neither client is connected to the 
+same network as the server.
+
+Write the **exact commands** that you typed 
 for both configuring the network and launching the server and the clients.
-&lt;strong&gt;Explain these commands.&lt;/strong&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Shut the application down!&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Shut both the clients and the server down before you move on.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;On the client-side, type &lt;code&gt;#quit&lt;/code&gt; at any moment to exit the chat room.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Type Ctrl-C to stop the server.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;!-- docker run -it --entrypoint sh quercinigia/webmeal this is to look into an image --&gt;
-&lt;!-- exercise on docker-compose. Look at what Clara Gross did last year --&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;multi-service-application-docker-compose&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Multi-service application: Docker Compose&lt;/h1&gt;
-&lt;p&gt;We intend to build and deploy the application &lt;em&gt;TripMeal&lt;/em&gt;
-by using &lt;strong&gt;Docker Compose&lt;/strong&gt;.
-You can download the application
-&lt;a href=&#34;/courses/cloud-computing/kube-lab/tripmeal.zip&#34;&gt;here&lt;/a&gt;.
-The source code has been readapted from
-&lt;a href=&#34;https://github.com/DanielAndreasen/TripMeal&#34; target=&#34;_blank&#34;&gt;this GitHub repository&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;The downloaded file is an archive.
-Extracting the archive will create a folder named
-&lt;code&gt;tripmeal_sujet&lt;/code&gt;.&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+**Explain these commands.**
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;
-Explain the structure of the content of the folder &lt;code&gt;tripmeal_sujet&lt;/code&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;/div&gt;\EndKnitrBlock{exercise}
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.2  &lt;/strong&gt;&lt;/span&gt;
+:::
+
+
+
+::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**Shut the application down!**
+
+Shut both the clients and the server down before you move on.
+
+* On the client-side, type ``#quit`` at any moment to exit the chat room.
+
+* Type Ctrl-C to stop the server.
+
+:::
+
+
+# Multi-service application: Docker Compose
+
+We intend to build and deploy the application *TripMeal*
+by using **Docker Compose**. 
+You can download the application 
+[here](/courses/cloud-computing/kube-lab/tripmeal.zip).
+The source code has been readapted from 
+[this GitHub repository](https://github.com/DanielAndreasen/TripMeal){target=&#34;_blank&#34;}.
+
+
+The downloaded file is an archive. 
+Extracting the archive will create a folder named 
+``tripmeal_sujet``.
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-5&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-5) &lt;/strong&gt;&lt;/span&gt;
+Explain the structure of the content of the folder ``tripmeal_sujet``. 
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-6&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-6) &lt;/strong&gt;&lt;/span&gt;
 How many services does the application have?
-Which technologies (i.e., programming languages, databases) are used in each service?&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;The &lt;code&gt;Dockerfile&lt;/code&gt; in the directory &lt;code&gt;db&lt;/code&gt; is already implemented.&lt;/p&gt;
-&lt;p&gt;Your goal here is to write a &lt;code&gt;Dockerfile&lt;/code&gt; in the directory &lt;code&gt;web&lt;/code&gt;.&lt;/p&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;In case you get Exec format error&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;In order to avoid an &lt;code&gt;Exec format error&lt;/code&gt; when you launch the application,
-you’ll need to add to your Dockerfile an instruction:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;RUN chmod -x path_to_file_app&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;where &lt;code&gt;path_to_file_app&lt;/code&gt; is the path to the file &lt;code&gt;app.py&lt;/code&gt;
-&lt;strong&gt;inside the image&lt;/strong&gt;.&lt;/p&gt;
-&lt;!-- https://stackoverflow.com/questions/55271912/flask-cli-throws-oserror-errno-8-exec-format-error-when-run-through-docker--&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+Which technologies (i.e., programming languages, databases) are used in each service?
+&lt;/div&gt;\EndKnitrBlock{exercise}
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.3  &lt;/strong&gt;&lt;/span&gt;
-Write the &lt;code&gt;Dockerfile&lt;/code&gt; in the directory &lt;code&gt;web&lt;/code&gt;.
-&lt;strong&gt;You need a Python 3.7 environment to run the application.&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Upload the Dockerfile to Edunao&lt;/strong&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;In the folder &lt;code&gt;tripmeal_sujet&lt;/code&gt;, you’ll find a file named &lt;code&gt;tripmeal.env&lt;/code&gt;.
-It contains the definition of &lt;strong&gt;environment variables&lt;/strong&gt; that
-are used in the application.&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+:::
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.4  &lt;/strong&gt;&lt;/span&gt;
-Looking at the environment variables defined in file &lt;code&gt;tripmeal.env&lt;/code&gt;:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;What does SERVER_PORT refer to? A port opened at one of the host network interfaces or
-a port opened at one of the container’s network interfaces?&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Which environment variable tells you the name to assign to the database service?&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Feel free to answer this question after deploying the application.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.5  &lt;/strong&gt;&lt;/span&gt;
-What do you need to define in file &lt;code&gt;docker-compose.yml&lt;/code&gt;
-to enable the communication between the different services?&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.6  &lt;/strong&gt;&lt;/span&gt;
+
+The ``Dockerfile`` in the directory ``db`` is already implemented.
+
+Your goal here is to write a ``Dockerfile`` in the directory ``web``.
+
+::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**In case you get Exec format error**
+
+In order to avoid an ``Exec format error`` when you launch the application, 
+you&#39;ll need to add to your Dockerfile an instruction:
+
+``
+RUN chmod -x path_to_file_app
+``
+
+where ``path_to_file_app`` is the path to the file ``app.py``
+**inside the image**.
+
+
+
+
+:::
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-7&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-7) &lt;/strong&gt;&lt;/span&gt;
+Write the ``Dockerfile`` in the directory ``web``.
+**You need a Python 3.7 environment to run the application.**
+
+**Upload the Dockerfile to Edunao**.
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+
+In the folder ``tripmeal_sujet``, you&#39;ll find a file named ``tripmeal.env``.
+It contains the definition of **environment variables** that 
+are used in the application.
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-8&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-8) &lt;/strong&gt;&lt;/span&gt;
+Looking at the environment variables defined in file ``tripmeal.env``:
+
+* What does SERVER_PORT refer to? A port opened at one of the host network interfaces or 
+a port opened at one of the container&#39;s network interfaces? 
+
+* Which environment variable tells you the name to assign to the database service?
+
+
+Feel free to answer this question after deploying the application.
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-9&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-9) &lt;/strong&gt;&lt;/span&gt;
+What do you need to define in file ``docker-compose.yml`` 
+to enable the communication between the different services?
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-10&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-10) &lt;/strong&gt;&lt;/span&gt;
 Which base image is used to build a container for the database?
 Where is this base image stored?
-Can you find the documentation of this image in the Internet?
-Write down the link to the documentation page in the answer.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+Can you find the documentation of this image in the Internet? 
+Write down the link to the documentation page in the answer.
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-11&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.7  &lt;/strong&gt;&lt;/span&gt;
-By looking at the documentation of the database image,
-what do you need to define in &lt;code&gt;docker-compose.yml&lt;/code&gt;
-to make sure that the data is not deleted once the application is taken down?&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;You’re finally ready to complete the file &lt;code&gt;docker-compose.yml&lt;/code&gt;.&lt;/p&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Remember that you need to pass the &lt;strong&gt;environment variables&lt;/strong&gt;
-to your application.&lt;/p&gt;
-&lt;p&gt;As a documentation of Docker Compose you can use:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;The &lt;a href=&#34;/courses/cloud-computing/tutorials/tutorial-kube&#34; target=&#34;_blank&#34;&gt;examples that we’ve seen together&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The overview presented on the &lt;a href=&#34;https://docs.docker.com/compose/&#34; target=&#34;_blank&#34;&gt;official Docker website&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;You can also find the full specification of Compose &lt;a href=&#34;https://github.com/compose-spec/compose-spec/blob/master/spec.md&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;/div&gt;\EndKnitrBlock{exercise}
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-12&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.8  &lt;/strong&gt;&lt;/span&gt;
-Write the file &lt;code&gt;docker-compose.yml&lt;/code&gt;.
-Build, deploy and test your application.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Upload the file &lt;code&gt;docker-compose.yml&lt;/code&gt; to Edunao.&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Useful commands&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;After launching the application, you can type the command &lt;code&gt;docker-compose ps&lt;/code&gt;
-to look at the details of each container. The command must be typed from folder &lt;code&gt;tripmeal_sujet&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;If any error occurs, you can look at the logs by typing the command &lt;code&gt;docker-compose logs&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+:::
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-13&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.9  &lt;/strong&gt;&lt;/span&gt;
-&lt;u&gt;Use Docker Compose&lt;/u&gt; to push all the images that you built in this section to
-your DockerHub registry.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;In the answer to this exercise write:&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;the command that you execute to push the images.&lt;/li&gt;
-&lt;li&gt;the link to the uploaded images.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Shut down the application!&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Shut down both the application before you move on.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;local-kubernetes-cluster&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Local Kubernetes cluster&lt;/h1&gt;
-&lt;p&gt;We intend to deploy the application &lt;em&gt;TripMeal&lt;/em&gt; on
-a &lt;strong&gt;local Kubernetes cluster&lt;/strong&gt; (either Docker Desktop or Minikube).&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-14&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;
-Specify which services are &lt;strong&gt;stateless&lt;/strong&gt;
-and which ones are &lt;strong&gt;stateful&lt;/strong&gt;. Justify your answer.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-15&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.2  &lt;/strong&gt;&lt;/span&gt;
-For each service of the application &lt;em&gt;TripMeal&lt;/em&gt;, specify
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-11&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-11) &lt;/strong&gt;&lt;/span&gt;
+By looking at the documentation of the database image, 
+what do you need to define in ``docker-compose.yml``
+to make sure that the data is not deleted once the application is taken down?
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+
+You&#39;re finally ready to complete the file ``docker-compose.yml``. 
+
+::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**Warning**
+
+Remember that you need to pass the **environment variables** 
+to your application. 
+
+As a documentation of Docker Compose you can use:
+
+* The [examples that we&#39;ve seen together](/courses/cloud-computing/tutorials/tutorial-kube){target=&#34;_blank&#34;}.
+
+* The overview presented on the [official Docker website](https://docs.docker.com/compose/){target=&#34;_blank&#34;}.
+
+* You can also find the full specification of Compose [here](https://github.com/compose-spec/compose-spec/blob/master/spec.md){target=&#34;_blank&#34;}.
+
+:::
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-12&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-12) &lt;/strong&gt;&lt;/span&gt;
+Write the file ``docker-compose.yml``. 
+Build, deploy and test your application.
+
+**Upload the file ``docker-compose.yml`` to Edunao.**
+
+::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**Useful commands**
+
+
+* After launching the application, you can type the command ``docker-compose ps`` 
+to look at the details of each container. The command must be typed from folder ``tripmeal_sujet``.
+
+* If any error occurs, you can look at the logs by typing the command ``docker-compose logs``.
+
+:::
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-13&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-13) &lt;/strong&gt;&lt;/span&gt;
+&lt;u&gt;Use Docker Compose&lt;/u&gt; to push all the images that you built in this section to 
+your DockerHub registry.
+
+**In the answer to this exercise write:**
+
+* the command that you execute to push the images.
+* the link to the uploaded images.
+
+
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+
+::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**Shut down the application!**
+
+Shut down both the application before you move on.
+
+:::
+
+# Local Kubernetes cluster
+
+We intend to deploy the application *TripMeal* on 
+a **local Kubernetes cluster** (either Docker Desktop or Minikube).
+
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-14&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-14) &lt;/strong&gt;&lt;/span&gt;
+Specify which services are **stateless** 
+and which ones are **stateful**. Justify your answer.
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-15&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-15) &lt;/strong&gt;&lt;/span&gt;
+For each service of the application *TripMeal*, specify 
 the Kubernetes objects that you need to create and their types.
-Justify your answers.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Help&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;In order to write the specification of each object, you can refer to the
+Justify your answers.
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+
+::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**Help**
+
+In order to write the specification of each object, you can refer to the 
 examples that we discussed together in the second tutorial.
-You can also refer
-to the &lt;a href=&#34;https://kubernetes.io/docs/reference/kubernetes-api/&#34; target=&#34;_blank&#34;&gt;API documentation on the Kubernetes website&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+You can also refer 
+to the [API documentation on the Kubernetes website](https://kubernetes.io/docs/reference/kubernetes-api/){target=&#34;_blank&#34;}.
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-16&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.3  &lt;/strong&gt;&lt;/span&gt;
-For each Kubernetes object:&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;&lt;strong&gt;Configure.&lt;/strong&gt; Write a Yaml configuration file. Remember that you need to pass the environment variables to the application.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;strong&gt;Create.&lt;/strong&gt; Create the object in Kubernetes with &lt;code&gt;kubectl&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;strong&gt;Analyze.&lt;/strong&gt; Execute the command &lt;code&gt;kubectl get all&lt;/code&gt; and explain in detail which objects appear in the output as the result of step 2.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;&lt;strong&gt;In case of problems.&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;You can look at the logs of a pod with the following command: &lt;code&gt;kubectl logs NAME-OF-POD --previous&lt;/code&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox activitybox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Play with the application in order to verify that everything works as expected.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Shut down the application!&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Shut down the application by removing all the Kubernetes objects.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+:::
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-17&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.4  &lt;/strong&gt;&lt;/span&gt;
-Create a new file called &lt;code&gt;tripmeal.yml&lt;/code&gt; that contains the
-definition of all the Kubernetes objects of the application, as we have seen
-in the &lt;a href=&#34;/courses/cloud-computing/tutorials/tutorial-kube#conclusion&#34; target=&#34;_blank&#34;&gt;conclusion of the tutorial 2&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Upload this file to Edunao.&lt;/strong&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;kubernetes-cluster-on-microsoft-azure&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Kubernetes cluster on Microsoft Azure&lt;/h1&gt;
-&lt;p&gt;You’re now going to create a Kubernetes cluster on &lt;strong&gt;Microsoft Azure&lt;/strong&gt;
-and deploy &lt;em&gt;TripMeal&lt;/em&gt; on that cluster.&lt;/p&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;In order to perform this activity, you need a &lt;strong&gt;student subscription&lt;/strong&gt; on Microsoft Azure.
-If you haven’t activated it yet:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Connect to &lt;a href=&#34;https://azure.microsoft.com/en-us/free/students/&#34; target=&#34;_blank&#34;&gt;this webpage&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Click on &lt;code&gt;Start free&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Sign in by using your CentraleSupélec credentials.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Follow the instructions.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;p&gt;During this activity, you’ll need to answer some questions that encourage you to
+
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-16&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-16) &lt;/strong&gt;&lt;/span&gt;
+For each Kubernetes object:
+
+1. **Configure.** Write a Yaml configuration file. Remember that you need to pass the environment variables to the application.
+
+2. **Create.** Create the object in Kubernetes with ``kubectl``.
+
+3. **Analyze.** Execute the command ``kubectl get all`` and explain in detail which objects appear in the output as the result of step 2.
+
+**In case of problems.**
+
+You can look at the logs of a pod with the following command: ``kubectl logs NAME-OF-POD --previous``
+
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+
+
+
+::: {.infobox .activitybox data-latex=&#34;{exercisebox}&#34;}
+**Activity**
+
+Play with the application in order to verify that everything works as expected.
+
+:::
+
+::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**Shut down the application!**
+
+Shut down the application by removing all the Kubernetes objects.
+
+:::
+
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-17&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-17) &lt;/strong&gt;&lt;/span&gt;
+Create a new file called ``tripmeal.yml`` that contains the 
+definition of all the Kubernetes objects of the application, as we have seen 
+in the [conclusion of the tutorial 2](/courses/cloud-computing/tutorials/tutorial-kube#conclusion){target=&#34;_blank&#34;}.
+
+**Upload this file to Edunao.** 
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+
+# Kubernetes cluster on Microsoft Azure
+
+You&#39;re now going to create a Kubernetes cluster on **Microsoft Azure** 
+and deploy *TripMeal* on that cluster.
+
+::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**Warning**
+
+In order to perform this activity, you need a **student subscription** on Microsoft Azure.
+If you haven&#39;t activated it yet:
+
+* Connect to [this webpage](https://azure.microsoft.com/en-us/free/students/){target=&#34;_blank&#34;}.
+
+* Click on ``Start free``.
+
+* Sign in by using your CentraleSupélec credentials.
+
+* Follow the instructions.
+
+
+:::
+
+During this activity, you&#39;ll need to answer some questions that encourage you to 
 gain a deeper knowledge of the Azure platform and better understand the commands that you type.
-&lt;strong&gt;Feel free to read the documentation on the Azure platform in order to answer the questions.&lt;/strong&gt;&lt;/p&gt;
-&lt;div id=&#34;login-to-azure-through-cli&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.1&lt;/span&gt; Login to Azure through CLI&lt;/h2&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;If you get “command not found” when you type &lt;code&gt;az&lt;/code&gt;, it means that you haven’t installed
-the Azure CLI yet.
-You’ll find more information on the &lt;a href=&#34;https://centralesupelec.edunao.com/course/view.php?id=4686#section-3&#34; target=&#34;_blank&#34;&gt;Edunao course page&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Make sure you run version 2.25 or higher of the Azure CLI, by typing:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;az --version&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;strong&gt;If you use a VM with Multipass you’ll need to install the Azure CLI with the following command:&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;&lt;strong&gt;If you use a VM either with Multipass or with VirtualBox you’ll need to re-install kubectl:&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Type the following command so as the command &lt;code&gt;kubectl&lt;/code&gt; does not refer to &lt;code&gt;minikube kubectl&lt;/code&gt; anymore:&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code&gt;unalias kubectl&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;Type the following command to install a new version of &lt;code&gt;kubectl&lt;/code&gt;:&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code&gt;sudo az aks install-cli&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;p&gt;Whether you’re on Windows, macOS or Linux, you need to &lt;strong&gt;open a terminal&lt;/strong&gt;.&lt;/p&gt;
-&lt;p&gt;In order to log in to your Azure account, type the following command:&lt;/p&gt;
-&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;az login&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;A Web page will open in your default Web browser, where you can type your username and
+**Feel free to read the documentation on the Azure platform in order to answer the questions.**
+
+## Login to Azure through CLI
+
+::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**Warning**
+
+If you get &#34;command not found&#34; when you type ``az``, it means that you haven&#39;t installed 
+the Azure CLI yet. 
+You&#39;ll find more information on the [Edunao course page](https://centralesupelec.edunao.com/course/view.php?id=4686#section-3){target=&#34;_blank&#34;}.
+
+Make sure you run version 2.25 or higher of the Azure CLI, by typing:
+
+```
+az --version
+```
+
+**If you use a VM with Multipass you&#39;ll need to install the Azure CLI with the following command:**
+
+```
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+```
+
+**If you use a VM either with Multipass or with VirtualBox you&#39;ll need to re-install kubectl:**
+
+* Type the following command so as the command ``kubectl`` does not refer to ``minikube kubectl`` anymore:
+
+```
+unalias kubectl
+```
+
+* Type the following command to install a new version of ``kubectl``:
+
+```
+sudo az aks install-cli
+```
+
+
+:::
+
+Whether you&#39;re on Windows, macOS or Linux, you need to **open a terminal**.
+
+In order  to log in to your Azure account, type the following command:
+
+
+```bash
+az login
+```
+
+A Web page will open in your default Web browser, where you can type your username and 
 password (your CentraleSupélec credentials).
 After authenticating your Azure account, you can go back to the terminal, where you should see
-some information about your account, such as:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;[
+some information about your account, such as:
+
+```
+[
   {
-    &amp;quot;cloudName&amp;quot;: &amp;quot;AzureCloud&amp;quot;,
-    &amp;quot;homeTenantId&amp;quot;: &amp;quot;&amp;lt;id&amp;gt;&amp;quot;,
-    &amp;quot;id&amp;quot;: &amp;quot;&amp;lt;id&amp;gt;&amp;quot;,
-    &amp;quot;isDefault&amp;quot;: true,
-    &amp;quot;managedByTenants&amp;quot;: [],
-    &amp;quot;name&amp;quot;: &amp;quot;Azure for Students&amp;quot;,
-    &amp;quot;state&amp;quot;: &amp;quot;Enabled&amp;quot;,
-    &amp;quot;tenantId&amp;quot;: &amp;quot;&amp;lt;id&amp;gt;&amp;quot;,
-    &amp;quot;user&amp;quot;: {
-      &amp;quot;name&amp;quot;: &amp;quot;&amp;lt;email-address&amp;gt;&amp;quot;,
-      &amp;quot;type&amp;quot;: &amp;quot;user&amp;quot;
+    &#34;cloudName&#34;: &#34;AzureCloud&#34;,
+    &#34;homeTenantId&#34;: &#34;&lt;id&gt;&#34;,
+    &#34;id&#34;: &#34;&lt;id&gt;&#34;,
+    &#34;isDefault&#34;: true,
+    &#34;managedByTenants&#34;: [],
+    &#34;name&#34;: &#34;Azure for Students&#34;,
+    &#34;state&#34;: &#34;Enabled&#34;,
+    &#34;tenantId&#34;: &#34;&lt;id&gt;&#34;,
+    &#34;user&#34;: {
+      &#34;name&#34;: &#34;&lt;email-address&gt;&#34;,
+      &#34;type&#34;: &#34;user&#34;
     }
   }
-]&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div id=&#34;deploy-and-use-azure-container-registry&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.2&lt;/span&gt; Deploy and use Azure Container Registry&lt;/h2&gt;
-&lt;p&gt;When we run TripMeal on a local Kubernetes cluster, we assumed that our computer
-could have a direct access to the Internet and, therefore, to the DockerHub registry, where we
+]
+```
+
+## Deploy and use Azure Container Registry
+
+When we run TripMeal on a local Kubernetes cluster, we assumed that our computer
+could have a direct access to the Internet and, therefore, to the DockerHub registry, where we 
 could pull the images of the TripMeal services.
-When we run a containerized application in production, we cannot make this assumption
-as the production servers have often no direct access to the Internet.&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+When we run a containerized application in production, we cannot make this assumption 
+as the production servers have often no direct access to the Internet.
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-19&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.1  &lt;/strong&gt;&lt;/span&gt;
-In your view, why isn’t it a good idea to have production servers directly
-connected to the Internet?&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;We need to place the images in a container registry that is in the same context
-as our production servers.
-Since we’re going to run the application on Azure, we can use the
-&lt;strong&gt;Azure Container Registry (ACR)&lt;/strong&gt;.&lt;/p&gt;
-&lt;div id=&#34;registry-creation&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.2.1&lt;/span&gt; Registry creation&lt;/h3&gt;
-&lt;p&gt;First, we need to create a &lt;strong&gt;resource group&lt;/strong&gt;.&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-20&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.2  &lt;/strong&gt;&lt;/span&gt;
-What is a &lt;strong&gt;resource group&lt;/strong&gt; in Azure and how is it useful?&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;The command to create a new resource group is the following
-(replace RES_GRP_NAME with a name of your choice).&lt;/p&gt;
-&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;az group create --name  RES_GRP_NAME --location francecentral&lt;/code&gt;&lt;/pre&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;If &lt;code&gt;francecentral&lt;/code&gt; does not work for your account, the previous command will normally suggest a possible location.
-Choose one that is near you.&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;You can verify that the resources are correctly created by looking &lt;a href=&#34;https://portal.azure.com/&#34; target=&#34;_blank&#34;&gt;at the Azure portal&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Next, we need to create a &lt;strong&gt;container registry&lt;/strong&gt; with the following command
-(replace RES_GRP_NAME with the name of your resource group and REG_NAME with a name of your choice for the registry).&lt;/p&gt;
-&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;az acr create --resource-group RES_GRP_NAME --name REG_NAME --sku Basic&lt;/code&gt;&lt;/pre&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-23&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.3  &lt;/strong&gt;&lt;/span&gt;
-In the previous command, what does &lt;code&gt;sku&lt;/code&gt; refer to?
-Feel free to look up on the Azure website to find the answer.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;registry-login&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.2.2&lt;/span&gt; Registry login&lt;/h3&gt;
-&lt;p&gt;After creating the registry, we can log into it with the following command:&lt;/p&gt;
-&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;az acr login --name REG_NAME&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div id=&#34;image-tagging&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.2.3&lt;/span&gt; Image tagging&lt;/h3&gt;
-&lt;p&gt;We’re almost ready to push the images that compose the application &lt;em&gt;TripMeal&lt;/em&gt; to the registry.
-In order to do that, we need to &lt;strong&gt;tag&lt;/strong&gt; (i.e., rename) our images so that their names are
-preceded by the &lt;strong&gt;login server name&lt;/strong&gt; of the registry.&lt;/p&gt;
-&lt;p&gt;In order to get the name of the &lt;strong&gt;login server name&lt;/strong&gt;
-(that we denote here as &lt;code&gt;acrloginserver&lt;/code&gt;) of your registry, you can type
-the following command:&lt;/p&gt;
-&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;az acr list --resource-group RES_GRP_NAME --query &amp;quot;[].{acrLoginServer:loginServer}&amp;quot; --output table&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Your &lt;code&gt;acrloginserver&lt;/code&gt; will be something like &lt;code&gt;xxx.azurecr.io&lt;/code&gt;.&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-19&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-19) &lt;/strong&gt;&lt;/span&gt;
+In your view, why isn&#39;t it a good idea to have production servers directly 
+connected to the Internet?
+&lt;/div&gt;\EndKnitrBlock{exercise}
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-26&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.4  &lt;/strong&gt;&lt;/span&gt;
-Tag the images that correspond to the services of the application &lt;em&gt;TripMeal&lt;/em&gt; so that
-their name is similar to: &lt;code&gt;acrloginserver/nameofimage:latest&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;Write the &lt;strong&gt;exact Docker command&lt;/strong&gt; that you use to tag the images.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;pushing-the-images&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.2.4&lt;/span&gt; Pushing the images&lt;/h3&gt;
-&lt;p&gt;We can push the images with the following command (use your image name
-instead of &lt;code&gt;xxx.azurecr.io/imagename:latest&lt;/code&gt;).&lt;/p&gt;
-&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;docker push xxx.azurecr.io/imagename:latest&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Make sure to &lt;strong&gt;type this command for each image&lt;/strong&gt; that you want to push.&lt;/p&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;It might take few minutes before the images are completely pushed to the registry.&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;Finally, verify that the images are actually in the registry with the following command:&lt;/p&gt;
-&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;az acr repository list --name REG_NAME --output table&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Alternatively, you can connect to &lt;a href=&#34;https://portal.azure.com/&#34; target=&#34;_blank&#34;&gt;your Azure portal&lt;/a&gt;
-and visually browse your resources.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;deploy-a-kubernetes-cluster&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.3&lt;/span&gt; Deploy a Kubernetes cluster&lt;/h2&gt;
-&lt;p&gt;We now deploy a &lt;strong&gt;Kubernetes cluster on Azure&lt;/strong&gt;.&lt;/p&gt;
-&lt;div id=&#34;cluster-creation&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.3.1&lt;/span&gt; Cluster creation&lt;/h3&gt;
-&lt;p&gt;We create the cluster with the following command (replace CLUSTER_NAME
-with a name of your choice. As before, RES_GRP_NAME is the name of your resource group
-and REG_NAME is the name of the container registry).&lt;/p&gt;
-&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;az aks create \
+:::
+
+
+
+We need to place the images in a container registry that is in the same context 
+as our production servers. 
+Since we&#39;re going to run the application on Azure, we can use the 
+**Azure Container Registry (ACR)**.
+
+### Registry creation
+
+First, we need to create a **resource group**.
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-20&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-20) &lt;/strong&gt;&lt;/span&gt;
+What is a **resource group** in Azure and how is it useful?
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+
+
+The command to create a new resource group is the following
+(replace RES_GRP_NAME with a name of your choice).
+
+
+```bash
+az group create --name  RES_GRP_NAME --location francecentral
+```
+
+::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**Warning**
+
+If ``francecentral`` does not work for your account, the previous command will normally suggest a possible location.
+Choose one that is near you.
+
+:::
+
+You can verify that the resources are correctly created by looking [at the Azure portal](https://portal.azure.com/){target=&#34;_blank&#34;}.
+
+Next, we need to create a **container registry** with the following command
+(replace RES_GRP_NAME with the name of your resource group and REG_NAME with a name of your choice for the registry).
+
+
+
+```bash
+az acr create --resource-group RES_GRP_NAME --name REG_NAME --sku Basic
+```
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-23&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-23) &lt;/strong&gt;&lt;/span&gt;
+In the previous command, what does ``sku`` refer to?
+Feel free to look up on the Azure website to find the answer.
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+
+### Registry login
+
+After creating the registry, we can log into it with the following command:
+
+
+```bash
+az acr login --name REG_NAME
+```
+
+### Image tagging
+
+We&#39;re almost ready to push the images that compose the application *TripMeal* to the registry.
+In order to do that, we need to **tag** (i.e., rename) our images so that their names are 
+preceded by the **login server name** of the registry.
+
+In order to get the name of the **login server name** 
+(that we denote here as ``acrloginserver``) of your registry, you can type 
+the following command:
+
+
+```bash
+az acr list --resource-group RES_GRP_NAME --query &#34;[].{acrLoginServer:loginServer}&#34; --output table
+```
+
+Your ``acrloginserver`` will be something like ``xxx.azurecr.io``.
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-26&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-26) &lt;/strong&gt;&lt;/span&gt;
+Tag the images that correspond to the services of the  application *TripMeal* so that
+their name is similar to: ``acrloginserver/nameofimage:latest``
+
+Write the **exact Docker command** that you use to tag the images.
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+
+### Pushing the images
+
+We can push the images with the following command (use your image name 
+instead of ``xxx.azurecr.io/imagename:latest``).
+
+
+```bash
+docker push xxx.azurecr.io/imagename:latest
+```
+
+Make sure to **type this command for each image** that you want to push.
+
+::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**Warning**
+
+It might take few minutes before the images are completely pushed to the registry.
+
+:::
+
+Finally, verify that the images are actually in the registry with the following command:
+
+
+```bash
+az acr repository list --name REG_NAME --output table
+```
+
+Alternatively, you can connect to [your Azure portal](https://portal.azure.com/){target=&#34;_blank&#34;}
+and visually browse your resources. 
+
+## Deploy a Kubernetes cluster
+
+We now deploy a **Kubernetes cluster on Azure**.
+
+### Cluster creation
+
+We create the cluster with the following command (replace CLUSTER_NAME 
+with a name of your choice. As before, RES_GRP_NAME is the name of your resource group 
+and REG_NAME is the name of the container registry).
+
+
+```bash
+az aks create \
     --resource-group RES_GRP_NAME \
     --name CLUSTER_NAME \
     --node-count 2 \
     --generate-ssh-keys \
-    --attach-acr REG_NAME&lt;/code&gt;&lt;/pre&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;If you get an error on your SSH key, then your key is not in the right format.&lt;/p&gt;
-&lt;p&gt;Here is how we suggest you to proceed.&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;Open your home directory in Visual Studio.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Locate the hidden folder &lt;code&gt;.ssh&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;You should have a file named &lt;code&gt;id_rsa.pub&lt;/code&gt; under folder &lt;code&gt;.ssh&lt;/code&gt;. Open it.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Copy the whole content of the file.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Create a new file under folder &lt;code&gt;.ssh&lt;/code&gt;. Give it a name of your choice (for instance, &lt;code&gt;id_kube_rsa.pub&lt;/code&gt;).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Paste the content into the new file, while making sure that you don’t have any whitespace before
-the first character.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Save and close the file.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Type the command &lt;code&gt;az aks create&lt;/code&gt; and replace the &lt;code&gt;--generate--ssh-keys&lt;/code&gt; option with &lt;code&gt;--ssh-key-value ~/.ssh/id_kube_rsa.pub&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;p&gt;The cluster will take a while to start. Time for a coffee!
-But before, answer the following question!&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+    --attach-acr REG_NAME
+```
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-30&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.5  &lt;/strong&gt;&lt;/span&gt;
-Can you tell the meaning of the options in the previous command?&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;connect-to-the-cluster&#34; class=&#34;section level3&#34;&gt;
-&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.3.2&lt;/span&gt; Connect to the cluster&lt;/h3&gt;
-&lt;p&gt;We can configure &lt;code&gt;kubectl&lt;/code&gt; to connect to the newly created cluster.
-You need to type the following command:&lt;/p&gt;
-&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;az aks get-credentials --resource-group RES_GRP_NAME --name CLUSTER_NAME&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Now, your Kubernetes cluster should be visible locally.
-To verify it, type the following command:&lt;/p&gt;
-&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;kubectl config get-contexts&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Here &lt;em&gt;context&lt;/em&gt; refers to the Kubernetes clusters that &lt;em&gt;kubectl&lt;/em&gt; has access to.
+::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**Warning**
+
+If you get an error on your SSH key, then your key is not in the right format. 
+
+Here is how we suggest you to proceed.
+
+1. Open your home directory in Visual Studio.
+
+2. Locate the hidden folder  ``.ssh``.
+
+3. You should have a file named ``id_rsa.pub`` under folder ``.ssh``.  Open it.
+
+4. Copy the whole content of the file.
+
+5. Create a new file under folder ``.ssh``. Give it a name of your choice (for instance, ``id_kube_rsa.pub``).
+
+6. Paste the content into the new file, while making sure that you don&#39;t have any whitespace before 
+the first character.
+
+7. Save and close the file.
+
+8. Type the command ``az aks create`` and replace the ``--generate--ssh-keys`` option with ``--ssh-key-value ~/.ssh/id_kube_rsa.pub``.
+
+
+
+
+
+
+:::
+
+The cluster will take a while to start. Time for a coffee!
+But before, answer the following question!
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-30&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-30) &lt;/strong&gt;&lt;/span&gt;
+Can you tell the meaning of the options in the previous command?
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+
+### Connect to the cluster
+
+We can configure ``kubectl`` to connect to the newly created cluster.
+You need to type the following command:
+
+
+```bash
+az aks get-credentials --resource-group RES_GRP_NAME --name CLUSTER_NAME
+```
+
+Now, your Kubernetes cluster should be visible locally.
+To verify it, type the following command:
+
+
+```bash
+kubectl config get-contexts
+```
+
+Here *context* refers to the Kubernetes clusters that *kubectl* has access to.
 The Kubernetes cluster that you created on Azure should be visible in the output; an asterisk
-should appear in front of its name, indicating that it is the &lt;em&gt;current context&lt;/em&gt;
-(that is the Kubernetes cluster being currently referenced by &lt;code&gt;kubectl&lt;/code&gt;).&lt;/p&gt;
-&lt;p&gt;Type the following command:&lt;/p&gt;
-&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;kubectl get nodes&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;You should see that the Kubernetes cluster has &lt;strong&gt;two nodes&lt;/strong&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;deploy-the-application&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.4&lt;/span&gt; Deploy the application&lt;/h2&gt;
-&lt;p&gt;We’re almost done! The images are in the registry, the Kubernetes cluster is up and running.
-The only missing piece of the puzzle is our application &lt;em&gt;TripMeal&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;First thing to do is to slightly modify the file &lt;code&gt;tripmeal.yml&lt;/code&gt; that you created at the end
-of the previous section.&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+should appear in front of its name, indicating that it is the *current context* 
+(that is the Kubernetes cluster being currently referenced by ``kubectl``).
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-34&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.6  &lt;/strong&gt;&lt;/span&gt;
+Type the following command:
+
+
+```bash
+kubectl get nodes
+```
+
+You should see that the Kubernetes cluster has **two nodes**.
+
+## Deploy the application 
+
+We&#39;re almost done! The images are in the registry, the Kubernetes cluster is up and running.
+The only missing piece of the puzzle is our application *TripMeal*.
+
+First thing to do is to slightly modify the file ``tripmeal.yml`` that you created at the end
+of the previous section.
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-34&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-34) &lt;/strong&gt;&lt;/span&gt;
 Look at the names of the images of each service in that file. How must these names change?
-Modify the file accordingly (&lt;strong&gt;no need to upload it on Edunao&lt;/strong&gt;).&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;It is the moment of truth!
-Deploy your application by typing the following command:&lt;/p&gt;
-&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;kubectl apply -f tripmeal.yml&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Look at Kubernetes objects created after this command:&lt;/p&gt;
-&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;kubectl get all&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Get the external IP address of the web service and try to connect to the application,
-in the same way you did in the previous section.&lt;/p&gt;
-&lt;p&gt;If you can play with the application like you did in your local deployment it means that you reached
-the conclusion of this assignment! Bravo!&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+Modify the file accordingly (**no need to upload it on Edunao**).
+&lt;/div&gt;\EndKnitrBlock{exercise}
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-37&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.7  &lt;/strong&gt;&lt;/span&gt;
-Submit a &lt;strong&gt;video&lt;/strong&gt; like that the one that &lt;a href=&#34;https://webtv.centralesupelec.fr/permalink/v1261a00b74dbbzwk2vr/&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;you can see here&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;The video must &lt;strong&gt;clearly&lt;/strong&gt; show that:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;You’re connected to &lt;strong&gt;your Azure portal&lt;/strong&gt; (Email address on the top right corner of the portal).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;All the passages that you see in the sample video: you need to show the &lt;strong&gt;public IP address&lt;/strong&gt;
-of the application that you deployed, use that address to connect to your application and play
-with the application to show that it works correctly.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;The next exercise is &lt;strong&gt;optional&lt;/strong&gt;.
-Before you leave, &lt;strong&gt;make sure to read the conclusion of this document!!&lt;/strong&gt;.&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+:::
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-38&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.8  &lt;/strong&gt;&lt;/span&gt;
-The title of this exercise is &lt;em&gt;Cerise sur le gâteau&lt;/em&gt; (aka, this is &lt;strong&gt;optional&lt;/strong&gt;!).&lt;/p&gt;
-&lt;p&gt;At this point, you can connect to &lt;em&gt;TripMeal&lt;/em&gt; by using an IP address.
+
+
+It is the moment of truth! 
+Deploy your application by typing the following command:
+
+
+```bash
+kubectl apply -f tripmeal.yml
+```
+
+Look at Kubernetes objects created after this command:
+
+
+```bash
+kubectl get all
+```
+
+Get the external IP address of the web service and try to connect to the application,
+in the same way you did in the previous section.
+
+If you can play with the application like you did in your local deployment it means that you reached 
+the conclusion of this assignment! Bravo!
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-37&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-37) &lt;/strong&gt;&lt;/span&gt;
+Submit a **video** like that the one that [**you can see here**](https://webtv.centralesupelec.fr/permalink/v1261a00b74dbbzwk2vr/){target=&#34;_blank&#34;}.
+
+The video must **clearly** show that:
+
+* You&#39;re connected to **your Azure portal** (Email address on the top right corner of the portal).
+
+* All the passages that you see in the sample video: you need to show the **public IP address**
+of the application that you deployed, use that address to connect to your application and play 
+with the application to show that it works correctly.
+
+&lt;/div&gt;\EndKnitrBlock{exercise}
+:::
+
+The next exercise is **optional**.
+Before you leave, **make sure to read the conclusion of this document!!**.
+
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-38&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-38) &lt;/strong&gt;&lt;/span&gt;
+The title of this exercise is *Cerise sur le gâteau* (aka, this is **optional**!).
+
+At this point, you can connect to *TripMeal* by using an IP address. 
 It would be nice if you could use a URL, like in the real websites.
-Can you find a way to assign a URL to your web service? &lt;strong&gt;Describe your procedure.&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;You need a bit of Googling here….&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;conclusion&#34; class=&#34;section level1 unnumbered&#34;&gt;
-&lt;h1&gt;Conclusion&lt;/h1&gt;
-&lt;p&gt;Make sure you follow these instructions:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Take down your application in Kubernetes by using the following command:&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code&gt;kubectl delete -f tripmeal.yml&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;Change the context of the &lt;code&gt;kubectl&lt;/code&gt; command so that it points back
-to a local Kubernetes cluster. Type the following command, where
-CONTEXT_NAME will be &lt;code&gt;docker-desktop&lt;/code&gt; or &lt;code&gt;minikube&lt;/code&gt;, depending on which local Kubernetes cluster
-you use.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;kubectl config use-context CONTEXT_NAME&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Destroy all the resources&lt;/strong&gt; linked to the application
-&lt;em&gt;TripMeal&lt;/em&gt; on Microsoft Azure, otherwise you’ll get billed even if you don’t use them!
+Can you find a way to assign a URL to your web service? **Describe your procedure.**
+
+You need a bit of Googling here....
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+
+# Conclusion {-}
+
+Make sure you follow these instructions:
+
+* Take down your application in Kubernetes by using the following command:
+
+```
+kubectl delete -f tripmeal.yml
+``` 
+
+* Change the context of the ``kubectl`` command so that it points back 
+to a local Kubernetes cluster. Type the following command, where 
+CONTEXT_NAME will be ``docker-desktop`` or ``minikube``, depending on which local Kubernetes cluster 
+you use.
+
+
+```bash
+kubectl config use-context CONTEXT_NAME
+```
+
+* **Destroy all the resources** linked to the application
+*TripMeal* on Microsoft Azure, otherwise you&#39;ll get billed even if you don&#39;t use them!
 You can destroy all the resources by simply deleting the resource group to which they belong.
 You can do it through the Azure portal or by typing the following command (replace RES_GRP_NAME with the name
-of the resource group that you intend to remove).&lt;/li&gt;
-&lt;/ul&gt;
-&lt;pre&gt;&lt;code&gt;az group delete --name RES_GRP_NAME&lt;/code&gt;&lt;/pre&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;You can check the balance of your Azure credit &lt;a href=&#34;https://www.microsoftazuresponsorships.com/Balance&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;You can stop Docker and Kubernetes if you don’t need it anymore.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
+of the resource group that you intend to remove).
+
+```
+az group delete --name RES_GRP_NAME
+```
+
+* You can check the balance of your Azure credit [here](https://www.microsoftazuresponsorships.com/Balance){target=&#34;_blank&#34;}.
+
+* You can stop Docker and Kubernetes if you don&#39;t need it anymore. --&gt;
+&lt;!-- https://stackoverflow.com/questions/55271912/flask-cli-throws-oserror-errno-8-exec-format-error-when-run-through-docker--&gt;
+&lt;!-- merge 1.2 with 1.3, so that we can ask students to point out exactly the common layers --&gt;
 </description>
     </item>
     
@@ -11166,6 +11508,7 @@ For each table, underline the primary keys and specify the foreign keys.
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>/courses/cloud-computing/tutorials/tutorial-docker/</guid>
       <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
@@ -11182,7 +11525,9 @@ For each table, underline the primary keys and specify the foreign keys.
 &lt;li&gt;Having installed Docker on your computer or having imported the Linux virtual machine either with VirtualBox or with Multipass.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Using a virtual machine with Multipass? Click here for more info&lt;/summary&gt;&lt;/p&gt;
+&lt;summary&gt;
+Using a virtual machine with Multipass? Click here for more info
+&lt;/summary&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Multipass commands&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -11233,7 +11578,7 @@ is an application running in a container.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;running&#34; class=&#34;section level1&#34;&gt;
+&lt;div id=&#34;running&#34; class=&#34;section level1&#34; number=&#34;1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Running containers&lt;/h1&gt;
 &lt;!--The command used to run a container 
 is ``docker run`` followed by four parameters:
@@ -11290,24 +11635,6 @@ specify the registry name, the user, the name and the tag.
 
 
 
-&lt;details&gt;
-
-&lt;summary&gt;Solution&lt;/summary&gt;
-
-::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
-
-1. Registry: *registry.redhat.io*, user: *rhel8*, name: *mysql-80*,
-tag: *latest*
-
-2. Registry: *DockerHub*, user: *library*, name: *alpine*, tag: *3.11*
-
-3. Registry: *DockerHub*, user: *library*, name: *alpine*, tag: *latest*
-:::
-
-&lt;/details&gt;
-
-
-
 ::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
 **Exercise**
 
@@ -11326,18 +11653,6 @@ tag: *latest*
 
 :::
 
-
-&lt;details&gt;
-&lt;summary&gt;Solution&lt;/summary&gt;
-
-::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
-
-There&#39;s no difference. They all point to the same image, that is
-the latest version of *alpine* in the DockerHub registry.
-
-:::
-
-&lt;/details&gt;
 --&gt;
 &lt;p&gt;We now learn how to use the command &lt;code&gt;docker run&lt;/code&gt; and some of
 its options.
@@ -11356,17 +11671,6 @@ Which command would you write in the terminal?
 Execute it.
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The goal of this exercise is to start playing with the
-&lt;code&gt;docker run&lt;/code&gt; command.
-Since the question doesn’t say anything about the
-options, nor does it mention the command to run inside the container,
-we’d type:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker run alpine&lt;/code&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;!--::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
 **Exercise**
 
@@ -11378,33 +11682,7 @@ taken by Docker to run the container.&lt;/div&gt;\EndKnitrBlock{exercise}
 
 :::
 
-
-&lt;details&gt;
-&lt;summary&gt;Solution&lt;/summary&gt;
-
-::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
-
-The output obtained from executing the command should 
-look like as follows:
-
-```bash
-Unable to find image &#39;alpine:latest&#39; locally
-latest: Pulling from library/alpine
-aad63a933944: Pull complete 
-Digest: sha256:b276d875eeed9c7d3f1cfa7edb06b22ed22b14219a7d67c52c56612330348239
-Status: Downloaded newer image for alpine:latest
-```
-
-Here&#39;s what happens under the hood:
-
-1. Docker looks for an image named *alpine:latest* in the host 
-computer and cannot find it.
-
-2. Docker *pulls* (i.e., downloads) the image from the DockerHub registry.
-
-:::
-
-&lt;/details&gt;--&gt;
+--&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -11412,19 +11690,6 @@ computer and cannot find it.
 &lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.2  &lt;/strong&gt;&lt;/span&gt;Is the container still running?
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;In order to list all containers still running on the host, type the
-following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker container ls&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;Your container shouldn’t appear in the output,
-because it’s not running.
-In order to see all containers, including those that are not
-running, type the following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker container ls -a&lt;/code&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;!--::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
 **Exercise**
 
@@ -11433,33 +11698,7 @@ running, type the following command:&lt;/p&gt;
 
 :::
 
-
-&lt;details&gt;
-&lt;summary&gt;Solution&lt;/summary&gt;
-
-::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
-
-* The identifier of the container.
-
-* The name of the image used to run the container (it should be *alpine* for your 
-container).
-
-* The command executed within the container (it should be ``/bin/sh`` for your container).
-
-* When the container has been created.
-
-* The container current status (it should be *exited (0) x seconds ago* for your container).
-
-* The network ports used by the container (we&#39;ll study them later).
-
-* The name of the container. If you don&#39;t specify any when you 
-run the container (as is our case),
-Docker generates a random name by concatenating an adjective and 
-a famous scientist&#39;s name (e.g., *agitated_newton*).
-
-:::
-
-&lt;/details&gt;--&gt;
+--&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -11468,16 +11707,6 @@ a famous scientist&#39;s name (e.g., *agitated_newton*).
 can you tell why the container stopped without giving any output?
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The command is &lt;code&gt;/bin/sh&lt;/code&gt;;
-the container runs a Linux terminal.
-But since we didn’t specify what to do with that terminal
-(we didn’t run any Linux command, nor we tried to access the terminal),
-the container stopped.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;We’re now going to do something useful with the image &lt;em&gt;alpine&lt;/em&gt;.
 Make sure you read the &lt;strong&gt;good practices&lt;/strong&gt; that you should
 adopt while playing with images and containers.&lt;/p&gt;
@@ -11523,7 +11752,7 @@ and prune unused ones are &lt;code&gt;docker image rm&lt;/code&gt;
 and &lt;code&gt;docker image prune -a&lt;/code&gt; respectively.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
-&lt;div id=&#34;pass-a-command-to-the-containerized-application&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;pass-a-command-to-the-containerized-application&#34; class=&#34;section level2&#34; number=&#34;1.1&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.1&lt;/span&gt; Pass a command to the containerized application&lt;/h2&gt;
 &lt;p&gt;Remember that the template of &lt;code&gt;docker run&lt;/code&gt; is the following:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;docker run [options] image-name [command] [arg]&lt;/code&gt;&lt;/p&gt;
@@ -11566,17 +11795,6 @@ In the host or in the container?&lt;/li&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;&lt;code&gt;docker run --rm --name ls-test alpine ls&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;The command &lt;code&gt;ls&lt;/code&gt; is run in the guest terminal, therefore
-what we see in the output is a list of files stored in the
-container.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Notice&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;In Exercise &lt;a href=&#34;#exr:command-in-guest&#34;&gt;1.4&lt;/a&gt; the command
@@ -11598,16 +11816,6 @@ whether the Web site &lt;code&gt;www.centralesupelec.fr&lt;/code&gt; is reachabl
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;&lt;code&gt;docker run --rm --name ping-test alpine ping www.centralesupelec.fr&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;In order to interrupt &lt;code&gt;ping&lt;/code&gt;
-just type the key combination that you’s use to
-interrupt any other command in your terminal.
-(typically Ctrl-C on Windows and Cmd-C in MacOs).&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;!--An application running in a container might need to interact 
 with the user. 
 For instance, the Linux 
@@ -11627,30 +11835,6 @@ You can stop interacting with ``rev`` by typing Ctrl+C at any time.&lt;/div&gt;\
 
 
 :::
-&lt;details&gt;
-&lt;summary&gt;Solution&lt;/summary&gt;
-
-::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
-
-``
-docker run --rm --name rev -it alpine rev
-``
-
-After typing the command, type a word on your keyboard
-(e.g., *deeps*), press *Return* and 
-you should see the same word reversed (e.g., *speed*). 
-
-The option ``-t`` opens a guest terminal (so we can see its
-output); the option ``-i`` allows you to write directly 
-into the guest terminal.
-
-In order to stop using the guest terminal, 
-you&#39;ll need to press Ctrl+D (both in Windows and MacOs).
-
-:::
-
-&lt;/details&gt;
-
 --&gt;
 &lt;p&gt;Now run the following command:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;docker run  --name my-alpine -it alpine&lt;/code&gt;&lt;/p&gt;
@@ -11664,17 +11848,8 @@ Moreover, we didn’t specify any command to run in the guest terminal.&lt;/p&gt
 &lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.6  &lt;/strong&gt;&lt;/span&gt;What do you obtain?
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;When we run a container from the image &lt;em&gt;alpine&lt;/em&gt;, the command
-&lt;code&gt;/bin/sh&lt;/code&gt; is executed within the container.
-Since we specified the option &lt;code&gt;-it&lt;/code&gt;, what we obtain is an access to the
-Linux terminal running in the container.&lt;/p&gt;
 &lt;/div&gt;
-&lt;/details&gt;
-&lt;/div&gt;
-&lt;div id=&#34;starting-and-stopping-containers.&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;starting-and-stopping-containers.&#34; class=&#34;section level2&#34; number=&#34;1.2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.2&lt;/span&gt; Starting and stopping containers.&lt;/h2&gt;
 &lt;p&gt;&lt;code&gt;docker run&lt;/code&gt; is a shorthand for two Docker commands, namely
 &lt;code&gt;docker create&lt;/code&gt;, that creates a container from an image,
@@ -11699,19 +11874,9 @@ download
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Just type in &lt;em&gt;my-alpine&lt;/em&gt; guest terminal the following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;wget https://www.centralesupelec.fr/fr/presentation&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;The Web page will be saved in the current directory
-of the container. You can verify that the file is there
-by typing &lt;code&gt;ls&lt;/code&gt; in the guest terminal.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Want to copy the donwloaded file from the container to your computer?&lt;/summary&gt;&lt;/p&gt;
+&lt;summary&gt;
+Want to copy the donwloaded file from the container to your computer?
+&lt;/summary&gt;
 &lt;p&gt;To copy the file &lt;code&gt;presentation&lt;/code&gt; to your working directory, type the following command in
 the host terminal:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;  docker cp &amp;lt;containerId&amp;gt;:/presentation .&lt;/code&gt;&lt;/pre&gt;
@@ -11721,7 +11886,9 @@ the identifier of the container from the output of the command &lt;code&gt;docke
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Where are the containers and image files stored?&lt;/strong&gt;&lt;/p&gt;
 &lt;details&gt;
-&lt;p&gt;&lt;summary&gt;If you use MacOS or Windows&lt;/summary&gt;&lt;/p&gt;
+&lt;summary&gt;
+If you use MacOS or Windows
+&lt;/summary&gt;
 &lt;p&gt;The files managed by Docker are not stored directly in your computer, but
 in the Linux virtual machine installed and operated by Docker Desktop (remember, Docker always need Linux to be executed).&lt;/p&gt;
 &lt;p&gt;Therefore, you need to open a terminal inside that Linux virtual machine by typing the following command:&lt;/p&gt;
@@ -11729,7 +11896,9 @@ in the Linux virtual machine installed and operated by Docker Desktop (remember,
 &lt;p&gt;Once the terminal is opened, you can follow the instructions given below for Linux users.&lt;/p&gt;
 &lt;/details&gt;
 &lt;details&gt;
-&lt;p&gt;&lt;summary&gt;If you use Docker on Linux&lt;/summary&gt;&lt;/p&gt;
+&lt;summary&gt;
+If you use Docker on Linux
+&lt;/summary&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;All files managed by Docker are stored under folder &lt;code&gt;/var/lib/docker&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;To access that folder, you need to be root (i.e., administrator). Type the command &lt;code&gt;sudo su&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
@@ -11759,7 +11928,9 @@ use the following command:&lt;/p&gt;
 type &lt;code&gt;ls&lt;/code&gt; to verify that
 the Web page that you downloaded before is still there.&lt;/p&gt;
 &lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Homework (optional)&lt;/summary&gt;&lt;/p&gt;
+&lt;summary&gt;
+Homework (optional)
+&lt;/summary&gt;
 &lt;p&gt;Suppose that you need to download all the figures of
 &lt;a href=&#34;https://www.centralesupelec.fr/fr/presentation&#34; target=&#34;_blank&#34;&gt;this Web page&lt;/a&gt;.
 The Linux utility &lt;code&gt;wget&lt;/code&gt; comes in handy.
@@ -11782,12 +11953,6 @@ Call the container &lt;em&gt;dl-figures&lt;/em&gt;, and avoid the option
 &lt;code&gt;--rm&lt;/code&gt;, we’ll use this container later.
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;&lt;code&gt;docker run --name dl-figures -it ubuntu&lt;/code&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;From now on, we’ll be interacting with the guest Ubuntu terminal.
 If you type the command &lt;code&gt;wget&lt;/code&gt;,
 you’ll get an error (&lt;code&gt;bash: wget: command not found&lt;/code&gt;).&lt;/p&gt;
@@ -11824,7 +11989,7 @@ the guest terminal and stop the container.&lt;/p&gt;
 &lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;creating-images&#34; class=&#34;section level1&#34;&gt;
+&lt;div id=&#34;creating-images&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Creating Images&lt;/h1&gt;
 &lt;p&gt;A Docker image can be thought of as a template to create and run a container.
 An image is a file that contains a &lt;strong&gt;layered filesystem&lt;/strong&gt; with each layer being &lt;strong&gt;immutable&lt;/strong&gt;;
@@ -11862,29 +12027,6 @@ when we installed ``wget``.
 how can files that belong to the lower layers be modified or deleted?&lt;/div&gt;\EndKnitrBlock{exercise}
 :::
 
-&lt;details&gt;
-&lt;summary&gt;Solution&lt;/summary&gt;
-
-::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
-
-All files marked with A are new and therefore are 
-added to the writable layer of the container.
-
-As for the existing files, they live in the immutable layers 
-of the image, and therefore cannot be touched directly. 
-Instead, they are copied from the bottom layers to the writable layer where 
-they are modified.
-This strategy is called **copy-on-write**.
-
-The structure of layers generates a **layered filesystem** in the image; 
-if different copies of the same file exist in different layers, 
-the copy in the uppermost layer 
-overwrites the others.
-
-:::
-
-&lt;/details&gt;
-
 
 
 We can create a new image from the container *dl-figures*, one that provides
@@ -11907,30 +12049,8 @@ The command creates a new image called *ubuntu-with-wget*.
 
 :::
 
-&lt;details&gt;
-&lt;summary&gt;Solution&lt;/summary&gt;
-
-::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
-
-Just type the following command:
-
-``
-docker run --rm -it ubuntu-with-wget
-``
-In the guest terminal type ``wget``: you should see the 
-following output:
-
-``
-wget: missing URL
-Usage: wget [OPTION]... [URL]...
-
-Try `wget --help` for more options.
-``
-
-:::
-
-&lt;/details&gt;--&gt;
-&lt;div id=&#34;dockerfiles&#34; class=&#34;section level2&#34;&gt;
+--&gt;
+&lt;div id=&#34;dockerfiles&#34; class=&#34;section level2&#34; number=&#34;2.1&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.1&lt;/span&gt; Dockerfiles&lt;/h2&gt;
 &lt;p&gt;The most common way to create an image is to use a &lt;strong&gt;Dockerfile&lt;/strong&gt;, a
 text file that contains all the instructions necessary to
@@ -11966,7 +12086,7 @@ instruction &lt;code&gt;WORKDIR /my-figures&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;We specify the command to be executed when a container is run from this image.
 This corresponds to the instruction&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;&lt;code&gt;ENTRYPOINT [&amp;quot;wget&amp;quot;, &amp;quot;-nd&amp;quot;, &amp;quot;-r&amp;quot;, &amp;quot;-A&amp;quot;, &amp;quot;jpg,jpeg,bmp,png,gif&amp;quot;]&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;ENTRYPOINT [&#34;wget&#34;, &#34;-nd&#34;, &#34;-r&#34;, &#34;-A&#34;, &#34;jpg,jpeg,bmp,png,gif&#34;]&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;This instruction means: execute &lt;code&gt;wget&lt;/code&gt; with the options
 &lt;code&gt;-nd&lt;/code&gt;, &lt;code&gt;-r&lt;/code&gt;, &lt;code&gt;-A&lt;/code&gt;;
 the last option takes a list of file
@@ -11978,10 +12098,10 @@ the image &lt;em&gt;fig-downloader&lt;/em&gt;.
 Optionally, we can specify a default argument by using the
 keyword CMD. The meaning of the instruction:&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;&lt;code&gt;CMD [&amp;quot;https://www.centralesupelec.fr/fr/presentation&amp;quot;]&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;CMD [&#34;https://www.centralesupelec.fr/fr/presentation&#34;]&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;is: if we don’t give any URL when we run the container, the figures will
 be downloaded from
-&lt;a href=&#34;https://www.centralesupelec.fr/fr/presentation&#34; class=&#34;uri&#34; target=&#34;_blank&#34;&gt;https://www.centralesupelec.fr/fr/presentation&lt;/a&gt;.&lt;/p&gt;
+&lt;a href=&#34;https://www.centralesupelec.fr/fr/presentation&#34; target=&#34;_blank&#34;&gt;https://www.centralesupelec.fr/fr/presentation&lt;/a&gt;.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -11989,14 +12109,6 @@ be downloaded from
 &lt;span id=&#34;exr:unnamed-chunk-15&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;What’s the relation between the Dockerfile lines and the image layers?
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Each line corresponds to a new layer.
-The first line corresponds to the bottom layer;
-the last line to the top layer.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -12005,25 +12117,8 @@ the last line to the top layer.&lt;/p&gt;
 Modify the Dockerfile accordingly.
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;When creating an image, we should keep the number of layers relatively
-small; in fact, the more the layers, the bigger the image will be.
-Here we create three separate layers with three RUN commands; we can
-simply merge the three layers.
-The resulting Dockerfile will be:&lt;/p&gt;
-&lt;pre class=&#34;dockerfile&#34;&gt;&lt;code&gt;FROM ubuntu
-RUN apt-get update &amp;amp;&amp;amp; \
-    apt-get install -y wget &amp;amp;&amp;amp; \
-    mkdir -p /my-figures
-WORKDIR /my-figures
-ENTRYPOINT [&amp;quot;wget&amp;quot;, &amp;quot;-nd&amp;quot;, &amp;quot;-r&amp;quot;, &amp;quot;-A&amp;quot;, &amp;quot;jpg,jpeg,bmp,png,gif&amp;quot;]
-CMD [&amp;quot;https://www.centralesupelec.fr/fr/presentation&amp;quot;]&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;/details&gt;
-&lt;/div&gt;
-&lt;div id=&#34;building-an-image&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;building-an-image&#34; class=&#34;section level2&#34; number=&#34;2.2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.2&lt;/span&gt; Building an image&lt;/h2&gt;
 &lt;p&gt;We’re now going to build an image from a Dockerfile.&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
@@ -12052,30 +12147,6 @@ Why are there three of such images?&lt;/div&gt;\EndKnitrBlock{exercise}
 
 &lt;/div&gt;
 
-&lt;details&gt;
-&lt;summary&gt;Solution&lt;/summary&gt;
-
-::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
-
-These are the **intermediate images**. 
-Once a layer is compiled, an intermediate image is created that 
-contains that layer and all the layers underneath.
-In other words, the intermediate image 
-corresponding to the layer $i$ contains all files 
-up to the layer $i$, including layers 1 through $i-1$.
-
-The intermediate layers are used by the **build cache**, 
-of which we&#39;ll see an example later.
-
-Although there are five layers in the new image, there are only 
-three intermediate images because:
-
-* the base image is *ubuntu:eoan*.
-* the image corresponding to the top layer is the final image *fig-downloader*.
-
-:::
-
-&lt;/details&gt;
 --&gt;
 &lt;div class=&#34;infobox curiosity&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Good to know&lt;/strong&gt;&lt;/p&gt;
@@ -12111,28 +12182,6 @@ are marked as &lt;i&gt;missing&lt;/i&gt;?
 
 :::
 
-&lt;details&gt;
-&lt;summary&gt;Solution&lt;/summary&gt;
-
-::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
-
-The layers with an ID correspond to the layers of 
-the new image, including the top layer and the base image.
-The layers marked as *missing* are those that compose the 
-base image. Those layers are not stored in  
-your computer, 
-simply because they belong to an image 
-that hasn&#39;t been built on your computer 
-and you downloaded from the DockerHub registry.
-
-By looking at the output of ``docker image ls -a`` and the output of this command,
-we see that the layers between the base image and the top layer have the 
-same identifiers as the intermediate images.
-
-:::
-
-&lt;/details&gt;
-
 --&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
@@ -12143,15 +12192,6 @@ same identifiers as the intermediate images.
 What does it do? Where are the downloaded pictures?
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;We downloaded the figures
-&lt;a href=&#34;https://www.centralesupelec.fr/fr/presentation&#34; target=&#34;_blank&#34;&gt;of this page&lt;/a&gt;.
-The downloaded pictures are in the folder &lt;em&gt;/my-figures&lt;/em&gt;
-of the container &lt;em&gt;dl-1&lt;/em&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -12161,19 +12201,8 @@ of the container &lt;em&gt;dl-1&lt;/em&gt;.&lt;/p&gt;
 What does it do? Where are the downloaded pictures?
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;We downloaded the figures
-&lt;a href=&#34;https://www.centralesupelec.fr&#34; target=&#34;_blank&#34;&gt;of this page&lt;/a&gt;.
-We basically overwrote the URL specified by the CMD keyword with a new
-one.
-The downloaded pictures are in the folder &lt;em&gt;/my-figures&lt;/em&gt;
-of the container &lt;em&gt;dl-2&lt;/em&gt;.&lt;/p&gt;
 &lt;/div&gt;
-&lt;/details&gt;
-&lt;/div&gt;
-&lt;div id=&#34;containerized-python-application&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;containerized-python-application&#34; class=&#34;section level2&#34; number=&#34;2.3&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.3&lt;/span&gt; Containerized Python application&lt;/h2&gt;
 &lt;p&gt;Download &lt;a href=&#34;/courses/cloud-computing/tutorial-docker/word-frequency.zip&#34;&gt;this archive file&lt;/a&gt;
 and unzip it into your working directory.
@@ -12199,21 +12228,6 @@ ENTRYPOINT [&amp;quot;python&amp;quot;, &amp;quot;main.py&amp;quot;]&lt;/code&gt
 &lt;span id=&#34;exr:unnamed-chunk-19&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.5  &lt;/strong&gt;&lt;/span&gt;Describe what this Dockerfile does.
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;Takes &lt;em&gt;python:3.7-slim&lt;/em&gt; as the base image.&lt;/li&gt;
-&lt;li&gt;Creates a new folder &lt;em&gt;app&lt;/em&gt; in the image under the root directory.&lt;/li&gt;
-&lt;li&gt;Changes the working directory to &lt;em&gt;/app&lt;/em&gt;.&lt;/li&gt;
-&lt;li&gt;Copies the files &lt;em&gt;main.py&lt;/em&gt; and &lt;em&gt;requirements.txt&lt;/em&gt; from the local
-computer to the directory &lt;em&gt;/app&lt;/em&gt; in the image.&lt;/li&gt;
-&lt;li&gt;Runs the command &lt;code&gt;pip install&lt;/code&gt; to install the Python libraries
-specified in the file &lt;em&gt;requirements.txt&lt;/em&gt;.&lt;/li&gt;
-&lt;li&gt;Executes the command &lt;code&gt;python main.py&lt;/code&gt;.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34; word-latex=&#34;{exercisebox}&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -12221,12 +12235,6 @@ specified in the file &lt;em&gt;requirements.txt&lt;/em&gt;.&lt;/li&gt;
 &lt;span id=&#34;exr:unnamed-chunk-20&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.6  &lt;/strong&gt;&lt;/span&gt;Build an image called &lt;em&gt;wordfreq&lt;/em&gt; from this Dockerfile.
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;&lt;code&gt;docker build -t wordfreq .&lt;/code&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -12235,18 +12243,6 @@ specified in the file &lt;em&gt;requirements.txt&lt;/em&gt;.&lt;/li&gt;
 What do you notice?
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The build is very fast.
-Since we didn’t change the Dockerfile, the image
-is rebuilt by using the image layers created
-previously.
-This is clearly indicated by the word &lt;strong&gt;CACHED&lt;/strong&gt; written
-at each layer.
-Using the already stored layers is called &lt;strong&gt;build cache&lt;/strong&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -12255,19 +12251,6 @@ Using the already stored layers is called &lt;strong&gt;build cache&lt;/strong&g
 you rebuild the image?
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Add any instruction at the end of &lt;em&gt;main.py&lt;/em&gt;, such as:&lt;/p&gt;
-&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;print(&amp;quot;Finish!&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;then rebuild the image.
-The three bottom layers are not affected by the modification, therefore
-they benefit from the build cache.
-Layer 4 is the first affected by the modification.
-This layer, and those above, need therefore to be
-rebuilt.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -12277,26 +12260,6 @@ can you tell what’s wrong with this Dockerfile?
 Modify the Dockerfile accordingly and rebuild the image.
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Each time we modify &lt;em&gt;main.py&lt;/em&gt; and we rebuild the image,
-the layer 4 and 5 are recreated, meaning that all the Python packages
-are downloaded and installed.
-Depending on the size and number of the packages, this might
-take some while.
-A better way to structure the Dockerfile is to install the
-packages before copying the Python script to the image.
-Here is how we should modify the Dockerfile:&lt;/p&gt;
-&lt;pre class=&#34;dockerfile&#34;&gt;&lt;code&gt;FROM python:3.7-slim
-RUN mkdir -p /app
-WORKDIR /app
-COPY ./requirements.txt /app/
-RUN pip install -r requirements.txt
-COPY ./main.py /app/
-ENTRYPOINT [&amp;quot;python&amp;quot;, &amp;quot;main.py&amp;quot;]&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -12305,13 +12268,6 @@ ENTRYPOINT [&amp;quot;python&amp;quot;, &amp;quot;main.py&amp;quot;]&lt;/code&gt
 What changed?
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The Python packages are not reinstalled, as a result rebuilding the image&lt;br /&gt;
-takes much less time than before.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;Play with the application by running the following command:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;docker run --rm -it  wordfreq&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;The containerized application will prompt you to insert the URL of a webpage and
@@ -12319,7 +12275,7 @@ the language of the page (in English).
 The output will be the 20 most used words in the webpage.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;data-volumes&#34; class=&#34;section level1&#34;&gt;
+&lt;div id=&#34;data-volumes&#34; class=&#34;section level1&#34; number=&#34;3&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Data Volumes&lt;/h1&gt;
 &lt;p&gt;In Exercise &lt;a href=&#34;#exr:dl-1-container&#34;&gt;2.3&lt;/a&gt; you’ve been asked to run a container named
 &lt;em&gt;dl-1&lt;/em&gt; to download some figures from a Web page.
@@ -12346,22 +12302,7 @@ You can verify it by yourself.
 
 
 :::
-&lt;details&gt;
-&lt;summary&gt;Solution&lt;/summary&gt;
 
-::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
-
-1. After running the container we need to do an additional action to copy
-the figures from the container to the host computer.
-
-2. The container is created and run only to download some figures.
-We&#39;d like to remove it automatically (with the option ``--rm``) when its 
-execution is over. However, if we do so, the pictures will be lost before 
-we can copy them to the host computer.
-
-:::
-
-&lt;/details&gt;
 
 ## Using a host volume
 
@@ -12392,7 +12333,7 @@ removed when its execution is over.
 In this example, we&#39;ve used the directory *figs-volume* as a 
 **volume** (essentially, an external storage area) of the container;
 when the container is destroyed, the volume remains with all its data.--&gt;
-&lt;div id=&#34;docker-volumes&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;docker-volumes&#34; class=&#34;section level2&#34; number=&#34;3.1&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.1&lt;/span&gt; Docker volumes&lt;/h2&gt;
 &lt;p&gt;A volume can be seen as a virtual storage device attached to a container.
 All files there are written to a volume survive the containerized application that
@@ -12422,7 +12363,7 @@ You can then use the commands &lt;code&gt;cd&lt;/code&gt; and &lt;code&gt;ls&lt;
 to browse to the directory indicated as the mount path
 of the new volume.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;sharing-data&#34; class=&#34;section level3&#34;&gt;
+&lt;div id=&#34;sharing-data&#34; class=&#34;section level3&#34; number=&#34;3.1.1&#34;&gt;
 &lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.1.1&lt;/span&gt; Sharing data&lt;/h3&gt;
 &lt;p&gt;A Docker volume can be used to share data between containers.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -12443,17 +12384,11 @@ specifying the options to:&lt;/p&gt;
 &lt;p&gt;Feel free to use the &lt;a href=&#34;/courses/cloud-computing/references/docker-cheat-sheet&#34; target=&#34;_blank&#34;&gt;Docker cheat sheet&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;&lt;code&gt;docker run --rm -it -v data-volume:/data ubuntu&lt;/code&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;Type the following command in the guest Linux terminal to create a file
 &lt;em&gt;test-file.txt&lt;/em&gt; in the directory &lt;em&gt;/data&lt;/em&gt;:&lt;/li&gt;
 &lt;/ol&gt;
-&lt;p&gt;&lt;code&gt;echo &amp;quot;This is a new file&amp;quot; &amp;gt; /data/test-file.txt&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;echo &#34;This is a new file&#34; &amp;gt; /data/test-file.txt&lt;/code&gt;&lt;/p&gt;
 &lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;Print to the console the content of the file with the following command:&lt;/li&gt;
 &lt;/ol&gt;
@@ -12480,12 +12415,6 @@ of the container.&lt;/li&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;&lt;code&gt;docker container run --rm -it -v data-volume:/my-data alpine&lt;/code&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -12494,26 +12423,20 @@ of the container.&lt;/li&gt;
 Which folder would you look in?
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;We need to look in the folder &lt;em&gt;/my-data&lt;/em&gt; because this is where
-we mounted &lt;em&gt;data-volume&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;cat /my-data/test-file.txt&lt;/code&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;Type &lt;code&gt;exit&lt;/code&gt; to exit the guest terminal and terminate the container.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;single-host-networking&#34; class=&#34;section level1&#34;&gt;
+&lt;div id=&#34;single-host-networking&#34; class=&#34;section level1&#34; number=&#34;4&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Single-Host Networking&lt;/h1&gt;
 &lt;p&gt;In order to let containers communicate and, therefore, co-operate,
 Docker defines a simple networking model known as
 the &lt;a href=&#34;/courses/cloud-computing/references/docker-primer#single-host-networking&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;container network model&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;details&gt;
-&lt;p&gt;&lt;summary&gt;If you use a Linux virtual machine with Multipass&lt;/summary&gt;
-In this section, you’ll need to open several terminals in the virtual machine.
+&lt;summary&gt;
+If you use a Linux virtual machine with Multipass
+&lt;/summary&gt;
+&lt;p&gt;In this section, you’ll need to open several terminals in the virtual machine.
 You can do it easily by using &lt;code&gt;byobu&lt;/code&gt;, an advanced window manager already available in your virtual machine.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Just type &lt;code&gt;byobu&lt;/code&gt; to launch the window manager.&lt;/p&gt;&lt;/li&gt;
@@ -12532,38 +12455,6 @@ You can do it easily by using &lt;code&gt;byobu&lt;/code&gt;, an advanced window
 &lt;p&gt;&lt;code&gt;docker network ls&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The command lists all the networks created by Docker on
-your computer.
-For each network, the values of four attributes are shown:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;The identifier.&lt;/li&gt;
-&lt;li&gt;The name.&lt;/li&gt;
-&lt;li&gt;The driver used by the network.&lt;/li&gt;
-&lt;li&gt;The scope of the network (local or global).
-A local scope means that the network connects containers
-running on the same host, as opposed to a global scope that
-means that containers on different hosts can communicate.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Depending on the containers that you used
-in the past, you might see different networks.
-However, three networks are worth noting:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;The network named &lt;strong&gt;bridge&lt;/strong&gt;, that uses the driver &lt;strong&gt;bridge&lt;/strong&gt; and a local scope.
-By default, any new container is attached to this network.&lt;/li&gt;
-&lt;li&gt;The network named &lt;strong&gt;host&lt;/strong&gt;, that uses the driver &lt;strong&gt;host&lt;/strong&gt; and a local scope.
-It’s used when we want a container to directly use the network interface of the host.
-It’s important to remember that this network should only be used when analyzing the
-host’s network traffic. In the other cases, using this network exposes
-the container to all sorts of security risks.&lt;/li&gt;
-&lt;li&gt;The network named &lt;strong&gt;none&lt;/strong&gt;, that uses the driver &lt;strong&gt;null&lt;/strong&gt; and a local scope.
-Attaching a container to this network means that the container
-isn’t connected to any network, and therefore it’s completely isolated.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -12576,20 +12467,7 @@ what IP addresses will be given to the containers attached to this
 network? What’s the IP address of the router of this network?
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The information is specified in the field named &lt;strong&gt;IPAM&lt;/strong&gt;, more specifically:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;&lt;strong&gt;Subnet&lt;/strong&gt; indicates the range of IP addresses used by the network.
-The value of this field should be 172.17.0.0/16;
-the addresses range from 172.17.0.1 to 172.17.255.255.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;strong&gt;Gateway&lt;/strong&gt; indicates the IP address of the router of the network.
-The value should be 172.17.0.1&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;div id=&#34;creating-networks&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;creating-networks&#34; class=&#34;section level2&#34; number=&#34;4.1&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.1&lt;/span&gt; Creating networks&lt;/h2&gt;
 &lt;p&gt;By default, any new container is attached to the network named &lt;em&gt;bridge&lt;/em&gt;.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -12600,17 +12478,6 @@ Explain why it is not a good practice to
 attach all our containers to the same network.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;All new containers will be able to communicate over this network.
-This is not a good idea.
-If a hacker can compromise any of these containers, s/he might
-be able to attack the other containers as well.
-As a rule of thumb, we should attach two containers to the same network &lt;strong&gt;only&lt;/strong&gt; on a
-need-to-communicate basis.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;In order to create a new network, you can use the following command:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;docker network create network_name&lt;/code&gt;&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -12623,20 +12490,6 @@ By using the &lt;code&gt;docker network inspect&lt;/code&gt; command,
 look at the IP addresses of the new networks and write them down.
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Just run the following commands:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker network create buckingham&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker network create rochefort&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;The IP addresses for the network &lt;em&gt;buckingham&lt;/em&gt; are
-172.18.0.0/16 (addresses from 172.18.0.1 to 172.18.255.255);
-The IP addresses for the network &lt;em&gt;rochefort&lt;/em&gt; are:
-172.19.0.0/16 (assuming that you create &lt;em&gt;buckingham&lt;/em&gt;
-before &lt;em&gt;rochefort&lt;/em&gt;).&lt;/p&gt;
-&lt;p&gt;The IP addresses may be different on your machines.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -12659,48 +12512,8 @@ command &lt;code&gt;docker network inspect&lt;/code&gt;).&lt;/li&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Here are the commands to run &lt;em&gt;athos&lt;/em&gt; and &lt;em&gt;aramis&lt;/em&gt; while connecting
-them to &lt;em&gt;buckingham&lt;/em&gt; and &lt;em&gt;rochefort&lt;/em&gt; respectively.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker run --rm -it --name athos --network buckingham  alpine&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker run --rm -it --name aramis --network rochefort   alpine&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;Here’s the command to run &lt;em&gt;porthos&lt;/em&gt; and attach it to
-&lt;em&gt;buckingham&lt;/em&gt;:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker run --rm -it --name porthos --network buckingham   alpine&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;The following command attaches &lt;em&gt;porthos&lt;/em&gt; to the second network &lt;em&gt;rochefort&lt;/em&gt;:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker network connect rochefort porthos&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;As for the IP addresses, each network has IP addresses
-in the range 172.x.0.0/16, where x is 18 in the
-network &lt;em&gt;buckingham&lt;/em&gt; and 19 in the network &lt;em&gt;rochefort&lt;/em&gt;.
-The address 172.x.0.1 is reserved for the router.
-Therefore, the containers will be assigned
-IP addresses from 172.x.0.2.
-In this solution, we created &lt;em&gt;athos&lt;/em&gt;, &lt;em&gt;aramis&lt;/em&gt; and &lt;em&gt;portos&lt;/em&gt;
-in this order.
-Therefore, the IP addresses will be:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;In network &lt;em&gt;buckingham&lt;/em&gt;:
-&lt;ul&gt;
-&lt;li&gt;&lt;em&gt;athos&lt;/em&gt;: 172.18.0.2&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;porthos&lt;/em&gt;: 172.18.0.3&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;In network &lt;em&gt;rochefort&lt;/em&gt;:
-&lt;ul&gt;
-&lt;li&gt;&lt;em&gt;aramis&lt;/em&gt;: 172.19.0.2&lt;/li&gt;
-&lt;li&gt;&lt;em&gt;porthos&lt;/em&gt;: 172.19.0.3&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;You can actually verify this configuration by inspecting
-the two networks with the following commands:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker network inspect buckingham&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker network inspect rochefort&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;The IP addresses might be different on your machines.&lt;/p&gt;
 &lt;/div&gt;
-&lt;/details&gt;
-&lt;/div&gt;
-&lt;div id=&#34;communication-between-containers&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;communication-between-containers&#34; class=&#34;section level2&#34; number=&#34;4.2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.2&lt;/span&gt; Communication between containers&lt;/h2&gt;
 &lt;p&gt;Let’s see if and when the three containers can communicate.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -12711,13 +12524,6 @@ the two networks with the following commands:&lt;/p&gt;
 Justify your answer.
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The only containers that cannot communicate are &lt;em&gt;athos&lt;/em&gt; and &lt;em&gt;aramis&lt;/em&gt;,
-because they’re not connected to the same network.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -12730,14 +12536,6 @@ because they’re not connected to the same network.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;We need to use the IP address assigned to the endpoint linking
-&lt;em&gt;porthos&lt;/em&gt; to the network &lt;em&gt;buckingham&lt;/em&gt;, to which &lt;em&gt;athos&lt;/em&gt; is connected.
-In our case, this is 172.18.0.3.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -12746,13 +12544,6 @@ In our case, this is 172.18.0.3.&lt;/p&gt;
 Do you succeed? Are you surprised?
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;We succeed. Indeed, the network &lt;em&gt;buckingham&lt;/em&gt; provides a DNS server, that
-can translate names into IP addresses.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;You can now exit the three containers.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -13694,6 +13485,7 @@ Do you succeed? Are you surprised?
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>/courses/cloud-computing/tutorials/tutorial-kube/</guid>
       <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
@@ -13720,7 +13512,7 @@ Here are the necessary modifications:&lt;/p&gt;
 &lt;p&gt;This tutorial is adapted from the examples presented in Chapters
 14 and 20 of the book &lt;a href=&#34;https://www.packtpub.com/product/learn-docker-fundamentals-of-docker-19-x-second-edition/9781838827472&#34; target=&#34;_blank&#34;&gt;G. Schenker, &lt;em&gt;Learn Docker - Fundamentals of Docker 19.x&lt;/em&gt; (March 2020)&lt;/a&gt;.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;docker-compose&#34; class=&#34;section level1&#34;&gt;
+&lt;div id=&#34;docker-compose&#34; class=&#34;section level1&#34; number=&#34;1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Docker Compose&lt;/h1&gt;
 &lt;p&gt;In this section, you’re going to build and deploy a multi-service application
 by using &lt;a href=&#34;https://docs.docker.com/compose/&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;Docker Compose&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
@@ -13780,22 +13572,6 @@ answer the two following questions:&lt;/p&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;The directory already exists in the base image.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;By looking at the documentation, we learn that
-we can put any initialization script in this directory.
-In other words, at the startup the database will execute the
-SQL queries in file &lt;code&gt;init-db.sql&lt;/code&gt; so that the database
-is populated with new data.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;From the documentation, we also learn that the script is not executed
-if the data directory is not empty. This means that already existing databases
-will not be touched.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;The last three lines of the Dockerfile contain a keyword (&lt;code&gt;ENV&lt;/code&gt;)
 that we never came across before.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -13807,22 +13583,6 @@ Look again at the documentation of the image &lt;code&gt;postgres:10-2-alpine&lt
 and try to explain the meaning of the last three lines of the Dockerfile.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;These lines set the value of three &lt;strong&gt;environment variables&lt;/strong&gt;, useful
-to pass some parameters to the database.
-From the documentation we learn that:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;&lt;code&gt;POSTGRES_USER&lt;/code&gt; is the name of the database user. If not set,
-the default is the user &lt;code&gt;postgres&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;code&gt;POSTGRES_PASSWORD&lt;/code&gt; is the password associated with the
-user. This is the only mandatory variable.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;code&gt;POSTGRES_DB&lt;/code&gt; is the name given to the database.
-If not specified, the database name would be the same as the username.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;The Dockerfile of the web application is as follows:&lt;/p&gt;
 &lt;pre class=&#34;dockerfile&#34;&gt;&lt;code&gt;FROM node:9.6-alpine
 RUN mkdir /app
@@ -13857,7 +13617,7 @@ and the person who runs the container, about which ports are intended to be publ
 &lt;p&gt;In order to actually publish the port, we’ll use the file
 &lt;code&gt;docker-compose.yml&lt;/code&gt;.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;describing-the-application&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;describing-the-application&#34; class=&#34;section level2&#34; number=&#34;1.1&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.1&lt;/span&gt; Describing the application&lt;/h2&gt;
 &lt;p&gt;The application showcases a building block of a pet store.
 In the current version, the application shows a few pictures
@@ -13908,16 +13668,6 @@ What key informs &lt;code&gt;docker compose&lt;/code&gt; where to find the
 Dockerfile of the two services?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The value of the key &lt;code&gt;build&lt;/code&gt; is the name of the directory that contains
-the Dockefile. For the service &lt;code&gt;web&lt;/code&gt;, this is the directory
-&lt;code&gt;web&lt;/code&gt;; for the service &lt;code&gt;db&lt;/code&gt;, it is the directory &lt;code&gt;database&lt;/code&gt;.
-All paths are relative to the position of the file &lt;code&gt;docker-compose.yml&lt;/code&gt;
-itself.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;When we’ll build the application from the file &lt;code&gt;docker-compose.yml&lt;/code&gt;,
 two images will be created, one for each service.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -13929,19 +13679,8 @@ What will the name of the two images be?
 What key in the file &lt;code&gt;docker-compose.yml&lt;/code&gt; gives you this information?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The name of the image corresponding to the service &lt;code&gt;web&lt;/code&gt;
-will be &lt;code&gt;pet-store-web&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;The name of the image corresponding to the service &lt;code&gt;db&lt;/code&gt;
-will be &lt;code&gt;pet-store-db&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;This information is given by the key &lt;code&gt;image&lt;/code&gt;
-in the file &lt;code&gt;docker-compose.yml&lt;/code&gt;.&lt;/p&gt;
 &lt;/div&gt;
-&lt;/details&gt;
-&lt;/div&gt;
-&lt;div id=&#34;building-the-application&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;building-the-application&#34; class=&#34;section level2&#34; number=&#34;1.2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.2&lt;/span&gt; Building the application&lt;/h2&gt;
 &lt;p&gt;We now build the application.&lt;/p&gt;
 &lt;ul&gt;
@@ -13956,19 +13695,15 @@ position yourself in the root directory
 &lt;li&gt;&lt;p&gt;When the build is complete, verify that the two images corresponding
 to the two services have been created (which docker command do you need here?).&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;docker images&lt;/p&gt;
 &lt;/div&gt;
-&lt;/details&gt;
-&lt;/div&gt;
-&lt;div id=&#34;executing-the-application&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;executing-the-application&#34; class=&#34;section level2&#34; number=&#34;1.3&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.3&lt;/span&gt; Executing the application&lt;/h2&gt;
 &lt;p&gt;We now execute the application with the following command:&lt;/p&gt;
 &lt;details&gt;
-&lt;p&gt;&lt;summary&gt;If you use a Linux virtual machine with Multipass&lt;/summary&gt;
-In this section, you’ll need to open several terminals in the virtual machine.
+&lt;summary&gt;
+If you use a Linux virtual machine with Multipass
+&lt;/summary&gt;
+&lt;p&gt;In this section, you’ll need to open several terminals in the virtual machine.
 You can do it easily by using &lt;code&gt;byobu&lt;/code&gt;, an advanced window manager already available in your virtual machine.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Just type &lt;code&gt;byobu&lt;/code&gt; to launch the window manager.&lt;/p&gt;&lt;/li&gt;
@@ -14013,16 +13748,6 @@ Verify that the network and the volumes associated with the
 application have been correctly created.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Type the commands:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker volume ls&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;and&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker network ls&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;to verify respectively that the volumes and the networks have been created&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -14032,19 +13757,6 @@ How many containers do you expect to be associated to
 the application?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Each &lt;strong&gt;image&lt;/strong&gt; corresponds to a &lt;strong&gt;service&lt;/strong&gt;.
-Here we have two.
-Each &lt;strong&gt;container&lt;/strong&gt; corresponds to a &lt;strong&gt;service instance&lt;/strong&gt;.&lt;/p&gt;
-&lt;p&gt;We didn’t specify any parameter when we launched the application,
-so by default one instance of each service is executed.&lt;/p&gt;
-&lt;p&gt;So, we expect to have &lt;strong&gt;two containers&lt;/strong&gt; associated to the application:
-one container for the service &lt;code&gt;web&lt;/code&gt; and one for the
-service &lt;code&gt;db&lt;/code&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;You can verify the answer to the previous question by typing the following command:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;docker-compose ps&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;This command is exactly equivalent to &lt;code&gt;docker container ls&lt;/code&gt;, except that
@@ -14060,21 +13772,6 @@ the meaning of the following?&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;0.0.0.0:5000-&amp;gt;3000/tcp&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The notation 5000-&amp;gt;3000 means that the port
-5000 of the host computer is &lt;strong&gt;mapped&lt;/strong&gt;
-to the port 3000 of the container.
-This mechanism is explained in
-&lt;a href=&#34;https://centralesupelec.edunao.com/pluginfile.php/219281/mod_resource/content/4/cccs-lecture02-en.pdf&#34; target=&#34;blank&#34;&gt;slide 64 of the lecture on Docker&lt;/a&gt;.
-More specifically,
-when a client application connects to the port 5000 of the host computer,
-the connection is redirected to the port 3000 of the container.&lt;/p&gt;
-&lt;p&gt;The IP address 0.0.0.0 means that we can connect to the container by
-using any IP address on the host computer.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -14084,7 +13781,9 @@ Can you
 tell which URL you have to type in your web browser
 to access the application?&lt;/p&gt;
 &lt;details&gt;
-&lt;p&gt;&lt;summary&gt;If you use a Linux virtual machine with Multipass&lt;/summary&gt;&lt;/p&gt;
+&lt;summary&gt;
+If you use a Linux virtual machine with Multipass
+&lt;/summary&gt;
 &lt;p&gt;In order to open a Web browser window in the VM, you need to open a new
 terminal window on your computer and follow these instructions:&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
@@ -14102,17 +13801,6 @@ terminal window on your computer and follow these instructions:&lt;/p&gt;
 &lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;&lt;code&gt;http://localhost:5000&lt;/code&gt; or &lt;code&gt;http://127.0.0.1:5000/&lt;/code&gt;.&lt;/p&gt;
-&lt;p&gt;In the network settings of you computer, you can also
-get the IP address associated by the DHCP server of your&lt;br /&gt;
-local network and use that address to connect to the application
-from another device &lt;strong&gt;connected to the same network&lt;/strong&gt;
-(for instance, your mobile phone).&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;If you want to see the cats, you need to append
@@ -14120,7 +13808,7 @@ from another device &lt;strong&gt;connected to the same network&lt;/strong&gt;
 This is determined in file &lt;code&gt;server.js&lt;/code&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;shutting-down-the-application&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;shutting-down-the-application&#34; class=&#34;section level2&#34; number=&#34;1.4&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.4&lt;/span&gt; Shutting down the application&lt;/h2&gt;
 &lt;p&gt;You can shut down the application by typing the following command:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;docker-compose down&lt;/code&gt;&lt;/p&gt;
@@ -14134,24 +13822,8 @@ for the application?
 What about the volumes?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Just type the command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker network ls&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;and you’ll see that the network &lt;code&gt;backend&lt;/code&gt; is not there anymore.&lt;/p&gt;
-&lt;p&gt;Type the command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker volume ls&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;and you’ll see that the volume &lt;code&gt;pet-store_pets-data&lt;/code&gt; is still there.&lt;/p&gt;
-&lt;p&gt;By default volumes are not removed, to avoid the risk of permanently deleting
-data that might still be useful later.
-If you wish to remove the volumes when shutting down the application,
-you can type:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker-compose down -v&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
-&lt;/details&gt;
-&lt;/div&gt;
-&lt;div id=&#34;scaling-a-service&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;scaling-a-service&#34; class=&#34;section level2&#34; number=&#34;1.5&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.5&lt;/span&gt; Scaling a service&lt;/h2&gt;
 &lt;p&gt;When we launch the application, we can specify the
 number of instances of each service.
@@ -14167,22 +13839,10 @@ the workload will be automatically balanced across all the instances of the serv
 Running the previous command results in an error.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Can you explain why?&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;What fix would you propose in file &lt;code&gt;docker-compose.yml&lt;/code&gt;?&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What fix would you propose in file &lt;code&gt;docker-compose.yml&lt;/code&gt;?&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;We’re trying to bind three instances to the port 5000 on the host computer. This is not
-possible.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;In the section &lt;code&gt;ports&lt;/code&gt; of file
-&lt;code&gt;docker-compose.yml&lt;/code&gt; we need to remove 5000 and we only leave 3000. This way, each time we run a container, a random port will be chosen on the host computer to bind it
-with port 3000 of the container.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;You need to shut down the application before relaunching it again.
@@ -14206,17 +13866,17 @@ go on.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;pushing-an-application&#34; class=&#34;section level1&#34;&gt;
+&lt;div id=&#34;pushing-an-application&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Pushing an application&lt;/h1&gt;
 &lt;p&gt;Once we have built an application, we might want to
 share it by pushing it to the DockerHub registry or any
 other container registry, be it private or public.&lt;/p&gt;
-&lt;div id=&#34;creating-an-account-on-dockerhub&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;creating-an-account-on-dockerhub&#34; class=&#34;section level2&#34; number=&#34;2.1&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.1&lt;/span&gt; Creating an account on DockerHub&lt;/h2&gt;
 &lt;p&gt;You need to create an account on the &lt;a href=&#34;https://hub.docker.com/&#34; target=&#34;_blank&#34;&gt;DockerHub website&lt;/a&gt;
 in order to perform this activity.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;renaming-the-images&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;renaming-the-images&#34; class=&#34;section level2&#34; number=&#34;2.2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.2&lt;/span&gt; Renaming the images&lt;/h2&gt;
 &lt;p&gt;In order to push your images to the registry, you need to rename them, so as the new name
 has the following structure:&lt;/p&gt;
@@ -14228,18 +13888,22 @@ the two images &lt;code&gt;pet-store-web&lt;/code&gt; and &lt;code&gt;pet-store-
 &lt;p&gt;&lt;code&gt;docker tag pet-store-db quercinigia/pet-store-db:1.0&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;I chosen 1.0 as a tag, but feel free to pick another one.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;logging-in&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;logging-in&#34; class=&#34;section level2&#34; number=&#34;2.3&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.3&lt;/span&gt; Logging in&lt;/h2&gt;
 &lt;p&gt;You need to log in to your DockerHub account.&lt;/p&gt;
 &lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Instructions for Docker Desktop (macOS and Windows)&lt;/summary&gt;&lt;/p&gt;
+&lt;summary&gt;
+Instructions for Docker Desktop (macOS and Windows)
+&lt;/summary&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;macOS users: to see how to log in &lt;a href=&#34;https://webtv.centralesupelec.fr/videos/log-in-docker-macos/&#34; target=&#34;_blank&#34;&gt;click here&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Windows users: to see how to log in &lt;a href=&#34;https://webtv.centralesupelec.fr/videos/log-in-docker-windows/&#34; target=&#34;_blank&#34;&gt;click here&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/details&gt;
 &lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Instructions for the Linux VM&lt;/summary&gt;&lt;/p&gt;
+&lt;summary&gt;
+Instructions for the Linux VM
+&lt;/summary&gt;
 &lt;p&gt;Log in to DockerHub by typing the following command in the terminal
 (replace YOUR-USERNAME with your actual username).&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;docker login -u YOUR-USERNAME&lt;/code&gt;&lt;/p&gt;
@@ -14254,7 +13918,7 @@ look them up &lt;a href=&#34;https://www.techrepublic.com/article/how-to-setup-s
 &lt;/div&gt;
 &lt;/details&gt;
 &lt;/div&gt;
-&lt;div id=&#34;pushing-the-images&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;pushing-the-images&#34; class=&#34;section level2&#34; number=&#34;2.4&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.4&lt;/span&gt; Pushing the images&lt;/h2&gt;
 &lt;p&gt;Once you’re successfully logged in, you can type the following
 commands in the terminal to push the two images of your application:&lt;/p&gt;
@@ -14295,7 +13959,7 @@ of the application, no matter how many they are.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;introduction-to-kubernetes&#34; class=&#34;section level1&#34;&gt;
+&lt;div id=&#34;introduction-to-kubernetes&#34; class=&#34;section level1&#34; number=&#34;3&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Introduction to Kubernetes&lt;/h1&gt;
 &lt;p&gt;Kubernetes is the most popular &lt;strong&gt;orchestrator&lt;/strong&gt; to date.
 It is used to manage a multi-service application, usually deployed
@@ -14313,10 +13977,12 @@ but in terms of pods. Of course, a pod can also consist of just one container.&l
 as there are higher-level objects that manage them.
 We’ll use these objects in the next sections.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;activate-kubernetes&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;activate-kubernetes&#34; class=&#34;section level2&#34; number=&#34;3.1&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.1&lt;/span&gt; Activate Kubernetes&lt;/h2&gt;
 &lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Instructions for Docker Desktop (macOS and Windows)&lt;/summary&gt;&lt;/p&gt;
+&lt;summary&gt;
+Instructions for Docker Desktop (macOS and Windows)
+&lt;/summary&gt;
 &lt;p&gt;You need to follow all the instructions documented
 &lt;a href=&#34;https://docs.docker.com/desktop/kubernetes/&#34; target=&#34;_blank&#34;&gt;on this page&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;Before moving on, don’t forget to type the following command to verify that Kubernetes is correctly activated&lt;/p&gt;
@@ -14331,7 +13997,9 @@ minikube, by following &lt;a href=&#34;https://minikube.sigs.k8s.io/docs/start/&
 &lt;/div&gt;
 &lt;/details&gt;
 &lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Instructions for the Linux VM&lt;/summary&gt;&lt;/p&gt;
+&lt;summary&gt;
+Instructions for the Linux VM
+&lt;/summary&gt;
 &lt;p&gt;In the Linux VM you’ll find &lt;strong&gt;Minikube&lt;/strong&gt;, a single-node Kubernetes cluster
 in VirtualBox.
 Please follow &lt;strong&gt;all the instructions&lt;/strong&gt;:&lt;/p&gt;
@@ -14360,7 +14028,7 @@ you won’t be able to use these services in the exercises below.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/details&gt;
 &lt;/div&gt;
-&lt;div id=&#34;deploying-a-pod&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;deploying-a-pod&#34; class=&#34;section level2&#34; number=&#34;3.2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.2&lt;/span&gt; Deploying a pod&lt;/h2&gt;
 &lt;p&gt;In order to deploy &lt;a href=&#34;https://kubernetes.io/docs/concepts/workloads/pods/&#34; target=&#34;_blank&#34;&gt;a pod&lt;/a&gt;,
 we first have to give its &lt;strong&gt;specification&lt;/strong&gt;, basically its name
@@ -14420,22 +14088,10 @@ by typing the following command:&lt;/p&gt;
 Open a web browser and type &lt;code&gt;http://localhost:80&lt;/code&gt;.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;What do you get? What if you try to use the IP of the pod instead of &lt;code&gt;locahost&lt;/code&gt;?&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;What should we define in order to fix the problem?&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What should we define in order to fix the problem?&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;The connection is refused both when using &lt;code&gt;localhost&lt;/code&gt; and
-the IP address of the pod.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;In order to connect to the service instance, we need to
-define a &lt;strong&gt;Service&lt;/strong&gt; object in Kubernetes, that exposes an IP address
-that client applications can use.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;The following configuration
 defines a Service object of type &lt;strong&gt;LoadBalancer&lt;/strong&gt;:&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;apiVersion: v1
@@ -14468,17 +14124,6 @@ What is the field &lt;code&gt;selector&lt;/code&gt; in the definition of the ser
 (cf slide 56-57 in &lt;a href=&#34;https://centralesupelec.edunao.com/pluginfile.php/219286/mod_resource/content/4/cccs-lecture03-en.pdf&#34; target=&#34;_blank&#34;&gt;Lecture 3&lt;/a&gt;)&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The selector is used internally by Kubernetes to identify the pods that
-are the instances of the service.
-If you look at the specification of the pod above, the field &lt;code&gt;metadata&lt;/code&gt;
-contains a field &lt;code&gt;labels&lt;/code&gt;.
-One of the labels is &lt;code&gt;app: web-pod&lt;/code&gt; ;
-the selector matches this label.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -14487,15 +14132,6 @@ the selector matches this label.&lt;/p&gt;
 In the specification of the service, what &lt;code&gt;port&lt;/code&gt; and &lt;code&gt;targetPort&lt;/code&gt; mean?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;&lt;code&gt;port&lt;/code&gt; specifies the port number where the service will be available.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;code&gt;targetPort&lt;/code&gt; specifies the port number opened at the pods that are instances of the service.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox activitybox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -14527,38 +14163,6 @@ By looking at the output of the command &lt;code&gt;kubectl get svc/nginx-servic
 which URL do you need to type in the Web browser in order to access the service?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;The &lt;code&gt;CLUSTER-IP&lt;/code&gt; is an IP address that is only visible &lt;strong&gt;within the cluster&lt;/strong&gt;.
-In other words, only the services running within the cluster can connect to our
-&lt;code&gt;nginx-service&lt;/code&gt; by using this IP address.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;What we need to use is the IP address specified under &lt;code&gt;EXTERNAL-IP&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;If you’re using Docker Desktop&lt;/summary&gt;&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;EXTERNAL-IP&lt;/code&gt; is likely to be &lt;code&gt;localhost&lt;/code&gt;
-or &lt;code&gt;127.0.0.1&lt;/code&gt;&lt;/p&gt;
-&lt;/details&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;If you’re using Minikube in the Linux VM&lt;/summary&gt;&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;EXTERNAL-IP&lt;/code&gt; will be whatever IP address assigned to the service.&lt;/p&gt;
-&lt;/details&gt;
-&lt;ul&gt;
-&lt;li&gt;As for the port number, under PORT(S) you should see something like 8080:30548
-(the second number is likely different, but it should be something in the range [30000-32767]).
-The port 30548 is opened on each node of the Kubernetes cluster.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;In practice, when we type &lt;code&gt;http://localhost:8080&lt;/code&gt;, the load balancer replaces it
-with the IP address of a node in the cluster,
-followed by port number 30548.
-When the &lt;code&gt;kube-proxy&lt;/code&gt; on that node receives this request,
-it forwards it to an instance of the service,
-even if that instance runs in another node
-(mechanism of slide 64 in &lt;a href=&#34;https://centralesupelec.edunao.com/pluginfile.php/219286/mod_resource/content/4/cccs-lecture03-en.pdf&#34; target=&#34;_blank&#34;&gt;Lecture 3&lt;/a&gt;).&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Stop the pod and the service before moving on. Here are the commands to do so:&lt;/p&gt;
@@ -14567,7 +14171,7 @@ even if that instance runs in another node
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;kubernetes-deploying-an-application&#34; class=&#34;section level1&#34;&gt;
+&lt;div id=&#34;kubernetes-deploying-an-application&#34; class=&#34;section level1&#34; number=&#34;4&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Kubernetes: deploying an application&lt;/h1&gt;
 &lt;p&gt;In this section, we’re going to deploy our pet store in Kubernetes.
 As a reminder, our application consists of two services: &lt;code&gt;web&lt;/code&gt; and &lt;code&gt;db&lt;/code&gt;.&lt;/p&gt;
@@ -14594,24 +14198,11 @@ itself: &lt;strong&gt;stateless&lt;/strong&gt; or &lt;strong&gt;stateful&lt;/str
 &lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-15&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Is the service &lt;code&gt;web&lt;/code&gt; of our application stateless or stateful?&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;Is the service &lt;code&gt;db&lt;/code&gt; of our application stateless of stateful?&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Is the service &lt;code&gt;db&lt;/code&gt; of our application stateless of stateful?&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Stateful&lt;/strong&gt; service: one that manages permanent data and is bound to that data.&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Stateless&lt;/strong&gt; service: one that is not bound to permanent data.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The service &lt;code&gt;web&lt;/code&gt; is &lt;strong&gt;stateless&lt;/strong&gt; because it does not have to be tightly bound to the data.
-In other words, the service &lt;code&gt;web&lt;/code&gt; uses the data that is stored in the backend database, but
-it can be scheduled on any node of the cluster independently of that data.&lt;/p&gt;
-&lt;p&gt;The service &lt;code&gt;db&lt;/code&gt; is &lt;strong&gt;stateful&lt;/strong&gt; because it directly manages permanent data.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;div id=&#34;the-web-service-deployment&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;the-web-service-deployment&#34; class=&#34;section level2&#34; number=&#34;4.1&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.1&lt;/span&gt; The &lt;code&gt;web&lt;/code&gt; service: deployment&lt;/h2&gt;
 &lt;p&gt;For &lt;strong&gt;stateless application services&lt;/strong&gt;, we can use
 a &lt;a href=&#34;https://kubernetes.io/docs/concepts/workloads/controllers/deployment/&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;Deployment&lt;/strong&gt;&lt;/a&gt; for the deployment of a set of identical pods
@@ -14689,20 +14280,6 @@ Type the following command:&lt;/p&gt;
 Deployment?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;We can clearly see three types of objects:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Three pods, that correspond to the three replicas that we specified in the configuration.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;One deployment. Note that the 3/3 indicates that the deployment has
-3 identical pods, of which 3 are running.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;One ReplicaSet. The Deployment creates a ReplicaSet, that is the actual object that
-controls the three pods. The Deployment provides some additional services (i.e., updates)
-on top of a ReplicaSet.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -14718,22 +14295,8 @@ get back control of the terminal.&lt;/p&gt;
 &lt;p&gt;How many pods do you see? Is it surprising?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;If we type the command right after deleting the pod, it is likely that we’ll see
-four pods, one that is &lt;em&gt;terminating&lt;/em&gt; and another one that is &lt;em&gt;running&lt;/em&gt;.
-Try to type the command until you see three running pods.&lt;/p&gt;
-&lt;p&gt;This is not surprising.
-If we kill the pod, the orchestrator detects a
-deviation from the &lt;strong&gt;desired state&lt;/strong&gt; (which is, we want three replicas) and
-reschedules immediately another pod.
-This is what we mean by a &lt;strong&gt;self-healing system&lt;/strong&gt;. This is one of the major roles
-of an orchestrator.&lt;/p&gt;
 &lt;/div&gt;
-&lt;/details&gt;
-&lt;/div&gt;
-&lt;div id=&#34;the-web-service-service&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;the-web-service-service&#34; class=&#34;section level2&#34; number=&#34;4.2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.2&lt;/span&gt; The &lt;code&gt;web&lt;/code&gt; service: service&lt;/h2&gt;
 &lt;p&gt;Now we need to define a &lt;strong&gt;Service&lt;/strong&gt; in order to expose the web service to the public.
 Here is the definition:&lt;/p&gt;
@@ -14758,23 +14321,6 @@ spec:
 Describe the specification of this service.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;We create a service named &lt;code&gt;web&lt;/code&gt;. This indicated in the field
-&lt;code&gt;metadata.name&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The service has type &lt;code&gt;LoadBalancer&lt;/code&gt;. This is indicated in the field
-&lt;code&gt;spec.type&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The service listens on port 8080 and uses the TCP protocol.
-Each service instance (i.e., pod) listens on port 3000.
-This is indicated in the field &lt;code&gt;spec.ports&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The instances of the service (i.e., the pods) are those with labels
-&lt;code&gt;app: pets&lt;/code&gt; and &lt;code&gt;service: web&lt;/code&gt;.
-This is indicated in the field &lt;code&gt;spec.selector&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox activitybox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -14796,7 +14342,7 @@ see a Web page where the phrase &lt;em&gt;Pet store&lt;/em&gt; appears.&lt;/li&g
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;the-db-service-statefulset&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;the-db-service-statefulset&#34; class=&#34;section level2&#34; number=&#34;4.3&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.3&lt;/span&gt; The &lt;code&gt;db&lt;/code&gt; service: StatefulSet&lt;/h2&gt;
 &lt;p&gt;Kubernetes has defined a special type of ReplicaSet for stateful services that
 is called &lt;a href=&#34;https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;StatefulSet&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
@@ -14876,17 +14422,6 @@ Type the command:&lt;/p&gt;
 &lt;p&gt;Which objects have been created when you deployed the StatefulSet?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;A pod (likely to be called &lt;code&gt;pod/db-0&lt;/code&gt;)&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;A new StatefulSet that governs the pod.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Note that the StatefulSet has only one pod, which is normal,
-since we didn’t specify a higher number of replicas.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -14894,11 +14429,15 @@ since we didn’t specify a higher number of replicas.&lt;/p&gt;
 &lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-20&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.6  &lt;/strong&gt;&lt;/span&gt;
 Open the Web browser and type the following URL:&lt;/p&gt;
 &lt;details&gt;
-&lt;p&gt;&lt;summary&gt;If you’re using Docker Desktop&lt;/summary&gt;&lt;/p&gt;
+&lt;summary&gt;
+If you’re using Docker Desktop
+&lt;/summary&gt;
 &lt;p&gt;&lt;code&gt;http://localhost:8080/pet&lt;/code&gt;&lt;/p&gt;
 &lt;/details&gt;
 &lt;details&gt;
-&lt;p&gt;&lt;summary&gt;If you’re using Minikube on the Linux VM&lt;/summary&gt;&lt;/p&gt;
+&lt;summary&gt;
+If you’re using Minikube on the Linux VM
+&lt;/summary&gt;
 &lt;p&gt;&lt;code&gt;http://minikube-ip:8080/pet&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;where you’ll replace &lt;code&gt;minikube-ip&lt;/code&gt; with the external IP address associated with the
 &lt;code&gt;web&lt;/code&gt; service.&lt;/p&gt;
@@ -14907,19 +14446,6 @@ Open the Web browser and type the following URL:&lt;/p&gt;
 What do you observe? Can you explain the reason?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;We cannot access the application.
-If you type the command &lt;code&gt;kubectl get all&lt;/code&gt; quickly, you should show that the
-three pods that are instances of the service &lt;code&gt;web&lt;/code&gt; are in an error state.
-If you were too slow, you should see that the restart count of each pod has changed.
-This means that the pods have been restarted because of an error.&lt;/p&gt;
-&lt;p&gt;What happens here is that we launched the database,
-but we didn’t create the Service that lets the clients
-access the database.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;p&gt;In the output of the command &lt;code&gt;get kubectl all&lt;/code&gt;, look at the names of the
 pods that are instances of the &lt;code&gt;web&lt;/code&gt; service.
 &lt;!-- in the TP you can even ask why all the three instances got an error--&gt;
@@ -14935,16 +14461,9 @@ Does the output of the previous command confirm the explanation
 given in the previous question?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Yes, we can clearly read ENOTFOUND db db:5432.
-This means that Kubernetes cannot resolve the name &lt;code&gt;db&lt;/code&gt; to an IP address.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;the-db-service-service-object&#34; class=&#34;section level1&#34;&gt;
+&lt;div id=&#34;the-db-service-service-object&#34; class=&#34;section level1&#34; number=&#34;5&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;5&lt;/span&gt; The &lt;code&gt;db&lt;/code&gt; service: Service object&lt;/h1&gt;
 &lt;p&gt;From the above observations, we understand that we need to define
 a service to expose the database to the clients.&lt;/p&gt;
@@ -14957,14 +14476,6 @@ Should the &lt;code&gt;db&lt;/code&gt; service be accessible to client applicati
 the Kubernetes cluster?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;No, this component is the backend of the application. The only client
-that needs to access the database is the frontend, that is the
-&lt;code&gt;web&lt;/code&gt; service, that runs inside the cluster.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -14973,13 +14484,6 @@ that needs to access the database is the frontend, that is the
 Given the answer to the previous question, what should the type of this service be?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;&lt;strong&gt;ClusterIP&lt;/strong&gt;; this is the type of a service that does not need to
-be exposed to the outside world.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -14991,23 +14495,6 @@ named &lt;code&gt;db-service.yaml&lt;/code&gt; (or any other name of your liking
 that the service must have.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;pre&gt;&lt;code&gt;apiVersion: v1
-kind: Service
-metadata:
-  name: db
-spec:
-  type: ClusterIP
-  ports:
-  - port: 5432
-    protocol: TCP
-  selector:
-    app: pets
-    service: db&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox activitybox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -15025,7 +14512,7 @@ replace &lt;code&gt;localhost&lt;/code&gt; with the external IP address associat
 a connection error. Just wait and retry later.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
-&lt;div id=&#34;shutting-down-the-application-1&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;shutting-down-the-application-1&#34; class=&#34;section level2&#34; number=&#34;5.1&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;5.1&lt;/span&gt; Shutting down the application&lt;/h2&gt;
 &lt;p&gt;After you’re done with the application, you can shut it down with the following commands:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;kubectl delete svc/web&lt;/code&gt;&lt;/p&gt;
@@ -15037,7 +14524,7 @@ a connection error. Just wait and retry later.&lt;/li&gt;
 &lt;p&gt;&lt;code&gt;kubectl get all&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;you should see that the resources progressively disappear.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;conclusion&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;conclusion&#34; class=&#34;section level2&#34; number=&#34;5.2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;5.2&lt;/span&gt; Conclusion&lt;/h2&gt;
 &lt;p&gt;In the previous exercises, we deployed an application with two services, for which we had to create
 four files and type as many commands.

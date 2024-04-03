@@ -594,706 +594,1048 @@
 
           <div class="article-style">
             
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
-<!-- merge 1.2 with 1.3, so that we can ask students to point out exactly the common layers -->
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<div id="objectives" class="section level1 unnumbered">
-<h1>Objectives</h1>
-<p>In this lab assignment you will:</p>
-<ul>
-<li><p>Gain a deeper understanding of the <strong>Docker networking model</strong>.</p></li>
-<li><p>Build and deploy a multi-service application with <strong>Docker Compose</strong>.</p></li>
-<li><p>Deploy a multi-service application on a <strong>local Kubernetes cluster</strong>.</p></li>
-<li><p>Deploy a multi-service application on a <strong>Kubernetes cluster</strong> in <strong>Microsoft Azure</strong>.</p></li>
-</ul>
-</div>
-<div id="submission" class="section level1 unnumbered">
-<h1>Submission</h1>
-<ul>
-<li><p>Only one submission per group.</p></li>
-<li><p>In order to submit your work, you need to answer all the questions
-that you <strong><a href="https://centralesupelec.edunao.com/mod/quiz/view.php?id=115349" target="_blank">find here</a></strong>.
-Each question corresponds to an exercise that you find in this page.</p></li>
-<li><p>You can answer either <strong>in French</strong> or <strong>in English</strong>. Your pick!</p></li>
-<li><p><strong>Deadline: 16 May 2023, 23h59</strong></p></li>
-</ul>
-<div class="infobox warning">
-<p><strong>Warning</strong></p>
-<p>This lab assignment is <strong>evaluated</strong>.
-You won’t have access to the solutions.
-You <strong>can ask questions anytime</strong>
-should you run into problems
-with the implementation of the assignment.</p>
-</div>
-</div>
-<div id="docker-networking-model" class="section level1">
-<h1><span class="header-section-number">1</span> Docker networking model</h1>
-<p>We developed a simple chat room in Python that you can download
-<a href="/courses/cloud-computing/kube-lab/chat-room.zip">here</a>.
-The code has been adapted from <a href="https://github.com/pricheal/python-client-server/" target="_blank">this GitHub project</a>.</p>
-<p>Participants use a <em>client</em> program to connect to the chat room;
-the chat room is managed by a <em>server</em> application that receives the
+<!-- # Objectives {-}
+
+In this lab assignment you will:
+
+* Gain a deeper understanding of the **Docker networking model**.
+
+* Build and deploy a multi-service application with **Docker Compose**.
+
+* Deploy a multi-service application on a **local Kubernetes cluster**.
+
+* Deploy a multi-service application on a **Kubernetes cluster** in **Microsoft Azure**.
+
+
+# Submission {-}
+
+* Only one submission per group. 
+
+* In order to submit your work, you need to answer all the questions 
+that you **[find here](https://centralesupelec.edunao.com/mod/quiz/view.php?id=115349){target=_blank}**.
+Each question corresponds to an exercise that you find in this page.
+
+* You can answer either **in French** or **in English**. Your pick!
+
+* **Deadline: 16 May 2023, 23h59**
+
+::: {.infobox .warning data-latex="{warning}"}
+**Warning**
+
+This lab assignment is **evaluated**. 
+You won't have access to the solutions.
+You **can ask questions anytime**
+should you run into problems 
+with the implementation of the assignment.
+
+:::
+
+
+# Docker networking model
+
+We developed a simple chat room in Python that you can download 
+[here](/courses/cloud-computing/kube-lab/chat-room.zip). 
+The code has been adapted from [this GitHub project](https://github.com/pricheal/python-client-server/){target="_blank"}.
+
+Participants use a *client* program to connect to the chat room;
+the chat room is managed by a *server* application  that receives the 
 client connections and forwards the messages between the users.
-The archive contains the following files:</p>
-<ul>
-<li><em>client.py</em>. Implementation of the chat room client.</li>
-<li><em>server.py</em>. Implementation of the chat room server.</li>
-<li><em>utils.py</em>. Library with utility functions used in both <em>client.py</em> and <em>server.py</em>.</li>
-</ul>
-<p>The application is written in Python and it <strong>requires Python 3.7</strong>.
-The application doesn’t need any third-party library, the packages included in a minimal Python environment are enough.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+The archive contains the following files:
 
-<div class="exercise">
-<p><span id="exr:client-server-methodology" class="exercise"><strong>Exercise 1.1  </strong></span></p>
-<ol style="list-style-type: lower-alpha">
-<li><p>Is a single Docker image for this application enough? Justify your answer.</p></li>
-<li>Given your answer to the previous question, how many Docker images do you need to create?</li>
-</ol>
-</div>
-</div>
-<p>We now build the images for the application.</p>
-<div class="infobox curiosity">
-<p><strong>Good to know</strong></p>
-<p>If you need to inspect the file system of an
-image that you create (e.g., to verify that the files that you
-copied are actually there), you can open a terminal
-in the image by using the following command:</p>
-<p><code>docker run -it --entrypoint sh IMAGE_NAME</code></p>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+* *client.py*. Implementation of the chat room client.
+* *server.py*. Implementation of the chat room server.
+* *utils.py*. Library with utility functions used in both *client.py* and *server.py*.
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1.2  </strong></span>Build the image(s) for the application. For each image:</p>
-<ol style="list-style-type: lower-alpha">
-<li>Upload the Dockerfile to Edunao.</li>
-<li>Write the <strong>exact</strong> command that you used to build the image.</li>
-</ol>
-</div>
-<div class="infobox warning">
-<p><strong>Warning</strong></p>
-<p>The size of the images should be kept as small as possible.
-Remember to include in the images only what you need to build and run the application.</p>
-</div>
-<p>If you built more than one image:</p>
-<ol start="3" style="list-style-type: lower-alpha">
-<li><p>Do they have some common layers? Which ones?</p></li>
-<li><p>If so, is it something that has an impact on the build time and how?</p></li>
-</ol>
-</div>
-<div id="client-and-server-on-the-same-network" class="section level2">
-<h2><span class="header-section-number">1.1</span> Client and server on the same network</h2>
-<p>We want to execute:</p>
-<ul>
-<li><p>One instance of the server.</p></li>
-<li><p>Two instances of the client.</p></li>
-</ul>
-<p>The server, as well as the clients, will
-<strong>run in Docker containers attached to the same network</strong>.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+The application is written in Python and it **requires Python 3.7**. 
+The application doesn't need any third-party library, the packages included in a minimal Python environment are enough.
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 1.3  </strong></span>
-We want to make sure that:</p>
-<ol style="list-style-type: decimal">
-<li><p>The server and the clients can communicate with each other.</p></li>
-<li><p>Other Docker containers <strong>cannot</strong> communicate neither with the server nor with the clients.</p></li>
-</ol>
-<p>How can you satisfy both requirements in Docker? Explain your solution
-and justify it.</p>
-</div>
-</div>
-<div class="infobox warning">
-<p><strong>Warning</strong></p>
-<p>Only one instance of the server is running.
-Two instances of the client run at the same time.</p>
-<ol style="list-style-type: decimal">
-<li><p>In order to execute the server, we need to <strong>pass a port number as a parameter</strong>. Choose one in the range [49152–65535].</p></li>
-<li><p>In order to execute the client, we need to <strong>pass as parameters the IP address of the server and the port</strong> which the server listens to (the one that you specified at 1.).</p></li>
-</ol>
-</div>
-<!-- NOT LIVRAISON -->
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
 
-<div class="exercise">
-<p><span id="exr:client-server-single-network" class="exercise"><strong>Exercise 1.4  </strong></span>
+
+
+::: {.infobox .exercisebox  data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:client-server-methodology"><strong>(\#exr:client-server-methodology) </strong></span> 
+
+a. Is a single Docker image for this application enough? Justify your answer.
+
+b. Given your answer to the previous question, how many Docker images do you need to create? 
+</div>\EndKnitrBlock{exercise}
+
+
+:::
+
+
+
+We now build the images for the application.
+
+:::{.infobox .curiosity data-latex="curiosity"}
+**Good to know**
+
+If you need to inspect the file system of an
+image that you create (e.g., to verify that the files that you 
+copied are actually there), you can open a terminal 
+in the image by using the following command:
+
+``
+docker run -it --entrypoint sh IMAGE_NAME
+``
+
+:::
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-1"><strong>(\#exr:unnamed-chunk-1) </strong></span>Build the image(s) for the application. For each image:
+
+a. Upload the Dockerfile to Edunao.
+b. Write the **exact** command that you used to build the image.
+</div>\EndKnitrBlock{exercise}
+
+::: {.infobox .warning data-latex="{warning}"}
+**Warning**
+
+The size of the images should be kept as small as possible.
+Remember to include in the images only what you need to build and run the application.
+
+:::
+
+If you built more than one image:
+
+c. Do they have some common layers? Which ones?
+
+d. If so, is it something that has an impact on the build time and how?
+
+:::
+
+
+
+
+
+
+
+
+## Client and server on the same network
+
+We want to execute:
+
+* One instance of the server.
+
+* Two instances of the client.
+
+The server, as well as the clients, will 
+**run in Docker containers attached to the same network**.
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-2"><strong>(\#exr:unnamed-chunk-2) </strong></span>
+We want to make sure that:
+
+1. The server and the clients can communicate with each other.
+
+2. Other Docker containers **cannot** communicate neither with the server nor with the clients.  
+
+How can you satisfy both requirements in Docker? Explain your solution 
+and justify it.
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+::: {.infobox .warning data-latex="{warning}"}
+**Warning**
+
+Only one instance of the server is running. 
+Two instances of the client run at the same time.
+
+1. In order to execute the server, we need to **pass a port number as a parameter**. Choose one in the range [49152–65535].
+
+2. In order to execute the client, we need to **pass as parameters the IP address of the server and the port** which the server listens to (the one that you specified at 1.).
+
+:::
+
+
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:client-server-single-network"><strong>(\#exr:client-server-single-network) </strong></span>
 Execute the server and the two clients by using the network configuration that you
-explained in the previous exercise.</p>
-<ul>
-<li><p>The server writes messages on the terminal. Remember to launch the container with the appropriate
-options in order to actually see those messages.</p></li>
-<li><p>Users need to interact with the client, that is: read and write messages.
-Remember to launch the container with the appropriate options in order to actually see those messages.</p></li>
-</ul>
-<p>Write the <strong>exact commands</strong> that you typed for
-both configuring the network and launching the server and the clients. <strong>Explain these commands.</strong></p>
-</div>
-</div>
-<div class="infobox warning">
-<p><strong>Shut the application down!</strong></p>
-<p>Shut both the clients and the server down before you move on.</p>
-<ul>
-<li><p>On the client-side, type <code>#quit</code> at any moment to exit the chat room.</p></li>
-<li><p>Type Ctrl-C to stop the server.</p></li>
-</ul>
-</div>
-</div>
-<div id="client-and-server-on-different-networks" class="section level2">
-<h2><span class="header-section-number">1.2</span> Client and server on different networks</h2>
-<p>We want to execute:</p>
-<ul>
-<li><p>One instance of the server.</p></li>
-<li><p>Two instances of the client.</p></li>
-</ul>
-<p>However, <strong>neither client</strong> is connected to the same network as the server.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+explained in the previous exercise.
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 1.5  </strong></span>
-Why can’t you launch the containers with the same settings as
-in Exercise <a href="#exr:client-server-single-network">1.4</a>?</p>
-<p>What do you propose as a solution instead?</p>
-</div>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+* The server writes messages on the terminal. Remember to launch the container with the appropriate 
+options in order to actually see those messages.
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 1.6  </strong></span>
-Execute the server and the two clients by making sure that neither client is connected to the
-same network as the server.</p>
-<p>Write the <strong>exact commands</strong> that you typed
+* Users need to interact with the client, that is: read and write messages. 
+Remember to launch the container with the appropriate options in order to actually see those messages.
+
+Write the **exact commands** that you typed for 
+both configuring the network and launching the server and the clients.  **Explain these commands.**
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+::: {.infobox .warning data-latex="{warning}"}
+**Shut the application down!**
+
+Shut both the clients and the server down  before you move on.
+
+* On the client-side, type ``#quit`` at any moment to exit the chat room.
+
+* Type Ctrl-C to stop the server.
+
+:::
+
+
+## Client and server on different networks
+
+We want to execute:
+
+* One instance of the server.
+
+* Two instances of the client.
+
+However, **neither client** is connected to the same network as the server.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-3"><strong>(\#exr:unnamed-chunk-3) </strong></span>
+Why can't you launch the containers with the same settings as 
+in Exercise \@ref(exr:client-server-single-network)?
+
+What do you propose as a solution instead?
+
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-4"><strong>(\#exr:unnamed-chunk-4) </strong></span>
+Execute the server and the two clients by making sure that neither client is connected to the 
+same network as the server.
+
+Write the **exact commands** that you typed 
 for both configuring the network and launching the server and the clients.
-<strong>Explain these commands.</strong></p>
-</div>
-</div>
-<div class="infobox warning">
-<p><strong>Shut the application down!</strong></p>
-<p>Shut both the clients and the server down before you move on.</p>
-<ul>
-<li><p>On the client-side, type <code>#quit</code> at any moment to exit the chat room.</p></li>
-<li><p>Type Ctrl-C to stop the server.</p></li>
-</ul>
-</div>
-<!-- docker run -it --entrypoint sh quercinigia/webmeal this is to look into an image -->
-<!-- exercise on docker-compose. Look at what Clara Gross did last year -->
-</div>
-</div>
-<div id="multi-service-application-docker-compose" class="section level1">
-<h1><span class="header-section-number">2</span> Multi-service application: Docker Compose</h1>
-<p>We intend to build and deploy the application <em>TripMeal</em>
-by using <strong>Docker Compose</strong>.
-You can download the application
-<a href="/courses/cloud-computing/kube-lab/tripmeal.zip">here</a>.
-The source code has been readapted from
-<a href="https://github.com/DanielAndreasen/TripMeal" target="_blank">this GitHub repository</a>.</p>
-<p>The downloaded file is an archive.
-Extracting the archive will create a folder named
-<code>tripmeal_sujet</code>.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+**Explain these commands.**
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 2.1  </strong></span>
-Explain the structure of the content of the folder <code>tripmeal_sujet</code>.</p>
-</div>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+</div>\EndKnitrBlock{exercise}
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 2.2  </strong></span>
+:::
+
+
+
+::: {.infobox .warning data-latex="{warning}"}
+**Shut the application down!**
+
+Shut both the clients and the server down before you move on.
+
+* On the client-side, type ``#quit`` at any moment to exit the chat room.
+
+* Type Ctrl-C to stop the server.
+
+:::
+
+
+# Multi-service application: Docker Compose
+
+We intend to build and deploy the application *TripMeal*
+by using **Docker Compose**. 
+You can download the application 
+[here](/courses/cloud-computing/kube-lab/tripmeal.zip).
+The source code has been readapted from 
+[this GitHub repository](https://github.com/DanielAndreasen/TripMeal){target="_blank"}.
+
+
+The downloaded file is an archive. 
+Extracting the archive will create a folder named 
+``tripmeal_sujet``.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-5"><strong>(\#exr:unnamed-chunk-5) </strong></span>
+Explain the structure of the content of the folder ``tripmeal_sujet``. 
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-6"><strong>(\#exr:unnamed-chunk-6) </strong></span>
 How many services does the application have?
-Which technologies (i.e., programming languages, databases) are used in each service?</p>
-</div>
-</div>
-<p>The <code>Dockerfile</code> in the directory <code>db</code> is already implemented.</p>
-<p>Your goal here is to write a <code>Dockerfile</code> in the directory <code>web</code>.</p>
-<div class="infobox warning">
-<p><strong>In case you get Exec format error</strong></p>
-<p>In order to avoid an <code>Exec format error</code> when you launch the application,
-you’ll need to add to your Dockerfile an instruction:</p>
-<p><code>RUN chmod -x path_to_file_app</code></p>
-<p>where <code>path_to_file_app</code> is the path to the file <code>app.py</code>
-<strong>inside the image</strong>.</p>
-<!-- https://stackoverflow.com/questions/55271912/flask-cli-throws-oserror-errno-8-exec-format-error-when-run-through-docker-->
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+Which technologies (i.e., programming languages, databases) are used in each service?
+</div>\EndKnitrBlock{exercise}
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 2.3  </strong></span>
-Write the <code>Dockerfile</code> in the directory <code>web</code>.
-<strong>You need a Python 3.7 environment to run the application.</strong></p>
-<p><strong>Upload the Dockerfile to Edunao</strong>.</p>
-</div>
-</div>
-<p>In the folder <code>tripmeal_sujet</code>, you’ll find a file named <code>tripmeal.env</code>.
-It contains the definition of <strong>environment variables</strong> that
-are used in the application.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+:::
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 2.4  </strong></span>
-Looking at the environment variables defined in file <code>tripmeal.env</code>:</p>
-<ul>
-<li><p>What does SERVER_PORT refer to? A port opened at one of the host network interfaces or
-a port opened at one of the container’s network interfaces?</p></li>
-<li><p>Which environment variable tells you the name to assign to the database service?</p></li>
-</ul>
-<p>Feel free to answer this question after deploying the application.</p>
-</div>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-9" class="exercise"><strong>Exercise 2.5  </strong></span>
-What do you need to define in file <code>docker-compose.yml</code>
-to enable the communication between the different services?</p>
-</div>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-10" class="exercise"><strong>Exercise 2.6  </strong></span>
+
+The ``Dockerfile`` in the directory ``db`` is already implemented.
+
+Your goal here is to write a ``Dockerfile`` in the directory ``web``.
+
+::: {.infobox .warning data-latex="{warning}"}
+**In case you get Exec format error**
+
+In order to avoid an ``Exec format error`` when you launch the application, 
+you'll need to add to your Dockerfile an instruction:
+
+``
+RUN chmod -x path_to_file_app
+``
+
+where ``path_to_file_app`` is the path to the file ``app.py``
+**inside the image**.
+
+
+
+
+:::
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-7"><strong>(\#exr:unnamed-chunk-7) </strong></span>
+Write the ``Dockerfile`` in the directory ``web``.
+**You need a Python 3.7 environment to run the application.**
+
+**Upload the Dockerfile to Edunao**.
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+In the folder ``tripmeal_sujet``, you'll find a file named ``tripmeal.env``.
+It contains the definition of **environment variables** that 
+are used in the application.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-8"><strong>(\#exr:unnamed-chunk-8) </strong></span>
+Looking at the environment variables defined in file ``tripmeal.env``:
+
+* What does SERVER_PORT refer to? A port opened at one of the host network interfaces or 
+a port opened at one of the container's network interfaces? 
+
+* Which environment variable tells you the name to assign to the database service?
+
+
+Feel free to answer this question after deploying the application.
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-9"><strong>(\#exr:unnamed-chunk-9) </strong></span>
+What do you need to define in file ``docker-compose.yml`` 
+to enable the communication between the different services?
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-10"><strong>(\#exr:unnamed-chunk-10) </strong></span>
 Which base image is used to build a container for the database?
 Where is this base image stored?
-Can you find the documentation of this image in the Internet?
-Write down the link to the documentation page in the answer.</p>
-</div>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+Can you find the documentation of this image in the Internet? 
+Write down the link to the documentation page in the answer.
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-11" class="exercise"><strong>Exercise 2.7  </strong></span>
-By looking at the documentation of the database image,
-what do you need to define in <code>docker-compose.yml</code>
-to make sure that the data is not deleted once the application is taken down?</p>
-</div>
-</div>
-<p>You’re finally ready to complete the file <code>docker-compose.yml</code>.</p>
-<div class="infobox warning">
-<p><strong>Warning</strong></p>
-<p>Remember that you need to pass the <strong>environment variables</strong>
-to your application.</p>
-<p>As a documentation of Docker Compose you can use:</p>
-<ul>
-<li><p>The <a href="/courses/cloud-computing/tutorials/tutorial-kube" target="_blank">examples that we’ve seen together</a>.</p></li>
-<li><p>The overview presented on the <a href="https://docs.docker.com/compose/" target="_blank">official Docker website</a>.</p></li>
-<li><p>You can also find the full specification of Compose <a href="https://github.com/compose-spec/compose-spec/blob/master/spec.md" target="_blank">here</a>.</p></li>
-</ul>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+</div>\EndKnitrBlock{exercise}
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-12" class="exercise"><strong>Exercise 2.8  </strong></span>
-Write the file <code>docker-compose.yml</code>.
-Build, deploy and test your application.</p>
-<p><strong>Upload the file <code>docker-compose.yml</code> to Edunao.</strong></p>
-<div class="infobox warning">
-<p><strong>Useful commands</strong></p>
-<ul>
-<li><p>After launching the application, you can type the command <code>docker-compose ps</code>
-to look at the details of each container. The command must be typed from folder <code>tripmeal_sujet</code>.</p></li>
-<li><p>If any error occurs, you can look at the logs by typing the command <code>docker-compose logs</code>.</p></li>
-</ul>
-</div>
-</div>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+:::
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-13" class="exercise"><strong>Exercise 2.9  </strong></span>
-<u>Use Docker Compose</u> to push all the images that you built in this section to
-your DockerHub registry.</p>
-<p><strong>In the answer to this exercise write:</strong></p>
-<ul>
-<li>the command that you execute to push the images.</li>
-<li>the link to the uploaded images.</li>
-</ul>
-</div>
-</div>
-<div class="infobox warning">
-<p><strong>Shut down the application!</strong></p>
-<p>Shut down both the application before you move on.</p>
-</div>
-</div>
-<div id="local-kubernetes-cluster" class="section level1">
-<h1><span class="header-section-number">3</span> Local Kubernetes cluster</h1>
-<p>We intend to deploy the application <em>TripMeal</em> on
-a <strong>local Kubernetes cluster</strong> (either Docker Desktop or Minikube).</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-14" class="exercise"><strong>Exercise 3.1  </strong></span>
-Specify which services are <strong>stateless</strong>
-and which ones are <strong>stateful</strong>. Justify your answer.</p>
-</div>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-15" class="exercise"><strong>Exercise 3.2  </strong></span>
-For each service of the application <em>TripMeal</em>, specify
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-11"><strong>(\#exr:unnamed-chunk-11) </strong></span>
+By looking at the documentation of the database image, 
+what do you need to define in ``docker-compose.yml``
+to make sure that the data is not deleted once the application is taken down?
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+You're finally ready to complete the file ``docker-compose.yml``. 
+
+::: {.infobox .warning data-latex="{warning}"}
+**Warning**
+
+Remember that you need to pass the **environment variables** 
+to your application. 
+
+As a documentation of Docker Compose you can use:
+
+* The [examples that we've seen together](/courses/cloud-computing/tutorials/tutorial-kube){target="_blank"}.
+
+* The overview presented on the [official Docker website](https://docs.docker.com/compose/){target="_blank"}.
+
+* You can also find the full specification of Compose [here](https://github.com/compose-spec/compose-spec/blob/master/spec.md){target="_blank"}.
+
+:::
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-12"><strong>(\#exr:unnamed-chunk-12) </strong></span>
+Write the file ``docker-compose.yml``. 
+Build, deploy and test your application.
+
+**Upload the file ``docker-compose.yml`` to Edunao.**
+
+::: {.infobox .warning data-latex="{warning}"}
+**Useful commands**
+
+
+* After launching the application, you can type the command ``docker-compose ps`` 
+to look at the details of each container. The command must be typed from folder ``tripmeal_sujet``.
+
+* If any error occurs, you can look at the logs by typing the command ``docker-compose logs``.
+
+:::
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-13"><strong>(\#exr:unnamed-chunk-13) </strong></span>
+<u>Use Docker Compose</u> to push all the images that you built in this section to 
+your DockerHub registry.
+
+**In the answer to this exercise write:**
+
+* the command that you execute to push the images.
+* the link to the uploaded images.
+
+
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+::: {.infobox .warning data-latex="{warning}"}
+**Shut down the application!**
+
+Shut down both the application before you move on.
+
+:::
+
+# Local Kubernetes cluster
+
+We intend to deploy the application *TripMeal* on 
+a **local Kubernetes cluster** (either Docker Desktop or Minikube).
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-14"><strong>(\#exr:unnamed-chunk-14) </strong></span>
+Specify which services are **stateless** 
+and which ones are **stateful**. Justify your answer.
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-15"><strong>(\#exr:unnamed-chunk-15) </strong></span>
+For each service of the application *TripMeal*, specify 
 the Kubernetes objects that you need to create and their types.
-Justify your answers.</p>
-</div>
-</div>
-<div class="infobox warning">
-<p><strong>Help</strong></p>
-<p>In order to write the specification of each object, you can refer to the
+Justify your answers.
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+::: {.infobox .warning data-latex="{warning}"}
+**Help**
+
+In order to write the specification of each object, you can refer to the 
 examples that we discussed together in the second tutorial.
-You can also refer
-to the <a href="https://kubernetes.io/docs/reference/kubernetes-api/" target="_blank">API documentation on the Kubernetes website</a>.</p>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+You can also refer 
+to the [API documentation on the Kubernetes website](https://kubernetes.io/docs/reference/kubernetes-api/){target="_blank"}.
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-16" class="exercise"><strong>Exercise 3.3  </strong></span>
-For each Kubernetes object:</p>
-<ol style="list-style-type: decimal">
-<li><p><strong>Configure.</strong> Write a Yaml configuration file. Remember that you need to pass the environment variables to the application.</p></li>
-<li><p><strong>Create.</strong> Create the object in Kubernetes with <code>kubectl</code>.</p></li>
-<li><p><strong>Analyze.</strong> Execute the command <code>kubectl get all</code> and explain in detail which objects appear in the output as the result of step 2.</p></li>
-</ol>
-<p><strong>In case of problems.</strong></p>
-<p>You can look at the logs of a pod with the following command: <code>kubectl logs NAME-OF-POD --previous</code></p>
-</div>
-</div>
-<div class="infobox activitybox">
-<p><strong>Activity</strong></p>
-<p>Play with the application in order to verify that everything works as expected.</p>
-</div>
-<div class="infobox warning">
-<p><strong>Shut down the application!</strong></p>
-<p>Shut down the application by removing all the Kubernetes objects.</p>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+:::
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-17" class="exercise"><strong>Exercise 3.4  </strong></span>
-Create a new file called <code>tripmeal.yml</code> that contains the
-definition of all the Kubernetes objects of the application, as we have seen
-in the <a href="/courses/cloud-computing/tutorials/tutorial-kube#conclusion" target="_blank">conclusion of the tutorial 2</a>.</p>
-<p><strong>Upload this file to Edunao.</strong></p>
-</div>
-</div>
-</div>
-<div id="kubernetes-cluster-on-microsoft-azure" class="section level1">
-<h1><span class="header-section-number">4</span> Kubernetes cluster on Microsoft Azure</h1>
-<p>You’re now going to create a Kubernetes cluster on <strong>Microsoft Azure</strong>
-and deploy <em>TripMeal</em> on that cluster.</p>
-<div class="infobox warning">
-<p><strong>Warning</strong></p>
-<p>In order to perform this activity, you need a <strong>student subscription</strong> on Microsoft Azure.
-If you haven’t activated it yet:</p>
-<ul>
-<li><p>Connect to <a href="https://azure.microsoft.com/en-us/free/students/" target="_blank">this webpage</a>.</p></li>
-<li><p>Click on <code>Start free</code>.</p></li>
-<li><p>Sign in by using your CentraleSupélec credentials.</p></li>
-<li><p>Follow the instructions.</p></li>
-</ul>
-</div>
-<p>During this activity, you’ll need to answer some questions that encourage you to
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-16"><strong>(\#exr:unnamed-chunk-16) </strong></span>
+For each Kubernetes object:
+
+1. **Configure.** Write a Yaml configuration file. Remember that you need to pass the environment variables to the application.
+
+2. **Create.** Create the object in Kubernetes with ``kubectl``.
+
+3. **Analyze.** Execute the command ``kubectl get all`` and explain in detail which objects appear in the output as the result of step 2.
+
+**In case of problems.**
+
+You can look at the logs of a pod with the following command: ``kubectl logs NAME-OF-POD --previous``
+
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+
+
+::: {.infobox .activitybox data-latex="{exercisebox}"}
+**Activity**
+
+Play with the application in order to verify that everything works as expected.
+
+:::
+
+::: {.infobox .warning data-latex="{warning}"}
+**Shut down the application!**
+
+Shut down the application by removing all the Kubernetes objects.
+
+:::
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-17"><strong>(\#exr:unnamed-chunk-17) </strong></span>
+Create a new file called ``tripmeal.yml`` that contains the 
+definition of all the Kubernetes objects of the application, as we have seen 
+in the [conclusion of the tutorial 2](/courses/cloud-computing/tutorials/tutorial-kube#conclusion){target="_blank"}.
+
+**Upload this file to Edunao.** 
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+# Kubernetes cluster on Microsoft Azure
+
+You're now going to create a Kubernetes cluster on **Microsoft Azure** 
+and deploy *TripMeal* on that cluster.
+
+::: {.infobox .warning data-latex="{warning}"}
+**Warning**
+
+In order to perform this activity, you need a **student subscription** on Microsoft Azure.
+If you haven't activated it yet:
+
+* Connect to [this webpage](https://azure.microsoft.com/en-us/free/students/){target="_blank"}.
+
+* Click on ``Start free``.
+
+* Sign in by using your CentraleSupélec credentials.
+
+* Follow the instructions.
+
+
+:::
+
+During this activity, you'll need to answer some questions that encourage you to 
 gain a deeper knowledge of the Azure platform and better understand the commands that you type.
-<strong>Feel free to read the documentation on the Azure platform in order to answer the questions.</strong></p>
-<div id="login-to-azure-through-cli" class="section level2">
-<h2><span class="header-section-number">4.1</span> Login to Azure through CLI</h2>
-<div class="infobox warning">
-<p><strong>Warning</strong></p>
-<p>If you get “command not found” when you type <code>az</code>, it means that you haven’t installed
-the Azure CLI yet.
-You’ll find more information on the <a href="https://centralesupelec.edunao.com/course/view.php?id=4686#section-3" target="_blank">Edunao course page</a>.</p>
-<p>Make sure you run version 2.25 or higher of the Azure CLI, by typing:</p>
-<pre><code>az --version</code></pre>
-<p><strong>If you use a VM with Multipass you’ll need to install the Azure CLI with the following command:</strong></p>
-<pre><code>curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash</code></pre>
-<p><strong>If you use a VM either with Multipass or with VirtualBox you’ll need to re-install kubectl:</strong></p>
-<ul>
-<li>Type the following command so as the command <code>kubectl</code> does not refer to <code>minikube kubectl</code> anymore:</li>
-</ul>
-<pre><code>unalias kubectl</code></pre>
-<ul>
-<li>Type the following command to install a new version of <code>kubectl</code>:</li>
-</ul>
-<pre><code>sudo az aks install-cli</code></pre>
-</div>
-<p>Whether you’re on Windows, macOS or Linux, you need to <strong>open a terminal</strong>.</p>
-<p>In order to log in to your Azure account, type the following command:</p>
-<pre class="bash"><code>az login</code></pre>
-<p>A Web page will open in your default Web browser, where you can type your username and
+**Feel free to read the documentation on the Azure platform in order to answer the questions.**
+
+## Login to Azure through CLI
+
+::: {.infobox .warning data-latex="{warning}"}
+**Warning**
+
+If you get "command not found" when you type ``az``, it means that you haven't installed 
+the Azure CLI yet. 
+You'll find more information on the [Edunao course page](https://centralesupelec.edunao.com/course/view.php?id=4686#section-3){target="_blank"}.
+
+Make sure you run version 2.25 or higher of the Azure CLI, by typing:
+
+```
+az --version
+```
+
+**If you use a VM with Multipass you'll need to install the Azure CLI with the following command:**
+
+```
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+```
+
+**If you use a VM either with Multipass or with VirtualBox you'll need to re-install kubectl:**
+
+* Type the following command so as the command ``kubectl`` does not refer to ``minikube kubectl`` anymore:
+
+```
+unalias kubectl
+```
+
+* Type the following command to install a new version of ``kubectl``:
+
+```
+sudo az aks install-cli
+```
+
+
+:::
+
+Whether you're on Windows, macOS or Linux, you need to **open a terminal**.
+
+In order  to log in to your Azure account, type the following command:
+
+
+```bash
+az login
+```
+
+A Web page will open in your default Web browser, where you can type your username and 
 password (your CentraleSupélec credentials).
 After authenticating your Azure account, you can go back to the terminal, where you should see
-some information about your account, such as:</p>
-<pre><code>[
+some information about your account, such as:
+
+```
+[
   {
-    &quot;cloudName&quot;: &quot;AzureCloud&quot;,
-    &quot;homeTenantId&quot;: &quot;&lt;id&gt;&quot;,
-    &quot;id&quot;: &quot;&lt;id&gt;&quot;,
-    &quot;isDefault&quot;: true,
-    &quot;managedByTenants&quot;: [],
-    &quot;name&quot;: &quot;Azure for Students&quot;,
-    &quot;state&quot;: &quot;Enabled&quot;,
-    &quot;tenantId&quot;: &quot;&lt;id&gt;&quot;,
-    &quot;user&quot;: {
-      &quot;name&quot;: &quot;&lt;email-address&gt;&quot;,
-      &quot;type&quot;: &quot;user&quot;
+    "cloudName": "AzureCloud",
+    "homeTenantId": "<id>",
+    "id": "<id>",
+    "isDefault": true,
+    "managedByTenants": [],
+    "name": "Azure for Students",
+    "state": "Enabled",
+    "tenantId": "<id>",
+    "user": {
+      "name": "<email-address>",
+      "type": "user"
     }
   }
-]</code></pre>
-</div>
-<div id="deploy-and-use-azure-container-registry" class="section level2">
-<h2><span class="header-section-number">4.2</span> Deploy and use Azure Container Registry</h2>
-<p>When we run TripMeal on a local Kubernetes cluster, we assumed that our computer
-could have a direct access to the Internet and, therefore, to the DockerHub registry, where we
+]
+```
+
+## Deploy and use Azure Container Registry
+
+When we run TripMeal on a local Kubernetes cluster, we assumed that our computer
+could have a direct access to the Internet and, therefore, to the DockerHub registry, where we 
 could pull the images of the TripMeal services.
-When we run a containerized application in production, we cannot make this assumption
-as the production servers have often no direct access to the Internet.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+When we run a containerized application in production, we cannot make this assumption 
+as the production servers have often no direct access to the Internet.
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-19" class="exercise"><strong>Exercise 4.1  </strong></span>
-In your view, why isn’t it a good idea to have production servers directly
-connected to the Internet?</p>
-</div>
-</div>
-<p>We need to place the images in a container registry that is in the same context
-as our production servers.
-Since we’re going to run the application on Azure, we can use the
-<strong>Azure Container Registry (ACR)</strong>.</p>
-<div id="registry-creation" class="section level3">
-<h3><span class="header-section-number">4.2.1</span> Registry creation</h3>
-<p>First, we need to create a <strong>resource group</strong>.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-20" class="exercise"><strong>Exercise 4.2  </strong></span>
-What is a <strong>resource group</strong> in Azure and how is it useful?</p>
-</div>
-</div>
-<p>The command to create a new resource group is the following
-(replace RES_GRP_NAME with a name of your choice).</p>
-<pre class="bash"><code>az group create --name  RES_GRP_NAME --location francecentral</code></pre>
-<div class="infobox warning">
-<p><strong>Warning</strong></p>
-<p>If <code>francecentral</code> does not work for your account, the previous command will normally suggest a possible location.
-Choose one that is near you.</p>
-</div>
-<p>You can verify that the resources are correctly created by looking <a href="https://portal.azure.com/" target="_blank">at the Azure portal</a>.</p>
-<p>Next, we need to create a <strong>container registry</strong> with the following command
-(replace RES_GRP_NAME with the name of your resource group and REG_NAME with a name of your choice for the registry).</p>
-<pre class="bash"><code>az acr create --resource-group RES_GRP_NAME --name REG_NAME --sku Basic</code></pre>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-23" class="exercise"><strong>Exercise 4.3  </strong></span>
-In the previous command, what does <code>sku</code> refer to?
-Feel free to look up on the Azure website to find the answer.</p>
-</div>
-</div>
-</div>
-<div id="registry-login" class="section level3">
-<h3><span class="header-section-number">4.2.2</span> Registry login</h3>
-<p>After creating the registry, we can log into it with the following command:</p>
-<pre class="bash"><code>az acr login --name REG_NAME</code></pre>
-</div>
-<div id="image-tagging" class="section level3">
-<h3><span class="header-section-number">4.2.3</span> Image tagging</h3>
-<p>We’re almost ready to push the images that compose the application <em>TripMeal</em> to the registry.
-In order to do that, we need to <strong>tag</strong> (i.e., rename) our images so that their names are
-preceded by the <strong>login server name</strong> of the registry.</p>
-<p>In order to get the name of the <strong>login server name</strong>
-(that we denote here as <code>acrloginserver</code>) of your registry, you can type
-the following command:</p>
-<pre class="bash"><code>az acr list --resource-group RES_GRP_NAME --query &quot;[].{acrLoginServer:loginServer}&quot; --output table</code></pre>
-<p>Your <code>acrloginserver</code> will be something like <code>xxx.azurecr.io</code>.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-19"><strong>(\#exr:unnamed-chunk-19) </strong></span>
+In your view, why isn't it a good idea to have production servers directly 
+connected to the Internet?
+</div>\EndKnitrBlock{exercise}
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-26" class="exercise"><strong>Exercise 4.4  </strong></span>
-Tag the images that correspond to the services of the application <em>TripMeal</em> so that
-their name is similar to: <code>acrloginserver/nameofimage:latest</code></p>
-<p>Write the <strong>exact Docker command</strong> that you use to tag the images.</p>
-</div>
-</div>
-</div>
-<div id="pushing-the-images" class="section level3">
-<h3><span class="header-section-number">4.2.4</span> Pushing the images</h3>
-<p>We can push the images with the following command (use your image name
-instead of <code>xxx.azurecr.io/imagename:latest</code>).</p>
-<pre class="bash"><code>docker push xxx.azurecr.io/imagename:latest</code></pre>
-<p>Make sure to <strong>type this command for each image</strong> that you want to push.</p>
-<div class="infobox warning">
-<p><strong>Warning</strong></p>
-<p>It might take few minutes before the images are completely pushed to the registry.</p>
-</div>
-<p>Finally, verify that the images are actually in the registry with the following command:</p>
-<pre class="bash"><code>az acr repository list --name REG_NAME --output table</code></pre>
-<p>Alternatively, you can connect to <a href="https://portal.azure.com/" target="_blank">your Azure portal</a>
-and visually browse your resources.</p>
-</div>
-</div>
-<div id="deploy-a-kubernetes-cluster" class="section level2">
-<h2><span class="header-section-number">4.3</span> Deploy a Kubernetes cluster</h2>
-<p>We now deploy a <strong>Kubernetes cluster on Azure</strong>.</p>
-<div id="cluster-creation" class="section level3">
-<h3><span class="header-section-number">4.3.1</span> Cluster creation</h3>
-<p>We create the cluster with the following command (replace CLUSTER_NAME
-with a name of your choice. As before, RES_GRP_NAME is the name of your resource group
-and REG_NAME is the name of the container registry).</p>
-<pre class="bash"><code>az aks create \
+:::
+
+
+
+We need to place the images in a container registry that is in the same context 
+as our production servers. 
+Since we're going to run the application on Azure, we can use the 
+**Azure Container Registry (ACR)**.
+
+### Registry creation
+
+First, we need to create a **resource group**.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-20"><strong>(\#exr:unnamed-chunk-20) </strong></span>
+What is a **resource group** in Azure and how is it useful?
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+
+The command to create a new resource group is the following
+(replace RES_GRP_NAME with a name of your choice).
+
+
+```bash
+az group create --name  RES_GRP_NAME --location francecentral
+```
+
+::: {.infobox .warning data-latex="{warning}"}
+**Warning**
+
+If ``francecentral`` does not work for your account, the previous command will normally suggest a possible location.
+Choose one that is near you.
+
+:::
+
+You can verify that the resources are correctly created by looking [at the Azure portal](https://portal.azure.com/){target="_blank"}.
+
+Next, we need to create a **container registry** with the following command
+(replace RES_GRP_NAME with the name of your resource group and REG_NAME with a name of your choice for the registry).
+
+
+
+```bash
+az acr create --resource-group RES_GRP_NAME --name REG_NAME --sku Basic
+```
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-23"><strong>(\#exr:unnamed-chunk-23) </strong></span>
+In the previous command, what does ``sku`` refer to?
+Feel free to look up on the Azure website to find the answer.
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+### Registry login
+
+After creating the registry, we can log into it with the following command:
+
+
+```bash
+az acr login --name REG_NAME
+```
+
+### Image tagging
+
+We're almost ready to push the images that compose the application *TripMeal* to the registry.
+In order to do that, we need to **tag** (i.e., rename) our images so that their names are 
+preceded by the **login server name** of the registry.
+
+In order to get the name of the **login server name** 
+(that we denote here as ``acrloginserver``) of your registry, you can type 
+the following command:
+
+
+```bash
+az acr list --resource-group RES_GRP_NAME --query "[].{acrLoginServer:loginServer}" --output table
+```
+
+Your ``acrloginserver`` will be something like ``xxx.azurecr.io``.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-26"><strong>(\#exr:unnamed-chunk-26) </strong></span>
+Tag the images that correspond to the services of the  application *TripMeal* so that
+their name is similar to: ``acrloginserver/nameofimage:latest``
+
+Write the **exact Docker command** that you use to tag the images.
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+### Pushing the images
+
+We can push the images with the following command (use your image name 
+instead of ``xxx.azurecr.io/imagename:latest``).
+
+
+```bash
+docker push xxx.azurecr.io/imagename:latest
+```
+
+Make sure to **type this command for each image** that you want to push.
+
+::: {.infobox .warning data-latex="{warning}"}
+**Warning**
+
+It might take few minutes before the images are completely pushed to the registry.
+
+:::
+
+Finally, verify that the images are actually in the registry with the following command:
+
+
+```bash
+az acr repository list --name REG_NAME --output table
+```
+
+Alternatively, you can connect to [your Azure portal](https://portal.azure.com/){target="_blank"}
+and visually browse your resources. 
+
+## Deploy a Kubernetes cluster
+
+We now deploy a **Kubernetes cluster on Azure**.
+
+### Cluster creation
+
+We create the cluster with the following command (replace CLUSTER_NAME 
+with a name of your choice. As before, RES_GRP_NAME is the name of your resource group 
+and REG_NAME is the name of the container registry).
+
+
+```bash
+az aks create \
     --resource-group RES_GRP_NAME \
     --name CLUSTER_NAME \
     --node-count 2 \
     --generate-ssh-keys \
-    --attach-acr REG_NAME</code></pre>
-<div class="infobox warning">
-<p><strong>Warning</strong></p>
-<p>If you get an error on your SSH key, then your key is not in the right format.</p>
-<p>Here is how we suggest you to proceed.</p>
-<ol style="list-style-type: decimal">
-<li><p>Open your home directory in Visual Studio.</p></li>
-<li><p>Locate the hidden folder <code>.ssh</code>.</p></li>
-<li><p>You should have a file named <code>id_rsa.pub</code> under folder <code>.ssh</code>. Open it.</p></li>
-<li><p>Copy the whole content of the file.</p></li>
-<li><p>Create a new file under folder <code>.ssh</code>. Give it a name of your choice (for instance, <code>id_kube_rsa.pub</code>).</p></li>
-<li><p>Paste the content into the new file, while making sure that you don’t have any whitespace before
-the first character.</p></li>
-<li><p>Save and close the file.</p></li>
-<li><p>Type the command <code>az aks create</code> and replace the <code>--generate--ssh-keys</code> option with <code>--ssh-key-value ~/.ssh/id_kube_rsa.pub</code>.</p></li>
-</ol>
-</div>
-<p>The cluster will take a while to start. Time for a coffee!
-But before, answer the following question!</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+    --attach-acr REG_NAME
+```
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-30" class="exercise"><strong>Exercise 4.5  </strong></span>
-Can you tell the meaning of the options in the previous command?</p>
-</div>
-</div>
-</div>
-<div id="connect-to-the-cluster" class="section level3">
-<h3><span class="header-section-number">4.3.2</span> Connect to the cluster</h3>
-<p>We can configure <code>kubectl</code> to connect to the newly created cluster.
-You need to type the following command:</p>
-<pre class="bash"><code>az aks get-credentials --resource-group RES_GRP_NAME --name CLUSTER_NAME</code></pre>
-<p>Now, your Kubernetes cluster should be visible locally.
-To verify it, type the following command:</p>
-<pre class="bash"><code>kubectl config get-contexts</code></pre>
-<p>Here <em>context</em> refers to the Kubernetes clusters that <em>kubectl</em> has access to.
+::: {.infobox .warning data-latex="{warning}"}
+**Warning**
+
+If you get an error on your SSH key, then your key is not in the right format. 
+
+Here is how we suggest you to proceed.
+
+1. Open your home directory in Visual Studio.
+
+2. Locate the hidden folder  ``.ssh``.
+
+3. You should have a file named ``id_rsa.pub`` under folder ``.ssh``.  Open it.
+
+4. Copy the whole content of the file.
+
+5. Create a new file under folder ``.ssh``. Give it a name of your choice (for instance, ``id_kube_rsa.pub``).
+
+6. Paste the content into the new file, while making sure that you don't have any whitespace before 
+the first character.
+
+7. Save and close the file.
+
+8. Type the command ``az aks create`` and replace the ``--generate--ssh-keys`` option with ``--ssh-key-value ~/.ssh/id_kube_rsa.pub``.
+
+
+
+
+
+
+:::
+
+The cluster will take a while to start. Time for a coffee!
+But before, answer the following question!
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-30"><strong>(\#exr:unnamed-chunk-30) </strong></span>
+Can you tell the meaning of the options in the previous command?
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+### Connect to the cluster
+
+We can configure ``kubectl`` to connect to the newly created cluster.
+You need to type the following command:
+
+
+```bash
+az aks get-credentials --resource-group RES_GRP_NAME --name CLUSTER_NAME
+```
+
+Now, your Kubernetes cluster should be visible locally.
+To verify it, type the following command:
+
+
+```bash
+kubectl config get-contexts
+```
+
+Here *context* refers to the Kubernetes clusters that *kubectl* has access to.
 The Kubernetes cluster that you created on Azure should be visible in the output; an asterisk
-should appear in front of its name, indicating that it is the <em>current context</em>
-(that is the Kubernetes cluster being currently referenced by <code>kubectl</code>).</p>
-<p>Type the following command:</p>
-<pre class="bash"><code>kubectl get nodes</code></pre>
-<p>You should see that the Kubernetes cluster has <strong>two nodes</strong>.</p>
-</div>
-</div>
-<div id="deploy-the-application" class="section level2">
-<h2><span class="header-section-number">4.4</span> Deploy the application</h2>
-<p>We’re almost done! The images are in the registry, the Kubernetes cluster is up and running.
-The only missing piece of the puzzle is our application <em>TripMeal</em>.</p>
-<p>First thing to do is to slightly modify the file <code>tripmeal.yml</code> that you created at the end
-of the previous section.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+should appear in front of its name, indicating that it is the *current context* 
+(that is the Kubernetes cluster being currently referenced by ``kubectl``).
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-34" class="exercise"><strong>Exercise 4.6  </strong></span>
+Type the following command:
+
+
+```bash
+kubectl get nodes
+```
+
+You should see that the Kubernetes cluster has **two nodes**.
+
+## Deploy the application 
+
+We're almost done! The images are in the registry, the Kubernetes cluster is up and running.
+The only missing piece of the puzzle is our application *TripMeal*.
+
+First thing to do is to slightly modify the file ``tripmeal.yml`` that you created at the end
+of the previous section.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-34"><strong>(\#exr:unnamed-chunk-34) </strong></span>
 Look at the names of the images of each service in that file. How must these names change?
-Modify the file accordingly (<strong>no need to upload it on Edunao</strong>).</p>
-</div>
-</div>
-<p>It is the moment of truth!
-Deploy your application by typing the following command:</p>
-<pre class="bash"><code>kubectl apply -f tripmeal.yml</code></pre>
-<p>Look at Kubernetes objects created after this command:</p>
-<pre class="bash"><code>kubectl get all</code></pre>
-<p>Get the external IP address of the web service and try to connect to the application,
-in the same way you did in the previous section.</p>
-<p>If you can play with the application like you did in your local deployment it means that you reached
-the conclusion of this assignment! Bravo!</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+Modify the file accordingly (**no need to upload it on Edunao**).
+</div>\EndKnitrBlock{exercise}
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-37" class="exercise"><strong>Exercise 4.7  </strong></span>
-Submit a <strong>video</strong> like that the one that <a href="https://webtv.centralesupelec.fr/permalink/v1261a00b74dbbzwk2vr/" target="_blank"><strong>you can see here</strong></a>.</p>
-<p>The video must <strong>clearly</strong> show that:</p>
-<ul>
-<li><p>You’re connected to <strong>your Azure portal</strong> (Email address on the top right corner of the portal).</p></li>
-<li><p>All the passages that you see in the sample video: you need to show the <strong>public IP address</strong>
-of the application that you deployed, use that address to connect to your application and play
-with the application to show that it works correctly.</p></li>
-</ul>
-</div>
-</div>
-<p>The next exercise is <strong>optional</strong>.
-Before you leave, <strong>make sure to read the conclusion of this document!!</strong>.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+:::
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-38" class="exercise"><strong>Exercise 4.8  </strong></span>
-The title of this exercise is <em>Cerise sur le gâteau</em> (aka, this is <strong>optional</strong>!).</p>
-<p>At this point, you can connect to <em>TripMeal</em> by using an IP address.
+
+
+It is the moment of truth! 
+Deploy your application by typing the following command:
+
+
+```bash
+kubectl apply -f tripmeal.yml
+```
+
+Look at Kubernetes objects created after this command:
+
+
+```bash
+kubectl get all
+```
+
+Get the external IP address of the web service and try to connect to the application,
+in the same way you did in the previous section.
+
+If you can play with the application like you did in your local deployment it means that you reached 
+the conclusion of this assignment! Bravo!
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-37"><strong>(\#exr:unnamed-chunk-37) </strong></span>
+Submit a **video** like that the one that [**you can see here**](https://webtv.centralesupelec.fr/permalink/v1261a00b74dbbzwk2vr/){target="_blank"}.
+
+The video must **clearly** show that:
+
+* You're connected to **your Azure portal** (Email address on the top right corner of the portal).
+
+* All the passages that you see in the sample video: you need to show the **public IP address**
+of the application that you deployed, use that address to connect to your application and play 
+with the application to show that it works correctly.
+
+</div>\EndKnitrBlock{exercise}
+:::
+
+The next exercise is **optional**.
+Before you leave, **make sure to read the conclusion of this document!!**.
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-38"><strong>(\#exr:unnamed-chunk-38) </strong></span>
+The title of this exercise is *Cerise sur le gâteau* (aka, this is **optional**!).
+
+At this point, you can connect to *TripMeal* by using an IP address. 
 It would be nice if you could use a URL, like in the real websites.
-Can you find a way to assign a URL to your web service? <strong>Describe your procedure.</strong></p>
-<p>You need a bit of Googling here….</p>
-</div>
-</div>
-</div>
-</div>
-<div id="conclusion" class="section level1 unnumbered">
-<h1>Conclusion</h1>
-<p>Make sure you follow these instructions:</p>
-<ul>
-<li>Take down your application in Kubernetes by using the following command:</li>
-</ul>
-<pre><code>kubectl delete -f tripmeal.yml</code></pre>
-<ul>
-<li>Change the context of the <code>kubectl</code> command so that it points back
-to a local Kubernetes cluster. Type the following command, where
-CONTEXT_NAME will be <code>docker-desktop</code> or <code>minikube</code>, depending on which local Kubernetes cluster
-you use.</li>
-</ul>
-<pre class="bash"><code>kubectl config use-context CONTEXT_NAME</code></pre>
-<ul>
-<li><strong>Destroy all the resources</strong> linked to the application
-<em>TripMeal</em> on Microsoft Azure, otherwise you’ll get billed even if you don’t use them!
+Can you find a way to assign a URL to your web service? **Describe your procedure.**
+
+You need a bit of Googling here....
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+# Conclusion {-}
+
+Make sure you follow these instructions:
+
+* Take down your application in Kubernetes by using the following command:
+
+```
+kubectl delete -f tripmeal.yml
+``` 
+
+* Change the context of the ``kubectl`` command so that it points back 
+to a local Kubernetes cluster. Type the following command, where 
+CONTEXT_NAME will be ``docker-desktop`` or ``minikube``, depending on which local Kubernetes cluster 
+you use.
+
+
+```bash
+kubectl config use-context CONTEXT_NAME
+```
+
+* **Destroy all the resources** linked to the application
+*TripMeal* on Microsoft Azure, otherwise you'll get billed even if you don't use them!
 You can destroy all the resources by simply deleting the resource group to which they belong.
 You can do it through the Azure portal or by typing the following command (replace RES_GRP_NAME with the name
-of the resource group that you intend to remove).</li>
-</ul>
-<pre><code>az group delete --name RES_GRP_NAME</code></pre>
-<ul>
-<li><p>You can check the balance of your Azure credit <a href="https://www.microsoftazuresponsorships.com/Balance" target="_blank">here</a>.</p></li>
-<li><p>You can stop Docker and Kubernetes if you don’t need it anymore.</p></li>
-</ul>
-</div>
+of the resource group that you intend to remove).
+
+```
+az group delete --name RES_GRP_NAME
+```
+
+* You can check the balance of your Azure credit [here](https://www.microsoftazuresponsorships.com/Balance){target="_blank"}.
+
+* You can stop Docker and Kubernetes if you don't need it anymore. -->
+<!-- https://stackoverflow.com/questions/55271912/flask-cli-throws-oserror-errno-8-exec-format-error-when-run-through-docker-->
+<!-- merge 1.2 with 1.3, so that we can ask students to point out exactly the common layers -->
 
           </div>
 
