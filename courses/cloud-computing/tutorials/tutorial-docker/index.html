@@ -712,6 +712,24 @@ specify the registry name, the user, the name and the tag.
 
 
 
+<details>
+
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex="{exercisebox}"}
+
+1. Registry: *registry.redhat.io*, user: *rhel8*, name: *mysql-80*,
+tag: *latest*
+
+2. Registry: *DockerHub*, user: *library*, name: *alpine*, tag: *3.11*
+
+3. Registry: *DockerHub*, user: *library*, name: *alpine*, tag: *latest*
+:::
+
+</details>
+
+
+
 ::: {.infobox .exercisebox data-latex="{exercisebox}"}
 **Exercise**
 
@@ -730,6 +748,18 @@ specify the registry name, the user, the name and the tag.
 
 :::
 
+
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex="{exercisebox}"}
+
+There's no difference. They all point to the same image, that is
+the latest version of *alpine* in the DockerHub registry.
+
+:::
+
+</details>
 -->
 <p>We now learn how to use the command <code>docker run</code> and some of
 its options.
@@ -748,6 +778,17 @@ Which command would you write in the terminal?
 Execute it.
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>The goal of this exercise is to start playing with the
+<code>docker run</code> command.
+Since the question doesn’t say anything about the
+options, nor does it mention the command to run inside the container,
+we’d type:</p>
+<p><code>docker run alpine</code></p>
+</div>
+</details>
 <!--::: {.infobox .exercisebox data-latex="{exercisebox}"}
 **Exercise**
 
@@ -759,7 +800,33 @@ taken by Docker to run the container.</div>\EndKnitrBlock{exercise}
 
 :::
 
--->
+
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex="{exercisebox}"}
+
+The output obtained from executing the command should 
+look like as follows:
+
+```bash
+Unable to find image 'alpine:latest' locally
+latest: Pulling from library/alpine
+aad63a933944: Pull complete 
+Digest: sha256:b276d875eeed9c7d3f1cfa7edb06b22ed22b14219a7d67c52c56612330348239
+Status: Downloaded newer image for alpine:latest
+```
+
+Here's what happens under the hood:
+
+1. Docker looks for an image named *alpine:latest* in the host 
+computer and cannot find it.
+
+2. Docker *pulls* (i.e., downloads) the image from the DockerHub registry.
+
+:::
+
+</details>-->
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -767,6 +834,19 @@ taken by Docker to run the container.</div>\EndKnitrBlock{exercise}
 <span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 1.2  </strong></span>Is the container still running?
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>In order to list all containers still running on the host, type the
+following command:</p>
+<p><code>docker container ls</code></p>
+<p>Your container shouldn’t appear in the output,
+because it’s not running.
+In order to see all containers, including those that are not
+running, type the following command:</p>
+<p><code>docker container ls -a</code></p>
+</div>
+</details>
 <!--::: {.infobox .exercisebox data-latex="{exercisebox}"}
 **Exercise**
 
@@ -775,7 +855,33 @@ taken by Docker to run the container.</div>\EndKnitrBlock{exercise}
 
 :::
 
--->
+
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex="{exercisebox}"}
+
+* The identifier of the container.
+
+* The name of the image used to run the container (it should be *alpine* for your 
+container).
+
+* The command executed within the container (it should be ``/bin/sh`` for your container).
+
+* When the container has been created.
+
+* The container current status (it should be *exited (0) x seconds ago* for your container).
+
+* The network ports used by the container (we'll study them later).
+
+* The name of the container. If you don't specify any when you 
+run the container (as is our case),
+Docker generates a random name by concatenating an adjective and 
+a famous scientist's name (e.g., *agitated_newton*).
+
+:::
+
+</details>-->
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -784,6 +890,16 @@ taken by Docker to run the container.</div>\EndKnitrBlock{exercise}
 can you tell why the container stopped without giving any output?
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>The command is <code>/bin/sh</code>;
+the container runs a Linux terminal.
+But since we didn’t specify what to do with that terminal
+(we didn’t run any Linux command, nor we tried to access the terminal),
+the container stopped.</p>
+</div>
+</details>
 <p>We’re now going to do something useful with the image <em>alpine</em>.
 Make sure you read the <strong>good practices</strong> that you should
 adopt while playing with images and containers.</p>
@@ -872,6 +988,17 @@ In the host or in the container?</li>
 </div>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p><code>docker run --rm --name ls-test alpine ls</code></p>
+<ul>
+<li>The command <code>ls</code> is run in the guest terminal, therefore
+what we see in the output is a list of files stored in the
+container.</li>
+</ul>
+</div>
+</details>
 <div class="infobox warning">
 <p><strong>Notice</strong></p>
 <p>In Exercise <a href="#exr:command-in-guest">1.4</a> the command
@@ -893,6 +1020,16 @@ whether the Web site <code>www.centralesupelec.fr</code> is reachable.
 </div>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p><code>docker run --rm --name ping-test alpine ping www.centralesupelec.fr</code></p>
+<p>In order to interrupt <code>ping</code>
+just type the key combination that you’s use to
+interrupt any other command in your terminal.
+(typically Ctrl-C on Windows and Cmd-C in MacOs).</p>
+</div>
+</details>
 <!--An application running in a container might need to interact 
 with the user. 
 For instance, the Linux 
@@ -912,6 +1049,30 @@ You can stop interacting with ``rev`` by typing Ctrl+C at any time.</div>\EndKni
 
 
 :::
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex="{exercisebox}"}
+
+``
+docker run --rm --name rev -it alpine rev
+``
+
+After typing the command, type a word on your keyboard
+(e.g., *deeps*), press *Return* and 
+you should see the same word reversed (e.g., *speed*). 
+
+The option ``-t`` opens a guest terminal (so we can see its
+output); the option ``-i`` allows you to write directly 
+into the guest terminal.
+
+In order to stop using the guest terminal, 
+you'll need to press Ctrl+D (both in Windows and MacOs).
+
+:::
+
+</details>
+
 -->
 <p>Now run the following command:</p>
 <p><code>docker run  --name my-alpine -it alpine</code></p>
@@ -925,6 +1086,15 @@ Moreover, we didn’t specify any command to run in the guest terminal.</p>
 <span id="exr:unnamed-chunk-10" class="exercise"><strong>Exercise 1.6  </strong></span>What do you obtain?
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>When we run a container from the image <em>alpine</em>, the command
+<code>/bin/sh</code> is executed within the container.
+Since we specified the option <code>-it</code>, what we obtain is an access to the
+Linux terminal running in the container.</p>
+</div>
+</details>
 </div>
 <div id="starting-and-stopping-containers." class="section level2">
 <h2><span class="header-section-number">1.2</span> Starting and stopping containers.</h2>
@@ -950,6 +1120,18 @@ download
 </div>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>Just type in <em>my-alpine</em> guest terminal the following command:</p>
+<p><code>wget https://www.centralesupelec.fr/fr/presentation</code></p>
+<ul>
+<li>The Web page will be saved in the current directory
+of the container. You can verify that the file is there
+by typing <code>ls</code> in the guest terminal.</li>
+</ul>
+</div>
+</details>
 <details>
 <p><summary>Want to copy the donwloaded file from the container to your computer?</summary></p>
 <p>To copy the file <code>presentation</code> to your working directory, type the following command in
@@ -1022,6 +1204,12 @@ Call the container <em>dl-figures</em>, and avoid the option
 <code>--rm</code>, we’ll use this container later.
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p><code>docker run --name dl-figures -it ubuntu</code></p>
+</div>
+</details>
 <p>From now on, we’ll be interacting with the guest Ubuntu terminal.
 If you type the command <code>wget</code>,
 you’ll get an error (<code>bash: wget: command not found</code>).</p>
@@ -1096,6 +1284,29 @@ when we installed ``wget``.
 how can files that belong to the lower layers be modified or deleted?</div>\EndKnitrBlock{exercise}
 :::
 
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex="{exercisebox}"}
+
+All files marked with A are new and therefore are 
+added to the writable layer of the container.
+
+As for the existing files, they live in the immutable layers 
+of the image, and therefore cannot be touched directly. 
+Instead, they are copied from the bottom layers to the writable layer where 
+they are modified.
+This strategy is called **copy-on-write**.
+
+The structure of layers generates a **layered filesystem** in the image; 
+if different copies of the same file exist in different layers, 
+the copy in the uppermost layer 
+overwrites the others.
+
+:::
+
+</details>
+
 
 
 We can create a new image from the container *dl-figures*, one that provides
@@ -1118,7 +1329,29 @@ The command creates a new image called *ubuntu-with-wget*.
 
 :::
 
--->
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex="{exercisebox}"}
+
+Just type the following command:
+
+``
+docker run --rm -it ubuntu-with-wget
+``
+In the guest terminal type ``wget``: you should see the 
+following output:
+
+``
+wget: missing URL
+Usage: wget [OPTION]... [URL]...
+
+Try `wget --help` for more options.
+``
+
+:::
+
+</details>-->
 <div id="dockerfiles" class="section level2">
 <h2><span class="header-section-number">2.1</span> Dockerfiles</h2>
 <p>The most common way to create an image is to use a <strong>Dockerfile</strong>, a
@@ -1178,6 +1411,14 @@ be downloaded from
 <span id="exr:unnamed-chunk-15" class="exercise"><strong>Exercise 2.1  </strong></span>What’s the relation between the Dockerfile lines and the image layers?
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>Each line corresponds to a new layer.
+The first line corresponds to the bottom layer;
+the last line to the top layer.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -1186,6 +1427,23 @@ be downloaded from
 Modify the Dockerfile accordingly.
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>When creating an image, we should keep the number of layers relatively
+small; in fact, the more the layers, the bigger the image will be.
+Here we create three separate layers with three RUN commands; we can
+simply merge the three layers.
+The resulting Dockerfile will be:</p>
+<pre class="dockerfile"><code>FROM ubuntu
+RUN apt-get update &amp;&amp; \
+    apt-get install -y wget &amp;&amp; \
+    mkdir -p /my-figures
+WORKDIR /my-figures
+ENTRYPOINT [&quot;wget&quot;, &quot;-nd&quot;, &quot;-r&quot;, &quot;-A&quot;, &quot;jpg,jpeg,bmp,png,gif&quot;]
+CMD [&quot;https://www.centralesupelec.fr/fr/presentation&quot;]</code></pre>
+</div>
+</details>
 </div>
 <div id="building-an-image" class="section level2">
 <h2><span class="header-section-number">2.2</span> Building an image</h2>
@@ -1216,6 +1474,30 @@ Why are there three of such images?</div>\EndKnitrBlock{exercise}
 
 </div>
 
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex="{exercisebox}"}
+
+These are the **intermediate images**. 
+Once a layer is compiled, an intermediate image is created that 
+contains that layer and all the layers underneath.
+In other words, the intermediate image 
+corresponding to the layer $i$ contains all files 
+up to the layer $i$, including layers 1 through $i-1$.
+
+The intermediate layers are used by the **build cache**, 
+of which we'll see an example later.
+
+Although there are five layers in the new image, there are only 
+three intermediate images because:
+
+* the base image is *ubuntu:eoan*.
+* the image corresponding to the top layer is the final image *fig-downloader*.
+
+:::
+
+</details>
 -->
 <div class="infobox curiosity">
 <p><strong>Good to know</strong></p>
@@ -1251,6 +1533,28 @@ are marked as <i>missing</i>?
 
 :::
 
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex="{exercisebox}"}
+
+The layers with an ID correspond to the layers of 
+the new image, including the top layer and the base image.
+The layers marked as *missing* are those that compose the 
+base image. Those layers are not stored in  
+your computer, 
+simply because they belong to an image 
+that hasn't been built on your computer 
+and you downloaded from the DockerHub registry.
+
+By looking at the output of ``docker image ls -a`` and the output of this command,
+we see that the layers between the base image and the top layer have the 
+same identifiers as the intermediate images.
+
+:::
+
+</details>
+
 -->
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
@@ -1261,6 +1565,15 @@ are marked as <i>missing</i>?
 What does it do? Where are the downloaded pictures?
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>We downloaded the figures
+<a href="https://www.centralesupelec.fr/fr/presentation" target="_blank">of this page</a>.
+The downloaded pictures are in the folder <em>/my-figures</em>
+of the container <em>dl-1</em>.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -1270,6 +1583,17 @@ What does it do? Where are the downloaded pictures?
 What does it do? Where are the downloaded pictures?
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>We downloaded the figures
+<a href="https://www.centralesupelec.fr" target="_blank">of this page</a>.
+We basically overwrote the URL specified by the CMD keyword with a new
+one.
+The downloaded pictures are in the folder <em>/my-figures</em>
+of the container <em>dl-2</em>.</p>
+</div>
+</details>
 </div>
 <div id="containerized-python-application" class="section level2">
 <h2><span class="header-section-number">2.3</span> Containerized Python application</h2>
@@ -1297,6 +1621,21 @@ ENTRYPOINT [&quot;python&quot;, &quot;main.py&quot;]</code></pre>
 <span id="exr:unnamed-chunk-19" class="exercise"><strong>Exercise 2.5  </strong></span>Describe what this Dockerfile does.
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<ul>
+<li>Takes <em>python:3.7-slim</em> as the base image.</li>
+<li>Creates a new folder <em>app</em> in the image under the root directory.</li>
+<li>Changes the working directory to <em>/app</em>.</li>
+<li>Copies the files <em>main.py</em> and <em>requirements.txt</em> from the local
+computer to the directory <em>/app</em> in the image.</li>
+<li>Runs the command <code>pip install</code> to install the Python libraries
+specified in the file <em>requirements.txt</em>.</li>
+<li>Executes the command <code>python main.py</code>.</li>
+</ul>
+</div>
+</details>
 <div class="infobox exercisebox" word-latex="{exercisebox}">
 <p><strong>Exercise</strong></p>
 
@@ -1304,6 +1643,12 @@ ENTRYPOINT [&quot;python&quot;, &quot;main.py&quot;]</code></pre>
 <span id="exr:unnamed-chunk-20" class="exercise"><strong>Exercise 2.6  </strong></span>Build an image called <em>wordfreq</em> from this Dockerfile.
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p><code>docker build -t wordfreq .</code></p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -1312,6 +1657,18 @@ ENTRYPOINT [&quot;python&quot;, &quot;main.py&quot;]</code></pre>
 What do you notice?
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>The build is very fast.
+Since we didn’t change the Dockerfile, the image
+is rebuilt by using the image layers created
+previously.
+This is clearly indicated by the word <strong>CACHED</strong> written
+at each layer.
+Using the already stored layers is called <strong>build cache</strong>.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -1320,6 +1677,19 @@ What do you notice?
 you rebuild the image?
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>Add any instruction at the end of <em>main.py</em>, such as:</p>
+<pre class="python"><code>print(&quot;Finish!&quot;)</code></pre>
+<p>then rebuild the image.
+The three bottom layers are not affected by the modification, therefore
+they benefit from the build cache.
+Layer 4 is the first affected by the modification.
+This layer, and those above, need therefore to be
+rebuilt.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -1329,6 +1699,26 @@ can you tell what’s wrong with this Dockerfile?
 Modify the Dockerfile accordingly and rebuild the image.
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>Each time we modify <em>main.py</em> and we rebuild the image,
+the layer 4 and 5 are recreated, meaning that all the Python packages
+are downloaded and installed.
+Depending on the size and number of the packages, this might
+take some while.
+A better way to structure the Dockerfile is to install the
+packages before copying the Python script to the image.
+Here is how we should modify the Dockerfile:</p>
+<pre class="dockerfile"><code>FROM python:3.7-slim
+RUN mkdir -p /app
+WORKDIR /app
+COPY ./requirements.txt /app/
+RUN pip install -r requirements.txt
+COPY ./main.py /app/
+ENTRYPOINT [&quot;python&quot;, &quot;main.py&quot;]</code></pre>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -1337,6 +1727,13 @@ Modify the Dockerfile accordingly and rebuild the image.
 What changed?
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>The Python packages are not reinstalled, as a result rebuilding the image<br />
+takes much less time than before.</p>
+</div>
+</details>
 <p>Play with the application by running the following command:</p>
 <p><code>docker run --rm -it  wordfreq</code></p>
 <p>The containerized application will prompt you to insert the URL of a webpage and
@@ -1371,7 +1768,22 @@ You can verify it by yourself.
 
 
 :::
+<details>
+<summary>Solution</summary>
 
+::: {.infobox .exosolution data-latex="{exercisebox}"}
+
+1. After running the container we need to do an additional action to copy
+the figures from the container to the host computer.
+
+2. The container is created and run only to download some figures.
+We'd like to remove it automatically (with the option ``--rm``) when its 
+execution is over. However, if we do so, the pictures will be lost before 
+we can copy them to the host computer.
+
+:::
+
+</details>
 
 ## Using a host volume
 
@@ -1452,6 +1864,12 @@ specifying the options to:</p>
 </div>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p><code>docker run --rm -it -v data-volume:/data ubuntu</code></p>
+</div>
+</details>
 <ol style="list-style-type: decimal">
 <li>Type the following command in the guest Linux terminal to create a file
 <em>test-file.txt</em> in the directory <em>/data</em>:</li>
@@ -1483,6 +1901,12 @@ of the container.</li>
 </div>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p><code>docker container run --rm -it -v data-volume:/my-data alpine</code></p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -1491,6 +1915,14 @@ of the container.</li>
 Which folder would you look in?
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>We need to look in the folder <em>/my-data</em> because this is where
+we mounted <em>data-volume</em>.</p>
+<p><code>cat /my-data/test-file.txt</code></p>
+</div>
+</details>
 <p>Type <code>exit</code> to exit the guest terminal and terminate the container.</p>
 </div>
 </div>
@@ -1527,6 +1959,38 @@ Figure 4.1: The Docker container network model
 <p><code>docker network ls</code></p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>The command lists all the networks created by Docker on
+your computer.
+For each network, the values of four attributes are shown:</p>
+<ul>
+<li>The identifier.</li>
+<li>The name.</li>
+<li>The driver used by the network.</li>
+<li>The scope of the network (local or global).
+A local scope means that the network connects containers
+running on the same host, as opposed to a global scope that
+means that containers on different hosts can communicate.</li>
+</ul>
+<p>Depending on the containers that you used
+in the past, you might see different networks.
+However, three networks are worth noting:</p>
+<ul>
+<li>The network named <strong>bridge</strong>, that uses the driver <strong>bridge</strong> and a local scope.
+By default, any new container is attached to this network.</li>
+<li>The network named <strong>host</strong>, that uses the driver <strong>host</strong> and a local scope.
+It’s used when we want a container to directly use the network interface of the host.
+It’s important to remember that this network should only be used when analyzing the
+host’s network traffic. In the other cases, using this network exposes
+the container to all sorts of security risks.</li>
+<li>The network named <strong>none</strong>, that uses the driver <strong>null</strong> and a local scope.
+Attaching a container to this network means that the container
+isn’t connected to any network, and therefore it’s completely isolated.</li>
+</ul>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -1539,6 +2003,19 @@ what IP addresses will be given to the containers attached to this
 network? What’s the IP address of the router of this network?
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>The information is specified in the field named <strong>IPAM</strong>, more specifically:</p>
+<ul>
+<li><p><strong>Subnet</strong> indicates the range of IP addresses used by the network.
+The value of this field should be 172.17.0.0/16;
+the addresses range from 172.17.0.1 to 172.17.255.255.</p></li>
+<li><p><strong>Gateway</strong> indicates the IP address of the router of the network.
+The value should be 172.17.0.1</p></li>
+</ul>
+</div>
+</details>
 <div id="creating-networks" class="section level2">
 <h2><span class="header-section-number">4.1</span> Creating networks</h2>
 <p>By default, any new container is attached to the network named <em>bridge</em>.</p>
@@ -1550,6 +2027,17 @@ Explain why it is not a good practice to
 attach all our containers to the same network.</p>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>All new containers will be able to communicate over this network.
+This is not a good idea.
+If a hacker can compromise any of these containers, s/he might
+be able to attack the other containers as well.
+As a rule of thumb, we should attach two containers to the same network <strong>only</strong> on a
+need-to-communicate basis.</p>
+</div>
+</details>
 <p>In order to create a new network, you can use the following command:</p>
 <p><code>docker network create network_name</code></p>
 <div class="infobox exercisebox">
@@ -1562,6 +2050,20 @@ By using the <code>docker network inspect</code> command,
 look at the IP addresses of the new networks and write them down.
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>Just run the following commands:</p>
+<p><code>docker network create buckingham</code></p>
+<p><code>docker network create rochefort</code></p>
+<p>The IP addresses for the network <em>buckingham</em> are
+172.18.0.0/16 (addresses from 172.18.0.1 to 172.18.255.255);
+The IP addresses for the network <em>rochefort</em> are:
+172.19.0.0/16 (assuming that you create <em>buckingham</em>
+before <em>rochefort</em>).</p>
+<p>The IP addresses may be different on your machines.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -1584,6 +2086,46 @@ command <code>docker network inspect</code>).</li>
 </div>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>Here are the commands to run <em>athos</em> and <em>aramis</em> while connecting
+them to <em>buckingham</em> and <em>rochefort</em> respectively.</p>
+<p><code>docker run --rm -it --name athos --network buckingham  alpine</code></p>
+<p><code>docker run --rm -it --name aramis --network rochefort   alpine</code></p>
+<p>Here’s the command to run <em>porthos</em> and attach it to
+<em>buckingham</em>:</p>
+<p><code>docker run --rm -it --name porthos --network buckingham   alpine</code></p>
+<p>The following command attaches <em>porthos</em> to the second network <em>rochefort</em>:</p>
+<p><code>docker network connect rochefort porthos</code></p>
+<p>As for the IP addresses, each network has IP addresses
+in the range 172.x.0.0/16, where x is 18 in the
+network <em>buckingham</em> and 19 in the network <em>rochefort</em>.
+The address 172.x.0.1 is reserved for the router.
+Therefore, the containers will be assigned
+IP addresses from 172.x.0.2.
+In this solution, we created <em>athos</em>, <em>aramis</em> and <em>portos</em>
+in this order.
+Therefore, the IP addresses will be:</p>
+<ul>
+<li>In network <em>buckingham</em>:
+<ul>
+<li><em>athos</em>: 172.18.0.2</li>
+<li><em>porthos</em>: 172.18.0.3</li>
+</ul></li>
+<li>In network <em>rochefort</em>:
+<ul>
+<li><em>aramis</em>: 172.19.0.2</li>
+<li><em>porthos</em>: 172.19.0.3</li>
+</ul></li>
+</ul>
+<p>You can actually verify this configuration by inspecting
+the two networks with the following commands:</p>
+<p><code>docker network inspect buckingham</code></p>
+<p><code>docker network inspect rochefort</code></p>
+<p>The IP addresses might be different on your machines.</p>
+</div>
+</details>
 </div>
 <div id="communication-between-containers" class="section level2">
 <h2><span class="header-section-number">4.2</span> Communication between containers</h2>
@@ -1596,6 +2138,13 @@ command <code>docker network inspect</code>).</li>
 Justify your answer.
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>The only containers that cannot communicate are <em>athos</em> and <em>aramis</em>,
+because they’re not connected to the same network.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -1608,6 +2157,14 @@ Justify your answer.
 </div>
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>We need to use the IP address assigned to the endpoint linking
+<em>porthos</em> to the network <em>buckingham</em>, to which <em>athos</em> is connected.
+In our case, this is 172.18.0.3.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -1616,6 +2173,13 @@ Justify your answer.
 Do you succeed? Are you surprised?
 </div>
 </div>
+<details>
+<p><summary>Solution</summary></p>
+<div class="infobox exosolution">
+<p>We succeed. Indeed, the network <em>buckingham</em> provides a DNS server, that
+can translate names into IP addresses.</p>
+</div>
+</details>
 <p>You can now exit the three containers.</p>
 </div>
 </div>
