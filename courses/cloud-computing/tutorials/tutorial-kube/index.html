@@ -657,13 +657,13 @@ The file <code>package.json</code> contains the dependencies to install.</p></li
 </div>
 <p>Both directories contain a <strong>Dockerfile</strong>.
 The one in directory <code>database</code> is as follows:</p>
-<pre class="dockerfile"><code>FROM postgres:10.2-alpine
+<pre class="dockerfile"><code>FROM postgres
 COPY init-db.sql /docker-entrypoint-initdb.d/
 RUN chown postgres:postgres /docker-entrypoint-initdb.d/*.sql
 ENV POSTGRES_USER dockeruser
 ENV POSTGRES_PASSWORD dockerpass
 ENV POSTGRES_DB pets</code></pre>
-<p>The Dockerfile builds on an existing image called <code>postgres:10-2-alpine</code>,
+<p>The Dockerfile builds on an existing image called <code>postgres</code>,
 that is <a href="https://hub.docker.com/_/postgres" target="_blank">documented here</a>.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
@@ -672,7 +672,7 @@ that is <a href="https://hub.docker.com/_/postgres" target="_blank">documented h
 <p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1.1  </strong></span>
 Consider the following line in the Dockerfile:</p>
 <p><code>COPY init-db.sql /docker-entrypoint-initdb.d/</code></p>
-<p>By looking at the documentation of the image <code>postgres:10-2-alpine</code>,
+<p>By looking at the documentation of the image <code>postgres</code>,
 answer the two following questions:</p>
 <ul>
 <li><p>Where is the directory <code>/docker-entrypoint-initdb.d/</code>?</p></li>
@@ -687,7 +687,7 @@ that we never came across before.</p>
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 1.2  </strong></span>
-Look again at the documentation of the image <code>postgres:10-2-alpine</code>
+Look again at the documentation of the image <code>postgres</code>
 and try to explain the meaning of the last three lines of the Dockerfile.</p>
 </div>
 </div>
@@ -1149,12 +1149,12 @@ spec:
 <li><p><em>apiVersion</em>. Defines the versioned schema of this representation.</p></li>
 <li><p><em>kind</em>. The type of the resource that we intend to create.</p></li>
 <li><p><em>metadata</em>. The resource metadata. The list of
-all metadata is specified <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#objectmeta-v1-meta" target="_blank">here</a>.</p></li>
+all metadata is specified <a href="https://kubernetes.io/docs/reference/kubernetes-api/common-definitions/object-meta/#ObjectMeta" target="_blank">here</a>.</p></li>
 <li><p><em>spec</em>. The specification of the desired behaviour of the pod.
-The list of the possible specifications can be found <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#podspec-v1-core" target="_blank">here</a>.</p></li>
+The list of the possible specifications can be found <a href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#PodSpec" target="_blank">here</a>.</p></li>
 </ul>
 <p>Essentially, the previous specification defines a pod with a container that is launched from the
-image <code>nginx:alpine</code> (a Web server) and listens to ports 80 and 443.</p>
+image <code>nginx:alpine</code> (a Web server) and listens to port 80.</p>
 <div class="infobox activitybox">
 <p><strong>Activity</strong></p>
 <ul>
@@ -1205,7 +1205,7 @@ spec:
       app: web-pod</code></pre>
 <div class="infobox curiosity">
 <p><strong>Good to know</strong></p>
-<p>A <strong>LoadBalancer</strong> service is a <strong>NodePort</strong> service (cf slides 64-65 in <a href="https://centralesupelec.edunao.com/pluginfile.php/219286/mod_resource/content/4/cccs-lecture03-en.pdf" target="_blank">Lecture 3</a>)
+<p>A <strong>LoadBalancer</strong> service is a <strong>NodePort</strong> service.
 that offers load balancing capabilities.
 It is intended to expose an IP address
 that client applications (external to the Kubernetes cluster) can use to access
@@ -1216,8 +1216,7 @@ the service.</p>
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-12" class="exercise"><strong>Exercise 3.2  </strong></span>
-What is the field <code>selector</code> in the definition of the service?
-(cf slide 56-57 in <a href="https://centralesupelec.edunao.com/pluginfile.php/219286/mod_resource/content/4/cccs-lecture03-en.pdf" target="_blank">Lecture 3</a>)</p>
+What is the field <code>selector</code> in the definition of the service?</p>
 </div>
 </div>
 <div class="infobox exercisebox">
@@ -1286,7 +1285,7 @@ if ever, need to play directly with pods.
 Instead, we can resort to higher-level objects, called <strong>Controllers</strong>, for an easier
 definition of the <strong>desired state</strong> of the application itself.
 The type of the controller that we need to use depends on the nature of the service
-itself: <strong>stateless</strong> or <strong>stateful</strong> (slides 16 of <a href="https://centralesupelec.edunao.com/pluginfile.php/219286/mod_resource/content/4/cccs-lecture03-en.pdf" target="_blank">Lecture 3</a>.).</p>
+itself: <strong>stateless</strong> or <strong>stateful</strong>.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -1306,7 +1305,7 @@ that are launched across several nodes in the Kubernetes cluster.</p>
 <div class="infobox curiosity">
 <p><strong>Deployment and ReplicaSet</strong></p>
 <p>Deployments and ReplicaSets have been introduced
-in slides 51-52-53 of the <a href="https://centralesupelec.edunao.com/pluginfile.php/219286/mod_resource/content/4/cccs-lecture03-en.pdf" target="_blank">third lecture</a>.</p>
+in Lecture 3.</p>
 </div>
 <p>We here define the specification of
 a Deployment corresponding to the service <code>web</code>.</p>
@@ -1480,13 +1479,12 @@ spec:
 <p>By now you shouldn’t have any problem understanding the meaning of the fields
 in this specification.
 The fields are also
-documented in the <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#statefulsetspec-v1-apps" target="_blank">official Kubernetes documentation</a>.
+documented in the <a href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/stateful-set-v1/#StatefulSetSpec" target="_blank">official Kubernetes documentation</a>.
 Two points are worth a comment.
 First, the specification of a <code>StatefulSet</code> needs an attribute <code>serviceName</code> that indicates the name
 of the service that is responsible for the network identify of the pods in the set.
-That attribute is mandatory.
-This is <a href="https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#limitations" target="_blank">listed as one of the limitations</a> of a <code>StatefulSet</code>.
-Another novelty is the field <code>volumeClaimTemplates</code>.
+That attribute is mandatory.</p>
+<p>Another novelty is the field <code>volumeClaimTemplates</code>.
 It describes additional constraints on the volumes defined in the specification, in this case the volume
 named <code>pets-data</code> (where PostgreSQL keeps the data). In particular, two claims are given:</p>
 <ul>

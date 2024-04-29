@@ -15014,13 +15014,13 @@ The file &lt;code&gt;package.json&lt;/code&gt; contains the dependencies to inst
 &lt;/div&gt;
 &lt;p&gt;Both directories contain a &lt;strong&gt;Dockerfile&lt;/strong&gt;.
 The one in directory &lt;code&gt;database&lt;/code&gt; is as follows:&lt;/p&gt;
-&lt;pre class=&#34;dockerfile&#34;&gt;&lt;code&gt;FROM postgres:10.2-alpine
+&lt;pre class=&#34;dockerfile&#34;&gt;&lt;code&gt;FROM postgres
 COPY init-db.sql /docker-entrypoint-initdb.d/
 RUN chown postgres:postgres /docker-entrypoint-initdb.d/*.sql
 ENV POSTGRES_USER dockeruser
 ENV POSTGRES_PASSWORD dockerpass
 ENV POSTGRES_DB pets&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The Dockerfile builds on an existing image called &lt;code&gt;postgres:10-2-alpine&lt;/code&gt;,
+&lt;p&gt;The Dockerfile builds on an existing image called &lt;code&gt;postgres&lt;/code&gt;,
 that is &lt;a href=&#34;https://hub.docker.com/_/postgres&#34; target=&#34;_blank&#34;&gt;documented here&lt;/a&gt;.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
@@ -15029,7 +15029,7 @@ that is &lt;a href=&#34;https://hub.docker.com/_/postgres&#34; target=&#34;_blan
 &lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.1  &lt;/strong&gt;&lt;/span&gt;
 Consider the following line in the Dockerfile:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;COPY init-db.sql /docker-entrypoint-initdb.d/&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;By looking at the documentation of the image &lt;code&gt;postgres:10-2-alpine&lt;/code&gt;,
+&lt;p&gt;By looking at the documentation of the image &lt;code&gt;postgres&lt;/code&gt;,
 answer the two following questions:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Where is the directory &lt;code&gt;/docker-entrypoint-initdb.d/&lt;/code&gt;?&lt;/p&gt;&lt;/li&gt;
@@ -15044,7 +15044,7 @@ that we never came across before.&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
 &lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.2  &lt;/strong&gt;&lt;/span&gt;
-Look again at the documentation of the image &lt;code&gt;postgres:10-2-alpine&lt;/code&gt;
+Look again at the documentation of the image &lt;code&gt;postgres&lt;/code&gt;
 and try to explain the meaning of the last three lines of the Dockerfile.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -15506,12 +15506,12 @@ spec:
 &lt;li&gt;&lt;p&gt;&lt;em&gt;apiVersion&lt;/em&gt;. Defines the versioned schema of this representation.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;&lt;em&gt;kind&lt;/em&gt;. The type of the resource that we intend to create.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;&lt;em&gt;metadata&lt;/em&gt;. The resource metadata. The list of
-all metadata is specified &lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#objectmeta-v1-meta&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+all metadata is specified &lt;a href=&#34;https://kubernetes.io/docs/reference/kubernetes-api/common-definitions/object-meta/#ObjectMeta&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;&lt;em&gt;spec&lt;/em&gt;. The specification of the desired behaviour of the pod.
-The list of the possible specifications can be found &lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#podspec-v1-core&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+The list of the possible specifications can be found &lt;a href=&#34;https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/pod-v1/#PodSpec&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Essentially, the previous specification defines a pod with a container that is launched from the
-image &lt;code&gt;nginx:alpine&lt;/code&gt; (a Web server) and listens to ports 80 and 443.&lt;/p&gt;
+image &lt;code&gt;nginx:alpine&lt;/code&gt; (a Web server) and listens to port 80.&lt;/p&gt;
 &lt;div class=&#34;infobox activitybox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
 &lt;ul&gt;
@@ -15562,7 +15562,7 @@ spec:
       app: web-pod&lt;/code&gt;&lt;/pre&gt;
 &lt;div class=&#34;infobox curiosity&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Good to know&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;A &lt;strong&gt;LoadBalancer&lt;/strong&gt; service is a &lt;strong&gt;NodePort&lt;/strong&gt; service (cf slides 64-65 in &lt;a href=&#34;https://centralesupelec.edunao.com/pluginfile.php/219286/mod_resource/content/4/cccs-lecture03-en.pdf&#34; target=&#34;_blank&#34;&gt;Lecture 3&lt;/a&gt;)
+&lt;p&gt;A &lt;strong&gt;LoadBalancer&lt;/strong&gt; service is a &lt;strong&gt;NodePort&lt;/strong&gt; service.
 that offers load balancing capabilities.
 It is intended to expose an IP address
 that client applications (external to the Kubernetes cluster) can use to access
@@ -15573,8 +15573,7 @@ the service.&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
 &lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-12&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.2  &lt;/strong&gt;&lt;/span&gt;
-What is the field &lt;code&gt;selector&lt;/code&gt; in the definition of the service?
-(cf slide 56-57 in &lt;a href=&#34;https://centralesupelec.edunao.com/pluginfile.php/219286/mod_resource/content/4/cccs-lecture03-en.pdf&#34; target=&#34;_blank&#34;&gt;Lecture 3&lt;/a&gt;)&lt;/p&gt;
+What is the field &lt;code&gt;selector&lt;/code&gt; in the definition of the service?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -15643,7 +15642,7 @@ if ever, need to play directly with pods.
 Instead, we can resort to higher-level objects, called &lt;strong&gt;Controllers&lt;/strong&gt;, for an easier
 definition of the &lt;strong&gt;desired state&lt;/strong&gt; of the application itself.
 The type of the controller that we need to use depends on the nature of the service
-itself: &lt;strong&gt;stateless&lt;/strong&gt; or &lt;strong&gt;stateful&lt;/strong&gt; (slides 16 of &lt;a href=&#34;https://centralesupelec.edunao.com/pluginfile.php/219286/mod_resource/content/4/cccs-lecture03-en.pdf&#34; target=&#34;_blank&#34;&gt;Lecture 3&lt;/a&gt;.).&lt;/p&gt;
+itself: &lt;strong&gt;stateless&lt;/strong&gt; or &lt;strong&gt;stateful&lt;/strong&gt;.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -15663,7 +15662,7 @@ that are launched across several nodes in the Kubernetes cluster.&lt;/p&gt;
 &lt;div class=&#34;infobox curiosity&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Deployment and ReplicaSet&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Deployments and ReplicaSets have been introduced
-in slides 51-52-53 of the &lt;a href=&#34;https://centralesupelec.edunao.com/pluginfile.php/219286/mod_resource/content/4/cccs-lecture03-en.pdf&#34; target=&#34;_blank&#34;&gt;third lecture&lt;/a&gt;.&lt;/p&gt;
+in Lecture 3.&lt;/p&gt;
 &lt;/div&gt;
 &lt;p&gt;We here define the specification of
 a Deployment corresponding to the service &lt;code&gt;web&lt;/code&gt;.&lt;/p&gt;
@@ -15837,13 +15836,12 @@ spec:
 &lt;p&gt;By now you shouldn’t have any problem understanding the meaning of the fields
 in this specification.
 The fields are also
-documented in the &lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#statefulsetspec-v1-apps&#34; target=&#34;_blank&#34;&gt;official Kubernetes documentation&lt;/a&gt;.
+documented in the &lt;a href=&#34;https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/stateful-set-v1/#StatefulSetSpec&#34; target=&#34;_blank&#34;&gt;official Kubernetes documentation&lt;/a&gt;.
 Two points are worth a comment.
 First, the specification of a &lt;code&gt;StatefulSet&lt;/code&gt; needs an attribute &lt;code&gt;serviceName&lt;/code&gt; that indicates the name
 of the service that is responsible for the network identify of the pods in the set.
-That attribute is mandatory.
-This is &lt;a href=&#34;https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#limitations&#34; target=&#34;_blank&#34;&gt;listed as one of the limitations&lt;/a&gt; of a &lt;code&gt;StatefulSet&lt;/code&gt;.
-Another novelty is the field &lt;code&gt;volumeClaimTemplates&lt;/code&gt;.
+That attribute is mandatory.&lt;/p&gt;
+&lt;p&gt;Another novelty is the field &lt;code&gt;volumeClaimTemplates&lt;/code&gt;.
 It describes additional constraints on the volumes defined in the specification, in this case the volume
 named &lt;code&gt;pets-data&lt;/code&gt; (where PostgreSQL keeps the data). In particular, two claims are given:&lt;/p&gt;
 &lt;ul&gt;
