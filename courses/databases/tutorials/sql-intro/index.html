@@ -675,17 +675,6 @@ insert into film_actor (actor_id, film_id) values(1, 25)
 What is the reaction of the DBMS?</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>This statement should insert a new row in table <TT>film_actor</TT>,
-where the value of <TT>actor_id</TT> is 1 and the value of
-<TT>film_id</TT> is 25.</p>
-<p>The DBMS returns an error because there is already a row
-with these values and the two columns
-<TT>film_actor</TT>, <TT>film_id</TT> form the primary key.</p>
-</div>
-</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -697,17 +686,6 @@ the table <TT>Film</TT>.</p>
 <p>Execute the command. What happens?</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<PRE>
-delete from film where film_id=1
-</PRE>
-<p>The statement is rejected because there are rows in other tables
-that reference the row that we intend to delete.
-This is the effect of the foreign key constraint.</p>
-</div>
-</details>
 <!--
 ::: {.infobox .exercisebox data-latex="{exercisebox}"}
 **Exercise**
@@ -741,16 +719,6 @@ to table <TT>film</TT> coherent with the behavior observed
 in the previous exercise?</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>The foreign key linking table <TT>film_actor</TT> to table
-<TT>film</TT> is defined with the option RESTRICT on delete.
-This is coherent with the behavior that we observed
-in the previous exercise. Referenced rows cannot be deleted if
-there are still referencing rows.</p>
-</div>
-</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -769,14 +737,6 @@ WHERE  f.title='ACE GOLDFINGER'
 (columns <TT>film_id_in_table_film</TT> and <TT>film_id_in_table_film_actor</TT>).</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>The query returns the list of all actors in the film titled Ace Goldfinger.
-We note that the identifier of the film in both tables is identical (2), as it should
-because the query joins the two tables on the equality of these two values.</p>
-</div>
-</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -788,24 +748,6 @@ film ACE GOLDFINGER in table <TT>Film</TT>.</p>
 What changed? Explain in details what happened.</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>The statement to modify the <TT>film_id</TT> of the given film is as follows:</p>
-<p><TT>
-UPDATE film
-SET film_id=10000
-WHERE title=‘ACE GOLDFINGER’
-</TT></p>
-<p>After executing the same query as the previous exercise, we see that
-the identifier of the film has changed in the table <TT>film_actor</TT> too.
-This is expected, because the foreign key constraint between the
-colum <TT>film_id</TT> in table <TT>film_actor</TT> and the column
-<TT>film_id</TT> in table <TT>film</TT> has the option ON UPDATE CASCADE.
-This means that if we modify the identifier of the film in table
-<TT>film</TT>, the modification is propagated to all the referencing columns.</p>
-</div>
-</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -820,19 +762,6 @@ WHERE film_id=10000
 <p>What does it? What happens? Explain.</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>The statement intends to set the identifier of the film
-titled Ace Goldfinger (in the previous exercise we gave it the identifier 10000)
-back to its original value.
-However, we execute the statement on the table <TT>film_actor</TT>.
-The action is not allowed, as the identifier 2 does not correspond to
-any film in table <TT>film</TT>.</p>
-<p>The foreign key enforces the referential integrity constraint.
-A row cannot refer to a non-existing entity in the referenced table.</p>
-</div>
-</details>
 </div>
 <div id="basic-queries" class="section level1">
 <h1><span class="header-section-number">3</span> Basic queries</h1>
@@ -849,26 +778,6 @@ Write the following SQL queries:</p>
 </ol>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<ol style="list-style-type: decimal">
-<li><pre>
-select * 
-from customer
-</pre></li>
-<li><pre>
-select first_name, last_name 
-from customer
-</pre></li>
-<li><pre>
-select first_name, last_name 
-from customer
-where store_id=1
-</pre></li>
-</ol>
-</div>
-</details>
 </div>
 <div id="sorting-and-paginating" class="section level1">
 <h1><span class="header-section-number">4</span> Sorting and paginating</h1>
@@ -886,29 +795,6 @@ Sort by last name in ascending order and by first name in descending order.</li>
 </ol>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<ol style="list-style-type: decimal">
-<li><pre>
-select last_name, first_name 
-from customer
-order by last_name asc
-</pre></li>
-<li><pre>
-select last_name, first_name 
-from customer
-order by last_name asc, first_name DESC
-limit 100
-</pre></li>
-<li><pre>
-select first_name, last_name 
-from customer
-where store_id=1
-</pre></li>
-</ol>
-</div>
-</details>
 </div>
 <div id="aggregating-queries" class="section level1">
 <h1><span class="header-section-number">5</span> Aggregating queries</h1>
@@ -931,45 +817,6 @@ greater than or equal to 3.</p></li>
 </ol>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<ol style="list-style-type: decimal">
-<li><pre>
-select count(*) 
-from film
-</pre></li>
-<li><pre>
-select  count (distinct last_name) 
-from actor
-</pre></li>
-<li><pre>
-select sum(amount) 
-from payment
-</pre></li>
-<li><pre>
-select avg(rental_duration), min(rental_duration), max(rental_duration) 
-from film
-</pre></li>
-<li><pre>
-select film_id, count(*) as nb_actors
-from film_actor
-group by film_id
-</pre></li>
-<li><pre>
-select film_id, store_id, count(*) as nb_films
-from inventory
-group by film_id, store_id
-</pre></li>
-<li><pre>
-select film_id, store_id, count(*) as nb_films
-from inventory
-group by film_id, store_id
-having count(*) >=3
-</pre></li>
-</ol>
-</div>
-</details>
 </div>
 <div id="join-queries" class="section level1">
 <h1><span class="header-section-number">6</span> Join queries</h1>
@@ -990,51 +837,6 @@ movies in the category <em>Family</em>.</li>
 </ol>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<ol style="list-style-type: decimal">
-<li><pre>
-select first_name, last_name
-from staff join store using(store_id)
-where store_id=1
-</pre></li>
-<li><pre>
-select first_name, last_name
-from film join film_actor using(film_id) join actor using(actor_id)
-where title='ACE GOLDFINGER'
-</pre></li>
-<li><pre>
-select first_name, last_name, count(*) as nb_films
-from actor join film_actor using(actor_id)
-group by actor_id
-</pre></li>
-<li><pre>
-select first_name, last_name, count(*) as nb_films
-from actor join film_actor using(actor_id)
-group by actor_id
-order by nb_films desc
-</pre></li>
-<li><pre>
-select first_name, last_name, count(*) as nb_films
-from actor join film_actor using(actor_id)
-group by actor_id
-having count(*) >= 10
-order by nb_films desc
-</pre></li>
-<li><pre>
-select cust.customer_id, first_name, last_name, count(*) as nb_films
-from customer cust join rental using(customer_id) 
-  join inventory using(inventory_id)
-    join film_category using(film_id)
-    join category cat using(category_id)
-where cat.name='Family'
-group by customer_id
-having count(*) between 5 and 10
-</pre></li>
-</ol>
-</div>
-</details>
 </div>
 
           </div>
