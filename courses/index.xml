@@ -17898,6 +17898,167 @@ special symbols.&lt;/p&gt;
     
     <item>
       <title>MapReduce</title>
+      <link>/courses/bigdata-mds/labs/map-reduce/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/bigdata-mds/labs/map-reduce/</guid>
+      <description>
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;div id=&#34;calcul-des-moyennes&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Calcul des moyennes&lt;/h1&gt;
+&lt;p&gt;On nous donne un ensemble de données qui
+contient les mesures moyennes des températures mensuelles
+sur plusieurs années. Plus précisément, l’ensemble de données est stocké dans un fichier CSV,
+où chaque ligne correspond à une mesure mensuelle
+et les colonnes contiennent les valeurs suivantes :
+année, mois, température moyenne du mois.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;1980,1,5
+1980,2,2
+1980,3,10
+1980,4,14
+1980,5,17
+....
+1981,1,2
+1981,2,1
+1981,3,3
+1981,4,10
+....&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Nous avons l’intention d’obtenir la température moyenne pour chaque année.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.1  &lt;/strong&gt;&lt;/span&gt;
+Écrire un algorithme MapReduce qui génère des paires clé-valeur
+&lt;span class=&#34;math inline&#34;&gt;\((annee, temperature\_moyenne)\)&lt;/span&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Supposons maintenant que nous ayons un grand fichier CSV
+stocké dans un système de fichiers distribué (par exemple, HDFS),
+contenant une série de mesures au format « Année, Mois, Jour, Minute, Seconde, Température ».
+Pour certaines années, nous pouvons avoir jusqu’à une mesure par seconde.
+Comme précédemment, nous souhaitons calculer les paires clé-valeur (année, température moyenne) à l’aide d’un algorithme MapReduce.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.2  &lt;/strong&gt;&lt;/span&gt;
+Quel est le nombre maximum de mesures par an ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.3  &lt;/strong&gt;&lt;/span&gt;
+Compte tenu de la réponse à la question précédente, discutez de l’efficacité de la première implémentation de l’algorithme.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.4  &lt;/strong&gt;&lt;/span&gt;
+En fonction de la réponse à la question précédente,
+proposez une meilleure implémentation pour traiter le fichier CSV.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;common-friends&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Amis communs dans un réseau social&lt;/h1&gt;
+&lt;p&gt;Considérons un réseau social décrit par un graphe encodé dans un fichier texte.
+Chaque ligne du fichier est une liste d’identifiants séparés par des virgules.
+Par exemple, la ligne &lt;span class=&#34;math inline&#34;&gt;\(A,B,C,D\)&lt;/span&gt; signifie que &lt;span class=&#34;math inline&#34;&gt;\(A\)&lt;/span&gt; est ami avec &lt;span class=&#34;math inline&#34;&gt;\(B\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(C\)&lt;/span&gt; et &lt;span class=&#34;math inline&#34;&gt;\(D\)&lt;/span&gt;.
+Un extrait du fichier ressemble à ce qui suit :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;B,A,D
+A,D,B,C
+D,C,A,B
+C,D,A
+...&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Nous supposons que la relation d’amitié est symétrique : &lt;span class=&#34;math inline&#34;&gt;\((A, B)\)&lt;/span&gt; implique
+&lt;span class=&#34;math inline&#34;&gt;\((B, A)\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;Nous voulons obtenir la liste des amis communs pour chaque paire d’individus :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;(A, B), [D]
+(A, C), [D] 
+(A, D), [B, C] 
+(B, C), [D] 
+(B, D), [A] 
+(C, D), [A]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Comme contrainte supplémentaire, nous voulons représenter un couple une seule fois et éviter de représenter un couple symétrique.
+En d’autres termes, si nous produisons &lt;span class=&#34;math inline&#34;&gt;\((A, B)\)&lt;/span&gt;, nous ne voulons pas produire &lt;span class=&#34;math inline&#34;&gt;\((B, A)\)&lt;/span&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;
+Proposez une implémentation MapReduce pour trouver les amis communs dans un réseau social satisfaisant les contraintes données.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;calcul-de-la-moyenne-et-de-lécart-type&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Calcul de la moyenne et de l’écart-type&lt;/h1&gt;
+&lt;p&gt;Nous considérons à nouveau le grand fichier CSV
+contenant une série de mesures au format &lt;em&gt;Année, Mois, Jour, Minute, Seconde, Température&lt;/em&gt;.
+Nous souhaitons maintenant générer une série de paires clé-valeur &lt;em&gt;(année, (temperature_moy, ecart_type))&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Nous pouvons exprimer l’écart-type de &lt;span class=&#34;math inline&#34;&gt;\(n\)&lt;/span&gt; valeurs &lt;span class=&#34;math inline&#34;&gt;\(x_i\)&lt;/span&gt; (&lt;span class=&#34;math inline&#34;&gt;\(1 \leq i \leq n\)&lt;/span&gt;) avec deux équations différentes.&lt;/p&gt;
+&lt;p&gt;La première équation est la suivante :&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+\sigma = \sqrt{\frac{\sum_{i=1}^n (x_i - \overline{x})^2}{n}} 
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;La deuxième équation est la suivante :&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+\sigma = \sqrt{\overline{x^2} - \overline{x}^2} = \sqrt{\frac{\sum_{i=1}^n (x_i)^2}{n} - \Bigg(\frac{\sum_{i=1}^n x_i}{n}\Bigg)^2} 
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;
+Quelle équation de l’écart-type
+est plus appropriée dans un algorithme MapReduce ?
+Pourquoi ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.2  &lt;/strong&gt;&lt;/span&gt;
+Proposez une implémentation MapReduce pour calculer la moyenne et l’écart-type des températures pour chaque année.
+des températures pour chaque année.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;!--
+# Creating an inverted index
+
+We have  a collection of $n$ documents in a directory and we want to create 
+an **inverted index**,  one that associates each word 
+to the list of the files the word occurs in. 
+More precisely, for each word, the inverted index will 
+have a list of the names of the documents that contain the word. 
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercice**
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-8&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-8) &lt;/strong&gt;&lt;/span&gt;
+Propose a MapReduce implementation to create an inverted index over a 
+collection of documents.
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+
+
+--&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>MapReduce</title>
       <link>/courses/bigdata/tutorials/map-reduce/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>/courses/bigdata/tutorials/map-reduce/</guid>
@@ -18022,10 +18183,10 @@ propose a better implementation to handle the CSV file.&lt;/p&gt;
 Each line of the file is a list of identifiers separated by commas.
 For instance, the line &lt;span class=&#34;math inline&#34;&gt;\(A,B,C,D\)&lt;/span&gt; means that &lt;span class=&#34;math inline&#34;&gt;\(A\)&lt;/span&gt; is friend with &lt;span class=&#34;math inline&#34;&gt;\(B\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(C\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(D\)&lt;/span&gt;.
 An excerpt of the file looks like as follows:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;A,B,C,D
-B,A,D
-C,A,D
-D,A,B,C
+&lt;pre&gt;&lt;code&gt;B,A,D
+A,D,B,C
+D,C,A,B
+C,D,A
 ...&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;We suppose that the friendship relation is symmetric: &lt;span class=&#34;math inline&#34;&gt;\((A, B)\)&lt;/span&gt; implies
 &lt;span class=&#34;math inline&#34;&gt;\((B, A)\)&lt;/span&gt;.&lt;/p&gt;
