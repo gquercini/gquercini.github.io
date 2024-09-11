@@ -28,10 +28,10 @@
   
     
   
-  <meta name="description" content="Introduction to MapReduce programming.">
+  <meta name="description" content="2. Programmes Spark sur DCE">
 
   
-  <link rel="alternate" hreflang="en-us" href="/courses/bigdata-mds/labs/map-reduce/">
+  <link rel="alternate" hreflang="en-us" href="/courses/bigdata-mds/labs/spark-rdd/">
 
   
 
@@ -219,7 +219,7 @@
   <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_3.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_3.png">
 
-  <link rel="canonical" href="/courses/bigdata-mds/labs/map-reduce/">
+  <link rel="canonical" href="/courses/bigdata-mds/labs/spark-rdd/">
 
   
   
@@ -233,9 +233,9 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Gianluca Quercini">
-  <meta property="og:url" content="/courses/bigdata-mds/labs/map-reduce/">
-  <meta property="og:title" content="MapReduce | Gianluca Quercini">
-  <meta property="og:description" content="Introduction to MapReduce programming."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:url" content="/courses/bigdata-mds/labs/spark-rdd/">
+  <meta property="og:title" content="Programmes Spark sur DCE | Gianluca Quercini">
+  <meta property="og:description" content="2. Programmes Spark sur DCE"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
   
     
@@ -258,7 +258,7 @@
 
 
 
-  <title>MapReduce | Gianluca Quercini</title>
+  <title>Programmes Spark sur DCE | Gianluca Quercini</title>
 
 </head>
 
@@ -544,13 +544,13 @@
     <div id="labs-ddowncontent" class="labs-ddowncontent ddowncontent">
     <ul class="nav docs-sidenav">
       
-      <script>open_menu_on_load("labs".concat("-ddowncontent"))</script>
-      <li class="active labs">
+      
+      <li class="labs">
         <a href="/courses/bigdata-mds/labs/map-reduce/">1. MapReduce</a>
       </li>
       
-      
-      <li class="labs">
+      <script>open_menu_on_load("labs".concat("-ddowncontent"))</script>
+      <li class="active labs">
         <a href="/courses/bigdata-mds/labs/spark-rdd/">2. Programmes Spark sur DCE</a>
       </li>
       
@@ -580,8 +580,8 @@
       <article class="article">
 
         <div class="docs-article-container">
-          <div class="heading">Big Data MDS — Lab 1</div>
-          <h1>MapReduce</h1>
+          <div class="heading">Big Data MDS — Lab 2</div>
+          <h1>Programmes Spark sur DCE</h1>
           <hr>
           <div class="logo">
             
@@ -593,145 +593,249 @@
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
+<!-- ############ IMPORTANT: CHANGE THESE VALUES BEFORE ANY LAB ############ -->
+<!-- The group to which users in the cluster belong-->
+<!-- User accounts are numbered from the lower to the upper limit-->
+<!-- ############ END OF MODIFICATIONS ############ -->
 <div id="calcul-des-moyennes" class="section level1">
 <h1><span class="header-section-number">1</span> Calcul des moyennes</h1>
-<p>On nous donne un ensemble de données qui
-contient les mesures moyennes des températures mensuelles
-sur plusieurs années. Plus précisément, l’ensemble de données est stocké dans un fichier CSV,
-où chaque ligne correspond à une mesure mensuelle
-et les colonnes contiennent les valeurs suivantes :
-année, mois, température moyenne du mois.</p>
-<pre><code>1980,1,5
-1980,2,2
-1980,3,10
-1980,4,14
-1980,5,17
-....
-1981,1,2
-1981,2,1
-1981,3,3
-1981,4,10
-....</code></pre>
-<p>Nous avons l’intention d’obtenir la température moyenne pour chaque année.</p>
+<p>Nous considérons une collection de fichiers CSV contenant des mesures de température au format suivant :</p>
+<p><code>année, mois, jour, heure, minute, seconde, température</code></p>
+<p>vous pouvez trouver les fichiers dans le répertoire <code>hdfs://sar01:9000/data/temperatures/</code></p>
+<p>Voici les détails de chaque fichier :</p>
+<ul>
+<li>Le fichier <code>temperatures_86400.csv</code> contient une mesure par jour pour les années 1980 - 2018.</li>
+<li>Le fichier <code>temperatures_2880.csv</code> contient une mesure toutes les 2880 secondes pour les années 1980 - 2018.</li>
+<li>Le fichier <code>temperatures_86.csv</code> contient une mesure toutes les 86 secondes pour la seule année 1980.</li>
+<li>Le fichier <code>temperatures_10.csv</code> contient une mesure toutes les 10 secondes pour les années 1980 - 2018.</li>
+</ul>
+<div id="première-implémentation" class="section level2">
+<h2><span class="header-section-number">1.1</span> Première implémentation</h2>
+<p>Copiez le fichier <code>/usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_temperatures.py</code>
+dans votre répertoire personnel en saisissant la commande suivante :</p>
+<div align="center">
+<p><code>cp /usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_temperatures.py ./avg_temperatures_slow.py</code></p>
+</div>
+<p>Ouvrez le fichier <code>avg_temperatures_slow.py</code>.
+Le fichier contient l’implémentation de la fonction <code>avg_temperature_slow</code>
+qui:</p>
+<ul>
+<li><p>prend en arguments un RDD, dont chaque élément est une ligne du fichier donné ;</p></li>
+<li><p>renvoie un RDD, où chaque élément est une paire clé-valeur <code>(year, avg_temp)</code>.</p></li>
+</ul>
+<p>Dans le même fichier, localisez les deux variables <code>input_path</code> et <code>output-path</code>
+et écrivez le code suivant :</p>
+<pre><code>input_path = &quot;hdfs://sar01:9000/data/temperatures/&quot;
+output_path = &quot;hdfs://sar01:9000/hpdaspark24/hpdaspark24_X/&quot;</code></pre>
+<p>Remplacez <code>X</code> par le numéro correspondant à votre compte !
+<strong>N’oubliez pas le / à la fin des chemins d’accès aux fichiers !</strong></p>
+<p><strong>Faites les actions suivantes :</strong></p>
+<ul>
+<li>Exécutez le script <code>avg_temperatures_slow.py</code> en utilisantle fichier <code>temperatures_86400.csv</code> comme argument.
+Pour ce faire, utilisez la commande suivante :</li>
+</ul>
+<div align="center">
+<p><code>spark-submit --master spark://sar01:7077 avg_temperatures_slow.py temperatures_86400.csv</code></p>
+</div>
+<ul>
+<li>Vous devriez trouver la sortie du programme dans le dossier suivant :</li>
+</ul>
+<div align="center">
+<p><code>hdfs://sar01:9000/hpdaspark24/hpdaspark24_X/temperatures_86400.out</code></p>
+</div>
+<p>Tapez la commande suivante pour le vérifier :</p>
+<div align="center">
+<p><code>hdfs dfs -ls hdfs://sar01:9000/hpdaspark24/hpdaspark24_X/temperatures_86400.out</code></p>
+</div>
+<ul>
+<li>Si vous souhaitez accéder au résultat du calcul, vous pouvez exécuter la commande suivante :</li>
+</ul>
+<div align="center">
+<p><code>hdfs dfs -cat hdfs://sar01:9000/hpdaspark24/hpdaspark24_X/temperatures_86400.out/*</code></p>
+</div>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1.1  </strong></span>
-Écrire un algorithme MapReduce qui génère des paires clé-valeur
-<span class="math inline">\((annee, temperature\_moyenne)\)</span>.</p>
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1.1  </strong></span></p>
+<p>Dans la sortie que Spark affiche dans le terminal, vous devriez voir une ligne qui ressemble à la phrase suivante :</p>
+<pre><code>   INFO DAGScheduler: Job 0 finished: runJob at SparkHadoopWriter.scala:78, took 3.478220 s 
+   </code></pre>
+<ul>
+<li><p>Notez le temps d’exécution que vous avez obtenu.</p></li>
+<li><p>Exécutez le même script en utilisant le fichier <code>températures_2880.csv</code> comme argument.</p></li>
+<li><p>Quel est le temps d’exécution ? Semble-t-il raisonnable par rapport au temps d’exécution que vous avez observé auparavant ?
+Justifiez votre réponse.</p></li>
+<li><p>Exécutez le même script en utilisant le fichier <code>températures_86.csv</code> comme argument.</p></li>
+<li>Quel est le temps d’exécution ? Comment le justifiez-vous, sachant que
+les fichiers <code>temperatures_2880.csv</code> et <code>temperatures_86.csv</code> ont une taille similaire (11 Mo pour le premier, 9 Mo pour le second) ?</li>
+</ul>
 </div>
 </div>
-<p>Supposons maintenant que nous ayons un grand fichier CSV
-stocké dans un système de fichiers distribué (par exemple, HDFS),
-contenant une série de mesures au format « Année, Mois, Jour, Minute, Seconde, Température ».
-Pour certaines années, nous pouvons avoir jusqu’à une mesure par seconde.
-Comme précédemment, nous souhaitons calculer les paires clé-valeur (année, température moyenne) à l’aide d’un algorithme MapReduce.</p>
+</div>
+<div id="deuxième-implémentation" class="section level2">
+<h2><span class="header-section-number">1.2</span> Deuxième implémentation</h2>
+<p>Nous voulons mettre en œuvre une meilleure version du programme.
+Vous pouvez rédiger vos idées sur papier avant d’écrire du code.</p>
+<p>Lorsque vous êtes prêts, créez une copie du fichier <code>avg_temperatures_slow.py</code> et renommez-la en <code>avg_temperatures_fast.py</code>, avec la commande suivante :</p>
+<div align="center">
+<p><code>cp ./avg_temperatures_slow.py ./avg_temperatures_fast.py</code></p>
+</div>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 1.2  </strong></span>
-Quel est le nombre maximum de mesures par an ?</p>
+Ouvrez le fichier et implémentez la fonction <code>avg_temperature_fast</code>.</p>
+<p><strong>Notez que</strong> vous devez commenter l’appel à la fonction <code>avg_temperature_slow()</code> et décommenter l’appel à la fonction <code>avg_temperature_fast()</code> à la fin du fichier.</p>
 </div>
 </div>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 1.3  </strong></span>
-Compte tenu de la réponse à la question précédente, discutez de l’efficacité de la première implémentation de l’algorithme.</p>
-</div>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercice</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 1.4  </strong></span>
-En fonction de la réponse à la question précédente,
-proposez une meilleure implémentation pour traiter le fichier CSV.</p>
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 1.3  </strong></span></p>
+<ul>
+<li><p>Exécutez le script <code>avg_temperatures_fast.py</code> en utilisant le fichier <code>temperatures_86.csv</code> comme argument.</p></li>
+<li><p>Quel est le temps d’exécution ? Comparez-le avec le temps d’exécution obtenu dans l’exercice précédent et commentez la différence.</p></li>
+<li><p>Exécutez le même script en utilisant le fichier <code>températures_10.csv</code> (3 Go !) comme argument.
+Pensez-vous que le programme prend trop de temps ? Justifiez votre réponse.</p></li>
+</ul>
 </div>
 </div>
 </div>
-<div id="common-friends" class="section level1">
+</div>
+<div id="amis-communs-dans-un-réseau-social" class="section level1">
 <h1><span class="header-section-number">2</span> Amis communs dans un réseau social</h1>
 <p>Considérons un réseau social décrit par un graphe encodé dans un fichier texte.
 Chaque ligne du fichier est une liste d’identifiants séparés par des virgules.
-Par exemple, la ligne <span class="math inline">\(A,B,C,D\)</span> signifie que <span class="math inline">\(A\)</span> est ami avec <span class="math inline">\(B\)</span>, <span class="math inline">\(C\)</span> et <span class="math inline">\(D\)</span>.
+Par exemple, la ligne <span class="math inline">\(A,D,C,B\)</span> signifie que <span class="math inline">\(A\)</span> est ami avec <span class="math inline">\(D\)</span>, <span class="math inline">\(C\)</span> et <span class="math inline">\(B\)</span>.
 Un extrait du fichier ressemble à ce qui suit :</p>
-<pre><code>B,A,D
-A,D,B,C
-D,C,A,B
-C,D,A
+<pre><code>B,D,A
+A,D,C,B
+D,A,C,B
+C,A,D
 ...</code></pre>
 <p>Nous supposons que la relation d’amitié est symétrique : <span class="math inline">\((A, B)\)</span> implique
-<span class="math inline">\((B, A)\)</span>.</p>
-<p>Nous voulons obtenir la liste des amis communs pour chaque paire d’individus :</p>
-<pre><code>(A, B), [D]
-(A, C), [D] 
+(B, A)$.</p>
+<p><strong>Nous voulons obtenir la liste des amis communs pour chaque paire d’individus</strong> :</p>
+<pre><code>(B, C), [A, D] 
 (A, D), [B, C] 
-(B, C), [D] 
+(C, D), [A]
+(A, C), [D] 
 (B, D), [A] 
-(C, D), [A]</code></pre>
+(A, B), [D]</code></pre>
 <p>Comme contrainte supplémentaire, nous voulons représenter un couple une seule fois et éviter de représenter un couple symétrique.
 En d’autres termes, si nous produisons <span class="math inline">\((A, B)\)</span>, nous ne voulons pas produire <span class="math inline">\((B, A)\)</span>.</p>
+<p>Nous utilisons les fichiers suivants, disponibles dans le dossier <code>hdfs://sar01:9000/data/social-network/</code>:</p>
+<ul>
+<li><p><code>sn_tiny.csv</code>. Petit réseau social, que vous pouvez utiliser pour tester votre implémentation.</p></li>
+<li><p><code>sn_10k_100k.csv</code>. Réseau social avec <span class="math inline">\(10^4\)</span> individus et <span class="math inline">\(10^5\)</span> liens.</p></li>
+<li><p><code>sn_100k_100k.csv</code>. Réseau social avec <span class="math inline">\(10^5\)</span> individus et <span class="math inline">\(10^5\)</span> liens.</p></li>
+<li><p><code>sn_1k_100k.csv</code>. Réseau social avec <span class="math inline">\(10^3\)</span> individus et <span class="math inline">\(10^5\)</span> liens.</p></li>
+<li><p><code>sn_1m_1m.csv</code>. Réseau social avec <span class="math inline">\(10^6\)</span> individus et <span class="math inline">\(10^6\)</span> liens.</p></li>
+</ul>
+<div id="implémentation" class="section level2">
+<h2><span class="header-section-number">2.1</span> Implémentation</h2>
+<p><strong>Obtenez un squelette du code à l’aide de la commande suivante :</strong></p>
+<div align="center">
+<p><code>cp /usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_common_friends.py .</code></p>
+</div>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 2.1  </strong></span>
-Proposez une implémentation MapReduce pour trouver les amis communs dans un réseau social satisfaisant les contraintes données.</p>
+<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 2.1  </strong></span></p>
+<ul>
+<li><p>Écrivez une implémentation qui utilise la fonction <code>groupByKey()</code>.</p></li>
+<li><p>Écrivez une implémentation qui utilise la fonction <code>reduceByKey()</code>.</p></li>
+<li><p>Testez les deux implémentations sur le fichier <code>sn_tiny.csv</code>.</p></li>
+</ul>
 </div>
 </div>
 </div>
-<div id="calcul-de-la-moyenne-et-de-lécart-type" class="section level1">
-<h1><span class="header-section-number">3</span> Calcul de la moyenne et de l’écart-type</h1>
-<p>Nous considérons à nouveau le grand fichier CSV
-contenant une série de mesures au format <em>Année, Mois, Jour, Minute, Seconde, Température</em>.
-Nous souhaitons maintenant générer une série de paires clé-valeur <em>(année, (temperature_moy, ecart_type))</em>.</p>
-<p>Nous pouvons exprimer l’écart-type de <span class="math inline">\(n\)</span> valeurs <span class="math inline">\(x_i\)</span> (<span class="math inline">\(1 \leq i \leq n\)</span>) avec deux équations différentes.</p>
-<p>La première équation est la suivante :</p>
-<p><span class="math display">\[
-\sigma = \sqrt{\frac{\sum_{i=1}^n (x_i - \overline{x})^2}{n}} 
-\]</span></p>
-<p>La deuxième équation est la suivante :</p>
-<p><span class="math display">\[
+<div id="tests-et-mesures-de-performance" class="section level2">
+<h2><span class="header-section-number">2.2</span> Tests et mesures de performance</h2>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 2.2  </strong></span></p>
+<ul>
+<li><p>Exécutez les deux implémentations sur les autres fichiers.</p></li>
+<li><p>Remplissez un tableau dans lequel vous indiquez : le nom et la taille de chaque fichier et
+les temps d’exécution mesurés des deux implémentations.</p></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="degré-minimum-maximum-et-moyen" class="section level2">
+<h2><span class="header-section-number">2.3</span> Degré minimum, maximum et moyen</h2>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 2.3  </strong></span></p>
+<ol style="list-style-type: decimal">
+<li><p>Ajoutez une fonction au fichier <code>template_common_friends.py</code> qui renvoie un tuple contenant le degré minimum, maximum et moyen d’un noeud dans le réseau social.
+Vous devez utiliser des RDDs pour le faire, <strong>n’essayez pas d’utiliser la fonction <code>collect()</code> pour ensuite
+calculer les valeurs sur des listes Python</strong>.</p></li>
+<li><p>Exécutez la fonction pour tous les fichiers donnés.</p></li>
+<li><p>Complétez le tableau que vous avez créé dans l’exercice précédent en ajoutant les valeurs suivantes :
+le nombre minimum, maximum et moyen d’amis pour chaque individu.</p></li>
+</ol>
+</div>
+</div>
+</div>
+<div id="analyses-de-performance" class="section level2">
+<h2><span class="header-section-number">2.4</span> Analyses de performance</h2>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 2.4  </strong></span></p>
+<ul>
+<li><p>Nous supposons que chaque nœud a un nombre d’amis égal au nombre moyen d’amis.
+Calculez (sur papier, pas besoin d’écrire un code pour cela) le nombre de paires intermédiaires <span class="math inline">\(((A, B), X)\)</span> générées par votre code.</p></li>
+<li><p>Complétez le tableau en écrivant le nombre de paires intermédiaires pour chaque fichier.</p></li>
+<li><p>Tracez trois graphiques, où l’axe des <span class="math inline">\(y\)</span> représente les temps d’exécution du programme et l’axe des <span class="math inline">\(x\)</span> représente respectivement
+le nombre de paires intermédiaires, le degré moyen et la taille du fichier.</p></li>
+<li>Quels graphiques prédisent le mieux l’évolution du temps de calcul ?</li>
+</ul>
+</div>
+</div>
+<!-- # Average and standard deviation
+
+We use the same files as in the first question.
+Our objective is to write a Spark program that produces 
+triples $(y, t_{\mu}, t_{\sigma})$, where $y$, $t_{\mu}$ and 
+$t_{\sigma}$ are the year, the average temperature in the year and the 
+standard deviation respectively.
+
+We can express the standard deviation of $n$ values $x_1 \ldots x_n$ with the following formula:
+
+$$
 \sigma = \sqrt{\overline{x^2} - \overline{x}^2} = \sqrt{\frac{\sum_{i=1}^n (x_i)^2}{n} - \Bigg(\frac{\sum_{i=1}^n x_i}{n}\Bigg)^2} 
-\]</span></p>
-<div class="infobox exercisebox">
-<p><strong>Exercice</strong></p>
+$$
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 3.1  </strong></span>
-Quelle équation de l’écart-type
-est plus appropriée dans un algorithme MapReduce ?
-Pourquoi ?</p>
-</div>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercice</strong></p>
+Type the following command to get a code template:
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 3.2  </strong></span>
-Proposez une implémentation MapReduce pour calculer la moyenne et l’écart-type des températures pour chaque année.
-des températures pour chaque année.</p>
+<div align='center'>
+``
+cp /usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_temperatures.py  ./avg_stddev_temp.py
+``
 </div>
-</div>
-<!--
-# Creating an inverted index
-
-We have  a collection of $n$ documents in a directory and we want to create 
-an **inverted index**,  one that associates each word 
-to the list of the files the word occurs in. 
-More precisely, for each word, the inverted index will 
-have a list of the names of the documents that contain the word. 
 
 ::: {.infobox .exercisebox data-latex="{exercisebox}"}
 **Exercice**
 
+
 \BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-8"><strong>(\#exr:unnamed-chunk-8) </strong></span>
-Propose a MapReduce implementation to create an inverted index over a 
-collection of documents.
+
+* Define a new function ``avg_stddev_temperature`` in file ``avg_stddev_temp.py``.
+   
+* Execute the script and observe the results.
+
 </div>\EndKnitrBlock{exercise}
 
 :::
@@ -739,7 +843,8 @@ collection of documents.
 
 
 
--->
+ -->
+</div>
 </div>
 
           </div>
