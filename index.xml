@@ -19084,11 +19084,12 @@ special symbols.&lt;/p&gt;
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>/courses/bigdata-mds/labs/map-reduce/</guid>
       <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
 &lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
-&lt;div id=&#34;calcul-des-moyennes&#34; class=&#34;section level1&#34;&gt;
+&lt;div id=&#34;calcul-des-moyennes&#34; class=&#34;section level1&#34; number=&#34;1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Calcul des moyennes&lt;/h1&gt;
 &lt;p&gt;On nous donne un ensemble de données qui
 contient les mesures moyennes des températures mensuelles
@@ -19098,12 +19099,13 @@ et les colonnes contiennent les valeurs suivantes :
 année, mois, température moyenne du mois.&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;1980,1,5
 1980,2,2
+1981,1,2
+1981,2,1
+....
 1980,3,10
 1980,4,14
 1980,5,17
 ....
-1981,1,2
-1981,2,1
 1981,3,3
 1981,4,10
 ....&lt;/code&gt;&lt;/pre&gt;
@@ -19117,9 +19119,21 @@ année, mois, température moyenne du mois.&lt;/p&gt;
 &lt;span class=&#34;math inline&#34;&gt;\((annee, temperature\_moyenne)\)&lt;/span&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;def map(line):
+    values = line.split(&amp;quot;,&amp;quot;)
+    return (values[0], float(values[-1]))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;def reduce(year, temperatures_in_year):
+    return (year, sum(temperatures_in_year) / len(temperatures_in_year))&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;Supposons maintenant que nous ayons un grand fichier CSV
 stocké dans un système de fichiers distribué (par exemple, HDFS),
-contenant une série de mesures au format « Année, Mois, Jour, Minute, Seconde, Température ».
+contenant une série de mesures au format « Année,Mois,Jour,Heure,Minute,Seconde,Température ».
 Pour certaines années, nous pouvons avoir jusqu’à une mesure par seconde.
 Comme précédemment, nous souhaitons calculer les paires clé-valeur (année, température moyenne) à l’aide d’un algorithme MapReduce.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -19130,6 +19144,17 @@ Comme précédemment, nous souhaitons calculer les paires clé-valeur (année, t
 Quel est le nombre maximum de mesures par an ?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Comme nous pouvons avoir jusqu’à une mesure par seconde, le nombre maximum de mesures &lt;span class=&#34;math inline&#34;&gt;\(M_{max}\)&lt;/span&gt; pour une année est donné par la formule suivante :&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+M_{max} = 365 \times 24 \times 60 \times 60 \approx 31.5 \times 10^6
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
 
@@ -19138,6 +19163,18 @@ Quel est le nombre maximum de mesures par an ?&lt;/p&gt;
 Compte tenu de la réponse à la question précédente, discutez de l’efficacité de la première implémentation de l’algorithme.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Étant donné qu’il peut y avoir jusqu’à 31 millions de valeurs
+associées à une clé, le goulot d’étranglement du calcul serait l’opération de shuffle, puisque nous devons copier un grand nombre de paires
+(clé, valeur) des mappers vers les reducers.&lt;/p&gt;
+&lt;p&gt;De plus, un reducer peut avoir à
+boucler sur une énorme liste de valeurs afin de calculer leur moyenne.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
 
@@ -19147,8 +19184,36 @@ En fonction de la réponse à la question précédente,
 proposez une meilleure implémentation pour traiter le fichier CSV.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;La fonction &lt;code&gt;map()&lt;/code&gt; ne change pas par rapport à l’exercice précédent.&lt;/p&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;def map(line):
+    values = line.split(&amp;quot;,&amp;quot;)
+    return (values[0], float(values[-1])) &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Maintenant on code la fonction &lt;code&gt;combine()&lt;/code&gt; qui agira sur les couples clé-valeur renvoyées par
+chaque tâche Map.
+Concrètement, lorsqu’une tâche Map termine d’appliquer la fonction &lt;code&gt;map()&lt;/code&gt; sur toutes les lignes
+de son bloc, une opération de shuffle est réalisée pour rassembler toutes les valeurs à la clé correspondante.
+Ainsi, la fonction &lt;code&gt;combine()&lt;/code&gt; prend en argument un couple, dont la clé (une année) est associée à la liste de toutes ses valeurs (les températures de l’année).
+La fonction renvoie un couple dont la clé représente toujours une année, mais la valeur est, elle-même, un couple, dont le premier élément est la somme des
+températures sur l’année et le deuxième élément est la longueur de la liste des températures.&lt;/p&gt;
+&lt;p&gt;Ce faisant, on enverra aux reducers seulement un couple pour chaque année, réduisant ainsi le nombre de données qui seront transmises via le réseau.&lt;/p&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;def combine(year, temperatures_in_year):
+    return (year, (sum(temperatures_in_year), len(temperatures_in_year)))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;La fonction &lt;code&gt;reduce()&lt;/code&gt; prend en arguments un couple, dont la clé représente une année et la valeur est une liste de couples reçues après l’étape de
+&lt;code&gt;combine()&lt;/code&gt;. Il faudra ainsi sommer toutes les températures et toutes les longueurs, et ensuite calculer la moyenne.&lt;/p&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;def reduce(year, sum_len_tuples):
+    sum_temps = sum(s for (s, _) in sum_len_tuples)
+    nb_temps = sum(l for (_, l) in sum_len_tuples)
+        
+    return (year, sum_temps/nb_temps)&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;div id=&#34;common-friends&#34; class=&#34;section level1&#34;&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;common-friends&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Amis communs dans un réseau social&lt;/h1&gt;
 &lt;p&gt;Considérons un réseau social décrit par un graphe encodé dans un fichier texte.
 Chaque ligne du fichier est une liste d’identifiants séparés par des virgules.
@@ -19178,8 +19243,29 @@ En d’autres termes, si nous produisons &lt;span class=&#34;math inline&#34;&gt
 Proposez une implémentation MapReduce pour trouver les amis communs dans un réseau social satisfaisant les contraintes données.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Le résultat de notre algorithme doit être une une collection de couples,
+dont le premier élément représente un couple d’individus et le deuxième élément représente la liste des amis communs à ces individus.&lt;/p&gt;
+&lt;p&gt;On en déduit qu’il faudrait choisir un couple d’individus en tant que clé.&lt;/p&gt;
+&lt;p&gt;Or, la fonction &lt;code&gt;map()&lt;/code&gt; agit ligne par ligne. La question que nous devons nous poser est la suivante :
+pouvons-nous déduire une information à propos d’amis communs entre deux individus?&lt;/p&gt;
+&lt;p&gt;Prenons l’example de la ligne : A,D,B,C.
+À partir de cette ligne, nous savons que A est l’ami commun à tous les couples de ses amis : (B, D), (C, D) et (B, C).&lt;/p&gt;
+&lt;p&gt;Cela nous indique comment implémenter la fonction &lt;code&gt;map()&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;def map(line):
+    values = line.split(&amp;quot;,&amp;quot;)
+    return [((x, y), values[0]) for x in values[1:] for y in values[1:] if x &amp;lt; y] &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;À noter que la condition &lt;code&gt;x&amp;lt;y&lt;/code&gt; nous garantit que nous ne produirons jamais de couples symétriques.&lt;/p&gt;
+&lt;p&gt;La phase de shuffle associera ensuite à chaque couple d’individus tous leurs amis communs.
+Ceci étant déjà le résultat voulu, nous n’avons pas besoin de coder une fonction &lt;code&gt;reduce()&lt;/code&gt; (fonction identité).&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;calcul-de-la-moyenne-et-de-lécart-type&#34; class=&#34;section level1&#34;&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;calcul-de-la-moyenne-et-de-lécart-type&#34; class=&#34;section level1&#34; number=&#34;3&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Calcul de la moyenne et de l’écart-type&lt;/h1&gt;
 &lt;p&gt;Nous considérons à nouveau le grand fichier CSV
 contenant une série de mesures au format &lt;em&gt;Année, Mois, Jour, Minute, Seconde, Température&lt;/em&gt;.
@@ -19187,11 +19273,11 @@ Nous souhaitons maintenant générer une série de paires clé-valeur &lt;em&gt;
 &lt;p&gt;Nous pouvons exprimer l’écart-type de &lt;span class=&#34;math inline&#34;&gt;\(n\)&lt;/span&gt; valeurs &lt;span class=&#34;math inline&#34;&gt;\(x_i\)&lt;/span&gt; (&lt;span class=&#34;math inline&#34;&gt;\(1 \leq i \leq n\)&lt;/span&gt;) avec deux équations différentes.&lt;/p&gt;
 &lt;p&gt;La première équation est la suivante :&lt;/p&gt;
 &lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
-\sigma = \sqrt{\frac{\sum_{i=1}^n (x_i - \overline{x})^2}{n}} 
+\sigma = \sqrt{\frac{\sum_{i=1}^n (x_i - \overline{x})^2}{n}}
 \]&lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;La deuxième équation est la suivante :&lt;/p&gt;
 &lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
-\sigma = \sqrt{\overline{x^2} - \overline{x}^2} = \sqrt{\frac{\sum_{i=1}^n (x_i)^2}{n} - \Bigg(\frac{\sum_{i=1}^n x_i}{n}\Bigg)^2} 
+\sigma = \sqrt{\overline{x^2} - \overline{x}^2} = \sqrt{\frac{\sum_{i=1}^n (x_i)^2}{n} - \Bigg(\frac{\sum_{i=1}^n x_i}{n}\Bigg)^2}
 \]&lt;/span&gt;&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
@@ -19203,15 +19289,42 @@ est plus appropriée dans un algorithme MapReduce ?
 Pourquoi ?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;La deuxième équation est plus appropriée car elle permet de calculer la somme des éléments et le carré des éléments pas à pas
+en utilisant conjointement &lt;code&gt;map()&lt;/code&gt; et &lt;code&gt;combine()&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Au contraire, si nous utilisons la première équation, nous devons d’abord calculer la moyenne et ensuite l’utiliser pour calculer la variance.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
 &lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.2  &lt;/strong&gt;&lt;/span&gt;
-Proposez une implémentation MapReduce pour calculer la moyenne et l’écart-type des températures pour chaque année.
-des températures pour chaque année.&lt;/p&gt;
+Proposez une implémentation MapReduce pour calculer la moyenne et l’écart-type des températures pour chaque année.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;def map(line):
+    values = line.split(&amp;quot;,&amp;quot;)
+    return (values[0], float(values[-1])) &lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;def combine(year, temperatures_in_year):
+    return (year, (sum(temperatures_in_year), sum(x**2 for x in temperatures_in_year), len(temperatures_in_year)))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;def reduce(year, sum_len_tuples):
+    sum_temps = sum(s for (s, _, _) in sum_len_tuples)
+    sum_sq_temps = sum(sq for (_, sq, _) in sum_len_tuples)
+    nb_temps = sum(l for (_, _, l) in sum_len_tuples)
+        
+    return (year, (sum_temps/nb_temps, math.sqrt(sum_sq_temps/nb_temps - (sum_temps/nb_temps)**2)))&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;!--
 # Creating an inverted index
 
@@ -19233,6 +19346,32 @@ collection of documents.
 
 
 
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+The input to the map will be a key-value pair, where 
+the key is the name of a file $f$ and the value is the 
+content $C$ of the file.
+
+map: $(f, C) \rightarrow [(w, f)\ \forall w \in C]$
+
+reduce: $(w, L) \rightarrow (w, L)$
+
+where $L$ is the list of the files containing the word $w$.
+
+We note that the reduce function is the identity.
+
+Note also that in the map function we can add instructions 
+to preprocess the text. For example, we can eliminate some words
+that are not useful in the index (e.g., the stopwords) or remove 
+special symbols.
+
+:::
+
+&lt;/details&gt;
+
 
 --&gt;
 &lt;/div&gt;
@@ -19245,11 +19384,12 @@ collection of documents.
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>/courses/bigdata/tutorials/map-reduce/</guid>
       <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
 &lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
-&lt;div id=&#34;computing-averages&#34; class=&#34;section level1&#34;&gt;
+&lt;div id=&#34;computing-averages&#34; class=&#34;section level1&#34; number=&#34;1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Computing averages&lt;/h1&gt;
 &lt;p&gt;We are given a dataset that
 contains the average monthly
@@ -19281,15 +19421,15 @@ Write a MapReduce algorithm that generates key-value pairs
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
 &lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;map: &lt;span class=&#34;math inline&#34;&gt;\((year, month, temperature) \rightarrow (year, temperature)\)&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;reduce: &lt;span class=&#34;math inline&#34;&gt;\((year, temps) \rightarrow\)&lt;/span&gt; &lt;span class=&#34;math inline&#34;&gt;\((year, sum(temps)/len(temps))\)&lt;/span&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(temps\)&lt;/span&gt; is the list of all temperatures in the same &lt;span class=&#34;math inline&#34;&gt;\(year\)&lt;/span&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(sum(temps)\)&lt;/span&gt; sums all the elements in the list &lt;span class=&#34;math inline&#34;&gt;\(temps\)&lt;/span&gt;.&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(len(temps)\)&lt;/span&gt; gives the length of the list &lt;span class=&#34;math inline&#34;&gt;\(temps\)&lt;/span&gt;.&lt;/li&gt;
-&lt;/ul&gt;
+&lt;p&gt;def map(line):
+values = line.split(“,”)
+yield (values[0], float(values[2]))&lt;/p&gt;
+&lt;p&gt;def reduce(year, temperatures_in_year):
+return (year, sum(temperatures_in_year) / len(temperatures_in_year))&lt;/p&gt;
 &lt;/div&gt;
 &lt;/details&gt;
 &lt;p&gt;Suppose now that we have a large CSV file
@@ -19307,12 +19447,14 @@ What is the maximum number of measurements in a year?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
 &lt;div class=&#34;infobox exosolution&#34;&gt;
 &lt;p&gt;Since we can have up to one measurement per second, the maximum number of
 measurements &lt;span class=&#34;math inline&#34;&gt;\(M_{max}\)&lt;/span&gt; for a certain year is given by the following formula:&lt;/p&gt;
 &lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
-M_{max} = 365 \times 24 \times 60 \times 60 \approx 31.5 \times 10^6 
+M_{max} = 365 \times 24 \times 60 \times 60 \approx 31.5 \times 10^6
 \]&lt;/span&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/details&gt;
@@ -19326,7 +19468,9 @@ of the first implementation of the algorithm.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
 &lt;div class=&#34;infobox exosolution&#34;&gt;
 &lt;p&gt;Since there might be up to 31 million values
 associated with a key, the bottleneck of the computation would be
@@ -19346,7 +19490,9 @@ propose a better implementation to handle the CSV file.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
 &lt;div class=&#34;infobox exosolution&#34;&gt;
 &lt;p&gt;map: &lt;span class=&#34;math inline&#34;&gt;\((year, mo, d, mi, sec, temperature) \rightarrow (year, temperature)\)&lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;combine: &lt;span class=&#34;math inline&#34;&gt;\((year, temps) \rightarrow\)&lt;/span&gt; &lt;span class=&#34;math inline&#34;&gt;\((year, (sum(temps), len(temps)))\)&lt;/span&gt;&lt;/p&gt;
@@ -19359,7 +19505,7 @@ propose a better implementation to handle the CSV file.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/details&gt;
 &lt;/div&gt;
-&lt;div id=&#34;common-friends&#34; class=&#34;section level1&#34;&gt;
+&lt;div id=&#34;common-friends&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Common friends in a social network&lt;/h1&gt;
 &lt;p&gt;Consider a social network described by a graph encoded in a text file.
 Each line of the file is a list of identifiers separated by commas.
@@ -19392,7 +19538,9 @@ social network satisifying the given constraints.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
 &lt;div class=&#34;infobox exosolution&#34;&gt;
 &lt;p&gt;map: &lt;span class=&#34;math inline&#34;&gt;\((x, F) \rightarrow [((u, v), x)\ \forall (u, v) \in F\ |\ u &amp;lt; v ]\)&lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;reduce: &lt;span class=&#34;math inline&#34;&gt;\([(u, v), LCF] \rightarrow [(u, v), LCF]\)&lt;/span&gt;&lt;/p&gt;
@@ -19406,7 +19554,7 @@ social network satisifying the given constraints.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/details&gt;
 &lt;/div&gt;
-&lt;div id=&#34;computing-average-and-standard-deviation&#34; class=&#34;section level1&#34;&gt;
+&lt;div id=&#34;computing-average-and-standard-deviation&#34; class=&#34;section level1&#34; number=&#34;3&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Computing average and standard deviation&lt;/h1&gt;
 &lt;p&gt;We consider again the large CSV file
 with a series of measurements in the format “Year, Month, Day, Minute, Second, Temperature”.
@@ -19415,11 +19563,11 @@ We now intend to generate a series of key-value pairs (year, (avg_temperature, s
 equations.&lt;/p&gt;
 &lt;p&gt;The first equation is as follows:&lt;/p&gt;
 &lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
-\sigma = \sqrt{\frac{\sum_{i=1}^n (x_i - \overline{x})^2}{n}} 
+\sigma = \sqrt{\frac{\sum_{i=1}^n (x_i - \overline{x})^2}{n}}
 \]&lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;The second equation is as follows:&lt;/p&gt;
 &lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
-\sigma = \sqrt{\overline{x^2} - \overline{x}^2} = \sqrt{\frac{\sum_{i=1}^n (x_i)^2}{n} - \Bigg(\frac{\sum_{i=1}^n x_i}{n}\Bigg)^2} 
+\sigma = \sqrt{\overline{x^2} - \overline{x}^2} = \sqrt{\frac{\sum_{i=1}^n (x_i)^2}{n} - \Bigg(\frac{\sum_{i=1}^n x_i}{n}\Bigg)^2}
 \]&lt;/span&gt;&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
@@ -19432,7 +19580,9 @@ Why?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
 &lt;div class=&#34;infobox exosolution&#34;&gt;
 &lt;p&gt;The second equation is more appropriate because it allows the computation
 of the sum of the elements and of the square of the elements step by step
@@ -19451,7 +19601,9 @@ deviation of the temperatures for each year.
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
 &lt;div class=&#34;infobox exosolution&#34;&gt;
 &lt;p&gt;map: &lt;span class=&#34;math inline&#34;&gt;\((year, mo, d, mi, sec, temperature) \rightarrow (year, temperature)\)&lt;/span&gt;&lt;/p&gt;
 &lt;p&gt;combine: &lt;span class=&#34;math inline&#34;&gt;\((year, T) \rightarrow\)&lt;/span&gt; &lt;span class=&#34;math inline&#34;&gt;\((year, (sum(T), sum(T^2), len(T)))\)&lt;/span&gt;&lt;/p&gt;

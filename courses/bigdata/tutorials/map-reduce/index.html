@@ -626,11 +626,12 @@
 
           <div class="article-style">
             
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<div id="computing-averages" class="section level1">
+<div id="computing-averages" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> Computing averages</h1>
 <p>We are given a dataset that
 contains the average monthly
@@ -662,15 +663,15 @@ Write a MapReduce algorithm that generates key-value pairs
 </div>
 </div>
 <details>
-<p><summary>Solution</summary></p>
+<summary>
+Solution
+</summary>
 <div class="infobox exosolution">
-<p>map: <span class="math inline">\((year, month, temperature) \rightarrow (year, temperature)\)</span></p>
-<p>reduce: <span class="math inline">\((year, temps) \rightarrow\)</span> <span class="math inline">\((year, sum(temps)/len(temps))\)</span></p>
-<ul>
-<li><span class="math inline">\(temps\)</span> is the list of all temperatures in the same <span class="math inline">\(year\)</span>.</li>
-<li><span class="math inline">\(sum(temps)\)</span> sums all the elements in the list <span class="math inline">\(temps\)</span>.</li>
-<li><span class="math inline">\(len(temps)\)</span> gives the length of the list <span class="math inline">\(temps\)</span>.</li>
-</ul>
+<p>def map(line):
+values = line.split(“,”)
+yield (values[0], float(values[2]))</p>
+<p>def reduce(year, temperatures_in_year):
+return (year, sum(temperatures_in_year) / len(temperatures_in_year))</p>
 </div>
 </details>
 <p>Suppose now that we have a large CSV file
@@ -688,12 +689,14 @@ What is the maximum number of measurements in a year?</p>
 </div>
 </div>
 <details>
-<p><summary>Solution</summary></p>
+<summary>
+Solution
+</summary>
 <div class="infobox exosolution">
 <p>Since we can have up to one measurement per second, the maximum number of
 measurements <span class="math inline">\(M_{max}\)</span> for a certain year is given by the following formula:</p>
 <p><span class="math display">\[
-M_{max} = 365 \times 24 \times 60 \times 60 \approx 31.5 \times 10^6 
+M_{max} = 365 \times 24 \times 60 \times 60 \approx 31.5 \times 10^6
 \]</span></p>
 </div>
 </details>
@@ -707,7 +710,9 @@ of the first implementation of the algorithm.</p>
 </div>
 </div>
 <details>
-<p><summary>Solution</summary></p>
+<summary>
+Solution
+</summary>
 <div class="infobox exosolution">
 <p>Since there might be up to 31 million values
 associated with a key, the bottleneck of the computation would be
@@ -727,7 +732,9 @@ propose a better implementation to handle the CSV file.</p>
 </div>
 </div>
 <details>
-<p><summary>Solution</summary></p>
+<summary>
+Solution
+</summary>
 <div class="infobox exosolution">
 <p>map: <span class="math inline">\((year, mo, d, mi, sec, temperature) \rightarrow (year, temperature)\)</span></p>
 <p>combine: <span class="math inline">\((year, temps) \rightarrow\)</span> <span class="math inline">\((year, (sum(temps), len(temps)))\)</span></p>
@@ -740,7 +747,7 @@ propose a better implementation to handle the CSV file.</p>
 </div>
 </details>
 </div>
-<div id="common-friends" class="section level1">
+<div id="common-friends" class="section level1" number="2">
 <h1><span class="header-section-number">2</span> Common friends in a social network</h1>
 <p>Consider a social network described by a graph encoded in a text file.
 Each line of the file is a list of identifiers separated by commas.
@@ -773,7 +780,9 @@ social network satisifying the given constraints.</p>
 </div>
 </div>
 <details>
-<p><summary>Solution</summary></p>
+<summary>
+Solution
+</summary>
 <div class="infobox exosolution">
 <p>map: <span class="math inline">\((x, F) \rightarrow [((u, v), x)\ \forall (u, v) \in F\ |\ u &lt; v ]\)</span></p>
 <p>reduce: <span class="math inline">\([(u, v), LCF] \rightarrow [(u, v), LCF]\)</span></p>
@@ -787,7 +796,7 @@ social network satisifying the given constraints.</p>
 </div>
 </details>
 </div>
-<div id="computing-average-and-standard-deviation" class="section level1">
+<div id="computing-average-and-standard-deviation" class="section level1" number="3">
 <h1><span class="header-section-number">3</span> Computing average and standard deviation</h1>
 <p>We consider again the large CSV file
 with a series of measurements in the format “Year, Month, Day, Minute, Second, Temperature”.
@@ -796,11 +805,11 @@ We now intend to generate a series of key-value pairs (year, (avg_temperature, s
 equations.</p>
 <p>The first equation is as follows:</p>
 <p><span class="math display">\[
-\sigma = \sqrt{\frac{\sum_{i=1}^n (x_i - \overline{x})^2}{n}} 
+\sigma = \sqrt{\frac{\sum_{i=1}^n (x_i - \overline{x})^2}{n}}
 \]</span></p>
 <p>The second equation is as follows:</p>
 <p><span class="math display">\[
-\sigma = \sqrt{\overline{x^2} - \overline{x}^2} = \sqrt{\frac{\sum_{i=1}^n (x_i)^2}{n} - \Bigg(\frac{\sum_{i=1}^n x_i}{n}\Bigg)^2} 
+\sigma = \sqrt{\overline{x^2} - \overline{x}^2} = \sqrt{\frac{\sum_{i=1}^n (x_i)^2}{n} - \Bigg(\frac{\sum_{i=1}^n x_i}{n}\Bigg)^2}
 \]</span></p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
@@ -813,7 +822,9 @@ Why?</p>
 </div>
 </div>
 <details>
-<p><summary>Solution</summary></p>
+<summary>
+Solution
+</summary>
 <div class="infobox exosolution">
 <p>The second equation is more appropriate because it allows the computation
 of the sum of the elements and of the square of the elements step by step
@@ -832,7 +843,9 @@ deviation of the temperatures for each year.
 </div>
 </div>
 <details>
-<p><summary>Solution</summary></p>
+<summary>
+Solution
+</summary>
 <div class="infobox exosolution">
 <p>map: <span class="math inline">\((year, mo, d, mi, sec, temperature) \rightarrow (year, temperature)\)</span></p>
 <p>combine: <span class="math inline">\((year, T) \rightarrow\)</span> <span class="math inline">\((year, (sum(T), sum(T^2), len(T)))\)</span></p>
