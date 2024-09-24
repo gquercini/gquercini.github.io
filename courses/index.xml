@@ -11897,6 +11897,7 @@ For each table, underline the primary keys and specify the foreign keys.
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>/courses/databases/tutorials/data-modeling/</guid>
       <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
@@ -11911,7 +11912,7 @@ For each table, underline the primary keys and specify the foreign keys.
 &lt;ul&gt;
 &lt;li&gt;Having attended &lt;a href=&#34;/courses/cloud-computing/lectures/lectures&#34;&gt;Lecture 1&lt;/a&gt;.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;div id=&#34;database-of-a-social-network-platform&#34; class=&#34;section level1&#34;&gt;
+&lt;div id=&#34;database-of-a-social-network-platform&#34; class=&#34;section level1&#34; number=&#34;1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Database of a social network platform&lt;/h1&gt;
 &lt;p&gt;A social network platform wants to design a relational database
 to store information on its users.
@@ -11927,7 +11928,7 @@ if both agree on befriending each other;
 a user can also follow another user without necessarily befriending her.
 For any type of relationship (friendship or follower),
 the platform registers the date when the relationship is established.&lt;/p&gt;
-&lt;div id=&#34;exercises&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;exercises&#34; class=&#34;section level2&#34; number=&#34;1.1&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.1&lt;/span&gt; Exercises&lt;/h2&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
@@ -11937,6 +11938,14 @@ the platform registers the date when the relationship is established.&lt;/p&gt;
 Give the &lt;strong&gt;conceptual schema&lt;/strong&gt; of the database with an ER diagram.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-1/social-network-solution.png&#34; alt=&#34;Social network solution&#34;&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -11946,9 +11955,36 @@ Translate the conceptual schema into a logical schema.
 For each table, underline the primary key and specify the foreign keys.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The &lt;strong&gt;collection of tables&lt;/strong&gt; is the following:&lt;/p&gt;
+&lt;pre&gt;
+&lt;TT&gt;UserAccount&lt;/TT&gt;  (&lt;u&gt;nickname&lt;/u&gt;, first_name, last_name, city, country)
+
+&lt;TT&gt;Post&lt;/TT&gt;         (&lt;u&gt;post_id&lt;/u&gt;, content, date, time, lat, long, nickname)
+
+&lt;TT&gt;EmailAddress&lt;/TT&gt; (&lt;u&gt;email_address&lt;/u&gt;, nickname)
+
+&lt;TT&gt;Relationship&lt;/TT&gt; (&lt;u&gt;nickname_src&lt;/u&gt;, &lt;u&gt;nickname_dst&lt;/u&gt;, type, date)
+
+&lt;TT&gt;Tag&lt;/TT&gt;          (&lt;u&gt;post_id&lt;/u&gt;, &lt;u&gt;nickname&lt;/u&gt;)
+
+&lt;/pre&gt;
+&lt;p&gt;The &lt;strong&gt;foreign keys&lt;/strong&gt; are the following:&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Post(nickname)&lt;/TT&gt; → &lt;TT&gt;UserAccount(nickname)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;EmailAddress(nickname)&lt;/TT&gt; → &lt;TT&gt;EmailAddress(nickname)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Relationship(nickname_src)&lt;/TT&gt; → &lt;TT&gt;UserAccount(nickname)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Relationship(nickname_dst)&lt;/TT&gt; → &lt;TT&gt;UserAccount(nickname)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Tag(post_id)&lt;/TT&gt; → &lt;TT&gt;Post(post_id)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Tag(nickname)&lt;/TT&gt; → &lt;TT&gt;UserAccount(nickname)&lt;/TT&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;database-of-a-banking-system&#34; class=&#34;section level1&#34;&gt;
+&lt;div id=&#34;database-of-a-banking-system&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Database of a banking system&lt;/h1&gt;
 &lt;p&gt;The following figure shows the ER diagram with the
 conceptual schema of a banking system database.&lt;/p&gt;
@@ -11969,7 +12005,7 @@ and is either a checking or savings account
 Each customer is identified by its social
 security number (&lt;em&gt;ssn&lt;/em&gt;);
 a customer can be granted several loans and open as many accounts as s/he wishes.&lt;/p&gt;
-&lt;div id=&#34;exercises-1&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;exercises-1&#34; class=&#34;section level2&#34; number=&#34;2.1&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.1&lt;/span&gt; Exercises&lt;/h2&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
@@ -11978,6 +12014,18 @@ a customer can be granted several loans and open as many accounts as s/he wishes
 &lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;Which primary key would you choose for the entity Bank? Justify your answer.
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Since no
+two banks have the same &lt;em&gt;code_bank&lt;/em&gt; or &lt;em&gt;name&lt;/em&gt;,
+either property can be chosen as the primary key
+of the entity &lt;TT&gt;Bank&lt;/TT&gt;.
+Both can be considered as valid &lt;strong&gt;candidate keys&lt;/strong&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -11986,6 +12034,17 @@ a customer can be granted several loans and open as many accounts as s/he wishes
 as a valid candidate key for the entity &lt;TT&gt;Bank&lt;/TT&gt;? Justify your answer.
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The answer is &lt;strong&gt;no&lt;/strong&gt;.
+While there aren’t any banks that have
+the same value for {&lt;em&gt;code_bank&lt;/em&gt;, &lt;em&gt;name&lt;/em&gt;},
+two subsets ({&lt;em&gt;code_bank&lt;/em&gt;} and {&lt;em&gt;name&lt;/em&gt;}) are candidate keys.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -11996,6 +12055,14 @@ by adding the cardinalities to the relations.
 Justify your choices when any ambiguity arises.
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-1/banking-system-er-complete.png&#34; alt=&#34;Banking system solution&#34;&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -12004,9 +12071,35 @@ Justify your choices when any ambiguity arises.
 For each table, underline the primary keys and specify the foreign keys.
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The &lt;strong&gt;collection of tables&lt;/strong&gt; is the following:&lt;/p&gt;
+&lt;pre&gt;
+&lt;TT&gt;Bank&lt;/TT&gt;     (&lt;u&gt;code_bank&lt;/u&gt;, name, address)
+
+&lt;TT&gt;Branch&lt;/TT&gt;   (&lt;u&gt;branch_id&lt;/u&gt;, address, code_bank)
+
+&lt;TT&gt;Account&lt;/TT&gt;  (&lt;u&gt;acct_nbr&lt;/u&gt;, acct_type, balance, branch_id, ssn)
+
+&lt;TT&gt;Loan&lt;/TT&gt;     (&lt;u&gt;loan_nbr&lt;/u&gt;, loan_type, amount, branch_id, ssn)
+
+&lt;TT&gt;Customer&lt;/TT&gt; (&lt;u&gt;ssn&lt;/u&gt;, first_name, last_name, telephone, address)
+
+&lt;/pre&gt;
+&lt;p&gt;The &lt;strong&gt;foreign keys&lt;/strong&gt; are the following:&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Branch(code_bank)&lt;/TT&gt; → &lt;TT&gt;Bank(code_bank)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Account(branch_id)&lt;/TT&gt; → &lt;TT&gt;Branch(branch_id)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Account(ssn)&lt;/TT&gt; → &lt;TT&gt;Customer(ssn)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Loan(branch_id)&lt;/TT&gt; → &lt;TT&gt;Branch(branch_id)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Loan(ssn)&lt;/TT&gt; → &lt;TT&gt;Customer(ssn)&lt;/TT&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;car-dealership-database&#34; class=&#34;section level1&#34;&gt;
+&lt;div id=&#34;car-dealership-database&#34; class=&#34;section level1&#34; number=&#34;3&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Car dealership database&lt;/h1&gt;
 &lt;p&gt;We want to design the database of a car dealership.
 The dealership sells both new and used cars,
@@ -12030,7 +12123,7 @@ indicates the date on which the car is received from the customer,
 as well as the date on which the car should be returned to the customer.
 A car brought in for service can be worked on by many mechanics,
 and each mechanic may work on many cars.&lt;/p&gt;
-&lt;div id=&#34;exercises-2&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;exercises-2&#34; class=&#34;section level2&#34; number=&#34;3.1&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.1&lt;/span&gt; Exercises&lt;/h2&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
@@ -12039,6 +12132,14 @@ and each mechanic may work on many cars.&lt;/p&gt;
 &lt;span id=&#34;exr:command-in-guest&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;Give the &lt;strong&gt;conceptual schema&lt;/strong&gt; of the database with an ER diagram.
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-1/car-dealership.png&#34; alt=&#34;Car dealership solution&#34;&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -12048,6 +12149,30 @@ For each table, underline the primary keys and specify the foreign keys.
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The &lt;strong&gt;collection of tables&lt;/strong&gt; is the following:&lt;/p&gt;
+&lt;pre&gt;
+  Car          (&lt;u&gt;serial_number&lt;/u&gt;, make, model, colour, is_new)
+  Customer     (&lt;u&gt;cust_id&lt;/u&gt;, cust_first_name, cust_last_name, cust_phone)
+  Invoice      (&lt;u&gt;invoice_number&lt;/u&gt;, date, price, car_serial_number, sp_id, cust_id)
+  Salesperson  (&lt;u&gt;sp_id&lt;/u&gt;, sp_first_name, sp_last_name)
+  Mechanic     (&lt;u&gt;mec_id&lt;/u&gt;, mec_first_name, mec_last_name)
+  Ticket       (&lt;u&gt;ticket_number&lt;/u&gt;, date_open, date_return, car_serial_number)
+  Repair       (&lt;u&gt;ticket_number&lt;/u&gt;, &lt;u&gt;mec_id&lt;/u&gt;)&lt;/pre&gt;
+&lt;/pre&gt;
+&lt;p&gt;The &lt;strong&gt;foreign keys&lt;/strong&gt; are the following:&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Invoice(cust_id)&lt;/TT&gt; → &lt;TT&gt;Customer(cust_id)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Invoice(car_serial_number)&lt;/TT&gt; → &lt;TT&gt;Car(serial_number)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Invoice(sp_id)&lt;/TT&gt; → &lt;TT&gt;Salesperson(sp_id)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Ticket(car_serial_number)&lt;/TT&gt; → &lt;TT&gt;Car(serial_number)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Repair(ticket_number)&lt;/TT&gt; → &lt;TT&gt;Ticket(ticket_number)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Repair(mec_id)&lt;/TT&gt; → &lt;TT&gt;Mechanic(mec_id)&lt;/TT&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 </description>
