@@ -626,6 +626,7 @@
 
           <div class="article-style">
             
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
 <p><link rel="stylesheet" href="/styles/course.css">
@@ -665,7 +666,7 @@ export PYSPARK_PYTHON=/usr/bin/python3
 
 :::
 -->
-<div id="obtaining-a-training-and-test-set" class="section level1">
+<div id="obtaining-a-training-and-test-set" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> Obtaining a training and test set</h1>
 <p>In order to build and evaluate a machine learning model, we need to split our dataset into
 a <strong>training</strong> and <strong>test set</strong>.</p>
@@ -693,21 +694,10 @@ a <strong>training</strong> and <strong>test set</strong>.</p>
 <li><p><strong>Complete Line 23.</strong> Write the code to read the input file, which is stored in HDFS as a Parquet file, into the DataFrame <code>airbnb_df</code>.</p></li>
 <li><p><strong>From Line 26</strong>, add the instructions necessary to print the schema of <code>airbnb_df</code> and the first 5 rows. Which option should you use
 to nicely see the values in the columns?</p></li>
-<li>Execute the code with <code>spark-submit</code> and verify that the data is correctly loaded.</li>
+<li><p>Execute the code with <code>spark-submit</code> and verify that the data is correctly loaded.</p></li>
 </ol>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>The solutions are available in file:</p>
-<pre><code>
-/usr/users/prof/cpu_quercini/mllib_solutions/train_test.py
-</code></pre>
-<p>Since the DataFrame has many columns, we need to use the option <code>vertical=True</code> when calling the
-function <code>show()</code>.</p>
-</div>
-</details>
 <p>We now split <code>airbnb_df</code> into two separate DataFrames, <code>train_df</code> and <code>test_df</code>, containing the training and
 test instances respectively.</p>
 <div class="infobox exercisebox">
@@ -721,19 +711,10 @@ must be taken as training instances, while the remaining 20% will be used a test
 <a href="https://spark.apache.org/docs/3.1.1/api/python/reference/pyspark.sql.html" target="_blank">Looking at the DataFrame API documentation</a>, which
 function are you going to use?</p></li>
 <li><p><strong>From Line 36</strong>, write the code to print the number of instances in the training and test set.</p></li>
-<li>Execute the code with <code>spark-submit</code>. You should have 5780 training instances and 1366 test instances.</li>
+<li><p>Execute the code with <code>spark-submit</code>. You should have 5780 training instances and 1366 test instances.</p></li>
 </ol>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>The solutions are available in file:</p>
-<pre><code>
-/usr/users/prof/cpu_quercini/mllib_solutions/train_test.py
-</code></pre>
-</div>
-</details>
 <p>It is time to save the training and test sets to a HDFS file.
 This way, we can load them whenever we need them to build a machine learning model
 for this problem.</p>
@@ -747,17 +728,8 @@ The paths to the two files are already available in variables <code>training_set
 defined at Lines 40 and 43 respectively.</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>The solutions are available in file:</p>
-<pre><code>
-/usr/users/prof/cpu_quercini/mllib_solutions/train_test.py
-</code></pre>
 </div>
-</details>
-</div>
-<div id="preparing-the-features" class="section level1">
+<div id="preparing-the-features" class="section level1" number="2">
 <h1><span class="header-section-number">2</span> Preparing the features</h1>
 <p>In both training and test sets, the features correspond to DataFrame columns.
 Most of the machine learning algorithms in Spark need to have all features in one single vector.
@@ -788,15 +760,6 @@ got in the first section.</p></li>
 </ul>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>The solutions are available in file:</p>
-<pre><code>
-/usr/users/prof/cpu_quercini/mllib_solutions/train_test_model.py
-</code></pre>
-</div>
-</details>
 <p>It is now time to learn how to use a transformer to put all the necessary features into a vector.
 For the time being, we’ll only be using the feature <code>bedrooms</code> to predict the price.</p>
 <div class="infobox exercisebox">
@@ -813,15 +776,6 @@ You’ll need to use a <a href="https://spark.apache.org/docs/latest/ml-features
 </ul>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>The solutions are available in file:</p>
-<pre><code>
-/usr/users/prof/cpu_quercini/mllib_solutions/train_test_model.py
-</code></pre>
-</div>
-</details>
 <p>It is now time to train a linear regression model on the given training set and the selected features.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
@@ -833,19 +787,10 @@ You’ll need to use a <a href="https://spark.apache.org/docs/latest/ml-features
 <a href="https://spark.apache.org/docs/latest/ml-classification-regression.html#regression" target="_blank">Looking at the documentation</a>, identify the object that you need to use
 to create a linear regressor and the function that you need to invoke to train the linear regressor.</p></li>
 <li><p>Uncomment Lines 121, 124, 125, 126 to call the function <code>train_linear_regression_model</code> and display the coefficients learned by the linear regression model.</p></li>
-<li>Execute the file <code>train_test_model</code> with <code>spark-submit</code>.</li>
+<li><p>Execute the file <code>train_test_model</code> with <code>spark-submit</code>.</p></li>
 </ul>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>The solutions are available in file:</p>
-<pre><code>
-/usr/users/prof/cpu_quercini/mllib_solutions/train_test_model.py
-</code></pre>
-</div>
-</details>
 <p>We can now use the trained model to make some predictions.
 The model returned by the function that you implemented in the previous exercise
 is an object of type <code>LinearRegressionModel</code>.
@@ -861,25 +806,13 @@ The function takes in a DataFrame with the test set and returns the same DataFra
 <ul>
 <li><p>Look at Lines 130 and 131. Which DataFrame do we need to pass the function <code>transform</code>? Is <code>test_df</code> a good choice? Why?</p></li>
 <li><p>Complete line 130 and uncomment lines 130, 131, 132.</p></li>
-<li>Execute the file <code>train_test_model</code> with <code>spark-submit</code> and observe the result. Is the predicted value the one that you expect given that you
-know the formula of the regression line?</li>
+<li><p>Execute the file <code>train_test_model</code> with <code>spark-submit</code> and observe the result. Is the predicted value the one that you expect given that you
+know the formula of the regression line?</p></li>
 </ul>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p><code>test_df</code> is not a good choice. In fact, the test set DataFrame must have the same format as
-the training set DataFrame the model has been trained on.
-So, we need to transform it with a <code>vectAssembler</code>.</p>
-<p>The solutions are available in file:</p>
-<pre><code>
-/usr/users/prof/cpu_quercini/mllib_solutions/train_test_model.py
-</code></pre>
 </div>
-</details>
-</div>
-<div id="pipelines" class="section level1">
+<div id="pipelines" class="section level1" number="3">
 <h1><span class="header-section-number">3</span> Pipelines</h1>
 <p>In the previous section we learned that a training and test set need to go through the same transformation steps in
 order to be fed to a machine learning model.
@@ -913,14 +846,7 @@ to train and test a linear regression model on the given training and test sets.
 </ul>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>Solutions available in file:</p>
-<pre><code>/usr/users/prof/cpu_quercini/mllib_solutions/pipeline_example.py</code></pre>
-</div>
-</details>
-<div id="from-categorical-to-numerical-features" class="section level2">
+<div id="from-categorical-to-numerical-features" class="section level2" number="3.1">
 <h2><span class="header-section-number">3.1</span> From categorical to numerical features</h2>
 <p>Many machine learning models do not handle categorical values: they need all features to be numerical.
 Linear regression is such an example.</p>
@@ -950,13 +876,6 @@ with <code>spark_submit</code>. This execute the instruction at Line 86.</p></li
 </ul>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>Solutions available in file:</p>
-<pre><code>/usr/users/prof/cpu_quercini/mllib_solutions/onehot_playground.py</code></pre>
-</div>
-</details>
 <p>One example of a categorical feature in our dataset is <code>property_type</code>, which takes values such as <em>Apartment</em>, <em>House</em>, <em>Condominium</em>…
 Each value of a categorical feature is also referred to as a category.</p>
 <p>One way to turn this feature into a numerical one would be to assign a number to each category (e.g., <em>Apartment</em> corresponds to 1, <em>House</em> to 2….).
@@ -990,16 +909,6 @@ of the feature <code>property_type</code>?</p></li>
 </ul>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>Solutions available in file:</p>
-<pre><code>/usr/users/prof/cpu_quercini/mllib_solutions/onehot_playground.py</code></pre>
-<p>We note that the most frequent property type obtains the index 0; the second most frequent will obtain
-value 1…so the indexes are attributed by frequency. Each time we run the same code, we obtain the same indexes.
-This means that we have a determinism over different executions of the same program.</p>
-</div>
-</details>
 <p>It is time to find out how one-hot encoding works.</p>
 <div class="infobox activitybox">
 <p><strong>Activity</strong></p>
@@ -1018,25 +927,10 @@ This estimator uses the indexes in <code>property_type_index</code> and creates 
 <p><span id="exr:unnamed-chunk-11" class="exercise"><strong>Exercise 3.4  </strong></span></p>
 <ul>
 <li><p>Execute the file with <code>spark-submit</code>.</p></li>
-<li>Can you understand how one-hot encoding works?</li>
+<li><p>Can you understand how one-hot encoding works?</p></li>
 </ul>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>Solutions available in file:</p>
-<pre><code>/usr/users/prof/cpu_quercini/mllib_solutions/onehot_playground.py</code></pre>
-<p>One-hot creates a vector with as many values as the number of categories in the feature
-property_type.
-Each category has a fixed index in this vector, given by the column property_type_index.
-If for an instance the value of the property_type is <em>Guest suite</em> and the index of <em>Guest suite</em> is 3,
-then the one-hot encoded vector has only a value 1 at index 3 and 0 anywhere else.
-Spark only stores a concise representation of this sparse vector: a tuple with the
-size of the vector, the index whose value is non-zero and the actual value associated to the index
-(1 in our case).</p>
-</div>
-</details>
 <p>Now, you have all the ingredients to create a full pipeline to train and test a
 linear regression model by using all features.</p>
 <div class="infobox exercisebox">
@@ -1057,16 +951,9 @@ Create a new file <code>full_pipeline.py</code> where:</p>
 <p>You can display the first five rows of the DataFrame to see the predictions.</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>Solutions available in file:</p>
-<pre><code>/usr/users/prof/cpu_quercini/mllib_solutions/full_pipeline.py</code></pre>
-</div>
-</details>
 </div>
 </div>
-<div id="evaluating-a-model" class="section level1">
+<div id="evaluating-a-model" class="section level1" number="4">
 <h1><span class="header-section-number">4</span> Evaluating a model</h1>
 <p>In the previous sections we looked at the predictions to get a vague idea of how our
 estimator performs.
@@ -1081,15 +968,6 @@ to do a model selection based on a grid search of parameters.</p>
 <p><strong>Warning.</strong> TrainValidationSplit expects the features to be in a column named “features” and the variable to predict in a column named “label”.</p>
 </div>
 </div>
-<details>
-<p><summary>Solution</summary></p>
-<div class="infobox exosolution">
-<p>The solutions are available in file</p>
-<pre><code>
-/usr/users/prof/cpu_quercini/mllib_solutions/model_evaluation.py
-</code></pre>
-</div>
-</details>
 </div>
 
           </div>
