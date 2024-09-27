@@ -28,7 +28,7 @@
   
     
   
-  <meta name="description" content="2. Programmes Spark sur DCE">
+  <meta name="description" content="3. Programmes Spark sur DCE">
 
   
   <link rel="alternate" hreflang="en-us" href="/courses/bigdata-mds/labs/spark-rdd/">
@@ -235,7 +235,7 @@
   <meta property="og:site_name" content="Gianluca Quercini">
   <meta property="og:url" content="/courses/bigdata-mds/labs/spark-rdd/">
   <meta property="og:title" content="Programmes Spark sur DCE | Gianluca Quercini">
-  <meta property="og:description" content="2. Programmes Spark sur DCE"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:description" content="3. Programmes Spark sur DCE"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
   
     
@@ -549,9 +549,14 @@
         <a href="/courses/bigdata-mds/labs/map-reduce/">1. MapReduce</a>
       </li>
       
+      
+      <li class="labs">
+        <a href="/courses/bigdata-mds/labs/first-spark-program/">2. DCE - Premier programme Spark</a>
+      </li>
+      
       <script>open_menu_on_load("labs".concat("-ddowncontent"))</script>
       <li class="active labs">
-        <a href="/courses/bigdata-mds/labs/spark-rdd/">2. Programmes Spark sur DCE</a>
+        <a href="/courses/bigdata-mds/labs/spark-rdd/">3. Programmes Spark sur DCE</a>
       </li>
       
     </ul>
@@ -580,7 +585,7 @@
       <article class="article">
 
         <div class="docs-article-container">
-          <div class="heading">Big Data MDS — Lab 2</div>
+          <div class="heading">Big Data MDS — Lab 3</div>
           <h1>Programmes Spark sur DCE</h1>
           <hr>
           <div class="logo">
@@ -589,6 +594,7 @@
 
           <div class="article-style">
             
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
 <p><link rel="stylesheet" href="/styles/course.css">
@@ -597,7 +603,7 @@
 <!-- The group to which users in the cluster belong-->
 <!-- User accounts are numbered from the lower to the upper limit-->
 <!-- ############ END OF MODIFICATIONS ############ -->
-<div id="calcul-des-moyennes" class="section level1">
+<div id="calcul-des-moyennes" class="section level1" number="1">
 <h1><span class="header-section-number">1</span> Calcul des moyennes</h1>
 <p>Nous considérons une collection de fichiers CSV contenant des mesures de température au format suivant :</p>
 <p><code>année, mois, jour, heure, minute, seconde, température</code></p>
@@ -609,7 +615,7 @@
 <li>Le fichier <code>temperatures_86.csv</code> contient une mesure toutes les 86 secondes pour la seule année 1980.</li>
 <li>Le fichier <code>temperatures_10.csv</code> contient une mesure toutes les 10 secondes pour les années 1980 - 2018.</li>
 </ul>
-<div id="première-implémentation" class="section level2">
+<div id="première-implémentation" class="section level2" number="1.1">
 <h2><span class="header-section-number">1.1</span> Première implémentation</h2>
 <p>Copiez le fichier <code>/usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_temperatures.py</code>
 dans votre répertoire personnel en saisissant la commande suivante :</p>
@@ -626,7 +632,7 @@ qui:</p>
 <p>Dans le même fichier, localisez les deux variables <code>input_path</code> et <code>output-path</code>
 et écrivez le code suivant :</p>
 <pre><code>input_path = &quot;hdfs://sar01:9000/data/temperatures/&quot;
-output_path = &quot;hdfs://sar01:9000/hpdaspark24/hpdaspark24_X/&quot;</code></pre>
+output_path = &quot;hdfs://sar01:9000/itpspark24/itpspark24_X/&quot;</code></pre>
 <p>Remplacez <code>X</code> par le numéro correspondant à votre compte !
 <strong>N’oubliez pas le / à la fin des chemins d’accès aux fichiers !</strong></p>
 <p><strong>Faites les actions suivantes :</strong></p>
@@ -641,17 +647,17 @@ Pour ce faire, utilisez la commande suivante :</li>
 <li>Vous devriez trouver la sortie du programme dans le dossier suivant :</li>
 </ul>
 <div align="center">
-<p><code>hdfs://sar01:9000/hpdaspark24/hpdaspark24_X/temperatures_86400.out</code></p>
+<p><code>hdfs://sar01:9000/itpspark24/itpspark24_X/temperatures_86400.out</code></p>
 </div>
 <p>Tapez la commande suivante pour le vérifier :</p>
 <div align="center">
-<p><code>hdfs dfs -ls hdfs://sar01:9000/hpdaspark24/hpdaspark24_X/temperatures_86400.out</code></p>
+<p><code>hdfs dfs -ls hdfs://sar01:9000/itpspark24/itpspark24_X/temperatures_86400.out</code></p>
 </div>
 <ul>
 <li>Si vous souhaitez accéder au résultat du calcul, vous pouvez exécuter la commande suivante :</li>
 </ul>
 <div align="center">
-<p><code>hdfs dfs -cat hdfs://sar01:9000/hpdaspark24/hpdaspark24_X/temperatures_86400.out/*</code></p>
+<p><code>hdfs dfs -cat hdfs://sar01:9000/itpspark24/itpspark24_X/temperatures_86400.out/*</code></p>
 </div>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
@@ -667,13 +673,13 @@ Pour ce faire, utilisez la commande suivante :</li>
 <li><p>Quel est le temps d’exécution ? Semble-t-il raisonnable par rapport au temps d’exécution que vous avez observé auparavant ?
 Justifiez votre réponse.</p></li>
 <li><p>Exécutez le même script en utilisant le fichier <code>températures_86.csv</code> comme argument.</p></li>
-<li>Quel est le temps d’exécution ? Comment le justifiez-vous, sachant que
-les fichiers <code>temperatures_2880.csv</code> et <code>temperatures_86.csv</code> ont une taille similaire (11 Mo pour le premier, 9 Mo pour le second) ?</li>
+<li><p>Quel est le temps d’exécution ? Comment le justifiez-vous, sachant que
+les fichiers <code>temperatures_2880.csv</code> et <code>temperatures_86.csv</code> ont une taille similaire (11 Mo pour le premier, 9 Mo pour le second) ?</p></li>
 </ul>
 </div>
 </div>
 </div>
-<div id="deuxième-implémentation" class="section level2">
+<div id="deuxième-implémentation" class="section level2" number="1.2">
 <h2><span class="header-section-number">1.2</span> Deuxième implémentation</h2>
 <p>Nous voulons mettre en œuvre une meilleure version du programme.
 Vous pouvez rédiger vos idées sur papier avant d’écrire du code.</p>
@@ -705,7 +711,7 @@ Pensez-vous que le programme prend trop de temps ? Justifiez votre réponse.</p>
 </div>
 </div>
 </div>
-<div id="amis-communs-dans-un-réseau-social" class="section level1">
+<div id="amis-communs-dans-un-réseau-social" class="section level1" number="2">
 <h1><span class="header-section-number">2</span> Amis communs dans un réseau social</h1>
 <p>Considérons un réseau social décrit par un graphe encodé dans un fichier texte.
 Chaque ligne du fichier est une liste d’identifiants séparés par des virgules.
@@ -735,7 +741,7 @@ En d’autres termes, si nous produisons <span class="math inline">\((A, B)\)</s
 <li><p><code>sn_1k_100k.csv</code>. Réseau social avec <span class="math inline">\(10^3\)</span> individus et <span class="math inline">\(10^5\)</span> liens.</p></li>
 <li><p><code>sn_1m_1m.csv</code>. Réseau social avec <span class="math inline">\(10^6\)</span> individus et <span class="math inline">\(10^6\)</span> liens.</p></li>
 </ul>
-<div id="implémentation" class="section level2">
+<div id="implémentation" class="section level2" number="2.1">
 <h2><span class="header-section-number">2.1</span> Implémentation</h2>
 <p><strong>Obtenez un squelette du code à l’aide de la commande suivante :</strong></p>
 <div align="center">
@@ -754,7 +760,7 @@ En d’autres termes, si nous produisons <span class="math inline">\((A, B)\)</s
 </div>
 </div>
 </div>
-<div id="tests-et-mesures-de-performance" class="section level2">
+<div id="tests-et-mesures-de-performance" class="section level2" number="2.2">
 <h2><span class="header-section-number">2.2</span> Tests et mesures de performance</h2>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
@@ -769,7 +775,7 @@ les temps d’exécution mesurés des deux implémentations.</p></li>
 </div>
 </div>
 </div>
-<div id="degré-minimum-maximum-et-moyen" class="section level2">
+<div id="degré-minimum-maximum-et-moyen" class="section level2" number="2.3">
 <h2><span class="header-section-number">2.3</span> Degré minimum, maximum et moyen</h2>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
@@ -787,7 +793,7 @@ le nombre minimum, maximum et moyen d’amis pour chaque individu.</p></li>
 </div>
 </div>
 </div>
-<div id="analyses-de-performance" class="section level2">
+<div id="analyses-de-performance" class="section level2" number="2.4">
 <h2><span class="header-section-number">2.4</span> Analyses de performance</h2>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
@@ -800,7 +806,7 @@ Calculez (sur papier, pas besoin d’écrire un code pour cela) le nombre de pai
 <li><p>Complétez le tableau en écrivant le nombre de paires intermédiaires pour chaque fichier.</p></li>
 <li><p>Tracez trois graphiques, où l’axe des <span class="math inline">\(y\)</span> représente les temps d’exécution du programme et l’axe des <span class="math inline">\(x\)</span> représente respectivement
 le nombre de paires intermédiaires, le degré moyen et la taille du fichier.</p></li>
-<li>Quels graphiques prédisent le mieux l’évolution du temps de calcul ?</li>
+<li><p>Quels graphiques prédisent le mieux l’évolution du temps de calcul ?</p></li>
 </ul>
 </div>
 </div>

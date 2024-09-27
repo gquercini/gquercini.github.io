@@ -1176,6 +1176,137 @@ Table 5. Execution times of the queries on the sales dataset.
     </item>
     
     <item>
+      <title>Premier programme Spark sur DCE</title>
+      <link>/courses/bigdata-mds/labs/first-spark-program/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/bigdata-mds/labs/first-spark-program/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;!-- ############ IMPORTANT: CHANGE THESE VALUES BEFORE ANY LAB ############ --&gt;
+&lt;!-- The group to which users in the cluster belong--&gt;
+&lt;!-- User accounts are numbered from the lower to the upper limit--&gt;
+&lt;!-- The link to the Edunao page where the students can choose a username to connect to the cluster. --&gt;
+&lt;!-- ############ END OF MODIFICATIONS ############ --&gt;
+&lt;p&gt;Le &lt;a href=&#34;https://dce.pages.centralesupelec.fr/&#34; target=&#34;_blank&#34;&gt;Data Centre d’Enseignement (DCE)&lt;/a&gt; est un ensemble de
+ressources informatiques financées par l’Eurométropole de Metz
+par l’Eurométropole de Metz, la Région Grand Est, CentraleSupélec et sa fondation, et le Conseil Départemental de Moselle.&lt;/p&gt;
+&lt;p&gt;Ce tutoriel est un guide rapide pour :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Apprendre les commandes de base pour manipuler les fichiers stockés dans HDFS.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Apprendre à exécuter un programme Spark sur le DCE.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Plus d’informations sont disponibles sur le &lt;a href=&#34;https://dce.pages.centralesupelec.fr/&#34; target=&#34;_blank&#34;&gt;site officiel du DCE&lt;/a&gt;.&lt;/p&gt;
+&lt;div id=&#34;présentation-du-dce&#34; class=&#34;section level1&#34; number=&#34;1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Présentation du DCE&lt;/h1&gt;
+&lt;p&gt;L’architecture du DCE est présentée en Figure &lt;a href=&#34;#fig:cluster-metz&#34;&gt;1.1&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&#34;figure&#34; style=&#34;text-align: center&#34;&gt;&lt;span id=&#34;fig:cluster-metz&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/courses/plp/tutorials/spark-dce/reseau_dce.drawio.svg&#34; alt=&#34;Architecture du cluster (source : [documentation du DCE](https://dce.pages.centralesupelec.fr/01_cluster_overview/){target=&amp;quot;_blank&amp;quot;})&#34; width=&#34;100%&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 1.1: Architecture du cluster (source : &lt;a href=&#34;https://dce.pages.centralesupelec.fr/01_cluster_overview/&#34; target=&#34;_blank&#34;&gt;documentation du DCE&lt;/a&gt;)
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Dans ce cours, nous allons utiliser uniquement les noeuds CPU. Ces derniers sont divisés en deux groupes: le cluster Sarah et le cluster Kyle.&lt;/p&gt;
+&lt;!--# Creating your working directory in HDFS
+
+In this section, you&#39;ll be walked through the procedure to create a directory 
+in HDFS that you&#39;ll use as your working directory in the lab sessions.
+
+You user account is: ``itpspark24_X``, where X is between 1 and 
+25.
+
+In order to create your working directory in HDFS, type the following command in the terminal:
+
+``
+hdfs dfs -mkdir hdfs://sar01:9000/itpspark24/itpspark24_X
+``
+
+You can verify that the directory is there by listing the content of the folder hdfs://sar01:9000/itpspark24/
+with the following command:
+
+``
+hdfs dfs -ls hdfs://sar01:9000/itpspark24/
+``
+--&gt;
+&lt;/div&gt;
+&lt;div id=&#34;exécution-dun-programme-spark&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Exécution d’un programme Spark&lt;/h1&gt;
+&lt;p&gt;Les datasets sont normalement disponibles dans le dossier &lt;code&gt;/data/&lt;/code&gt;
+stocké dans HDFS.&lt;/p&gt;
+&lt;p&gt;Saisissez la commande suivante pour afifcher le contenu du dossier :&lt;/p&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;hdfs dfs -ls -h hdfs://sar01:9000/data&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;L’objectif ici est d’exécuter un code Spark pour compter le nombre d’occurrences de chaque mot dans le fichier &lt;code&gt;/data/sherlock.txt&lt;/code&gt;.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Copiez le fichier &lt;code&gt;~cpu_vialle/DCE-Spark/template_wc.py&lt;/code&gt; vers votre dossier personnel en saisissant la commande suivante :&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;cp ~cpu_vialle/DCE-Spark/template_wc.py ./wc.py&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Saisissez la commande &lt;code&gt;ls&lt;/code&gt; pour vérifier que le fichier &lt;code&gt;wc.py&lt;/code&gt; figure bien dans votre dossier personnel.
+Ce fichier contient le code Python du programme.
+Ce fichier devrait aussi apparaître dans l’explorateur de Visual Studio Code ; si cela n’est pas le cas, cliquez sur le bouton d’actualisation de l’explorateur.&lt;/p&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Ouvrez le fichier &lt;code&gt;wc.py&lt;/code&gt; dans Visual Studio Code.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Recherchez l’instruction suivante :&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;text_file = sc.textFile(&#34;hdfs://...&#34;)&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+et remplacez-la avec la suivante :
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;text_file = sc.textFile(&#34;hdfs://sar01:9000/data/sherlock.txt&#34;)&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Cette instruction créera un RDD nommé &lt;code&gt;text_file&lt;/code&gt; avec le contenu du fichier.&lt;/p&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;De la même manière, cherchez l’instruction suivante :&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;counts.saveAsTextFile(&#34;hdfs://...&#34;)&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;et remplacez-la par la suivante :&lt;/p&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;counts.saveAsTextFile(&#34;hdfs://sar01:9000/itpspark24/itpspark24_X/sherlock.out&#34;)&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Cette instruction créera un dossier &lt;em&gt;sherlock.out&lt;/em&gt; qui contiendra les fichiers renvoyés par le programme.&lt;/p&gt;
+&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Exécutez le programme &lt;code&gt;wc.py&lt;/code&gt; à l’aide de la commande suivante :&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;spark-submit --master spark://sar01:7077 wc.py&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;Lorsque l’exécution est terminée, la sortie sera disponible dans le dossier
+&lt;code&gt;sherlock.out&lt;/code&gt;. Pour le vérifier, exécutez la commande suivante :&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;hdfs dfs -ls -h hdfs://sar01:9000/itpspark24/itpspark24_X/sherlock.out&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Comme d’habitude, n’oubliez pas de remplacer itpspark24_X par votre nom d’utilisateur.&lt;/p&gt;
+&lt;ol start=&#34;6&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Pour afficher le résultat, exécutez la commande suivante :&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;hdfs dfs -cat hdfs://sar01:9000/itpspark24/itpspark24_X/sherlock.out/*&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Fichiers de sortie&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Si vous réexécutez le programme en spécifiant un fichier de sortie qui &lt;strong&gt;existe déjà&lt;/strong&gt;,
+vous obtiendrez une erreur.
+Si vous voulez vraiment écraser le fichier de sortie, vous devez d’abord le supprimer explicitement en tapant la commande suivante :&lt;/p&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;hdfs dfs -rm -r hdfs://sar01:9000/itpspark24/itpspark24_X/sherlock.out&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>DCE tutorial</title>
       <link>/courses/bigdata/documentation/cluster-connection/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -8169,6 +8300,7 @@ You can use the template available at ``~vialle/DCE-Spark/template_inverted_inde
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>/courses/bigdata-mds/labs/spark-rdd/</guid>
       <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
@@ -8177,7 +8309,7 @@ You can use the template available at ``~vialle/DCE-Spark/template_inverted_inde
 &lt;!-- The group to which users in the cluster belong--&gt;
 &lt;!-- User accounts are numbered from the lower to the upper limit--&gt;
 &lt;!-- ############ END OF MODIFICATIONS ############ --&gt;
-&lt;div id=&#34;calcul-des-moyennes&#34; class=&#34;section level1&#34;&gt;
+&lt;div id=&#34;calcul-des-moyennes&#34; class=&#34;section level1&#34; number=&#34;1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Calcul des moyennes&lt;/h1&gt;
 &lt;p&gt;Nous considérons une collection de fichiers CSV contenant des mesures de température au format suivant :&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;année, mois, jour, heure, minute, seconde, température&lt;/code&gt;&lt;/p&gt;
@@ -8189,7 +8321,7 @@ You can use the template available at ``~vialle/DCE-Spark/template_inverted_inde
 &lt;li&gt;Le fichier &lt;code&gt;temperatures_86.csv&lt;/code&gt; contient une mesure toutes les 86 secondes pour la seule année 1980.&lt;/li&gt;
 &lt;li&gt;Le fichier &lt;code&gt;temperatures_10.csv&lt;/code&gt; contient une mesure toutes les 10 secondes pour les années 1980 - 2018.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;div id=&#34;première-implémentation&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;première-implémentation&#34; class=&#34;section level2&#34; number=&#34;1.1&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.1&lt;/span&gt; Première implémentation&lt;/h2&gt;
 &lt;p&gt;Copiez le fichier &lt;code&gt;/usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_temperatures.py&lt;/code&gt;
 dans votre répertoire personnel en saisissant la commande suivante :&lt;/p&gt;
@@ -8206,7 +8338,7 @@ qui:&lt;/p&gt;
 &lt;p&gt;Dans le même fichier, localisez les deux variables &lt;code&gt;input_path&lt;/code&gt; et &lt;code&gt;output-path&lt;/code&gt;
 et écrivez le code suivant :&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;input_path = &amp;quot;hdfs://sar01:9000/data/temperatures/&amp;quot;
-output_path = &amp;quot;hdfs://sar01:9000/hpdaspark24/hpdaspark24_X/&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+output_path = &amp;quot;hdfs://sar01:9000/itpspark24/itpspark24_X/&amp;quot;&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Remplacez &lt;code&gt;X&lt;/code&gt; par le numéro correspondant à votre compte !
 &lt;strong&gt;N’oubliez pas le / à la fin des chemins d’accès aux fichiers !&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Faites les actions suivantes :&lt;/strong&gt;&lt;/p&gt;
@@ -8221,17 +8353,17 @@ Pour ce faire, utilisez la commande suivante :&lt;/li&gt;
 &lt;li&gt;Vous devriez trouver la sortie du programme dans le dossier suivant :&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;p&gt;&lt;code&gt;hdfs://sar01:9000/hpdaspark24/hpdaspark24_X/temperatures_86400.out&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;hdfs://sar01:9000/itpspark24/itpspark24_X/temperatures_86400.out&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;p&gt;Tapez la commande suivante pour le vérifier :&lt;/p&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;p&gt;&lt;code&gt;hdfs dfs -ls hdfs://sar01:9000/hpdaspark24/hpdaspark24_X/temperatures_86400.out&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;hdfs dfs -ls hdfs://sar01:9000/itpspark24/itpspark24_X/temperatures_86400.out&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;ul&gt;
 &lt;li&gt;Si vous souhaitez accéder au résultat du calcul, vous pouvez exécuter la commande suivante :&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;p&gt;&lt;code&gt;hdfs dfs -cat hdfs://sar01:9000/hpdaspark24/hpdaspark24_X/temperatures_86400.out/*&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;hdfs dfs -cat hdfs://sar01:9000/itpspark24/itpspark24_X/temperatures_86400.out/*&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
@@ -8247,13 +8379,13 @@ Pour ce faire, utilisez la commande suivante :&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Quel est le temps d’exécution ? Semble-t-il raisonnable par rapport au temps d’exécution que vous avez observé auparavant ?
 Justifiez votre réponse.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Exécutez le même script en utilisant le fichier &lt;code&gt;températures_86.csv&lt;/code&gt; comme argument.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;Quel est le temps d’exécution ? Comment le justifiez-vous, sachant que
-les fichiers &lt;code&gt;temperatures_2880.csv&lt;/code&gt; et &lt;code&gt;temperatures_86.csv&lt;/code&gt; ont une taille similaire (11 Mo pour le premier, 9 Mo pour le second) ?&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Quel est le temps d’exécution ? Comment le justifiez-vous, sachant que
+les fichiers &lt;code&gt;temperatures_2880.csv&lt;/code&gt; et &lt;code&gt;temperatures_86.csv&lt;/code&gt; ont une taille similaire (11 Mo pour le premier, 9 Mo pour le second) ?&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;deuxième-implémentation&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;deuxième-implémentation&#34; class=&#34;section level2&#34; number=&#34;1.2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.2&lt;/span&gt; Deuxième implémentation&lt;/h2&gt;
 &lt;p&gt;Nous voulons mettre en œuvre une meilleure version du programme.
 Vous pouvez rédiger vos idées sur papier avant d’écrire du code.&lt;/p&gt;
@@ -8285,7 +8417,7 @@ Pensez-vous que le programme prend trop de temps ? Justifiez votre réponse.&lt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;amis-communs-dans-un-réseau-social&#34; class=&#34;section level1&#34;&gt;
+&lt;div id=&#34;amis-communs-dans-un-réseau-social&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Amis communs dans un réseau social&lt;/h1&gt;
 &lt;p&gt;Considérons un réseau social décrit par un graphe encodé dans un fichier texte.
 Chaque ligne du fichier est une liste d’identifiants séparés par des virgules.
@@ -8315,7 +8447,7 @@ En d’autres termes, si nous produisons &lt;span class=&#34;math inline&#34;&gt
 &lt;li&gt;&lt;p&gt;&lt;code&gt;sn_1k_100k.csv&lt;/code&gt;. Réseau social avec &lt;span class=&#34;math inline&#34;&gt;\(10^3\)&lt;/span&gt; individus et &lt;span class=&#34;math inline&#34;&gt;\(10^5\)&lt;/span&gt; liens.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;&lt;code&gt;sn_1m_1m.csv&lt;/code&gt;. Réseau social avec &lt;span class=&#34;math inline&#34;&gt;\(10^6\)&lt;/span&gt; individus et &lt;span class=&#34;math inline&#34;&gt;\(10^6\)&lt;/span&gt; liens.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;div id=&#34;implémentation&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;implémentation&#34; class=&#34;section level2&#34; number=&#34;2.1&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.1&lt;/span&gt; Implémentation&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;Obtenez un squelette du code à l’aide de la commande suivante :&lt;/strong&gt;&lt;/p&gt;
 &lt;div align=&#34;center&#34;&gt;
@@ -8334,7 +8466,7 @@ En d’autres termes, si nous produisons &lt;span class=&#34;math inline&#34;&gt
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;tests-et-mesures-de-performance&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;tests-et-mesures-de-performance&#34; class=&#34;section level2&#34; number=&#34;2.2&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.2&lt;/span&gt; Tests et mesures de performance&lt;/h2&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
@@ -8349,7 +8481,7 @@ les temps d’exécution mesurés des deux implémentations.&lt;/p&gt;&lt;/li&gt
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;degré-minimum-maximum-et-moyen&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;degré-minimum-maximum-et-moyen&#34; class=&#34;section level2&#34; number=&#34;2.3&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.3&lt;/span&gt; Degré minimum, maximum et moyen&lt;/h2&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
@@ -8367,7 +8499,7 @@ le nombre minimum, maximum et moyen d’amis pour chaque individu.&lt;/p&gt;&lt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;analyses-de-performance&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;analyses-de-performance&#34; class=&#34;section level2&#34; number=&#34;2.4&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.4&lt;/span&gt; Analyses de performance&lt;/h2&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
@@ -8380,7 +8512,7 @@ Calculez (sur papier, pas besoin d’écrire un code pour cela) le nombre de pai
 &lt;li&gt;&lt;p&gt;Complétez le tableau en écrivant le nombre de paires intermédiaires pour chaque fichier.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Tracez trois graphiques, où l’axe des &lt;span class=&#34;math inline&#34;&gt;\(y\)&lt;/span&gt; représente les temps d’exécution du programme et l’axe des &lt;span class=&#34;math inline&#34;&gt;\(x\)&lt;/span&gt; représente respectivement
 le nombre de paires intermédiaires, le degré moyen et la taille du fichier.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;Quels graphiques prédisent le mieux l’évolution du temps de calcul ?&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Quels graphiques prédisent le mieux l’évolution du temps de calcul ?&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
