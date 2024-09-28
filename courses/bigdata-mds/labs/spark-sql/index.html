@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Gianluca Quercini">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="4. Spark Structured API">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/courses/bigdata-mds/labs/spark-sql/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="rgb(0, 136, 204)">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_3.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_3.png">
+
+  <link rel="canonical" href="/courses/bigdata-mds/labs/spark-sql/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="Gianluca Quercini">
+  <meta property="og:url" content="/courses/bigdata-mds/labs/spark-sql/">
+  <meta property="og:title" content="Spark Structured API | Gianluca Quercini">
+  <meta property="og:description" content="4. Spark Structured API"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
+  
+    
+    
+  
+
+  
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Spark Structured API | Gianluca Quercini</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#experience"><span>Experience</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#publications"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  
+
+  
+
+<div class="container-fluid docs">
+  <div class="row flex-xl-nowrap">
+    <div class="col-12 col-md-3 col-xl-2 docs-sidebar">
+      
+
+
+<script src="/js/toggle-menu.js"></script>
+
+
+
+
+
+
+
+  
+    
+  
+
+
+
+
+<form class="docs-search d-flex align-items-center">
+  <button class="btn docs-toggle d-md-none p-0 mr-3" type="button" data-toggle="collapse" data-target="#docs-nav" aria-controls="docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    <span><i class="fas fa-bars"></i></span>
+  </button>
+
+  
+</form>
+
+<nav class="collapse docs-links" id="docs-nav">
+  
+
+  
+  
+  
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="labs" class="docs-toc-link" href="/courses/bigdata-mds/labs/map-reduce/">Labs</a>
+    
+    <div id="labs-ddowncontent" class="labs-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="labs">
+        <a href="/courses/bigdata-mds/labs/map-reduce/">1. MapReduce</a>
+      </li>
+      
+      
+      <li class="labs">
+        <a href="/courses/bigdata-mds/labs/first-spark-program/">2. DCE - Premier programme Spark</a>
+      </li>
+      
+      
+      <li class="labs">
+        <a href="/courses/bigdata-mds/labs/spark-rdd/">3. Programmes Spark sur DCE</a>
+      </li>
+      
+      <script>open_menu_on_load("labs".concat("-ddowncontent"))</script>
+      <li class="active labs">
+        <a href="/courses/bigdata-mds/labs/spark-sql/">4. Spark Structured API</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="documentation" class="docs-toc-link" >Documentation</a>
+    
+
+  </div>
+  
+  
+</nav>
+
+    </div>
+
+    
+
+    <main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 docs-content" role="main">
+
+      <article class="article">
+
+        <div class="docs-article-container">
+          <div class="heading">Big Data MDS — Lab 4</div>
+          <h1>Spark Structured API</h1>
+          <hr>
+          <div class="logo">
+            
+            </div>
+
+          <div class="article-style">
+            
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p><link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/cloud-computing.css"></p>
+<!-- ############ IMPORTANT: CHANGE THESE VALUES BEFORE ANY LAB ############ -->
+<!-- The group to which users in the cluster belong-->
+<!-- User accounts are numbered from the lower to the upper limit-->
+<!-- ############ END OF MODIFICATIONS ############ -->
+<div id="nombre-de-partitions-dans-un-rdd" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Nombre de partitions dans un RDD</h1>
+<p>Nous considérons un ensemble de fichiers CSV contenant des mesures de température sur plusieurs années.
+Chaque ligne a le contenu suivant : <code>année, mois, jour, heure, minute, seconde, température</code>.</p>
+<p>Ces fichiers sont stockés à l’emplacement suivant : <code>hdfs://sar01:9000/data/temperatures/</code>.</p>
+<p><strong>Voici le détail de chaque fichier :</strong></p>
+<ul>
+<li>Le fichier <code>temperatures_86400.csv</code> contient une mesure par jour entre 1980 et 2018.</li>
+<li>Le fichier <code>temperatures_2880.csv</code> contient une mesure toutes les 2880 secondes entre 1980 et 2018.</li>
+<li>Le fichier <code>temperatures_86.csv</code> contient une mesure toutes les 86 secondes pour la seule année 1980.</li>
+<li>Le fichier <code>temperatures_10.csv</code> contient une mesure toutes les 10 secondes entre 1980 et 2018.</li>
+</ul>
+<div class="infobox warning">
+<p><strong>Bon à savoir.</strong></p>
+<p>Un squelette du code à écrire est disponible dans le fichier <code>avg_temperatures_rdd.py</code>, que vous pourrez copier dans votre dossier
+personnel à l’aide de la commande suivante :</p>
+<div align="center">
+<pre><code>cp ~cpu_quercini/spark-sql-templates/avg_temperatures_rdd.py .</code></pre>
+</div>
+<p>Ce fichier contient une implémentation efficace de la fonction qui calcule la température moyenne annuelle, comme nous l’avons vu
+dans un précédent tutoriel.</p>
+</div>
+<div id="performances-et-nombre-de-partitions" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> Performances et nombre de partitions</h2>
+<ul>
+<li><p><strong>Ligne 70.</strong> Remplacez <code>sarXX</code> par <code>sar01</code>.</p></li>
+<li><p><strong>Ligne 80.</strong> Remplacez <code>sarXX</code> par <code>sar01</code>. Remplacez YOUR_DIRECTORY par <code>itpspark24/itpspark24_XX/</code> (où XX correspond au numéro de votre nom d’utilisateur).</p></li>
+<li><p>Observez les instructions aux <strong>lignes 98</strong> et <strong>lignes 104</strong>. Elles obtiennent et affichent
+le nombre de partitions du RDD en argument <code>text_file</code> et du RDD de sortie <code>temperatures</code> respectivement.</p></li>
+</ul>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1.1  </strong></span>
+Complétez le tableau 1. Exécutez le programme sur le fichier <code>temperatures_10.csv</code>. Notez le temps d’exécution et le nombre de partitions des deux RDDs
+<code>text_file</code> et <code>temperatures</code>.</p>
+</div>
+</div>
+<p><strong>Rappel.</strong> La commande pour exécuter le programme est la suivante :</p>
+<div align="center">
+<pre><code>spark-submit --master spark://sar01:7077 avg_temperatures_rdd.py temperatures_10.csv</code></pre>
+</div>
+<p>
+<table class="bigdata">
+<tr>
+<td>
+<b>Fichier</b>
+</td>
+<td>
+<b>Temps d’exécution <br>(sec)</b>
+</td>
+<td>
+<b>Nombre de partitions <br> (RDD <code>text_file</code>)</b>
+</td>
+<td>
+<b>Nombre de partitions <br> (RDD <code>temperatures</code>)</b>
+</td>
+</tr>
+<tr>
+<td>
+temperatures_86400.csv
+</td>
+<td>
+3.12
+</td>
+<td>
+2
+</td>
+<td>
+2
+</td>
+</tr>
+<tr>
+<td>
+temperatures_2880.csv
+</td>
+<td>
+3.67
+</td>
+<td>
+2
+</td>
+<td>
+2
+</td>
+</tr>
+<tr>
+<td>
+temperatures_86.csv
+</td>
+<td>
+4.59
+</td>
+<td>
+2
+</td>
+<td>
+2
+</td>
+</tr>
+<tr>
+<td>
+temperatures_10.csv
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<caption>
+<b>Table 1. Temps d’exécution et nombre de partitions (RDD).</b>
+</caption>
+</table>
+</p>
+</div>
+<div id="analyse-du-fonctionnement-de-spark" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> Analyse du fonctionnement de Spark</h2>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 1.2  </strong></span></p>
+<ul>
+<li>Pourriez-vous comprendre comment Spark détermine le nombre de partitions du RDD <code>fichier_texte</code> en regardant la taille des fichiers d’entrée ?</li>
+</ul>
+<p><strong>Coup de pouce.</strong> Si vous divisez la taille du fichier <code>temperatures_10.csv</code> par le nombre de partitions du RDD <code>fichier_texte</code>, quelle valeur obtenez-vous ?
+par le nombre de partitions du RDD <code>text_file</code>, quelle valeur obtenez-vous ? Que représente cette valeur ?</p>
+<ul>
+<li>Affichez les fichiers stockés dans le dossier de sortie <code>temperatures_10.rdd.out</code>.
+Que constatez-vous ? Existe-t-il une relation avec le nombre de partitions ?</li>
+</ul>
+</div>
+</div>
+<div class="infobox warning">
+<p><strong>Bon à savoir.</strong></p>
+<p>Afin d;afficher le contenu du dossier sur HDFS, vous pouvez utiliser la commande suivante :</p>
+<div align="center">
+<pre><code>hdfs dfs -ls hdfs://sar01:9000/itpspark24/itpspark24_XX/temperatures_10.rdd.out</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div id="utilisation-de-lapi-dataframe-pour-le-calcul-des-températures-moyennes" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Utilisation de l’API DataFrame pour le calcul des températures moyennes</h1>
+<p>Vous allez maintenant implémenter un programme Spark pour calculer des températures moyennes en utilisant l’API Spark DataFrame.</p>
+<p><strong>Suivez les étapes suivantes:</strong></p>
+<ul>
+<li>Copiez le modèle de code <code>avg_temperatures_df.py</code> dans votre dossier personnel en exécutant la commande suivante :</li>
+</ul>
+<div align="center">
+<p><code>cp ~cpu_quercini/spark-sql-templates/avg_temperatures_df.py .</code></p>
+</div>
+<!--* The instructions **at line 109 and 115** show the number of partitions of the RDDs
+underlying the dataframes ``df`` (input) and ``df_avg`` (output) respectively.-->
+<ul>
+<li>Le résultat du calcul sera stocké dans le dossier <code>temperatures_*.df.out</code>
+sous votre dossier HDFS <code>itpspark24/itpspark24_XX</code>.</li>
+</ul>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 2.1  </strong></span></p>
+<ul>
+<li><p><strong>Ligne 78.</strong> Remplacez <code>sarXX</code> par <code>sar01</code>.</p></li>
+<li><p><strong>Ligne 89.</strong> Remplacez <code>sarXX</code> par <code>sar01</code>.</p></li>
+<li><p><strong>Ligne 106.</strong> Complétez l’instruction pour lire un fichier CSV.
+Veuillez noter que les fichiers CSV donnés <strong>n’ont pas d’en-têtes</strong>. N’utilisez pas l’inférence de schéma,
+spécifiez simplement votre schéma manuellement. Pour rappel, les colonnes sont : <code>année</code>, <code>mois</code>,
+<code>jour</code>, <code>heure</code>, <code>minute</code>, <code>seconde</code>, <code>température</code>.</p></li>
+<li><p><strong>Ligne 55.</strong> Complétez la définition de la fonction <code>avg_temperature_df</code>.</p></li>
+<li><p>Exécutez votre code sur tous les fichiers CSV donnés et <strong>complétez le tableau 2</strong>.</p></li>
+</ul>
+</div>
+</div>
+<table class="bigdata">
+<tr>
+<td>
+<b>Fichier</b>
+</td>
+<td>
+<b>Temps d’exécution - RDD<br>(sec)</b>
+</td>
+<td>
+<b>Temps d’exécution - DataFrame<br>(sec)</b>
+</td>
+</tr>
+<tr>
+<td>
+temperatures_86400.csv
+</td>
+<td>
+3.12
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+temperatures_2880.csv
+</td>
+<td>
+3.67
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+temperatures_86.csv
+</td>
+<td>
+4.59
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+temperatures_10.csv
+</td>
+<td>
+Exercice 1.1
+</td>
+<td>
+</td>
+</tr>
+<caption>
+Table 2. RDDs vs. DataFrames.
+</caption>
+</table>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 2.2  </strong></span></p>
+<p>Comparez les temps d’exécution avec ceux obtenus en utilisant les RDD.
+Qu’observez-vous ? Comment expliquez-vous ces différences ?</p>
+</div>
+</div>
+<!-- ## Effect of the number of partitions
+
+You're going to study the effect of the number of partitions on the performances of the program.
+
+* In file ``avg_temperatures_df.py`` add the following instruction right below the initialisation of the 
+``SparkSession``. The command sets the number of *shuffle* partitions to a certain value `X`.
+
+``
+spark.conf.set("spark.sql.shuffle.partitions", X)
+``
+
+* Execute the program with different values of `X` (say, 1, 2, 10, 50, 100, 500, 1000, 5000, 100000) **only on file**
+``temperatures_86400.csv`` and write down the execution times.
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-5"><strong>(\#exr:unnamed-chunk-5) </strong></span>
+
+* Plot a graph where the x-axis contains the values of `X` and the y-axis contains the execution time.
+What do you observe?
+
+
+* Execute the program on the other files by using small values of `X` (1 and 2). 
+Comment on the evolution of the execution times.
+</div>\EndKnitrBlock{exercise}
+
+:::
+-->
+<div id="mise-en-cache-dun-dataframe" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Mise en cache d’un DataFrame</h2>
+<p>Vous allez maintenant découvrir les avantages de la mise en cache d’un DataFrame.</p>
+<ul>
+<li><p>Décommentez les deux dernières lignes du fichier <code>avg_temperatures_df.py</code></p></li>
+<li><p>Supprimez le fichier <code>temperatures_10.df.out</code> en saisissant la commande suivante :</p></li>
+</ul>
+<div align="center">
+<p><code>hdfs dfs -rm -r hdfs://sar01:9000/itpspark24/itpspark24_XX/temperatures_10.df.out</code></p>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 2.3  </strong></span>
+Exécutez le code sur le fichier <code>températures_10.csv</code>.
+Quel est le temps d’exécution de chaque action ?
+Pouvez-vous expliquer en détail ce qui se passe ici ?</p>
+</div>
+</div>
+<ul>
+<li>Supprimez les fichiers <code>temperatures_10.df.out</code> et <code>temperatures_10.df.out.bis</code>.</li>
+</ul>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 2.4  </strong></span>
+Mettez en cache le DataFrame <code>df_avg</code> et
+exécutez à nouveau le code sur le fichier <code>temperatures_10.csv</code>.</p>
+<ul>
+<li><p>Où devez-vous ajouter l’instruction de mise en cache ?</p></li>
+<li><p>Quel est le temps d’exécution de chaque action ?</p></li>
+<li><p>Pouvez-vous expliquer en détail ce qui se passe ici ?</p></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="calcul-des-moyennes-avec-sql" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Calcul des moyennes avec SQL</h1>
+<p>Vous allez maintenant implémenter le calcul des températures moyennes annuelles en utilisant SQL sur les DataFrames Spark.</p>
+<div id="utilisation-dune-vue" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Utilisation d’une vue</h2>
+<p>Une première option pour interroger un DataFrame avec SQL est de créer une <strong>vue</strong>.</p>
+<ul>
+<li>Copiez le fichier <code>avg_temperatures_sql_view.py</code> dans votre dossier personnel à l’aide de la commande suivante :</li>
+</ul>
+<div align="center">
+<pre><code>cp ~cpu_quercini/spark-sql-templates/avg_temperatures_sql_view.py .</code></pre>
+</div>
+<ul>
+<li><p>Complétez le code des lignes 90, 101 et 118.</p></li>
+<li><p>Implémentez la fonction <code>avg_temperature_sql</code> (ligne 57).</p></li>
+</ul>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 3.1  </strong></span></p>
+<ul>
+<li><p>Exécutez le code sur tous les fichiers CSV et <strong>complétez le tableau 3</strong>.</p></li>
+<li><p>Que pouvez-vous dire sur les temps d’exécution ? Trouvez-vous des différences
+significatives entre l’utilisation de SQL sur une vue et l’utilisation des fonctions de l’API DataFrame ?</p></li>
+</ul>
+</div>
+</div>
+<table class="bigdata">
+<tr>
+<td>
+<b>Fichier</b>
+</td>
+<td>
+<b>Temps d’exécution - RDD<br>(sec)</b>
+</td>
+<td>
+<b>Temps d’exécution - DataFrame<br>(sec)</b>
+</td>
+<td>
+<b>Temps d’exécution - Vue SQL<br>(sec)</b>
+</td>
+</tr>
+<tr>
+<td>
+temperatures_86400.csv
+</td>
+<td>
+3.12
+</td>
+<td>
+Exercice 2.1
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+temperatures_2880.csv
+</td>
+<td>
+3.67
+</td>
+<td>
+Exercice 2.1
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+temperatures_86.csv
+</td>
+<td>
+4.59
+</td>
+<td>
+Exercice 2.1
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+temperatures_10.csv
+</td>
+<td>
+Exercice 1.1
+</td>
+<td>
+Exercice 2.1
+</td>
+<td>
+</td>
+</tr>
+<caption>
+Table 3. RDDs vs DataFrames vs Vues.
+</caption>
+</table>
+</div>
+<div id="utilisation-dune-table" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Utilisation d’une table</h2>
+<p>Une deuxième option pour interroger un DataFrame avec SQL est de créer une <strong>table</strong>.</p>
+<ul>
+<li>Copiez le fichier <code>avg_temperatures_sql_table.py</code> dans votre dossier personnel à l’aide de la commande suivante :</li>
+</ul>
+<div align="center">
+<pre><code>cp ~cpu_quercini/spark-sql-templates/avg_temperatures_sql_table.py .</code></pre>
+</div>
+<ul>
+<li><p>Complétez les lignes 50, 112, 123 et 140.</p></li>
+<li><p>Implémentez la fonction <code>avg_temperature_sql</code> (ligne 76).</p></li>
+</ul>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-9" class="exercise"><strong>Exercise 3.2  </strong></span></p>
+<ul>
+<li><p>Exécutez le code sur tous les fichiers CSV.</p></li>
+<li><p>Complétez le tableau 4.</p></li>
+<li><p>Comparez les temps d’exécution avec ceux que vous avez obtenus avant. Discutez des résultats.</p></li>
+</ul>
+</div>
+</div>
+<!--While reading the code in file ``avg_temperatures_sql_table.py``, you probably noticed that we have specified 
+the path to a HDFS folder for the **Hive metastore warehouse**. This folder will contain the data of each table 
+that we create.-->
+<!--::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-10"><strong>(\#exr:unnamed-chunk-10) </strong></span>
+
+* Look at the files in your home folder (in the local file system, not HDFS) by using the command ``ls``. 
+
+* Do you notice the presence of new files?
+
+* Can you explain what these files are?
+
+* Execute the code on all CSV files and **complete Table 4**. 
+
+* Compare the execution times against the ones that you obtained in the previous exercises.
+</div>\EndKnitrBlock{exercise}
+
+:::-->
+<table class="bigdata">
+<tr>
+<td>
+<b>Fichier</b>
+</td>
+<td>
+<b>Temps d’exécution - RDD<br>(sec)</b>
+</td>
+<td>
+<b>Temps d’exécution - DataFrame<br>(sec)</b>
+</td>
+<td>
+<b>Temps d’exécution - Vue SQL<br>(sec)</b>
+</td>
+<td>
+<b>Temps d’exécution - Table SQL<br>(sec)</b>
+</td>
+</tr>
+<tr>
+<td>
+temperatures_86400.csv
+</td>
+<td>
+3.12
+</td>
+<td>
+Exercice 2.1
+</td>
+<td>
+Exercice 3.1
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+temperatures_2880.csv
+</td>
+<td>
+3.67
+</td>
+<td>
+Exercice 2.1
+</td>
+<td>
+Exercice 3.1
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+temperatures_86.csv
+</td>
+<td>
+4.59
+</td>
+<td>
+Exercice 2.1
+</td>
+<td>
+Exercice 3.1
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+temperatures_10.csv
+</td>
+<td>
+Exercice 1.1
+</td>
+<td>
+Exercice 2.1
+</td>
+<td>
+Exercice 3.1
+</td>
+<td>
+</td>
+</tr>
+<caption>
+Table 4. RDDs vs DataFrames vs Vues vs Tables.
+</caption>
+</table>
+<ul>
+<li><p>Supprimez le fichier <code>temperatures_10.sql.table.out</code>.</p></li>
+<li><p>Exécutez à nouveau le code sur le fichier <code>temperatures_10.csv</code>.</p></li>
+</ul>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-11" class="exercise"><strong>Exercise 3.3  </strong></span>
+Quel est le temps d’exécution que vous obtenez maintenant ?</p>
+</div>
+</div>
+</div>
+</div>
+<div id="utilisation-de-lapi-dataframe-sur-des-fichiers-volumineux" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Utilisation de l’API DataFrame sur des fichiers volumineux</h1>
+<p>Nous allons maintenant examiner les fichiers stockés sous <code>hdfs://sar01:9000/data/sales/</code>.</p>
+<p>Ces fichiers contiennent des données tabulaires relatives à la vente de produits dans une chaîne de magasins.
+Nous considérons deux tables : <code>store_sales</code> et <code>customer</code>.
+Dans la première table, nous trouvons des informations sur chaque vente,
+comme l’identifiant du produit vendu,
+l’identifiant de l’acheteur,
+la quantité de produit acheté et le prix payé par le client.
+Pour cette table, nous disposons de 4 fichiers, qui ne diffèrent que par leur taille :</p>
+<ul>
+<li><p><code>store_sales_1_4.100.dat</code> : contient 9.5 GiB de données.</p></li>
+<li><p><code>store_sales_1_4.200.dat</code> : contient 19 GiB de données.</p></li>
+<li><p><code>store_sales_1_4.400.dat</code> : contient 38 GiB de données.</p></li>
+<li><p><code>store_sales_1_4.800.dat</code> : contient 77 GiB de données.</p></li>
+</ul>
+<p>Dans la table <code>customer</code> nous trouvons des données sur les clients, comme le prénom, le nom et la date de naissance.
+Nous n’avons qu’un seul fichier pour cette table :</p>
+<ul>
+<li><code>customer_10000.dat</code> : contient 8.3 GiB de données.</li>
+</ul>
+<p>Nous voulons tester les performances de l’API <strong>DataFrame</strong> sur les requêtes suivantes
+(<strong>Attention. vous devez écrire un code qui utilise les fonctions DataFrame, pas du SQL!</strong>) :</p>
+<ul>
+<li><strong>Requête Q1</strong> : renvoie le nombre de clients. Cela correspond à la requête SQL suivante :</li>
+</ul>
+<pre><code>SELECT count(*) 
+FROM customer</code></pre>
+<p><strong>Requête Q2</strong> : renvoie le prix du produit le plus cher. Cela correspond à la requête SQL suivante :</p>
+<pre><code>SELECT max(ss_list_price) 
+FROM store_sales</code></pre>
+<p><strong>Requête Q3</strong> : renvoie la somme d’argent dépensée par chaque client. Cela correspond à la requête SQL suivante :</p>
+<pre><code>SELECT ss_customer_sk, SUM(ss_net_paid_inc_tax) as amountSpent 
+FROM store_sales
+GROUP BY ss_customer_sk</code></pre>
+<p><strong>Requête Q4</strong> : Requête Q3 + trier le résultat de façon à ce que le client qui a dépensé le plus d’argent apparaisse en haut.
+Cela correspond à la requête SQL suivante :</p>
+<pre><code>SELECT ss_customer_sk, SUM(ss_net_paid_inc_tax) as amountSpent 
+FROM store_sales
+GROUP BY ss_customer_sk
+ORDER BY amountSpent DESC</code></pre>
+<p><strong>Requête Q5</strong> : Requête Q4 + jointure avec la table <code>customer</code> pour obtenir le nom et le prénom des clients.
+Cela correspond à la requête SQL suivante :</p>
+<pre><code>SELECT c.c_first_name, c.c_last_name, SUM(ss_net_paid_inc_tax) as amountSpent 
+FROM store_sales s JOIN customer c ON s.ss_customer_sk = c.c_customer_sk 
+GROUP BY ss_customer_sk
+ORDER BY amountSpent DESC</code></pre>
+<div id="développement-du-code-utilisant-lapi-dataframe." class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> Développement du code utilisant l’API DataFrame.</h2>
+<ul>
+<li>Copiez le fichier <code>dataframe_api_benchmark.py</code> dans votre dossier personnel à l’aide de la commande suivante :</li>
+</ul>
+<div align="center">
+<pre><code>cp ~cpu_quercini/spark-sql-templates/dataframe_api_benchmark.py .</code></pre>
+</div>
+<ul>
+<li><p>Modifiez le code en suivant les instructions que vous trouvez dans le fichier.</p></li>
+<li><p>Exécutez le code sur le fichier <code>store_sales_1_4.100.dat</code> (le plus petit) pour tester que votre code ne contient pas de bogues.</p></li>
+<li><p>Une fois que vous êtes sûr que votre code est correct, <strong>décommentez les lignes 82 et 83</strong>. Cela mettra en cache les deux DataFrames.</p></li>
+<li><p>Exécutez le code sur tous les fichiers <code>store-sales_*.dat</code></p></li>
+</ul>
+<div class="infobox warning">
+<p><strong>Bon à savoir</strong></p>
+<p>Chaque requête est exécutée 5 fois pour avoir une estimation correcte du temps d’exécution.
+Vous verrez que les temps d’exécution fluctuent lors des premières itérations et qu’ils se stabilisent
+au cours des itérations suivantes.
+Lorsque vous notez les temps d’exécution, ne prenez en compte que ceux obtenus
+à la dernière itération.</p>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-12" class="exercise"><strong>Exercise 4.1  </strong></span></p>
+<ul>
+<li><p>Complétez le tableau 5 et notez le temps d’exécution de chaque requête pour chaque fichier.</p></li>
+<li><p>Pourquoi le temps d’exécution des requêtes Q1 et Q2 est-il élevé à l’itération 0 ?</p></li>
+<li><p>Pensez-vous que la différence entre les temps d’exécution des requêtes est raisonnable ?</p></li>
+<li><p>Pensez-vous que l’augmentation des temps d’exécution est raisonnable compte tenu de la taille des fichiers d’entrée ?</p></li>
+</ul>
+</div>
+</div>
+<table class="bigdata">
+<tr>
+<td>
+<b>Fichier / Requête</b>
+</td>
+<td>
+<b>Lecture<br>(sec)</b>
+</td>
+<td>
+<b>Requête Q1<br>(sec)</b>
+</td>
+<td>
+<b>Requête Q2<br>(sec)</b>
+</td>
+<td>
+<b>Requête Q3<br>(sec)</b>
+</td>
+<td>
+<b>Requête Q4<br>(sec)</b>
+</td>
+<td>
+<b>Requête Q5<br>(sec)</b>
+</td>
+</tr>
+<tr>
+<td>
+store_sales_1_4.100.dat
+</td>
+<td>
+17.24
+</td>
+<td>
+0.94
+</td>
+<td>
+1.05
+</td>
+<td>
+1.17
+</td>
+<td>
+2.16
+</td>
+<td>
+5.22
+</td>
+</tr>
+<tr>
+<td>
+store_sales_1_4.200.dat
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+store_sales_1_4.400.dat
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<tr>
+<td>
+store_sales_1_4.800.dat
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+<td>
+</td>
+</tr>
+<caption>
+Table 5. Temps d’exécution des requêtes sur le dataset <code>sales</code>.
+</caption>
+</table>
+</div>
+</div>
+
+          </div>
+
+          
+
+
+
+          
+        </div>
+
+        
+      </article>
+
+      
+
+    </main>
+  </div>
+</div>
+
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.1/anchor.min.js" integrity="sha256-pB/deHc9CGfFpJRjC43imB29Rse8tak+5eXqntO94ck=" crossorigin="anonymous"></script>
+    <script>
+      anchors.add();
+    </script>
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.3da86581634ab22d5bb3fc4505df30a5.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
