@@ -8323,10 +8323,10 @@ You can use the template available at ``~vialle/DCE-Spark/template_inverted_inde
 &lt;/ul&gt;
 &lt;div id=&#34;première-implémentation&#34; class=&#34;section level2&#34; number=&#34;1.1&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.1&lt;/span&gt; Première implémentation&lt;/h2&gt;
-&lt;p&gt;Copiez le fichier &lt;code&gt;/usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_temperatures.py&lt;/code&gt;
+&lt;p&gt;Copiez le fichier &lt;code&gt;~cpu_vialle/DCE-Spark/template_temperatures.py&lt;/code&gt;
 dans votre répertoire personnel en saisissant la commande suivante :&lt;/p&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;p&gt;&lt;code&gt;cp /usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_temperatures.py ./avg_temperatures_slow.py&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;cp ~cpu_vialle/DCE-Spark/template_temperatures.py ./avg_temperatures_slow.py&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;p&gt;Ouvrez le fichier &lt;code&gt;avg_temperatures_slow.py&lt;/code&gt;.
 Le fichier contient l’implémentation de la fonction &lt;code&gt;avg_temperature_slow&lt;/code&gt;
@@ -8451,7 +8451,7 @@ En d’autres termes, si nous produisons &lt;span class=&#34;math inline&#34;&gt
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.1&lt;/span&gt; Implémentation&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;Obtenez un squelette du code à l’aide de la commande suivante :&lt;/strong&gt;&lt;/p&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;p&gt;&lt;code&gt;cp /usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_common_friends.py .&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;cp ~cpu_vialle/DCE-Spark/template_common_friends.py .&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
@@ -8534,7 +8534,7 @@ Type the following command to get a code template:
 
 &lt;div align=&#39;center&#39;&gt;
 ``
-cp /usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_temperatures.py  ./avg_stddev_temp.py
+cp ~cpu_vialle/DCE-Spark/template_temperatures.py  ./avg_stddev_temp.py
 ``
 &lt;/div&gt;
 
@@ -8832,6 +8832,501 @@ cp /usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_temperatures.py  ./avg_stdd
 
  --&gt;
 &lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Spark MLlib</title>
+      <link>/courses/bigdata-mds/labs/spark-mllib/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/bigdata-mds/labs/spark-mllib/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;!-- ############ IMPORTANT: CHANGE THESE VALUES BEFORE ANY LAB ############ --&gt;
+&lt;!-- The group to which users in the cluster belong--&gt;
+&lt;!-- User accounts are numbered from the lower to the upper limit--&gt;
+&lt;!-- ############ END OF MODIFICATIONS ############ --&gt;
+&lt;p&gt;Dans ce TD, vous apprendrez à utiliser la bibliothèque &lt;strong&gt;Spark MLlib&lt;/strong&gt; pour entraîner, tester et évaluer des modèles d’apprentissage automatique.
+Nous utiliserons un jeu de données sur les logements AirBnb dans la région de San Francisco.
+Le jeu de données est disponible sur HDFS au chemin suivant :&lt;/p&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;hdfs://sar01:9000/cpu_quercini/ml/sf-airbnb-clean.parquet&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Source du jeu de données&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Le jeu de données a été téléchargé à partir &lt;a href=&#34;https://github.com/databricks/LearningSparkV2&#34; target=&#34;_blank&#34;&gt;de ce dépôt GitHub&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Le but de ce TD est de prédire le prix par nuit d’un appartement en fonction de toutes les caractéristiques des données.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Bon à savoir.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;L’interpréteur Python utilisé par les exécuteurs du cluster n’a pas le paquet &lt;code&gt;numpy&lt;/code&gt; installé.
+Afin d’utiliser un interpréteur qui utilise &lt;code&gt;numpy&lt;/code&gt;, vous devez exécuter la commande suivante dans le terminal :&lt;/p&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;pre&gt;&lt;code&gt;export PYSPARK_PYTHON=/usr/bin/python3&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ensemble-dentraînement-et-ensemble-de-test&#34; class=&#34;section level1&#34; number=&#34;1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Ensemble d’entraînement et ensemble de test&lt;/h1&gt;
+&lt;p&gt;Afin de entraîner et d’évaluer un modèle d’apprentissage automatique, nous devons
+obtenir un &lt;strong&gt;ensemble d’entraînement&lt;/strong&gt; et un &lt;strong&gt;ensemble de test&lt;/strong&gt; à partir de notre jeu de données.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activité&lt;/strong&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Copiez le fichier &lt;code&gt;train_test.py&lt;/code&gt; vers votre dossier personnel (sur les machines du DCE) à l’aide de la commande suivante :&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;pre&gt;&lt;code&gt;~cpu_quercini/mllib/train_test.py .&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;strong&gt;Complétez la ligne 9&lt;/strong&gt;, en spécifiant votre répertoire personnel sur HDFS, qui est le suivant (&lt;strong&gt;remplacer X par votre numéro de compte&lt;/strong&gt;).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;hdfs://sar01:9000/itpspark24/itpspark24_X&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Écrivez le code&lt;/strong&gt; pour lire le fichier donné, qui est stocké sur HDFS au format Parquet, et charger son contenu dans un DataFrame nommé &lt;code&gt;airbnb_df&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;À partir de la ligne 26&lt;/strong&gt;, ajoutez les instructions nécessaires pour afficher le schéma du DataFrame &lt;code&gt;airbnb_df&lt;/code&gt; et les 5 premières lignes.
+Quelle option devriez-vous utiliser pour voir les valeurs dans les colonnes ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Exécutez le code à l’aide de la commande &lt;code&gt;spark-submit&lt;/code&gt;, et vérifiez que les données sont correctement chargées dans le DataFrame.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Le corrigé est disponible dans le fichier :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+~cpu_quercini/mllib_solutions/train_test.py
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Puisque le DataFrame a beaucoup de colonnes, nous avons besoin de spécifier l’option &lt;code&gt;vertical=True&lt;/code&gt; lorsqu’on appelle la fonction &lt;code&gt;show()&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;p&gt;Nous séparons maintenant le DataFrame &lt;code&gt;airbnb_df&lt;/code&gt; en deux DataFrames distincts, &lt;code&gt;train_df&lt;/code&gt; et &lt;code&gt;test_df&lt;/code&gt;,
+contenant respectivement les instances d’entraînement et de test.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.2  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Écrivez le code&lt;/strong&gt; pour diviser le jeu de données en un ensemble d’entraînement (80% du jeu de données) et un ensemble de test (20% du jeu de données).
+&lt;a href=&#34;https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/api/pyspark.sql.DataFrame.html&#34; target=&#34;_blank&#34;&gt;En consultant la documentation de l’API DataFrame&lt;/a&gt;, quelle fonction allez-vous utiliser ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;A partir de la ligne 36&lt;/strong&gt;, écrivez le code pour afficher le nombre d’instances des deux ensembles obtenus.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Exécutez le code à l’aide de la commande &lt;code&gt;spark-submit&lt;/code&gt;. Vérifiez que le nombre d’instances des deux ensembles soit correct.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Le corrigé est disponible dans le fichier suivant :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+~cpu_quercini/mllib_solutions/train_test.py
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;p&gt;Il est temps d’enregistrer les ensembles d’entraînement et de test dans deux fichiers HDFS séparés.
+Ainsi, nous pourrons les charger chaque fois que nous en aurons besoin pour entraîner un modèle d’apprentissage automatique
+pour ce problème.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.3  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;À partir de la ligne 47&lt;/strong&gt;. Ecrivez le code pour sauvegarder les ensembles d’entraînement et de test dans deux fichiers au format Parquet sur HDFS.
+Les chemins d’accès des deux fichiers sont déjà disponibles dans les variables &lt;code&gt;training_set_file&lt;/code&gt; et &lt;code&gt;test_set_file&lt;/code&gt;
+définies respectivement aux lignes 40 et 43.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Le corrigé est disponible dans le fichier suivant :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+~cpu_quercini/mllib_solutions/train_test.py
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;préparation-des-caractéristiques&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Préparation des caractéristiques&lt;/h1&gt;
+&lt;p&gt;Dans les ensembles d’entraînement et de test, les caractéristiques des données correspondent aux colonnes du DataFrame.
+La plupart des algorithmes d’apprentissage automatique définis dans Spark ont besoin d’avoir toutes les caractéristiques dans un seul vecteur.
+Nous devons utiliser un &lt;strong&gt;transformateur&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Bon à savoir.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Les transformateurs&lt;/strong&gt; prennent en argument un DataFrame et renvoient un nouveau DataFrame
+qui a les mêmes colonnes que le DataFrame en argument et des colonnes supplémentaires spécifiées en tant qu’argument du transformateur.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Copiez le fichier &lt;code&gt;train_test_model&lt;/code&gt; vers votre dossier personnel (sur les machines du DCE) à l’aide de la commande suivante :&lt;/p&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;~cpu_quercini/mllib/train_test_model.py .&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Implémentez la fonction &lt;code&gt;read_training_set&lt;/code&gt; à la ligne 22.
+Cette fonction charge dans un DataFrame l’ensemble d’entraînement à partir du fichier que vous avez généré à l’exercice précédent.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Implémentez la fonction &lt;code&gt;read_test_function&lt;/code&gt; à la ligne 39.
+Cette fonction charge dans un DataFrame l’ensemble de test à partir du fichier que vous avez généré à l’exercice précédent.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Modifiez les variables aux lignes 105 et 106 pour qu’elles pointent vers les deux fichiers HDFS Parquet qui contiennent les ensembles d’entraînement et de test.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Décommentez les lignes 109 et 110, afin d’afficher le nombre d’instances d’entraînement et de test.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Exécutez le fichier &lt;code&gt;train_test_model&lt;/code&gt; à l’aide de la commande &lt;code&gt;spark-submit&lt;/code&gt;. Vérifiez que le nombre d’instances d’entraînement et de test corresponde
+à ce que vous avez obtenu lors des exercices précédents.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Le corrigé est disponible dans le fichier :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+~cpu_quercini/mllib_solutions/train_test_model.py
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;p&gt;Il est maintenant temps d’apprendre à utiliser un transformateur pour mettre toutes les caractéristiques nécessaires dans un vecteur.
+Pour l’instant, nous n’utiliserons que la caractéristique « bedrooms » pour prédire le prix.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.2  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Implémentez la fonction &lt;code&gt;get_vector&lt;/code&gt; à la ligne 55. Les commentaires dans le fichier décrivent ce que la fonction doit faire.
+Vous devrez utiliser un &lt;a href=&#34;https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.feature.VectorAssembler.html#pyspark.ml.feature.VectorAssembler&#34; target=&#34;_blank&#34;&gt;objet VectorAssembler&lt;/a&gt; pour implémenter la fonction.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Décommentez les lignes 117 et 118 pour appeler la fonction &lt;code&gt;get_vector&lt;/code&gt; et afficher le résultat.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Exécutez le fichier &lt;code&gt;train_test_model&lt;/code&gt; à l’aide de la commande &lt;code&gt;spark-submit&lt;/code&gt;. Observez le contenu du DataFrame &lt;code&gt;train_vect&lt;/code&gt;. Il devrait avoir une colonne nommée
+&lt;code&gt;features&lt;/code&gt; contenant une liste avec une valeur (la valeur de la caractéristique &lt;code&gt;bedrooms&lt;/code&gt;).&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Le corrigé est disponible dans le fichier suivant :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+~cpu_quercini/mllib_solutions/train_test_model.py
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;p&gt;Il est maintenant temps d’entraîner un modèle de régression linéaire sur l’ensemble d’entraînement donné et les caractéristiques sélectionnées.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.3  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Implémentez la fonction &lt;code&gt;train_linear_regression_model&lt;/code&gt; à la ligne 79. Les commentaires du fichier décrivent ce que la fonction est censée faire.
+&lt;a href=&#34;https://spark.apache.org/docs/latest/api/python/reference/pyspark.ml.html&#34; target=&#34;_blank&#34;&gt;En consultant la documentation&lt;/a&gt;,
+essayez d’identifier l’objet que vous devez utiliser pour créer un régresseur linéaire et la fonction que vous devez utiliser pour l’entraîner.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Décommentez les lignes 121, 124, 125, 126 pour appeler la fonction &lt;code&gt;train_linear_regression_model&lt;/code&gt; et afficher les coefficients appris par le modèle de régression linéaire.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Exécutez le fichier &lt;code&gt;train_test_model&lt;/code&gt; à l’aide de la commande &lt;code&gt;spark-submit&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Le corrigé est disponible dans le fichier :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+~cpu_quercini/mllib_solutions/train_test_model.py
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;p&gt;Nous pouvons maintenant utiliser le modèle entraîné pour faire des prédictions.
+Le modèle renovyé par la fonction que vous avez implémentée dans l’exercice précédent
+est un objet de type &lt;code&gt;LinearRegressionModel&lt;/code&gt;.
+&lt;a href=&#34;https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.regression.LinearRegressionModel.html#pyspark.ml.regression.LinearRegressionModel&#34; target=&#34;_blank_&#34;&gt;En consultant la documentation&lt;/a&gt;, nous apprenons qu’il existe une fonction &lt;code&gt;predict&lt;/code&gt;
+permettant de faire une prédiction à partir d’une seule instance.
+Si nous voulons faire une prédiction sur l’ensemble du jeu de test, nous devons utiliser la fonction &lt;code&gt;transform&lt;/code&gt;.
+La fonction prend en argument un DataFrame avec l’ensemble de test et renvoie le même DataFrame
+avec une colonne supplémentaire &lt;code&gt;prediction&lt;/code&gt; qui contient la valeur prédite.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.4  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Regardez les lignes 130 et 131. Quel DataFrame devons-nous passer à la fonction &lt;code&gt;transform&lt;/code&gt; ? Est-ce que &lt;code&gt;test_df&lt;/code&gt; est un bon choix ? Pourquoi ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Complétez la ligne 130 et décommentez les lignes 130, 131, 132.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Exécutez le fichier &lt;code&gt;train_test_model&lt;/code&gt; à l’aide de la commande &lt;code&gt;spark-submit&lt;/code&gt; et observez le résultat.
+La valeur prédite est-elle celle à laquelle vous vous attendez étant donné que vous connaissez la formule de la droite de régression ?&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;code&gt;test_df&lt;/code&gt; n’est pas un bon choix.
+En fait, le DataFrame de l’ensemble de test doit avoir le même format que le DataFrame de l’ensemble d’apprentissage
+sur lequel le modèle a été entraîné.&lt;/p&gt;
+&lt;p&gt;Donc, nous devons le transformer avec un objet &lt;code&gt;vecAssembler&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Le corrigé est disponible dans le fichier suivant :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+~cpu_quercini/mllib_solutions/train_test_model.py
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;pipelines&#34; class=&#34;section level1&#34; number=&#34;3&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Pipelines&lt;/h1&gt;
+&lt;p&gt;Dans la section précédente, nous avons appris qu’un ensemble d’entraînement et un ensemble
+de test doivent passer par les mêmes étapes de transformation afin d’alimenter un modèle d’apprentissage automatique.&lt;/p&gt;
+&lt;p&gt;Lorsque nous avons peu de transformations, il est facile de se souvenir de
+celles que nous avons appliquées à un ensemble d’entraînement, afin de les appliquer également à l’ensemble de test.&lt;/p&gt;
+&lt;p&gt;Cependant, lorsque nous devons appliquer une série de transformations, dont l’ordre est important,
+il est facile de commettre des erreurs.&lt;/p&gt;
+&lt;p&gt;Une bonne pratique consiste à utiliser l’API &lt;strong&gt;Pipeline&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Un &lt;strong&gt;pipeline&lt;/strong&gt; est composée d’&lt;strong&gt;étapes&lt;/strong&gt;. Chaque étape peut consister de l’appel à un &lt;strong&gt;transformateur&lt;/strong&gt; ou à un &lt;strong&gt;estimateur&lt;/strong&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Un &lt;strong&gt;transformateur&lt;/strong&gt; est un objet sur lequel nous appelons la fonction &lt;code&gt;transform&lt;/code&gt; pour obtenir un nouveau DataFrame à partir d’un DataFrame donné.&lt;/li&gt;
+&lt;li&gt;Un &lt;strong&gt;estimateur&lt;/strong&gt; est un objet sur lequel nous appelons la fonction &lt;code&gt;fit&lt;/code&gt; pour apprendre un modèle sur un DataFrame donné. Le modèle appris est lui-même
+un transformateur.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Lorsque la fonction &lt;code&gt;fit&lt;/code&gt; est appelée sur un pipeline, l’ensemble d’apprentissage passe par tous
+les transformateurs et les estimateurs dans l’ordre dans lequel ils sont déclarés dans le pipeline ;
+enfin, l’estimateur spécifié à la dernière étape est entraîné sur l’ensemble d’apprentissage.
+Le modèle renovyé par l’application de la fonction &lt;code&gt;fit&lt;/code&gt; sur le pipeline est lui-même un transformateur.
+Si nous invoquons la fonction &lt;code&gt;transform&lt;/code&gt; sur ce modèle sur l’ensemble de test, nous obtenons un DataFrame qui contient une colonne nommée &lt;code&gt;predictions&lt;/code&gt;.
+Implicitement, toutes les transformations dans le pipeline seront appliquées à l’ensemble de test aussi, avant de faire les prédictions.&lt;/p&gt;
+&lt;p&gt;Copiez le fichier &lt;code&gt;pipeline_example.py&lt;/code&gt; dans votre dossier personnel à l’aide de la commande suivante :&lt;/p&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;pre&gt;&lt;code&gt;cp ~cpu_quercini/mllib/pipeline_example.py .&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;
+&lt;a href=&#34;https://spark.apache.org/docs/latest/ml-pipeline.html&#34; target=&#34;_blank&#34;&gt;Regardez la documentation&lt;/a&gt; et
+écrivez un code à partir de la ligne 34 pour créer un pipeline qui effectue les mêmes opérations que vous avez écrites dans le fichier &lt;code&gt;train_test_model.py&lt;/code&gt;
+pour entraîner et tester un modèle de régression linéaire sur les ensembles d’entraînement et de test donnés.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;N’oubliez pas de spécifier &lt;strong&gt;aux lignes 27 et 28&lt;/strong&gt; les chemins d’accès des fichiers d’entraînement et de test stockés sur HDFS .&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Le corrigé est disponible dans le fichier suivant :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;~cpu_quercini/mllib_solutions/pipeline_example.py&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div id=&#34;des-caractéristiques-catégorielles-aux-caractéristiques-numériques&#34; class=&#34;section level2&#34; number=&#34;3.1&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.1&lt;/span&gt; Des caractéristiques catégorielles aux caractéristiques numériques&lt;/h2&gt;
+&lt;p&gt;De nombreux modèles d’apprentissage automatique n’acceptent pas des valeurs catégorielles : ils ont besoin que toutes les caractéristiques soient numériques.
+La régression linéaire en est un exemple.&lt;/p&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activité&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Copiez le fichier &lt;code&gt;onehot_playground.py&lt;/code&gt; vers votre dossier personnel à l’aide de la commande suivante :&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;pre&gt;&lt;code&gt;~cpu_quercini/mllib/onehot_playground.py .&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;Modifiez les lignes 27 et 28 et écrivez les chemins d’accès des fichiers contenant les ensembles d’entraînement et de test.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;p&gt;Commençons par déterminer quelles sont les caractéristiques catégorielles de notre jeu de données.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.2  &lt;/strong&gt;&lt;/span&gt;
+Complétez la fonction &lt;code&gt;get_categorical_columns&lt;/code&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Pour avoir une idée sur comment obtenir les colonnes catégorielles, exécutez le code à l’aide de la commande &lt;code&gt;spark_submit&lt;/code&gt;.
+Ceci exécute l’instruction à la ligne 86.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Une fois que vous avez terminé l’implémentation, exécutez le fichier à l’aide de la commande &lt;code&gt;spark-submit&lt;/code&gt; et observez la sortie.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Le corrigé est disponible dans le fichier suivant :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;~cpu_quercini/mllib_solutions/onehot_playground.py&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;p&gt;Un exemple de caractéristique catégorielle
+dans notre jeu de données est &lt;code&gt;property_type&lt;/code&gt;,
+qui accepte des valeurs telles que &lt;em&gt;Apartment&lt;/em&gt;, &lt;em&gt;House&lt;/em&gt;, &lt;em&gt;Condominium&lt;/em&gt;…
+Chaque valeur d’une caractéristique catégorielle est également appelée catégorie.&lt;/p&gt;
+&lt;p&gt;Une façon de transformer cette caractéristique en une caractéristique
+numérique serait d’attribuer un numéro à chaque catégorie
+(par exemple, &lt;em&gt;Appartement&lt;/em&gt; correspond à 0, &lt;em&gt;Maison&lt;/em&gt; à 1….).
+Cependant, cela introduit implicitement un ordre entre les catégories : la catégorie &lt;em&gt;Maison&lt;/em&gt; vaudrait deux fois plus que la catégorie &lt;em&gt;Appartement&lt;/em&gt; ;
+Cela fausserait inévitablement le modèle.&lt;/p&gt;
+&lt;p&gt;Une méthode couramment utilisée est l’encodage &lt;strong&gt;one-hot&lt;/strong&gt;. Voyons comment elle fonctionne.
+Concentrons-nous uniquement sur la caractéristique &lt;code&gt;type_de_propriété&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activité&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Décommentez les lignes 40, 41 et 42. Ces lignes instancient un estimateur appelé &lt;code&gt;StringIndexer&lt;/code&gt;.
+Cet estimateur associe des index numériques aux valeurs de &lt;code&gt;property_type&lt;/code&gt;. Les index seront stockés dans une autre colonne
+nommée &lt;code&gt;property_type_index&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Décommentez la ligne 46. Le &lt;code&gt;StringIndexer&lt;/code&gt; est appliqué à l’ensemble d’entraînement pour apprendre à associer des index aux valeurs de
+&lt;code&gt;property_type&lt;/code&gt;. Le résultat de cette instruction est un nouveau transformateur.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Décommentez la ligne 49. Le transformateur appris à la ligne 46 est utilisé pour transformer l’ensemble d’entraînement dans un nouveau DataFrame.
+Ce DataFrame contient une colonne supplémentaire appelée &lt;code&gt;property_type_index&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.3  &lt;/strong&gt;&lt;/span&gt;
+Complétez la fonction &lt;code&gt;count_property_types&lt;/code&gt;.
+Suivez les instructions que vous trouvez dans le fichier &lt;code&gt;onehot_playground.py&lt;/code&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Une fois la fonction terminée, décommentez la ligne 53 pour appeler la fonction.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Exécutez le fichier à l’aide de la commande &lt;code&gt;spark-submit&lt;/code&gt; et observez la sortie. Pouvez-vous deviner comment les index sont assignés aux catégories
+de l’élément &lt;code&gt;property_type&lt;/code&gt; ?&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Le corrigé est disponible dans le fichier suivant :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;~cpu_quercini/mllib_solutions/onehot_playground.py&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;On constate que le type de propriété le plus fréquent obtient l’indice 0 ; le deuxième plus fréquent obtiendra la valeur 1…les indices sont donc attribués par fréquence.
+Chaque fois que nous exécutons le même code, nous obtenons les mêmes index.
+Cela signifie que nous avons un déterminisme sur les différentes exécutions d’un même programme.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;p&gt;Il est temps de découvrir comment fonctionne l’encodage one-hot.&lt;/p&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activité&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Décommentez les lignes 57, 58, 61, 64, 67. Ces lignes instancient un estimateur appelé &lt;code&gt;OneHotEncoder&lt;/code&gt;.
+Cet estimateur utilise les index de la colonne &lt;code&gt;property_type_index&lt;/code&gt; et crée une nouvelle colonne &lt;code&gt;property_type_ohe&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;L’estimateur est entraîné sur l’ensemble d’entraînement et un nouveau transformateur est obtenu (ligne 61).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Le transformateur est utilisé sur l’ensemble d’entraînement pour le transformer en un nouveau DataFrame, qui aura une nouvelle colonne &lt;code&gt;property_type_ohe&lt;/code&gt; .&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;La ligne 67 affiche des colonnes sélectionnées de cet ensemble d’entraînement transformé.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-11&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.4  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Exécutez le fichier à l’aide de la commande &lt;code&gt;spark-submit&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Pouvez-vous comprendre comment fonctionne l’encodage one-hot ?&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Le corrigé est disponible dans le fichier suivant :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;~cpu_quercini/mllib_solutions/onehot_playground.py&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;L’encodage one-hot crée un vecteur avec autant de valeurs que le nombre de catégories dans la colonne
+&lt;code&gt;property_type&lt;/code&gt;.
+Chaque catégorie a un index fixe dans ce vecteur, donné par la colonne &lt;code&gt;property_type_index&lt;/code&gt;.
+Si, pour une instance, la valeur de la colonne &lt;code&gt;property_type&lt;/code&gt; est &lt;em&gt;Guest suite&lt;/em&gt; et que l’index de &lt;em&gt;Guest suite&lt;/em&gt; est 3,
+alors le vecteur produit par l’encodage one-hot n’a qu’une valeur 1 à l’index 3 et 0 partout ailleurs.
+Spark ne stocke qu’une représentation concise de ce vecteur creux : un tuple avec la taille du vecteur,
+l’index 3 et la valeur associée à cet index (1).&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;p&gt;Maintenant, vous avez tous les ingrédients pour créer un pipeline complet
+pour former et tester un modèle de régression linéaire en utilisant toutes les fonctionnalités.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-12&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.5  &lt;/strong&gt;&lt;/span&gt;
+Créez un nouveau fichier &lt;code&gt;full_pipeline.py&lt;/code&gt; et suivez ces instructions :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Sélectionnez les caractéristiques catégorielles.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Configurez un &lt;code&gt;StringIndexer&lt;/code&gt; et un &lt;code&gt;OneHotEncoder&lt;/code&gt; pour appliquer un encodage one-hot à toutes les caractéristiques catégorielles.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Extrayez les caractéristiques numériques.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Mettez en oeuvre un &lt;code&gt;VectorAssembler&lt;/code&gt; pour mettre dans un seul vecteur les caractéristiques encodées et les caractéristiques numériques.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Mettez en oeuvre un modèle de régression linéaire qui prend en arguments toutes les caractéristiques et la variable à prédire (&lt;code&gt;price&lt;/code&gt;).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Mélangez tous ces ingrédients dans un &lt;code&gt;Pipeline&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Utilisez le &lt;code&gt;Pipeline&lt;/code&gt; pour entraîner et tester le modèle.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Le corrigé est disponible dans le fichier suivant :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;~cpu_quercini/mllib_solutions/full_pipeline.py&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;évaluation-du-modèle&#34; class=&#34;section level1&#34; number=&#34;4&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Évaluation du modèle&lt;/h1&gt;
+&lt;p&gt;Dans les sections précédentes, nous avons examiné les prédictions pour avoir une vague idée des performances de notre
+estimateur.
+Afin de quantifier la qualité de notre estimateur, nous avons besoin de mesures d’évaluation.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-13&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.1  &lt;/strong&gt;&lt;/span&gt;
+&lt;a href=&#34;https://spark.apache.org/docs/latest/ml-tuning.html#train-validation-split&#34; target=&#34;_blank&#34;&gt;Regardez la documentation&lt;/a&gt;
+et modifiez le code pour sélectionner un modèle à l’aide d’une recherche par grille (&lt;em&gt;grid search&lt;/em&gt;). Le but de la recherche par grille est
+de trouver la valeur optimale des hyperparamètres du modèle.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Le corrigé est disponible dans le fichier suivant :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+~cpu_quercini/mllib_solutions/model_evaluation.py
+&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>

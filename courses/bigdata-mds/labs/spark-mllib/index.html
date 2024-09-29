@@ -1,0 +1,1222 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Gianluca Quercini">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="5. Spark MLlib">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/courses/bigdata-mds/labs/spark-mllib/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="rgb(0, 136, 204)">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_3.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_3.png">
+
+  <link rel="canonical" href="/courses/bigdata-mds/labs/spark-mllib/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="Gianluca Quercini">
+  <meta property="og:url" content="/courses/bigdata-mds/labs/spark-mllib/">
+  <meta property="og:title" content="Spark MLlib | Gianluca Quercini">
+  <meta property="og:description" content="5. Spark MLlib"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
+  
+    
+    
+  
+
+  
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Spark MLlib | Gianluca Quercini</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#experience"><span>Experience</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#publications"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  
+
+  
+
+<div class="container-fluid docs">
+  <div class="row flex-xl-nowrap">
+    <div class="col-12 col-md-3 col-xl-2 docs-sidebar">
+      
+
+
+<script src="/js/toggle-menu.js"></script>
+
+
+
+
+
+
+
+  
+    
+  
+
+
+
+
+<form class="docs-search d-flex align-items-center">
+  <button class="btn docs-toggle d-md-none p-0 mr-3" type="button" data-toggle="collapse" data-target="#docs-nav" aria-controls="docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    <span><i class="fas fa-bars"></i></span>
+  </button>
+
+  
+</form>
+
+<nav class="collapse docs-links" id="docs-nav">
+  
+
+  
+  
+  
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="labs" class="docs-toc-link" href="/courses/bigdata-mds/labs/map-reduce/">Labs</a>
+    
+    <div id="labs-ddowncontent" class="labs-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="labs">
+        <a href="/courses/bigdata-mds/labs/map-reduce/">1. MapReduce</a>
+      </li>
+      
+      
+      <li class="labs">
+        <a href="/courses/bigdata-mds/labs/first-spark-program/">2. DCE - Premier programme Spark</a>
+      </li>
+      
+      
+      <li class="labs">
+        <a href="/courses/bigdata-mds/labs/spark-rdd/">3. Programmes Spark sur DCE</a>
+      </li>
+      
+      
+      <li class="labs">
+        <a href="/courses/bigdata-mds/labs/spark-sql/">4. Spark Structured API</a>
+      </li>
+      
+      <script>open_menu_on_load("labs".concat("-ddowncontent"))</script>
+      <li class="active labs">
+        <a href="/courses/bigdata-mds/labs/spark-mllib/">5. Spark MLlib</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="documentation" class="docs-toc-link" >Documentation</a>
+    
+
+  </div>
+  
+  
+</nav>
+
+    </div>
+
+    
+
+    <main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 docs-content" role="main">
+
+      <article class="article">
+
+        <div class="docs-article-container">
+          <div class="heading">Big Data MDS — Lab 5</div>
+          <h1>Spark MLlib</h1>
+          <hr>
+          <div class="logo">
+            
+            </div>
+
+          <div class="article-style">
+            
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p><link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/cloud-computing.css"></p>
+<!-- ############ IMPORTANT: CHANGE THESE VALUES BEFORE ANY LAB ############ -->
+<!-- The group to which users in the cluster belong-->
+<!-- User accounts are numbered from the lower to the upper limit-->
+<!-- ############ END OF MODIFICATIONS ############ -->
+<p>Dans ce TD, vous apprendrez à utiliser la bibliothèque <strong>Spark MLlib</strong> pour entraîner, tester et évaluer des modèles d’apprentissage automatique.
+Nous utiliserons un jeu de données sur les logements AirBnb dans la région de San Francisco.
+Le jeu de données est disponible sur HDFS au chemin suivant :</p>
+<div align="center">
+<p><code>hdfs://sar01:9000/cpu_quercini/ml/sf-airbnb-clean.parquet</code></p>
+</div>
+<div class="infobox warning">
+<p><strong>Source du jeu de données</strong></p>
+<p>Le jeu de données a été téléchargé à partir <a href="https://github.com/databricks/LearningSparkV2" target="_blank">de ce dépôt GitHub</a>.</p>
+</div>
+<p>Le but de ce TD est de prédire le prix par nuit d’un appartement en fonction de toutes les caractéristiques des données.</p>
+<div class="infobox warning">
+<p><strong>Bon à savoir.</strong></p>
+<p>L’interpréteur Python utilisé par les exécuteurs du cluster n’a pas le paquet <code>numpy</code> installé.
+Afin d’utiliser un interpréteur qui utilise <code>numpy</code>, vous devez exécuter la commande suivante dans le terminal :</p>
+<div align="center">
+<pre><code>export PYSPARK_PYTHON=/usr/bin/python3</code></pre>
+</div>
+</div>
+<div id="ensemble-dentraînement-et-ensemble-de-test" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Ensemble d’entraînement et ensemble de test</h1>
+<p>Afin de entraîner et d’évaluer un modèle d’apprentissage automatique, nous devons
+obtenir un <strong>ensemble d’entraînement</strong> et un <strong>ensemble de test</strong> à partir de notre jeu de données.</p>
+<div class="infobox exercisebox">
+<p><strong>Activité</strong></p>
+<ol style="list-style-type: decimal">
+<li>Copiez le fichier <code>train_test.py</code> vers votre dossier personnel (sur les machines du DCE) à l’aide de la commande suivante :</li>
+</ol>
+<div align="center">
+<pre><code>~cpu_quercini/mllib/train_test.py .</code></pre>
+</div>
+<ol start="2" style="list-style-type: decimal">
+<li><strong>Complétez la ligne 9</strong>, en spécifiant votre répertoire personnel sur HDFS, qui est le suivant (<strong>remplacer X par votre numéro de compte</strong>).</li>
+</ol>
+<div align="center">
+<p><code>hdfs://sar01:9000/itpspark24/itpspark24_X</code></p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1.1  </strong></span></p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Écrivez le code</strong> pour lire le fichier donné, qui est stocké sur HDFS au format Parquet, et charger son contenu dans un DataFrame nommé <code>airbnb_df</code>.</p></li>
+<li><p><strong>À partir de la ligne 26</strong>, ajoutez les instructions nécessaires pour afficher le schéma du DataFrame <code>airbnb_df</code> et les 5 premières lignes.
+Quelle option devriez-vous utiliser pour voir les valeurs dans les colonnes ?</p></li>
+<li><p>Exécutez le code à l’aide de la commande <code>spark-submit</code>, et vérifiez que les données sont correctement chargées dans le DataFrame.</p></li>
+</ol>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Le corrigé est disponible dans le fichier :</p>
+<pre><code>
+~cpu_quercini/mllib_solutions/train_test.py
+</code></pre>
+<p>Puisque le DataFrame a beaucoup de colonnes, nous avons besoin de spécifier l’option <code>vertical=True</code> lorsqu’on appelle la fonction <code>show()</code>.</p>
+</div>
+</details>
+<p>Nous séparons maintenant le DataFrame <code>airbnb_df</code> en deux DataFrames distincts, <code>train_df</code> et <code>test_df</code>,
+contenant respectivement les instances d’entraînement et de test.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 1.2  </strong></span></p>
+<ol style="list-style-type: decimal">
+<li><p><strong>Écrivez le code</strong> pour diviser le jeu de données en un ensemble d’entraînement (80% du jeu de données) et un ensemble de test (20% du jeu de données).
+<a href="https://spark.apache.org/docs/latest/api/python/reference/pyspark.sql/api/pyspark.sql.DataFrame.html" target="_blank">En consultant la documentation de l’API DataFrame</a>, quelle fonction allez-vous utiliser ?</p></li>
+<li><p><strong>A partir de la ligne 36</strong>, écrivez le code pour afficher le nombre d’instances des deux ensembles obtenus.</p></li>
+<li><p>Exécutez le code à l’aide de la commande <code>spark-submit</code>. Vérifiez que le nombre d’instances des deux ensembles soit correct.</p></li>
+</ol>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Le corrigé est disponible dans le fichier suivant :</p>
+<pre><code>
+~cpu_quercini/mllib_solutions/train_test.py
+</code></pre>
+</div>
+</details>
+<p>Il est temps d’enregistrer les ensembles d’entraînement et de test dans deux fichiers HDFS séparés.
+Ainsi, nous pourrons les charger chaque fois que nous en aurons besoin pour entraîner un modèle d’apprentissage automatique
+pour ce problème.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 1.3  </strong></span></p>
+<p><strong>À partir de la ligne 47</strong>. Ecrivez le code pour sauvegarder les ensembles d’entraînement et de test dans deux fichiers au format Parquet sur HDFS.
+Les chemins d’accès des deux fichiers sont déjà disponibles dans les variables <code>training_set_file</code> et <code>test_set_file</code>
+définies respectivement aux lignes 40 et 43.</p>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Le corrigé est disponible dans le fichier suivant :</p>
+<pre><code>
+~cpu_quercini/mllib_solutions/train_test.py
+</code></pre>
+</div>
+</details>
+</div>
+<div id="préparation-des-caractéristiques" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Préparation des caractéristiques</h1>
+<p>Dans les ensembles d’entraînement et de test, les caractéristiques des données correspondent aux colonnes du DataFrame.
+La plupart des algorithmes d’apprentissage automatique définis dans Spark ont besoin d’avoir toutes les caractéristiques dans un seul vecteur.
+Nous devons utiliser un <strong>transformateur</strong>.</p>
+<div class="infobox warning">
+<p><strong>Bon à savoir.</strong></p>
+<p><strong>Les transformateurs</strong> prennent en argument un DataFrame et renvoient un nouveau DataFrame
+qui a les mêmes colonnes que le DataFrame en argument et des colonnes supplémentaires spécifiées en tant qu’argument du transformateur.</p>
+</div>
+</div>
+<p>Copiez le fichier <code>train_test_model</code> vers votre dossier personnel (sur les machines du DCE) à l’aide de la commande suivante :</p>
+<div align="center">
+<p>~cpu_quercini/mllib/train_test_model.py .</p>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 2.1  </strong></span></p>
+<ul>
+<li><p>Implémentez la fonction <code>read_training_set</code> à la ligne 22.
+Cette fonction charge dans un DataFrame l’ensemble d’entraînement à partir du fichier que vous avez généré à l’exercice précédent.</p></li>
+<li><p>Implémentez la fonction <code>read_test_function</code> à la ligne 39.
+Cette fonction charge dans un DataFrame l’ensemble de test à partir du fichier que vous avez généré à l’exercice précédent.</p></li>
+<li><p>Modifiez les variables aux lignes 105 et 106 pour qu’elles pointent vers les deux fichiers HDFS Parquet qui contiennent les ensembles d’entraînement et de test.</p></li>
+<li><p>Décommentez les lignes 109 et 110, afin d’afficher le nombre d’instances d’entraînement et de test.</p></li>
+<li><p>Exécutez le fichier <code>train_test_model</code> à l’aide de la commande <code>spark-submit</code>. Vérifiez que le nombre d’instances d’entraînement et de test corresponde
+à ce que vous avez obtenu lors des exercices précédents.</p></li>
+</ul>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Le corrigé est disponible dans le fichier :</p>
+<pre><code>
+~cpu_quercini/mllib_solutions/train_test_model.py
+</code></pre>
+</div>
+</details>
+<p>Il est maintenant temps d’apprendre à utiliser un transformateur pour mettre toutes les caractéristiques nécessaires dans un vecteur.
+Pour l’instant, nous n’utiliserons que la caractéristique « bedrooms » pour prédire le prix.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 2.2  </strong></span></p>
+<ul>
+<li><p>Implémentez la fonction <code>get_vector</code> à la ligne 55. Les commentaires dans le fichier décrivent ce que la fonction doit faire.
+Vous devrez utiliser un <a href="https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.feature.VectorAssembler.html#pyspark.ml.feature.VectorAssembler" target="_blank">objet VectorAssembler</a> pour implémenter la fonction.</p></li>
+<li><p>Décommentez les lignes 117 et 118 pour appeler la fonction <code>get_vector</code> et afficher le résultat.</p></li>
+<li><p>Exécutez le fichier <code>train_test_model</code> à l’aide de la commande <code>spark-submit</code>. Observez le contenu du DataFrame <code>train_vect</code>. Il devrait avoir une colonne nommée
+<code>features</code> contenant une liste avec une valeur (la valeur de la caractéristique <code>bedrooms</code>).</p></li>
+</ul>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Le corrigé est disponible dans le fichier suivant :</p>
+<pre><code>
+~cpu_quercini/mllib_solutions/train_test_model.py
+</code></pre>
+</div>
+</details>
+<p>Il est maintenant temps d’entraîner un modèle de régression linéaire sur l’ensemble d’entraînement donné et les caractéristiques sélectionnées.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 2.3  </strong></span></p>
+<ul>
+<li><p>Implémentez la fonction <code>train_linear_regression_model</code> à la ligne 79. Les commentaires du fichier décrivent ce que la fonction est censée faire.
+<a href="https://spark.apache.org/docs/latest/api/python/reference/pyspark.ml.html" target="_blank">En consultant la documentation</a>,
+essayez d’identifier l’objet que vous devez utiliser pour créer un régresseur linéaire et la fonction que vous devez utiliser pour l’entraîner.</p></li>
+<li><p>Décommentez les lignes 121, 124, 125, 126 pour appeler la fonction <code>train_linear_regression_model</code> et afficher les coefficients appris par le modèle de régression linéaire.</p></li>
+<li><p>Exécutez le fichier <code>train_test_model</code> à l’aide de la commande <code>spark-submit</code>.</p></li>
+</ul>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Le corrigé est disponible dans le fichier :</p>
+<pre><code>
+~cpu_quercini/mllib_solutions/train_test_model.py
+</code></pre>
+</div>
+</details>
+<p>Nous pouvons maintenant utiliser le modèle entraîné pour faire des prédictions.
+Le modèle renovyé par la fonction que vous avez implémentée dans l’exercice précédent
+est un objet de type <code>LinearRegressionModel</code>.
+<a href="https://spark.apache.org/docs/latest/api/python/reference/api/pyspark.ml.regression.LinearRegressionModel.html#pyspark.ml.regression.LinearRegressionModel" target="_blank_">En consultant la documentation</a>, nous apprenons qu’il existe une fonction <code>predict</code>
+permettant de faire une prédiction à partir d’une seule instance.
+Si nous voulons faire une prédiction sur l’ensemble du jeu de test, nous devons utiliser la fonction <code>transform</code>.
+La fonction prend en argument un DataFrame avec l’ensemble de test et renvoie le même DataFrame
+avec une colonne supplémentaire <code>prediction</code> qui contient la valeur prédite.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 2.4  </strong></span></p>
+<ul>
+<li><p>Regardez les lignes 130 et 131. Quel DataFrame devons-nous passer à la fonction <code>transform</code> ? Est-ce que <code>test_df</code> est un bon choix ? Pourquoi ?</p></li>
+<li><p>Complétez la ligne 130 et décommentez les lignes 130, 131, 132.</p></li>
+<li><p>Exécutez le fichier <code>train_test_model</code> à l’aide de la commande <code>spark-submit</code> et observez le résultat.
+La valeur prédite est-elle celle à laquelle vous vous attendez étant donné que vous connaissez la formule de la droite de régression ?</p></li>
+</ul>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p><code>test_df</code> n’est pas un bon choix.
+En fait, le DataFrame de l’ensemble de test doit avoir le même format que le DataFrame de l’ensemble d’apprentissage
+sur lequel le modèle a été entraîné.</p>
+<p>Donc, nous devons le transformer avec un objet <code>vecAssembler</code>.</p>
+<p>Le corrigé est disponible dans le fichier suivant :</p>
+<pre><code>
+~cpu_quercini/mllib_solutions/train_test_model.py
+</code></pre>
+</div>
+</details>
+</div>
+<div id="pipelines" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Pipelines</h1>
+<p>Dans la section précédente, nous avons appris qu’un ensemble d’entraînement et un ensemble
+de test doivent passer par les mêmes étapes de transformation afin d’alimenter un modèle d’apprentissage automatique.</p>
+<p>Lorsque nous avons peu de transformations, il est facile de se souvenir de
+celles que nous avons appliquées à un ensemble d’entraînement, afin de les appliquer également à l’ensemble de test.</p>
+<p>Cependant, lorsque nous devons appliquer une série de transformations, dont l’ordre est important,
+il est facile de commettre des erreurs.</p>
+<p>Une bonne pratique consiste à utiliser l’API <strong>Pipeline</strong>.</p>
+<p>Un <strong>pipeline</strong> est composée d’<strong>étapes</strong>. Chaque étape peut consister de l’appel à un <strong>transformateur</strong> ou à un <strong>estimateur</strong>.</p>
+<ul>
+<li>Un <strong>transformateur</strong> est un objet sur lequel nous appelons la fonction <code>transform</code> pour obtenir un nouveau DataFrame à partir d’un DataFrame donné.</li>
+<li>Un <strong>estimateur</strong> est un objet sur lequel nous appelons la fonction <code>fit</code> pour apprendre un modèle sur un DataFrame donné. Le modèle appris est lui-même
+un transformateur.</li>
+</ul>
+<p>Lorsque la fonction <code>fit</code> est appelée sur un pipeline, l’ensemble d’apprentissage passe par tous
+les transformateurs et les estimateurs dans l’ordre dans lequel ils sont déclarés dans le pipeline ;
+enfin, l’estimateur spécifié à la dernière étape est entraîné sur l’ensemble d’apprentissage.
+Le modèle renovyé par l’application de la fonction <code>fit</code> sur le pipeline est lui-même un transformateur.
+Si nous invoquons la fonction <code>transform</code> sur ce modèle sur l’ensemble de test, nous obtenons un DataFrame qui contient une colonne nommée <code>predictions</code>.
+Implicitement, toutes les transformations dans le pipeline seront appliquées à l’ensemble de test aussi, avant de faire les prédictions.</p>
+<p>Copiez le fichier <code>pipeline_example.py</code> dans votre dossier personnel à l’aide de la commande suivante :</p>
+<div align="center">
+<pre><code>cp ~cpu_quercini/mllib/pipeline_example.py .</code></pre>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 3.1  </strong></span>
+<a href="https://spark.apache.org/docs/latest/ml-pipeline.html" target="_blank">Regardez la documentation</a> et
+écrivez un code à partir de la ligne 34 pour créer un pipeline qui effectue les mêmes opérations que vous avez écrites dans le fichier <code>train_test_model.py</code>
+pour entraîner et tester un modèle de régression linéaire sur les ensembles d’entraînement et de test donnés.</p>
+<ul>
+<li>N’oubliez pas de spécifier <strong>aux lignes 27 et 28</strong> les chemins d’accès des fichiers d’entraînement et de test stockés sur HDFS .</li>
+</ul>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Le corrigé est disponible dans le fichier suivant :</p>
+<pre><code>~cpu_quercini/mllib_solutions/pipeline_example.py</code></pre>
+</div>
+</details>
+<div id="des-caractéristiques-catégorielles-aux-caractéristiques-numériques" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Des caractéristiques catégorielles aux caractéristiques numériques</h2>
+<p>De nombreux modèles d’apprentissage automatique n’acceptent pas des valeurs catégorielles : ils ont besoin que toutes les caractéristiques soient numériques.
+La régression linéaire en est un exemple.</p>
+<div class="infobox activitybox">
+<p><strong>Activité</strong></p>
+<ul>
+<li>Copiez le fichier <code>onehot_playground.py</code> vers votre dossier personnel à l’aide de la commande suivante :</li>
+</ul>
+<div align="center">
+<pre><code>~cpu_quercini/mllib/onehot_playground.py .</code></pre>
+</div>
+<ul>
+<li>Modifiez les lignes 27 et 28 et écrivez les chemins d’accès des fichiers contenant les ensembles d’entraînement et de test.</li>
+</ul>
+</div>
+<p>Commençons par déterminer quelles sont les caractéristiques catégorielles de notre jeu de données.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-9" class="exercise"><strong>Exercise 3.2  </strong></span>
+Complétez la fonction <code>get_categorical_columns</code>.</p>
+<ul>
+<li><p>Pour avoir une idée sur comment obtenir les colonnes catégorielles, exécutez le code à l’aide de la commande <code>spark_submit</code>.
+Ceci exécute l’instruction à la ligne 86.</p></li>
+<li><p>Une fois que vous avez terminé l’implémentation, exécutez le fichier à l’aide de la commande <code>spark-submit</code> et observez la sortie.</p></li>
+</ul>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Le corrigé est disponible dans le fichier suivant :</p>
+<pre><code>~cpu_quercini/mllib_solutions/onehot_playground.py</code></pre>
+</div>
+</details>
+<p>Un exemple de caractéristique catégorielle
+dans notre jeu de données est <code>property_type</code>,
+qui accepte des valeurs telles que <em>Apartment</em>, <em>House</em>, <em>Condominium</em>…
+Chaque valeur d’une caractéristique catégorielle est également appelée catégorie.</p>
+<p>Une façon de transformer cette caractéristique en une caractéristique
+numérique serait d’attribuer un numéro à chaque catégorie
+(par exemple, <em>Appartement</em> correspond à 0, <em>Maison</em> à 1….).
+Cependant, cela introduit implicitement un ordre entre les catégories : la catégorie <em>Maison</em> vaudrait deux fois plus que la catégorie <em>Appartement</em> ;
+Cela fausserait inévitablement le modèle.</p>
+<p>Une méthode couramment utilisée est l’encodage <strong>one-hot</strong>. Voyons comment elle fonctionne.
+Concentrons-nous uniquement sur la caractéristique <code>type_de_propriété</code>.</p>
+<div class="infobox activitybox">
+<p><strong>Activité</strong></p>
+<ul>
+<li><p>Décommentez les lignes 40, 41 et 42. Ces lignes instancient un estimateur appelé <code>StringIndexer</code>.
+Cet estimateur associe des index numériques aux valeurs de <code>property_type</code>. Les index seront stockés dans une autre colonne
+nommée <code>property_type_index</code>.</p></li>
+<li><p>Décommentez la ligne 46. Le <code>StringIndexer</code> est appliqué à l’ensemble d’entraînement pour apprendre à associer des index aux valeurs de
+<code>property_type</code>. Le résultat de cette instruction est un nouveau transformateur.</p></li>
+<li><p>Décommentez la ligne 49. Le transformateur appris à la ligne 46 est utilisé pour transformer l’ensemble d’entraînement dans un nouveau DataFrame.
+Ce DataFrame contient une colonne supplémentaire appelée <code>property_type_index</code>.</p></li>
+</ul>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-10" class="exercise"><strong>Exercise 3.3  </strong></span>
+Complétez la fonction <code>count_property_types</code>.
+Suivez les instructions que vous trouvez dans le fichier <code>onehot_playground.py</code>.</p>
+<ul>
+<li><p>Une fois la fonction terminée, décommentez la ligne 53 pour appeler la fonction.</p></li>
+<li><p>Exécutez le fichier à l’aide de la commande <code>spark-submit</code> et observez la sortie. Pouvez-vous deviner comment les index sont assignés aux catégories
+de l’élément <code>property_type</code> ?</p></li>
+</ul>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Le corrigé est disponible dans le fichier suivant :</p>
+<pre><code>~cpu_quercini/mllib_solutions/onehot_playground.py</code></pre>
+<p>On constate que le type de propriété le plus fréquent obtient l’indice 0 ; le deuxième plus fréquent obtiendra la valeur 1…les indices sont donc attribués par fréquence.
+Chaque fois que nous exécutons le même code, nous obtenons les mêmes index.
+Cela signifie que nous avons un déterminisme sur les différentes exécutions d’un même programme.</p>
+</div>
+</details>
+<p>Il est temps de découvrir comment fonctionne l’encodage one-hot.</p>
+<div class="infobox activitybox">
+<p><strong>Activité</strong></p>
+<ul>
+<li><p>Décommentez les lignes 57, 58, 61, 64, 67. Ces lignes instancient un estimateur appelé <code>OneHotEncoder</code>.
+Cet estimateur utilise les index de la colonne <code>property_type_index</code> et crée une nouvelle colonne <code>property_type_ohe</code>.</p></li>
+<li><p>L’estimateur est entraîné sur l’ensemble d’entraînement et un nouveau transformateur est obtenu (ligne 61).</p></li>
+<li><p>Le transformateur est utilisé sur l’ensemble d’entraînement pour le transformer en un nouveau DataFrame, qui aura une nouvelle colonne <code>property_type_ohe</code> .</p></li>
+<li><p>La ligne 67 affiche des colonnes sélectionnées de cet ensemble d’entraînement transformé.</p></li>
+</ul>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-11" class="exercise"><strong>Exercise 3.4  </strong></span></p>
+<ul>
+<li><p>Exécutez le fichier à l’aide de la commande <code>spark-submit</code>.</p></li>
+<li><p>Pouvez-vous comprendre comment fonctionne l’encodage one-hot ?</p></li>
+</ul>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Le corrigé est disponible dans le fichier suivant :</p>
+<pre><code>~cpu_quercini/mllib_solutions/onehot_playground.py</code></pre>
+<p>L’encodage one-hot crée un vecteur avec autant de valeurs que le nombre de catégories dans la colonne
+<code>property_type</code>.
+Chaque catégorie a un index fixe dans ce vecteur, donné par la colonne <code>property_type_index</code>.
+Si, pour une instance, la valeur de la colonne <code>property_type</code> est <em>Guest suite</em> et que l’index de <em>Guest suite</em> est 3,
+alors le vecteur produit par l’encodage one-hot n’a qu’une valeur 1 à l’index 3 et 0 partout ailleurs.
+Spark ne stocke qu’une représentation concise de ce vecteur creux : un tuple avec la taille du vecteur,
+l’index 3 et la valeur associée à cet index (1).</p>
+</div>
+</details>
+<p>Maintenant, vous avez tous les ingrédients pour créer un pipeline complet
+pour former et tester un modèle de régression linéaire en utilisant toutes les fonctionnalités.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-12" class="exercise"><strong>Exercise 3.5  </strong></span>
+Créez un nouveau fichier <code>full_pipeline.py</code> et suivez ces instructions :</p>
+<ul>
+<li><p>Sélectionnez les caractéristiques catégorielles.</p></li>
+<li><p>Configurez un <code>StringIndexer</code> et un <code>OneHotEncoder</code> pour appliquer un encodage one-hot à toutes les caractéristiques catégorielles.</p></li>
+<li><p>Extrayez les caractéristiques numériques.</p></li>
+<li><p>Mettez en oeuvre un <code>VectorAssembler</code> pour mettre dans un seul vecteur les caractéristiques encodées et les caractéristiques numériques.</p></li>
+<li><p>Mettez en oeuvre un modèle de régression linéaire qui prend en arguments toutes les caractéristiques et la variable à prédire (<code>price</code>).</p></li>
+<li><p>Mélangez tous ces ingrédients dans un <code>Pipeline</code>.</p></li>
+<li><p>Utilisez le <code>Pipeline</code> pour entraîner et tester le modèle.</p></li>
+</ul>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Le corrigé est disponible dans le fichier suivant :</p>
+<pre><code>~cpu_quercini/mllib_solutions/full_pipeline.py</code></pre>
+</div>
+</details>
+</div>
+</div>
+<div id="évaluation-du-modèle" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Évaluation du modèle</h1>
+<p>Dans les sections précédentes, nous avons examiné les prédictions pour avoir une vague idée des performances de notre
+estimateur.
+Afin de quantifier la qualité de notre estimateur, nous avons besoin de mesures d’évaluation.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-13" class="exercise"><strong>Exercise 4.1  </strong></span>
+<a href="https://spark.apache.org/docs/latest/ml-tuning.html#train-validation-split" target="_blank">Regardez la documentation</a>
+et modifiez le code pour sélectionner un modèle à l’aide d’une recherche par grille (<em>grid search</em>). Le but de la recherche par grille est
+de trouver la valeur optimale des hyperparamètres du modèle.</p>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Le corrigé est disponible dans le fichier suivant :</p>
+<pre><code>
+~cpu_quercini/mllib_solutions/model_evaluation.py
+</code></pre>
+</div>
+</details>
+</div>
+
+          </div>
+
+          
+
+
+
+          
+        </div>
+
+        
+      </article>
+
+      
+
+    </main>
+  </div>
+</div>
+
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.1/anchor.min.js" integrity="sha256-pB/deHc9CGfFpJRjC43imB29Rse8tak+5eXqntO94ck=" crossorigin="anonymous"></script>
+    <script>
+      anchors.add();
+    </script>
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.3da86581634ab22d5bb3fc4505df30a5.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
