@@ -28,10 +28,10 @@
   
     
   
-  <meta name="description" content="Queries in MongoDB">
+  <meta name="description" content="How to execute a Spark program on DCE">
 
   
-  <link rel="alternate" hreflang="en-us" href="/courses/bdia/tutorials/mongodb-queries/">
+  <link rel="alternate" hreflang="en-us" href="/courses/bdia/tutorials/first-spark-program/">
 
   
 
@@ -219,7 +219,7 @@
   <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_3.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_3.png">
 
-  <link rel="canonical" href="/courses/bdia/tutorials/mongodb-queries/">
+  <link rel="canonical" href="/courses/bdia/tutorials/first-spark-program/">
 
   
   
@@ -233,9 +233,9 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Gianluca Quercini">
-  <meta property="og:url" content="/courses/bdia/tutorials/mongodb-queries/">
-  <meta property="og:title" content="MongoDB - Queries | Gianluca Quercini">
-  <meta property="og:description" content="Queries in MongoDB"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:url" content="/courses/bdia/tutorials/first-spark-program/">
+  <meta property="og:title" content="First Spark program on the DCE | Gianluca Quercini">
+  <meta property="og:description" content="How to execute a Spark program on DCE"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
   
     
@@ -258,7 +258,7 @@
 
 
 
-  <title>MongoDB - Queries | Gianluca Quercini</title>
+  <title>First Spark program on the DCE | Gianluca Quercini</title>
 
 </head>
 
@@ -549,8 +549,8 @@
         <a href="/courses/bdia/tutorials/map-reduce/">MapReduce</a>
       </li>
       
-      
-      <li class="tutorials">
+      <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
+      <li class="active tutorials">
         <a href="/courses/bdia/tutorials/first-spark-program/">DCE - First Spark program</a>
       </li>
       
@@ -579,8 +579,8 @@
         <a href="/courses/bdia/tutorials/mongodb-modeling/">MongoDB data modeling</a>
       </li>
       
-      <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
-      <li class="active tutorials">
+      
+      <li class="tutorials">
         <a href="/courses/bdia/tutorials/mongodb-queries/">MongoDB queries</a>
       </li>
       
@@ -603,8 +603,8 @@
       <article class="article">
 
         <div class="docs-article-container">
-          <div class="heading">Big Data for IA — Tutorial 6</div>
-          <h1>MongoDB - Queries</h1>
+          <div class="heading">Big Data IA</div>
+          <h1>First Spark program on the DCE</h1>
           <hr>
           <div class="logo">
             
@@ -612,97 +612,125 @@
 
           <div class="article-style">
             
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<p>We learn how to write queries in MongoDB on the Sakila database.</p>
-<div id="initialization" class="section level1">
-<h1><span class="header-section-number">1</span> Initialization</h1>
+<!-- ############ IMPORTANT: CHANGE THESE VALUES BEFORE ANY LAB ############ -->
+<!-- The group to which users in the cluster belong-->
+<!-- User accounts are numbered from the lower to the upper limit-->
+<!-- The link to the Edunao page where the students can choose a username to connect to the cluster. -->
+<!-- ############ END OF MODIFICATIONS ############ -->
+<p>The <a href="https://dce.pages.centralesupelec.fr/" target="“_blank”">Data Centre d’Enseignement (DCE)</a> is a set
+of computing resources financed by the Metz Eurometropole
+by the Eurométropole de Metz, Grand Est, CentraleSupélec and its foundation,
+and the Conseil Départemental de Moselle.</p>
+<p>This tutorial is a quick guide to :
+* Learn the basic commands for manipulating files stored in HDFS.
+* Learn how to run a Spark program on the DCE.</p>
+<p>More information is available on the <a href="https://dce.pages.centralesupelec.fr/" target="“_blank”">official DCE website</a>.</p>
+<div id="overview-of-the-dce" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Overview of the DCE</h1>
+<p>The architecture of the DCE is presented in Figure <a href="#fig:cluster-metz">1.1</a>.</p>
+<div class="figure" style="text-align: center"><span id="fig:cluster-metz"></span>
+<img src="/courses/plp/tutorials/spark-dce/reseau_dce.drawio.svg" alt="Architecture of the cluster (source : [DCE documentation](https://dce.pages.centralesupelec.fr/01_cluster_overview/){target=&quot;_blank&quot;})" width="100%" />
+<p class="caption">
+Figure 1.1: Architecture of the cluster (source : <a href="https://dce.pages.centralesupelec.fr/01_cluster_overview/" target="_blank">DCE documentation</a>)
+</p>
+</div>
+<p>In this course, we’ll be using CPU nodes only.
+These are divided into two groups: the Sarah cluster and the Kyle cluster.</p>
+<!--# Creating your working directory in HDFS
+
+In this section, you'll be walked through the procedure to create a directory 
+in HDFS that you'll use as your working directory in the lab sessions.
+
+You user account is: ``bdiaspark24_X``, where X is between 1 and 
+24.
+
+In order to create your working directory in HDFS, type the following command in the terminal:
+
+``
+hdfs dfs -mkdir hdfs://sar01:9000/bdiaspark24/bdiaspark24_X
+``
+
+You can verify that the directory is there by listing the content of the folder hdfs://sar01:9000/bdiaspark24/
+with the following command:
+
+``
+hdfs dfs -ls hdfs://sar01:9000/bdiaspark24/
+``
+-->
+</div>
+<div id="running-a-spark-program" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Running a Spark program</h1>
+<p>Datasets are normally available in the <code>/data/</code> folder stored in HDFS.
+Enter the following command to display the contents of the folder:</p>
+<div align="center">
+<p><code>hdfs dfs -ls -h hdfs://sar01:9000/data</code></p>
+</div>
+<p>The aim here is to run Spark code to count the number of occurrences of each word in file <code>/data/sherlock.txt</code>.</p>
+<ol style="list-style-type: decimal">
+<li>Copy file <code>~cpu_vialle/DCE-Spark/template_wc.py</code> to your home directory through the following command :</li>
+</ol>
+<div align="center">
+<p><code>cp ~cpu_vialle/DCE-Spark/template_wc.py ./wc.py</code></p>
+</div>
+<p>Enter the <code>ls</code> command to check that the <code>wc.py</code> file is in your home directory.
+This file contains the program’s Python code.
+This file should also appear in the Visual Studio Code explorer; if not, click on the explorer’s refresh button.</p>
+<ol start="2" style="list-style-type: decimal">
+<li><p>Open file <code>wc.py</code> in Visual Studio Code.</p></li>
+<li><p>Locate the following instruction:</p></li>
+</ol>
+<div align="center">
+<p><code>text_file = sc.textFile("hdfs://...")</code></p>
+</div>
+and replace it with the following :
+<div align="center">
+<p><code>text_file = sc.textFile("hdfs://sar01:9000/data/sherlock.txt")</code></p>
+</div>
+<p>This instruction will create an RDD called <code>text_file</code> with the contents of the file.</p>
+<ol start="4" style="list-style-type: decimal">
+<li>Similarly, locate the following instruction :</li>
+</ol>
+<div align="center">
+<p><code>counts.saveAsTextFile("hdfs://...")</code></p>
+</div>
+<p>and replace it with the following:</p>
+<div align="center">
+<p><code>counts.saveAsTextFile("hdfs://sar01:9000/bdiaspark24/bdiaspark24_X/sherlock.out")</code></p>
+</div>
+<p>This instruction will create a folder <em>sherlock.out</em> that your program will produce.</p>
+<ol start="5" style="list-style-type: decimal">
+<li>Execute the program <code>wc.py</code> through the following command:</li>
+</ol>
+<div align="center">
+<p><code>spark-submit --master spark://sar01:7077 wc.py</code></p>
+</div>
 <ul>
-<li><p>Launch a MongoDB server on your computer.</p></li>
-<li><p>Open MongoDB Compass.</p></li>
-<li><p>Connect to the MongoDB server with the following URI: <code>mongodb://localhost:27017</code>.</p></li>
-<li><p>Download the <a href="/courses/databases/tutorial-6/sakila-mongodb.zip"><strong>this archive file</strong></a> and extract it.
-Each file corresponds to a collection.</p></li>
-<li><p>In MongoDB Compass create a new database named <code>sakila</code>.</p></li>
-<li><p>Create the collections <code>customer</code>, <code>film</code>, <code>rental</code>, <code>staff</code> and <code>store</code>.</p></li>
-<li><p>Import the data from the downloaded JSON files.</p></li>
+<li>When the execution is completed, the output will be available in the folder <code>sherlock.out</code>.
+To verify it, type the following command:</li>
 </ul>
+<div align="center">
+<p><code>hdfs dfs -ls -h hdfs://sar01:9000/bdiaspark24/bdiaspark24_X/sherlock.out</code></p>
 </div>
-<div id="basic-queries" class="section level1">
-<h1><span class="header-section-number">2</span> Basic queries</h1>
-<p>We might want to see a list of common operators <a href="https://www.mongodb.com/docs/manual/reference/operator/query/#std-label-query-selectors" target="_blank">in this page</a>.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 2.1  </strong></span>
-Write the following queries in MongoDB:</p>
+<p>As usual, don’t forget to replace bdiaspark24_X with your username.</p>
 <ol style="list-style-type: decimal">
-<li><p>Return all the information on all customers.</p></li>
-<li><p>Return the email of all customers.</p></li>
-<li><p>Return the email of the customers of Canadian stores.</p></li>
-<li><p>Return the identifier of all rentals made by customers from Iran, where
-the amount paid is strictly greater than 10 dollars.</p></li>
-<li><p>Return the first and last names of the actors who played a role in film 213.</p></li>
+<li>Type the following command to print the result:</li>
 </ol>
+<div align="center">
+<p><code>hdfs dfs -cat hdfs://sar01:9000/bdiaspark24/bdiaspark24_X/sherlock.out/*</code></p>
 </div>
-</div>
-</div>
-<div id="operations-on-arrays" class="section level1">
-<h1><span class="header-section-number">3</span> Operations on arrays</h1>
-<p>Useful array operators are <a href="https://www.mongodb.com/docs/manual/reference/operator/query-array/" target="_blank">listed here</a>.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 3.1  </strong></span>
-Write the following queries in MongoDB:</p>
-<ol style="list-style-type: decimal">
-<li><p>Return the identifier of the films that have “Behind the Scenes” as special features.</p></li>
-<li><p>Return the identifier of the films that have as special features all of the following: “Commentaries” and “Deleted Scenes”.</p></li>
-<li><p>Return the identifier of all the films where BURT POSEY played a role.</p></li>
-<li><p>Return the identifier of the film that has exactly 15 actors.</p></li>
-</ol>
-</div>
-</div>
-</div>
-<div id="aggregation-framework" class="section level1">
-<h1><span class="header-section-number">4</span> Aggregation framework</h1>
-<p>A useful reference for the aggregation pipeline <a href="https://www.mongodb.com/docs/manual/meta/aggregation-quick-reference/" target="_blank">can be found here here</a>.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 4.1  </strong></span>
-Write the following queries in MongoDB using the aggregation framework:</p>
-<ol style="list-style-type: decimal">
-<li><p>Return the title of the films rented by TOMMY COLLAZO (can you also express this query with the function find()?)</p></li>
-<li><p>Count the total amount of payments across all rentals.</p></li>
-<li><p>Return the number of actors of each film.</p></li>
-<li><p>Sort the films by the number of actors (decreasing order).</p></li>
-<li><p>Return the average number of actors for each film.</p></li>
-<li><p>Return the identifier of the customer who made the most of rentals.</p></li>
-<li><p>Return the first and last name of the customer who made the most of rentals.</p></li>
-<li><p>Return the country where the customers have rented the most of the films in the category “Music”.</p></li>
-</ol>
-</div>
-</div>
-</div>
-<div id="join-operations" class="section level1">
-<h1><span class="header-section-number">5</span> Join Operations</h1>
-<p>The join operation is <a href="https://www.mongodb.com/docs/manual/reference/operator/aggregation/lookup/" target="_blank">explained here</a>.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 5.1  </strong></span>
-Write the following queries in MongoDB using the aggregation framework:</p>
-<ol style="list-style-type: decimal">
-<li><p>Return the language of the film with title “ACE GOLDFINGER”.</p></li>
-<li><p>Return all the information about the staff member who took care of rental 2.</p></li>
-</ol>
+<div class="infobox warning">
+<p><strong>Output files</strong></p>
+<p>If you execute the program and you specify an output file that <strong>already exists</strong>,
+you’ll get an error.
+If you really want to overwrite the output file,<br />
+you need to first remove it explicitly with the following command:</p>
+<div align="center">
+<p><code>hdfs dfs -rm -r hdfs://sar01:9000/bdiaspark24/bdiaspark24_X/sherlock.out</code></p>
 </div>
 </div>
 </div>
