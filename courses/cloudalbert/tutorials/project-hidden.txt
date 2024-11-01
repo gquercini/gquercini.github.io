@@ -1,0 +1,511 @@
+---
+title: "Deploying to GKE"
+heading: Cloud computing — Assignment
+linktitle: deploy-gke
+output:
+  bookdown::pdf_book:
+    toc: false
+    includes:
+      in_header: ./latex-files/preamble.tex
+    number_sections: yes
+  blogdown::html_page:
+    number_sections: yes
+  html_document:
+    df_print: paged
+menu:
+  cloudalbert:
+    name: 3. Deploying to GKE
+    parent: Tutorials
+    identifier: tutorial-gke-albert
+    weight: 3
+params:
+  solution: false
+summary: GKE
+draft: no
+type: docs
+---
+
+<link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/cloud-computing.css">
+
+The goal of this assignment is to deploy a containerized application 
+to **Google Kubernetes Engine (GKE)**.
+
+The lab consists of the following activities:
+
+1. Get a Web application from GitHub.
+
+2. Complete the *Dockerfile* of the front-end.
+
+3. Deploy and test of the application to your local Kubernetes cluster.
+
+4. Deploy the application to the Google Kubernetes Engine (GKE).
+
+5. Write a report describing the application and the deployment procedure. 
+You'll find detailed information about the report [in the last section](#report).
+
+
+
+::: {.infobox .warning data-latex="{warning}"}
+**Submission information**
+
+You have a submit a **single zip file** containing:
+
+* The report in PDF format.
+
+* The *Dockerfile* of the front-end.
+
+**Submission deadline:** March, 22nd, 2024, 11:59 PM.
+
+
+:::
+
+
+# Get the application {#getapp}
+
+You can download the application 
+[here](https://github.com/gquercini/tripmeal-cloud).
+
+If you have **git** installed on your computer you can simply open a terminal and type
+the following command:
+
+<center>
+
+``
+git clone https://github.com/gquercini/tripmeal-cloud.git
+``
+
+</center>
+
+# Dockerfile of the front-end
+
+The application folder has the same structure as we have seen in the previous labs.
+You should be able to understand the role of each file and folder. 
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Locate the *Dockerfile* of the front-end and complete it.
+
+**You need a Python 3.7 environment to run the application.**
+
+
+```
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+Different solutions exist, here is a proposition.
+It is important that we build a minimal image, so 
+we choose the environment python:3-7-slim.
+
+\x60\x60\x60
+FROM python:3.7-slim
+RUN mkdir -p /app & \\
+    mkdir -p /app/templates & \\
+    mkdir -p /app/static
+RUN /usr/local/bin/python -m pip install --upgrade pip
+COPY ./static /app/static/
+COPY ./templates /app/templates/
+COPY requirements.txt /app/
+WORKDIR /app
+RUN pip install -r requirements.txt
+COPY app.py dbconnect.py /app/
+ENTRYPOINT [\"python\",\"app.py\"]
+\x60\x60\x60
+
+:::
+
+</details>"}`
+
+
+# Local deployment
+
+
+You need to deploy and test  the application *TripMeal* on 
+a **local Kubernetes cluster** (either Docker Desktop or Minikube).
+
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Build the images of **all services** of the application.
+
+
+```
+
+:::
+
+
+Now, specify the names of the images in the file ``tripmeal.yml``.
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Open the file ``tripmeal.yml`` and add the names of the created Docker images 
+to the appropriate fields.
+
+
+```
+
+:::
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+
+* Execute the application by typing the following command:
+
+``
+kubectl apply -f tripmeal.yml
+``
+
+
+* Wait a minute and then check whether the state of the pods with the following command:
+
+``
+kubectl get all 
+``
+
+* If any of the pods is not ready yet, wait a moment and then type the previous command again.
+
+<details>
+
+<summary>If one or more pods are in an **error state** </summary>
+
+* Check the logs with the following commands:
+
+``
+kubectl logs NAME-OF-POD --previous
+``
+
+* **In case you get Exec format error**, add to your Dockerfile the following instruction:
+
+``
+RUN chmod -x path_to_file_app
+``
+
+where ``path_to_file_app`` is the path to the file ``app.py``
+**inside the image**. Rebuild the image.
+
+* After fixing the error, before executing the application again, run the following command
+to delete all previously created resources:
+
+``
+kubectl delete -f tripmeal.yml
+``
+
+
+
+</details>
+
+<details>
+
+<summary>If all pods are in running state</summary>
+
+* Open a web browser window.
+
+* Type the public IP and port of your application.
+
+* Confirm that the application works correctly.
+
+
+</details>
+
+
+```
+
+:::
+
+After confirming that the application works, you can shut down the application.
+
+``
+kubectl delete -f tripmeal.yml
+``
+
+
+
+# Deploy to GKE
+
+In this section, you're going to deploy your application to GKE.
+
+Here are the main steps:
+
+1. Make the code available to a public repository so that it can be easily imported into your cloud environment.
+
+2. Open the Google Cloud Shell to access your cloud environment.
+
+3. Deploy the application.
+
+The next subsections will describe these steps in greater detail.
+
+
+## Upload the code to GitHub
+
+The easiest way to import your application into your cloud environment is to 
+make it available to a Git repository, such as GitHub or any other Git service 
+for which you already have an account.
+If necessary, the teacher will guide you in this step.
+
+
+
+
+## Open the Google Cloud Shell
+
+
+Open the [Google Cloud Console](https://console.cloud.google.com/welcome?project=gq-cloud-computing){target="_blank"}.
+Make sure you log in with your school account.
+
+You'll see in this page an  overview of the project created to let you deploy the application to GKE. 
+In particular, you should take note of:
+
+* the project number (*124930651186*).
+
+* the project ID (*gq-cloud-computing*).
+
+You'll need this information later when you'll set up the deployment.
+
+In the top-right corner of the window, you should see a small icon with a prompt (*>*).
+When you click on it, a Google Cloud Shell will open at the bottom of the screen.
+The shell will be automatically connected to your project environment.
+
+
+## Deployment
+
+You'll now have to type few commands in the Google Cloud Shell to deploy the application to Kubernetes.
+
+### Create a repository
+
+Create a repository where you'll be storing the Docker images of your application. 
+The repository is stored in the *Artifact Registry*, the Google container registry.
+
+1. It is convenient to create an environment variable PROJECT_ID with the following command:
+
+``
+export PROJECT_ID=gq-cloud-computing
+``
+
+2. Verify that the value of the environment variable is correct:
+
+``
+echo $PROJECT_ID
+``
+
+3. Create an environment variable PROJECT_NUMBER whose value is 124930651186.
+
+4. Create  an environment variable REPO_NAME whose value is a name of your choice for the container 
+repository.
+
+5. Create an environment variable APP_NAME whose value is a name of your choice for the 
+application.
+
+6. Create an environment variable APP_VERSION whose value is the version of the app. You can choose
+``1.0`` or ``latest``, or any other value of your choice.
+
+
+7. Create your repository with the following command:
+
+```
+gcloud artifacts repositories create ${REPO_NAME} \
+   --repository-format=docker \
+   --location=europe-west2 \
+   --description="Docker repository"
+```
+
+### Building the Docker images
+
+1. Download the application from your Git repository with the command ``git clone``.
+
+2. Build and tag the Docker images of your application. 
+
+::: {.infobox .warning data-latex="{warning}"}
+**Names of the images**
+
+You have to give your images  names that are consistent with the names of images stored 
+in the container repository.
+
+In the case of your repository, the name of an image should be as follows:
+
+``
+europe-west2-docker.pkg.dev/${PROJECT_ID}/{$REPO_NAME}/{$APP_NAME}:{$APP_VERSION}
+``
+
+:::
+
+::: {.infobox .warning data-latex="{warning}"}
+**Warning**
+
+Note: If prompted, authorize Cloud Shell to make Google Cloud API calls.
+
+:::
+
+3. Verify that the images have been created with the following command:
+
+```
+docker images
+```
+
+4. Add IAM policy bindings (basically, some authorization configurations) to your service account:
+
+```
+gcloud artifacts repositories add-iam-policy-binding ${REPO_NAME}$ \
+    --location=europe-west2 \
+    --member=serviceAccount:{$PROJECT_NUMBER}-compute@developer.gserviceaccount.com \
+    --role="roles/artifactregistry.reader"
+```
+
+### Pushing the images to the Artifact registry
+
+You must upload the images to a registry so that your GKE cluster can download and run the images. 
+Here we use the repository that we created above.
+
+1. Configure the ``docker`` command to authenticate to the Artifact Registry.
+
+
+```
+gcloud auth configure-docker europe-west2-docker.pkg.dev
+```
+
+2. Push the images that you created with the command ``docker push``. Make
+sure that you use the correct image names, as discussed above.
+
+### Creating a GKE cluster
+
+You need now to create a Kubernetes cluster using the Google Kubernetes Engine.
+When you create a cluster, you'll also specify the option to create the network 
+over which the cluster nodes communicate.
+
+1. Define a new environment variable CLUSTER_NAME whose value is a name of your choice for the cluster.
+
+2. Define a new environment variable NET_NAME whose value is a name of your choice for the network.
+
+
+3. Set your compute engine region.
+
+```
+gcloud config set compute/region europe-west2
+```
+
+4. Create the cluster with the following command:
+
+```
+gcloud container clusters create-auto ${CLUSTER_NAME} \
+    --create-subnetwork name=${NET_NAME} \
+    --no-enable-master-authorized-networks \
+    --enable-private-nodes
+```
+
+::: {.infobox .warning data-latex="{warning}"}
+**Warning**
+
+The creation of the cluster might take several minutes.
+
+:::
+
+
+### Deploy the application
+
+You're now ready to deploy your application!
+
+1. In your GitHub repository, modify the file ``tripmeal.yml`` to change the names of the images. 
+Use the names of the images that you pushed to the the artifact registry. 
+
+ 
+2. Ensure that you are connected to your GKE cluster with the following command:
+
+``
+gcloud container clusters get-credentials $CLUSTER_NAME --region europe-west2
+``
+
+3. Type the following command to deploy your application:
+
+``
+kubectl apply -f tripmeal.yml
+``
+
+4. Wait 30 seconds and then type the following command:
+
+``
+kubectl get all
+``
+
+You should get some information about the state of the deployment. 
+Keep typing this command until the state of all pods is READY.
+
+4. Get the public IP address where your application is available and the port number 
+and type them in your browser to confirm that you can access and use the application.
+
+
+
+::: {.infobox .warning data-latex="{warning}"}
+**IMPORTANT: SHUT DOWN THE APPLICATION AND REMOVE THE RESOURCES**
+
+* **Shut down the application** by typing the following command:
+
+``
+kubectl delete -f tripmeal.yml
+``
+
+*  **Delete the Kubernetes cluster** by typing the following command:
+
+``
+gcloud container clusters delete $CLUSTER_NAME --region europe-west2
+
+* **Delete ALL the images from the container registry** with the following command:
+
+
+``
+gcloud artifacts docker images delete \
+    NAM_OF_IMAGE \
+    --delete-tags --quiet
+``
+
+
+:::
+
+
+
+
+# Report {#report}
+
+In the report you need to include the following elements.
+
+* A high-level description of the application. What is the application intended for?
+
+* The architecture of the application. How are files organized? How many services is the application composed of?
+What is the meaning of each file?
+
+* The technologies used in the application. Which programming languages are used for each service? 
+Which libraries and databases?
+
+* In which file can you get the information about the port number of the front end?
+
+* Look at the file ``tripmeal.yml``. Can you explain the content of this file? Can you explain the meaning 
+of each object created in this file? In particular explain: what is a service and a deployment? 
+What is a stateful set? Why is a deployment used and for which service? 
+Why is a stateful set used and for which service?
+
+Don't hesitate to add figures to your report, should you need them to better explain the different notions.
+
+
+
+
