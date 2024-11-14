@@ -19045,6 +19045,7 @@ social network satisifying the given constraints.&lt;/p&gt;
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>/courses/bdia/tutorials/mllib/</guid>
       <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
@@ -19059,7 +19060,7 @@ social network satisifying the given constraints.&lt;/p&gt;
 We’ll be using a dataset of AirBnb accommodation in the San Francisco area.
 The dataset is available in HDFS at the following path:&lt;/p&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;pre&gt;&lt;code&gt;hdfs://sar01:9000/cpu_quercini/ml/sf-airbnb-clean.parquet&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;hdfs://sar01:9000/prof/cpu_quercini/ml/sf-airbnb-clean.parquet&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Dataset source&lt;/strong&gt;&lt;/p&gt;
@@ -19072,10 +19073,10 @@ in the dataset.&lt;/p&gt;
 &lt;p&gt;The default Python interpreter used by the executors in the cluster does not have the package &lt;code&gt;numpy&lt;/code&gt; installed.
 In order to use one that has &lt;code&gt;numpy&lt;/code&gt;, you need to run the following command in the terminal:&lt;/p&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;pre&gt;&lt;code&gt;export PYSPARK_PYTHON=/usr/bin/python3&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;export PYSPARK_PYTHON=/usr/bin/python3&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;obtaining-a-training-and-test-set&#34; class=&#34;section level1&#34;&gt;
+&lt;div id=&#34;obtaining-a-training-and-test-set&#34; class=&#34;section level1&#34; number=&#34;1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Obtaining a training and test set&lt;/h1&gt;
 &lt;p&gt;In order to build and evaluate a machine learning model, we need to split our dataset into
 a &lt;strong&gt;training&lt;/strong&gt; and &lt;strong&gt;test set&lt;/strong&gt;.&lt;/p&gt;
@@ -19085,13 +19086,13 @@ a &lt;strong&gt;training&lt;/strong&gt; and &lt;strong&gt;test set&lt;/strong&gt
 &lt;li&gt;Copy the file &lt;code&gt;train_test.py&lt;/code&gt; to your home folder in the cluster by typing the following command:&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;pre&gt;&lt;code&gt;cp /usr/users/cpu-prof/cpu_quercini/mllib/train_test.py .&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;cp /usr/users/prof/cpu_quercini/mllib/train_test.py .&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;&lt;strong&gt;Complete Line 9&lt;/strong&gt;, by specifying your directory in HDFS, which is as follows (&lt;strong&gt;replace X with your account number&lt;/strong&gt;).&lt;/li&gt;
 &lt;/ol&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;pre&gt;&lt;code&gt;hdfs://sar01:9000/bdiaspark23/bdiaspark23_X&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;hdfs://sar01:9000/bdiaspark2024/bdiaspark2024_X&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -19103,7 +19104,7 @@ a &lt;strong&gt;training&lt;/strong&gt; and &lt;strong&gt;test set&lt;/strong&gt
 &lt;li&gt;&lt;p&gt;&lt;strong&gt;Complete Line 23.&lt;/strong&gt; Write the code to read the input file, which is stored in HDFS as a Parquet file, into the DataFrame &lt;code&gt;airbnb_df&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;&lt;strong&gt;From Line 26&lt;/strong&gt;, add the instructions necessary to print the schema of &lt;code&gt;airbnb_df&lt;/code&gt; and the first 5 rows. Which option should you use
 to nicely see the values in the columns?&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;Execute the code with &lt;code&gt;spark-submit&lt;/code&gt; and verify that the data is correctly loaded.&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Execute the code with &lt;code&gt;spark-submit&lt;/code&gt; and verify that the data is correctly loaded.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -19120,7 +19121,7 @@ must be taken as training instances, while the remaining 20% will be used a test
 &lt;a href=&#34;https://spark.apache.org/docs/3.1.1/api/python/reference/pyspark.sql.html&#34; target=&#34;_blank&#34;&gt;Looking at the DataFrame API documentation&lt;/a&gt;, which
 function are you going to use?&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;&lt;strong&gt;From Line 36&lt;/strong&gt;, write the code to print the number of instances in the training and test set.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;Execute the code with &lt;code&gt;spark-submit&lt;/code&gt;. You should have 5780 training instances and 1366 test instances.&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Execute the code with &lt;code&gt;spark-submit&lt;/code&gt;. You should have 5780 training instances and 1366 test instances.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -19138,7 +19139,7 @@ defined at Lines 40 and 43 respectively.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;preparing-the-features&#34; class=&#34;section level1&#34;&gt;
+&lt;div id=&#34;preparing-the-features&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Preparing the features&lt;/h1&gt;
 &lt;p&gt;In both training and test sets, the features correspond to DataFrame columns.
 Most of the machine learning algorithms in Spark need to have all features in one single vector.
@@ -19151,7 +19152,7 @@ input DataFrame and additional columns that are specified as an argument to the 
 &lt;/div&gt;
 &lt;p&gt;Copy the file &lt;code&gt;train_test_model&lt;/code&gt; to your home folder in the cluster by typing the following command:&lt;/p&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;p&gt;cp /usr/users/cpu-prof/cpu_quercini/mllib/train_test_model.py .&lt;/p&gt;
+&lt;p&gt;cp /usr/users/prof/cpu_quercini/mllib/train_test_model.py .&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
@@ -19196,7 +19197,7 @@ You’ll need to use a &lt;a href=&#34;https://spark.apache.org/docs/latest/api/
 &lt;a href=&#34;https://spark.apache.org/docs/latest/api/python/reference/pyspark.ml.html&#34; target=&#34;_blank&#34;&gt;Looking at the documentation&lt;/a&gt;, try to identify the object that you need to use
 to create a linear regressor and the function that you need to invoke to train the linear regressor.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Uncomment Lines 121, 124, 125, 126 to call the function &lt;code&gt;train_linear_regression_model&lt;/code&gt; and display the coefficients learned by the linear regression model.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;Execute the file &lt;code&gt;train_test_model&lt;/code&gt; with &lt;code&gt;spark-submit&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Execute the file &lt;code&gt;train_test_model&lt;/code&gt; with &lt;code&gt;spark-submit&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -19215,13 +19216,13 @@ The function takes in a DataFrame with the test set and returns the same DataFra
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Look at Lines 130 and 131. Which DataFrame do we need to pass the function &lt;code&gt;transform&lt;/code&gt;? Is &lt;code&gt;test_df&lt;/code&gt; a good choice? Why?&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Complete line 130 and uncomment lines 130, 131, 132.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;Execute the file &lt;code&gt;train_test_model&lt;/code&gt; with &lt;code&gt;spark-submit&lt;/code&gt; and observe the result. Is the predicted value the one that you expect given that you
-know the formula of the regression line?&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Execute the file &lt;code&gt;train_test_model&lt;/code&gt; with &lt;code&gt;spark-submit&lt;/code&gt; and observe the result. Is the predicted value the one that you expect given that you
+know the formula of the regression line?&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;pipelines&#34; class=&#34;section level1&#34;&gt;
+&lt;div id=&#34;pipelines&#34; class=&#34;section level1&#34; number=&#34;3&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Pipelines&lt;/h1&gt;
 &lt;p&gt;In the previous section we learned that a training and test set need to go through the same transformation steps in
 order to be fed to a machine learning model.
@@ -19241,7 +19242,7 @@ If we invoke the function &lt;code&gt;transform&lt;/code&gt; on that model on th
 Implicitly, all the transformations in the pipeline will be applied to the test set too, before making the predictions.&lt;/p&gt;
 &lt;p&gt;Copy the file &lt;code&gt;pipeline_example.py&lt;/code&gt; to your home folder in the cluster by typing the following command:&lt;/p&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;pre&gt;&lt;code&gt;cp /usr/users/cpu-prof/cpu_quercini/mllib/pipeline_example.py .&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;cp /usr/users/prof/cpu_quercini/mllib/pipeline_example.py .&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
@@ -19256,7 +19257,7 @@ to train and test a linear regression model on the given training and test sets.
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;from-categorical-to-numerical-features&#34; class=&#34;section level2&#34;&gt;
+&lt;div id=&#34;from-categorical-to-numerical-features&#34; class=&#34;section level2&#34; number=&#34;3.1&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.1&lt;/span&gt; From categorical to numerical features&lt;/h2&gt;
 &lt;p&gt;Many machine learning models do not handle categorical values: they need all features to be numerical.
 Linear regression is such an example.&lt;/p&gt;
@@ -19266,7 +19267,7 @@ Linear regression is such an example.&lt;/p&gt;
 &lt;li&gt;Copy the file &lt;code&gt;onehot_playground.py&lt;/code&gt; to your home directory in the cluster by typing the following command:&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div align=&#34;center&#34;&gt;
-&lt;pre&gt;&lt;code&gt;cp /usr/users/cpu-prof/cpu_quercini/mllib/onehot_playground.py .&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;code&gt;cp /usr/users/prof/cpu_quercini/mllib/onehot_playground.py .&lt;/code&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;ul&gt;
 &lt;li&gt;Change lines 27 and 28 and write the paths to the files with the training and test sets.&lt;/li&gt;
@@ -19337,7 +19338,7 @@ This estimator uses the indexes in &lt;code&gt;property_type_index&lt;/code&gt; 
 &lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-11&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.4  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Execute the file with &lt;code&gt;spark-submit&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;Can you understand how one-hot encoding works?&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Can you understand how one-hot encoding works?&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -19356,13 +19357,13 @@ Create a new file &lt;code&gt;full_pipeline.py&lt;/code&gt; where:&lt;/p&gt;
 &lt;li&gt;&lt;p&gt;Set up a &lt;code&gt;VectorAssembler&lt;/code&gt; to put into a single vector the one-hot encoded features and the numerical ones.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Set up a linear regression model that takes in all features and the variable to predict (&lt;code&gt;price&lt;/code&gt;).&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Mix all these ingredients in a &lt;code&gt;Pipeline&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;Use the &lt;code&gt;Pipeline&lt;/code&gt; to train and test the model.&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Use the &lt;code&gt;Pipeline&lt;/code&gt; to train and test the model.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;evaluating-a-model&#34; class=&#34;section level1&#34;&gt;
+&lt;div id=&#34;evaluating-a-model&#34; class=&#34;section level1&#34; number=&#34;4&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Evaluating a model&lt;/h1&gt;
 &lt;p&gt;In the previous sections we visually looked at the predictions to get an vague idea of how our
 estimator performs.
