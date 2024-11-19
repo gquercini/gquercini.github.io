@@ -15698,40 +15698,56 @@ The file &lt;code&gt;package.json&lt;/code&gt; contains the dependencies to inst
 &lt;/div&gt;
 &lt;p&gt;Both directories contain a &lt;strong&gt;Dockerfile&lt;/strong&gt;.
 The one in directory &lt;code&gt;database&lt;/code&gt; is as follows:&lt;/p&gt;
-&lt;pre class=&#34;dockerfile&#34;&gt;&lt;code&gt;FROM postgres:10.2-alpine
+&lt;pre class=&#34;dockerfile&#34;&gt;&lt;code&gt;FROM postgres
 COPY init-db.sql /docker-entrypoint-initdb.d/
 RUN chown postgres:postgres /docker-entrypoint-initdb.d/*.sql
 ENV POSTGRES_USER dockeruser
 ENV POSTGRES_PASSWORD dockerpass
 ENV POSTGRES_DB pets&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The Dockerfile builds on an existing image called &lt;code&gt;postgres:10-2-alpine&lt;/code&gt;,
-that is &lt;a href=&#34;https://hub.docker.com/_/postgres&#34; target=&#34;_blank&#34;&gt;documented here&lt;/a&gt;.&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;!-- The Dockerfile builds on an existing image called ``postgres:10-2-alpine``, 
+that is [documented here](https://hub.docker.com/_/postgres){target=&#34;_blank&#34;}.
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.1  &lt;/strong&gt;&lt;/span&gt;
-Consider the following line in the Dockerfile:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;COPY init-db.sql /docker-entrypoint-initdb.d/&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;By looking at the documentation of the image &lt;code&gt;postgres:10-2-alpine&lt;/code&gt;,
-answer the two following questions:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Where is the directory &lt;code&gt;/docker-entrypoint-initdb.d/&lt;/code&gt;?&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Why do we copy the file &lt;code&gt;init-db.sql&lt;/code&gt; to this directory?&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;The last three lines of the Dockerfile contain a keyword (&lt;code&gt;ENV&lt;/code&gt;)
-that we never came across before.&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.2  &lt;/strong&gt;&lt;/span&gt;
-Look again at the documentation of the image &lt;code&gt;postgres:10-2-alpine&lt;/code&gt;
-and try to explain the meaning of the last three lines of the Dockerfile.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-1&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-1) &lt;/strong&gt;&lt;/span&gt;
+Consider the following line in the Dockerfile:
+
+``
+COPY init-db.sql /docker-entrypoint-initdb.d/
+``
+
+By looking at the documentation of the image ``postgres:10-2-alpine``, 
+answer the two following questions:
+
+* Where is the directory ``/docker-entrypoint-initdb.d/``?
+
+* Why do we copy the file ``init-db.sql`` to this directory?
+
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+
+:::
+
+
+ --&gt;
+&lt;!-- The last three lines of the Dockerfile contain a keyword (``ENV``)
+that we never came across before.
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-2&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-2) &lt;/strong&gt;&lt;/span&gt;
+Look again at the documentation of the image ``postgres:10-2-alpine`` 
+and try to explain the meaning of the last three lines of the Dockerfile.
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+ --&gt;
 &lt;p&gt;The Dockerfile of the web application is as follows:&lt;/p&gt;
 &lt;pre class=&#34;dockerfile&#34;&gt;&lt;code&gt;FROM node:9.6-alpine
 RUN mkdir /app
@@ -15812,7 +15828,7 @@ The volume is attached to the directory &lt;code&gt;/var/lib/postgresql/data&lt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.3  &lt;/strong&gt;&lt;/span&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.1  &lt;/strong&gt;&lt;/span&gt;
 What key informs &lt;code&gt;docker compose&lt;/code&gt; where to find the
 Dockerfile of the two services?&lt;/p&gt;
 &lt;/div&gt;
@@ -15823,7 +15839,7 @@ two images will be created, one for each service.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.4  &lt;/strong&gt;&lt;/span&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.2  &lt;/strong&gt;&lt;/span&gt;
 What will the name of the two images be?
 What key in the file &lt;code&gt;docker-compose.yml&lt;/code&gt; gives you this information?&lt;/p&gt;
 &lt;/div&gt;
@@ -15877,7 +15893,7 @@ shown in the terminal.
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.5  &lt;/strong&gt;&lt;/span&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.3  &lt;/strong&gt;&lt;/span&gt;
 Verify that the network and the volumes associated with the
 application have been correctly created.&lt;/p&gt;
 &lt;/div&gt;
@@ -15886,7 +15902,7 @@ application have been correctly created.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.6  &lt;/strong&gt;&lt;/span&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.4  &lt;/strong&gt;&lt;/span&gt;
 How many containers do you expect to be associated to
 the application?&lt;/p&gt;
 &lt;/div&gt;
@@ -15900,7 +15916,7 @@ that we’ve just executed.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.7  &lt;/strong&gt;&lt;/span&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.5  &lt;/strong&gt;&lt;/span&gt;
 In the output of the command &lt;code&gt;docker-compose ps&lt;/code&gt;, can you explain
 the meaning of the following?&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;0.0.0.0:5000-&amp;gt;3000/tcp&lt;/code&gt;&lt;/p&gt;
@@ -15910,7 +15926,7 @@ the meaning of the following?&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.8  &lt;/strong&gt;&lt;/span&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.6  &lt;/strong&gt;&lt;/span&gt;
 Can you
 tell which URL you have to type in your web browser
 to access the application?&lt;/p&gt;
@@ -15931,7 +15947,7 @@ This is determined in file &lt;code&gt;server.js&lt;/code&gt;.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.9  &lt;/strong&gt;&lt;/span&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.7  &lt;/strong&gt;&lt;/span&gt;
 Does shutting down the application remove the networks created
 for the application?
 What about the volumes?&lt;/p&gt;
@@ -15950,7 +15966,7 @@ the workload will be automatically balanced across all the instances of the serv
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.10  &lt;/strong&gt;&lt;/span&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.8  &lt;/strong&gt;&lt;/span&gt;
 Running the previous command results in an error.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Can you explain why?&lt;/p&gt;&lt;/li&gt;
@@ -16163,11 +16179,10 @@ spec:
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;&lt;em&gt;apiVersion&lt;/em&gt;. Defines the versioned schema of this representation.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;&lt;em&gt;kind&lt;/em&gt;. The type of the resource that we intend to create.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;em&gt;metadata&lt;/em&gt;. The resource metadata. The list of
-all metadata is specified &lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#objectmeta-v1-meta&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;em&gt;spec&lt;/em&gt;. The specification of the desired behaviour of the pod.
-The list of the possible specifications can be found &lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#podspec-v1-core&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;em&gt;metadata&lt;/em&gt;. The resource metadata.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;em&gt;spec&lt;/em&gt;. The specification of the desired behaviour of the pod.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
+&lt;p&gt;All these fields are described in the &lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#pod-v1-core&#34; target=&#34;_blank&#34;&gt;Kubernetes API reference&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;Essentially, the previous specification defines a pod with a container that is launched from the
 image &lt;code&gt;nginx:alpine&lt;/code&gt; (a Web server) and listens to ports 80 and 443.&lt;/p&gt;
 &lt;div class=&#34;infobox activitybox&#34;&gt;
@@ -16488,15 +16503,7 @@ spec:
           storage: 100Mi&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;By now you shouldn’t have any problem understanding the meaning of the fields
 in this specification.
-The fields are also
-documented in the &lt;a href=&#34;https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#statefulsetspec-v1-apps&#34; target=&#34;_blank&#34;&gt;official Kubernetes documentation&lt;/a&gt;.
-Two points are worth a comment.
-First, the specification of a &lt;code&gt;StatefulSet&lt;/code&gt; needs an attribute &lt;code&gt;serviceName&lt;/code&gt; that indicates the name
-of the service that is responsible for the network identify of the pods in the set.
-That attribute is mandatory.
-This is &lt;a href=&#34;https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#limitations&#34; target=&#34;_blank&#34;&gt;listed as one of the limitations&lt;/a&gt; of a &lt;code&gt;StatefulSet&lt;/code&gt;.
-Another novelty is the field &lt;code&gt;volumeClaimTemplates&lt;/code&gt;.
-It describes additional constraints on the volumes defined in the specification, in this case the volume
+The field &lt;code&gt;volumeClaimTemplates&lt;/code&gt; describes additional constraints on the volumes defined in the specification, in this case the volume
 named &lt;code&gt;pets-data&lt;/code&gt; (where PostgreSQL keeps the data). In particular, two claims are given:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;The access mode &lt;code&gt;ReadWriteOnce&lt;/code&gt; means that the volume can be mounted

@@ -649,40 +649,56 @@ The file <code>package.json</code> contains the dependencies to install.</p></li
 </div>
 <p>Both directories contain a <strong>Dockerfile</strong>.
 The one in directory <code>database</code> is as follows:</p>
-<pre class="dockerfile"><code>FROM postgres:10.2-alpine
+<pre class="dockerfile"><code>FROM postgres
 COPY init-db.sql /docker-entrypoint-initdb.d/
 RUN chown postgres:postgres /docker-entrypoint-initdb.d/*.sql
 ENV POSTGRES_USER dockeruser
 ENV POSTGRES_PASSWORD dockerpass
 ENV POSTGRES_DB pets</code></pre>
-<p>The Dockerfile builds on an existing image called <code>postgres:10-2-alpine</code>,
-that is <a href="https://hub.docker.com/_/postgres" target="_blank">documented here</a>.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+<!-- The Dockerfile builds on an existing image called ``postgres:10-2-alpine``, 
+that is [documented here](https://hub.docker.com/_/postgres){target="_blank"}.
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1.1  </strong></span>
-Consider the following line in the Dockerfile:</p>
-<p><code>COPY init-db.sql /docker-entrypoint-initdb.d/</code></p>
-<p>By looking at the documentation of the image <code>postgres:10-2-alpine</code>,
-answer the two following questions:</p>
-<ul>
-<li><p>Where is the directory <code>/docker-entrypoint-initdb.d/</code>?</p></li>
-<li><p>Why do we copy the file <code>init-db.sql</code> to this directory?</p></li>
-</ul>
-</div>
-</div>
-<p>The last three lines of the Dockerfile contain a keyword (<code>ENV</code>)
-that we never came across before.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 1.2  </strong></span>
-Look again at the documentation of the image <code>postgres:10-2-alpine</code>
-and try to explain the meaning of the last three lines of the Dockerfile.</p>
-</div>
-</div>
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-1"><strong>(\#exr:unnamed-chunk-1) </strong></span>
+Consider the following line in the Dockerfile:
+
+``
+COPY init-db.sql /docker-entrypoint-initdb.d/
+``
+
+By looking at the documentation of the image ``postgres:10-2-alpine``, 
+answer the two following questions:
+
+* Where is the directory ``/docker-entrypoint-initdb.d/``?
+
+* Why do we copy the file ``init-db.sql`` to this directory?
+
+</div>\EndKnitrBlock{exercise}
+
+
+:::
+
+
+ -->
+<!-- The last three lines of the Dockerfile contain a keyword (``ENV``)
+that we never came across before.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-2"><strong>(\#exr:unnamed-chunk-2) </strong></span>
+Look again at the documentation of the image ``postgres:10-2-alpine`` 
+and try to explain the meaning of the last three lines of the Dockerfile.
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+ -->
 <p>The Dockerfile of the web application is as follows:</p>
 <pre class="dockerfile"><code>FROM node:9.6-alpine
 RUN mkdir /app
@@ -763,7 +779,7 @@ The volume is attached to the directory <code>/var/lib/postgresql/data</code>
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 1.3  </strong></span>
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 1.1  </strong></span>
 What key informs <code>docker compose</code> where to find the
 Dockerfile of the two services?</p>
 </div>
@@ -774,7 +790,7 @@ two images will be created, one for each service.</p>
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 1.4  </strong></span>
+<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 1.2  </strong></span>
 What will the name of the two images be?
 What key in the file <code>docker-compose.yml</code> gives you this information?</p>
 </div>
@@ -828,7 +844,7 @@ shown in the terminal.
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 1.5  </strong></span>
+<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 1.3  </strong></span>
 Verify that the network and the volumes associated with the
 application have been correctly created.</p>
 </div>
@@ -837,7 +853,7 @@ application have been correctly created.</p>
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 1.6  </strong></span>
+<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 1.4  </strong></span>
 How many containers do you expect to be associated to
 the application?</p>
 </div>
@@ -851,7 +867,7 @@ that we’ve just executed.</p>
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 1.7  </strong></span>
+<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 1.5  </strong></span>
 In the output of the command <code>docker-compose ps</code>, can you explain
 the meaning of the following?</p>
 <p><code>0.0.0.0:5000-&gt;3000/tcp</code></p>
@@ -861,7 +877,7 @@ the meaning of the following?</p>
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 1.8  </strong></span>
+<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 1.6  </strong></span>
 Can you
 tell which URL you have to type in your web browser
 to access the application?</p>
@@ -882,7 +898,7 @@ This is determined in file <code>server.js</code>.</p>
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-9" class="exercise"><strong>Exercise 1.9  </strong></span>
+<p><span id="exr:unnamed-chunk-9" class="exercise"><strong>Exercise 1.7  </strong></span>
 Does shutting down the application remove the networks created
 for the application?
 What about the volumes?</p>
@@ -901,7 +917,7 @@ the workload will be automatically balanced across all the instances of the serv
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-10" class="exercise"><strong>Exercise 1.10  </strong></span>
+<p><span id="exr:unnamed-chunk-10" class="exercise"><strong>Exercise 1.8  </strong></span>
 Running the previous command results in an error.</p>
 <ul>
 <li><p>Can you explain why?</p></li>
@@ -1114,11 +1130,10 @@ spec:
 <ul>
 <li><p><em>apiVersion</em>. Defines the versioned schema of this representation.</p></li>
 <li><p><em>kind</em>. The type of the resource that we intend to create.</p></li>
-<li><p><em>metadata</em>. The resource metadata. The list of
-all metadata is specified <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#objectmeta-v1-meta" target="_blank">here</a>.</p></li>
-<li><p><em>spec</em>. The specification of the desired behaviour of the pod.
-The list of the possible specifications can be found <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#podspec-v1-core" target="_blank">here</a>.</p></li>
+<li><p><em>metadata</em>. The resource metadata.</p></li>
+<li><p><em>spec</em>. The specification of the desired behaviour of the pod.</p></li>
 </ul>
+<p>All these fields are described in the <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.31/#pod-v1-core" target="_blank">Kubernetes API reference</a>.</p>
 <p>Essentially, the previous specification defines a pod with a container that is launched from the
 image <code>nginx:alpine</code> (a Web server) and listens to ports 80 and 443.</p>
 <div class="infobox activitybox">
@@ -1439,15 +1454,7 @@ spec:
           storage: 100Mi</code></pre>
 <p>By now you shouldn’t have any problem understanding the meaning of the fields
 in this specification.
-The fields are also
-documented in the <a href="https://kubernetes.io/docs/reference/generated/kubernetes-api/v1.21/#statefulsetspec-v1-apps" target="_blank">official Kubernetes documentation</a>.
-Two points are worth a comment.
-First, the specification of a <code>StatefulSet</code> needs an attribute <code>serviceName</code> that indicates the name
-of the service that is responsible for the network identify of the pods in the set.
-That attribute is mandatory.
-This is <a href="https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/#limitations" target="_blank">listed as one of the limitations</a> of a <code>StatefulSet</code>.
-Another novelty is the field <code>volumeClaimTemplates</code>.
-It describes additional constraints on the volumes defined in the specification, in this case the volume
+The field <code>volumeClaimTemplates</code> describes additional constraints on the volumes defined in the specification, in this case the volume
 named <code>pets-data</code> (where PostgreSQL keeps the data). In particular, two claims are given:</p>
 <ul>
 <li><p>The access mode <code>ReadWriteOnce</code> means that the volume can be mounted
