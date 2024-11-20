@@ -1899,6 +1899,400 @@ the previous exercise. Import the data into the tables.&lt;/p&gt;
     </item>
     
     <item>
+      <title>Deploying to GKE</title>
+      <link>/courses/cloudalbert/tutorials/project/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/cloudalbert/tutorials/project/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;p&gt;The goal of this assignment is to deploy a containerized application
+to &lt;strong&gt;Google Kubernetes Engine (GKE)&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;The lab consists of the following activities:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Get a Web application from GitHub.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Complete the &lt;em&gt;Dockerfile&lt;/em&gt; of the front-end.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Deploy and test the application on your local Kubernetes cluster.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Deploy the application to the Google Kubernetes Engine (GKE).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Write a report describing the application and the deployment procedure.
+You’ll find detailed information about the report &lt;a href=&#34;#report&#34;&gt;in the last section&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Submission information&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;You have a submit a &lt;strong&gt;single zip file&lt;/strong&gt; containing:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The report in PDF format.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The &lt;em&gt;Dockerfile&lt;/em&gt; of the front-end.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Submission deadline:&lt;/strong&gt; 5 December 2024, 11:59 PM.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;getapp&#34; class=&#34;section level1&#34; number=&#34;1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Get the application&lt;/h1&gt;
+&lt;p&gt;You can download the application
+&lt;a href=&#34;https://github.com/gquercini/tripmeal-cloud&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;If you have &lt;strong&gt;git&lt;/strong&gt; installed on your computer you can simply open a terminal and type
+the following command:&lt;/p&gt;
+&lt;center&gt;
+&lt;p&gt;&lt;code&gt;git clone https://github.com/gquercini/tripmeal-cloud.git&lt;/code&gt;&lt;/p&gt;
+&lt;/center&gt;
+&lt;/div&gt;
+&lt;div id=&#34;dockerfile-of-the-front-end&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Dockerfile of the front-end&lt;/h1&gt;
+&lt;p&gt;The application folder has the same structure as we have seen in the previous labs.
+You should be able to understand the role of each file and folder.&lt;/p&gt;
+&lt;p&gt;Note that:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The folder &lt;code&gt;web&lt;/code&gt; containing the front-end consists of Python code files, a &lt;code&gt;requirements.txt&lt;/code&gt; file, and two folders &lt;code&gt;static&lt;/code&gt; and &lt;code&gt;templates&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The files and folders contained in the folder &lt;code&gt;web&lt;/code&gt; need to be copied to a Docker image.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;
+Locate the &lt;em&gt;Dockerfile&lt;/em&gt; of the front-end and complete it.
+Please note that:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;You need a Python 3.7 environment to run the application.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Make sure you build a &lt;strong&gt;minimal image&lt;/strong&gt;; don’t add unnecessary files to the image. Also,
+choose a base image to have a minimal Python environment.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Make sure your Dockerfile is written so that it can take full advantage of the build cache.
+Specifically, the dependencies should not be installed every time you build an image after a modification of the source code.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;local-deployment&#34; class=&#34;section level1&#34; number=&#34;3&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Local deployment&lt;/h1&gt;
+&lt;p&gt;You need to deploy and test the application &lt;em&gt;TripMeal&lt;/em&gt; on
+a &lt;strong&gt;local Kubernetes cluster&lt;/strong&gt; (either Docker Desktop or Minikube).&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;
+Build the images of &lt;strong&gt;all services&lt;/strong&gt; of the application.
+Prefix the name of each image with your username, such as:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;your-username/image-name:tag&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Now, specify the names of the images in the file &lt;code&gt;tripmeal.yml&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.2  &lt;/strong&gt;&lt;/span&gt;
+Open the file &lt;code&gt;tripmeal.yml&lt;/code&gt; and add the names of the created Docker images
+to the appropriate fields.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.3  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Execute the application by typing the following command:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;center&gt;
+&lt;p&gt;&lt;code&gt;kubectl apply -f tripmeal.yml&lt;/code&gt;&lt;/p&gt;
+&lt;/center&gt;
+&lt;ul&gt;
+&lt;li&gt;Wait a minute and then check whether the state of the pods with the following command:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;center&gt;
+&lt;p&gt;&lt;code&gt;kubectl get all&lt;/code&gt;&lt;/p&gt;
+&lt;/center&gt;
+&lt;ul&gt;
+&lt;li&gt;If any of the pods is not ready yet, wait a moment and then type the previous command again.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;details&gt;
+&lt;summary&gt;
+If one or more pods are in an &lt;strong&gt;error state&lt;/strong&gt;
+&lt;/summary&gt;
+&lt;ul&gt;
+&lt;li&gt;Check the logs with the following commands:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;center&gt;
+&lt;p&gt;&lt;code&gt;kubectl logs NAME-OF-POD --previous&lt;/code&gt;&lt;/p&gt;
+&lt;/center&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;In case you get Exec format error&lt;/strong&gt;, add to your Dockerfile the following instruction:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;center&gt;
+&lt;p&gt;&lt;code&gt;RUN chmod -x path_to_file_app&lt;/code&gt;&lt;/p&gt;
+&lt;/center&gt;
+&lt;p&gt;where &lt;code&gt;path_to_file_app&lt;/code&gt; is the path to the file &lt;code&gt;app.py&lt;/code&gt;
+&lt;strong&gt;inside the image&lt;/strong&gt;. Rebuild the image.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;After fixing the error, before executing the application again, run the following command
+to delete all previously created resources:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;center&gt;
+&lt;p&gt;&lt;code&gt;kubectl delete -f tripmeal.yml&lt;/code&gt;&lt;/p&gt;
+&lt;/center&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;summary&gt;
+External IP pending problem
+&lt;/summary&gt;
+&lt;p&gt;If the external IP address is in &lt;pending state&gt; for the frontend service,
+delete the service, change the port number in the &lt;code&gt;.yml&lt;/code&gt; file and restart the service.&lt;/p&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;summary&gt;
+If all pods are in running state
+&lt;/summary&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Open a web browser window.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Type the public IP and port of your application.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Confirm that the application works correctly.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;After confirming that the application works, you can shut down the application.&lt;/p&gt;
+&lt;center&gt;
+&lt;p&gt;&lt;code&gt;kubectl delete -f tripmeal.yml&lt;/code&gt;&lt;/p&gt;
+&lt;/center&gt;
+&lt;/div&gt;
+&lt;div id=&#34;deploy-to-gke&#34; class=&#34;section level1&#34; number=&#34;4&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Deploy to GKE&lt;/h1&gt;
+&lt;p&gt;In this section, you’re going to deploy your application to GKE.&lt;/p&gt;
+&lt;p&gt;Here are the main steps:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Make the code available to a &lt;strong&gt;public&lt;/strong&gt; repository so that it can be easily imported into your cloud environment.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Open the Google Cloud Shell to access your cloud environment.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Deploy the application.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;The next subsections will describe these steps in greater detail.&lt;/p&gt;
+&lt;div id=&#34;upload-the-code-to-github&#34; class=&#34;section level2&#34; number=&#34;4.1&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.1&lt;/span&gt; Upload the code to GitHub&lt;/h2&gt;
+&lt;p&gt;The easiest way to import your application into your cloud environment is to
+make it available to a Git repository, such as GitHub or any other Git service
+for which you already have an account.
+If necessary, the teacher will guide you in this step.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;open-the-google-cloud-shell&#34; class=&#34;section level2&#34; number=&#34;4.2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.2&lt;/span&gt; Open the Google Cloud Shell&lt;/h2&gt;
+&lt;p&gt;Open the &lt;a href=&#34;https://console.cloud.google.com/welcome?project=gq-cloud-computing&#34; target=&#34;_blank&#34;&gt;Google Cloud Console&lt;/a&gt;.
+Make sure you log in with your school account.&lt;/p&gt;
+&lt;p&gt;You’ll see in this page an overview of the project created to let you deploy the application to GKE.
+In particular, you should take note of:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;the project number (&lt;em&gt;124930651186&lt;/em&gt;).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;the project ID (&lt;em&gt;gq-cloud-computing&lt;/em&gt;).&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You’ll need this information later when you’ll set up the deployment.&lt;/p&gt;
+&lt;p&gt;In the top-right corner of the window, you should see a small icon with a prompt (&lt;em&gt;&amp;gt;&lt;/em&gt;).
+When you click on it, a Google Cloud Shell will open at the bottom of the screen.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;It may take few minutes for the shell to up and running.&lt;/strong&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;deployment&#34; class=&#34;section level2&#34; number=&#34;4.3&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.3&lt;/span&gt; Deployment&lt;/h2&gt;
+&lt;p&gt;You’ll now have to type few commands in the Google Cloud Shell to deploy the application to Kubernetes.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Set the project in the shell session&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Set your Cloud platform project in this session.&lt;/p&gt;
+&lt;p&gt;First, create an environment variable PROJECT_ID with the following command:&lt;/p&gt;
+&lt;center&gt;
+&lt;p&gt;&lt;code&gt;export PROJECT_ID=gq-cloud-computing&lt;/code&gt;&lt;/p&gt;
+&lt;/center&gt;
+&lt;p&gt;Then configure the project ID with the following command:&lt;/p&gt;
+&lt;center&gt;
+&lt;p&gt;&lt;code&gt;gcloud config set project ${PROJECT_ID}&lt;/code&gt;&lt;/p&gt;
+&lt;/center&gt;
+&lt;/div&gt;
+&lt;div id=&#34;create-a-repository&#34; class=&#34;section level3&#34; number=&#34;4.3.1&#34;&gt;
+&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.3.1&lt;/span&gt; Create a repository&lt;/h3&gt;
+&lt;p&gt;Create a repository where you’ll be storing the Docker images of your application.
+The repository is stored in the &lt;em&gt;Artifact Registry&lt;/em&gt;, the Google container registry.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Create an environment variable PROJECT_NUMBER whose value is 124930651186.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Create an environment variable REPO_NAME whose value is a name of your choice for the container
+repository.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Create an environment variable APP_NAME whose value is a name of your choice for the
+application.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Create an environment variable APP_VERSION whose value is the version of the app. You can choose
+&lt;code&gt;1.0&lt;/code&gt; or &lt;code&gt;latest&lt;/code&gt;, or any other value of your choice.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Create your repository with the following command:&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;gcloud artifacts repositories create ${REPO_NAME} \
+   --repository-format=docker \
+   --location=europe-west2 \
+   --description=&amp;quot;Docker repository&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;building-the-docker-images&#34; class=&#34;section level3&#34; number=&#34;4.3.2&#34;&gt;
+&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.3.2&lt;/span&gt; Building the Docker images&lt;/h3&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Download the application from your Git repository with the command &lt;code&gt;git clone&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Build and tag the Docker images of your application.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Names of the images&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;You have to give your images names that are consistent with the names of images stored
+in the container repository.&lt;/p&gt;
+&lt;p&gt;In the case of your repository, the name of an image should be as follows:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;europe-west2-docker.pkg.dev/${PROJECT_ID}/${REPO_NAME}/${APP_NAME}-image-name:${APP_VERSION}&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Note: If prompted, authorize Cloud Shell to make Google Cloud API calls.&lt;/p&gt;
+&lt;/div&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Verify that the images have been created with the following command:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;center&gt;
+&lt;p&gt;&lt;code&gt;docker images&lt;/code&gt;&lt;/p&gt;
+&lt;/center&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Add IAM policy bindings (basically, some authorization configurations) to your service account:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;gcloud artifacts repositories add-iam-policy-binding ${REPO_NAME} \
+    --location=europe-west2 \
+    --member=serviceAccount:${PROJECT_NUMBER}-compute@developer.gserviceaccount.com \
+    --role=&amp;quot;roles/artifactregistry.reader&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;pushing-the-images-to-the-artifact-registry&#34; class=&#34;section level3&#34; number=&#34;4.3.3&#34;&gt;
+&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.3.3&lt;/span&gt; Pushing the images to the Artifact registry&lt;/h3&gt;
+&lt;p&gt;You must upload the images to a registry so that your GKE cluster can download and run the images.
+Here we use the repository that we created above.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Configure the &lt;code&gt;docker&lt;/code&gt; command to authenticate to the Artifact Registry.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;center&gt;
+&lt;p&gt;&lt;code&gt;gcloud auth configure-docker europe-west2-docker.pkg.dev&lt;/code&gt;&lt;/p&gt;
+&lt;/center&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Push the images that you created with the command &lt;code&gt;docker push&lt;/code&gt;. Make
+sure that you use the correct image names, as discussed above.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div id=&#34;creating-a-gke-cluster&#34; class=&#34;section level3&#34; number=&#34;4.3.4&#34;&gt;
+&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.3.4&lt;/span&gt; Creating a GKE cluster&lt;/h3&gt;
+&lt;p&gt;You need now to create a Kubernetes cluster using the Google Kubernetes Engine.
+When you create a cluster, you’ll also specify the option to create the network
+over which the cluster nodes communicate.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Define a new environment variable CLUSTER_NAME whose value is a name of your choice for the cluster.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Define a new environment variable NET_NAME whose value is a name of your choice for the network.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Set your compute engine region.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;center&gt;
+&lt;p&gt;&lt;code&gt;gcloud config set compute/region europe-west2&lt;/code&gt;&lt;/p&gt;
+&lt;/center&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Create the cluster with the following command:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;gcloud container clusters create-auto ${CLUSTER_NAME} \
+  --create-subnetwork name=${NET_NAME} \
+  --no-enable-master-authorized-networks \
+  --enable-private-nodes&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The creation of the cluster might take &lt;strong&gt;several minutes&lt;/strong&gt;.
+You may want to get a coffee :)&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;deploy-the-application&#34; class=&#34;section level3&#34; number=&#34;4.3.5&#34;&gt;
+&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.3.5&lt;/span&gt; Deploy the application&lt;/h3&gt;
+&lt;p&gt;You’re now ready to deploy your application!&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;In your GitHub repository, modify the file &lt;code&gt;tripmeal.yml&lt;/code&gt; to change the names of the images.
+Use the names of the images that you pushed to the the artifact registry.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In the Google Cloud Shell, move to the directory that contains your application with the command &lt;code&gt;cd&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Execute the command &lt;code&gt;git pull&lt;/code&gt; to get the updated version of file &lt;code&gt;tripmeal.yml&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Ensure that you are connected to your GKE cluster with the following command:&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;center&gt;
+&lt;p&gt;&lt;code&gt;gcloud container clusters get-credentials $CLUSTER_NAME --region europe-west2&lt;/code&gt;&lt;/p&gt;
+&lt;/center&gt;
+&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Type the following command to deploy your application:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;center&gt;
+&lt;p&gt;&lt;code&gt;kubectl apply -f tripmeal.yml&lt;/code&gt;&lt;/p&gt;
+&lt;/center&gt;
+&lt;ol start=&#34;6&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Wait 30 seconds and then type the following command:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;center&gt;
+&lt;p&gt;&lt;code&gt;kubectl get all&lt;/code&gt;&lt;/p&gt;
+&lt;/center&gt;
+&lt;p&gt;You should get some information about the state of the deployment.
+Keep typing this command until the state of all pods is READY.&lt;/p&gt;
+&lt;ol start=&#34;7&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Get the public IP address where your application is available and the port number
+and type them in your browser to confirm that you can access and use the application.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;video-of-the-application-use&#34; class=&#34;section level2&#34; number=&#34;4.4&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.4&lt;/span&gt; Video of the application use&lt;/h2&gt;
+&lt;p&gt;Record &lt;strong&gt;a video&lt;/strong&gt; while using the application.
+In particular shows:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;that you can connect to the website.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;you can create a user.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;you can log in with as new user.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;you can create a recipe.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;you can log out and log in back again.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;shut-down-the-application&#34; class=&#34;section level2&#34; number=&#34;4.5&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.5&lt;/span&gt; Shut down the application&lt;/h2&gt;
+&lt;p&gt;When you’re done using the application, &lt;strong&gt;shut it down and remove all resources&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;This is very important. Follow these instructions carefully to remove all your resources.&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Shut down the application&lt;/strong&gt; by typing the following command:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;center&gt;
+&lt;p&gt;&lt;code&gt;kubectl delete -f tripmeal.yml&lt;/code&gt;&lt;/p&gt;
+&lt;/center&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Delete the Kubernetes cluster&lt;/strong&gt; by typing the following command:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;center&gt;
+&lt;p&gt;&lt;code&gt;gcloud container clusters delete $CLUSTER_NAME --region europe-west2 --ansync&lt;/code&gt;&lt;/p&gt;
+&lt;/center&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Delete ALL the images from the container registry&lt;/strong&gt; with the following command:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;center&gt;
+&lt;p&gt;&lt;code&gt;gcloud artifacts docker images delete NAME_OF_IMAGE --delete-tags --quiet&lt;/code&gt;&lt;/p&gt;
+&lt;/center&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Delete the Docker repository&lt;/strong&gt; with the following command:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;center&gt;
+&lt;p&gt;&lt;code&gt;gcloud artifacts repositories delete ${REPO_NAME} --location=europe-west2 --async&lt;/code&gt;&lt;/p&gt;
+&lt;/center&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;report&#34; class=&#34;section level1&#34; number=&#34;5&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;5&lt;/span&gt; Report&lt;/h1&gt;
+&lt;p&gt;In the report you need to include the following elements.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;A high-level description of the application. What is the application intended for?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The architecture of the application. How are files organized? How many services is the application composed of?
+What is the meaning of each file?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The technologies used in the application. Which programming languages are used for each service?
+Which libraries and databases?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In which file can you get the information about the port number of the front end?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Look at the file &lt;code&gt;tripmeal.yml&lt;/code&gt;. Can you explain the content of this file? Can you explain the meaning
+of each object created in this file? In particular explain: what is a service and a deployment?
+What is a stateful set? Why is a deployment used and for which service?
+Why is a stateful set used and for which service?&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Don’t hesitate to add figures to your report, should you need them to better explain the different notions.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Etude de cas: DHCP</title>
       <link>/courses/network/labs/dhcp-lab/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
