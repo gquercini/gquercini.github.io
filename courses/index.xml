@@ -1964,28 +1964,6 @@ Specifically, the dependencies should not be installed every time you build an i
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Different solutions exist, here is a proposition.
-It is important that we build a minimal image, so
-we choose the environment python:3-7-slim.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;FROM python:3.7-slim
-RUN mkdir -p /app &amp;amp; \
-    mkdir -p /app/templates &amp;amp; \
-    mkdir -p /app/static
-RUN /usr/local/bin/python -m pip install --upgrade pip
-COPY ./static /app/static/
-COPY ./templates /app/templates/
-COPY requirements.txt /app/
-WORKDIR /app
-RUN pip install -r requirements.txt
-COPY app.py dbconnect.py /app/
-ENTRYPOINT [&amp;quot;python&amp;quot;,&amp;quot;app.py&amp;quot;]&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;local-deployment&#34; class=&#34;section level1&#34; number=&#34;3&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Local deployment&lt;/h1&gt;
