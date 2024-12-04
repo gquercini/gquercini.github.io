@@ -1,0 +1,482 @@
+---
+title: "Routage IPv4"
+heading: Routage IPv4
+linktitle: tutorial-routage
+output:
+  bookdown::pdf_book:
+    toc: false
+    includes:
+      in_header: ./latex-files/preamble.tex
+    number_sections: yes
+  blogdown::html_page:
+    number_sections: yes
+  html_document:
+    df_print: paged
+menu:
+  network:
+    name: 4. Routage IPv4
+    parent: Labs
+    identifier: tutorial-routage
+    weight: 6
+params:
+  solution: false
+summary: tutorial-routage
+draft: no
+type: docs
+---
+
+<link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/cloud-computing.css">
+
+
+L'objectif de ce TP est de configurer des **tables de transfert**.
+
+Le TP se compose de deux parties :
+
+* Première partie : configuration **statique** des tables de transfert.
+
+* Deuxième partie : configuration **dynamique** des tables de transfert.
+
+
+::: {.infobox .warning data-latex="{warning}"}
+**Informations importantes**
+
+Ce TP sera **évalué**. 
+
+**Remise du devoir**  : il faut remettre **un seul fichier .zip** comprenant :
+
+* Un rapport en PDF, complet d'une page de garde avec vos noms et prénoms et la date. 
+Ecrivez une réponse pour chaque question. Ne vous limitez pas à des phrases courtes et ambiguës. 
+La qualité et l'exhaustivité de vos réponses seront prises en compte dans la note finale.
+
+* Un fichier ``static-routing.pkt`` contenant le réseau créé dans Cisco Packet Tracer avec la configuration statique des tables de transfert.
+
+* Un fichier ``dynamic-routing.pkt`` contenant le réseau créé dans Cisco Packet Tracer avec la configuration dynamique des tables de transfert.
+
+
+::: 
+
+
+# Environnement de travail 
+
+Pour ce TP nous allons utiliser Cisco Packet Tracer. 
+Le logiciel permet de configurer et simuler un réseau. 
+Il utilise des composants de la marque Cisco, 
+un important fabricant sur le marché des équipements réseau professionnels.
+D'autre importants fabriquants sont : Huawei, HPE, Nokia, Netgear, Dell, Juniper, Aerohive.
+
+Pour cette activité, le réseau vous sera fourni sous forme d'un fichier géneré à l'aide de Cisco Packet Tracer.
+
+
+* Téléchargez le réseau [à ce lien](/courses/network/routing.pkt).
+
+* Faites un double click sur le fichier téléchargé pour ouvrir le réseau avec Cisco Packet Tracer.
+
+
+::: {.infobox .warning data-latex="{warning}"}
+**Bon à savoir**
+
+Certains cables sont rouges. Mais cela n'aura aucun impact sur l'activité. 
+
+
+::: 
+
+
+
+
+# Première partie : routage statique
+
+
+Dans un premier temps, nous allons configurer les tables de transfert des routers de manière **statique**, c'est à dire manuellement.
+
+Observez attentivement le réseau et répondez aux questions suivantes.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Combien de sous-réseaux a-t-on dans ce réseau ? Pour chaque sous-réseau, précisez les interfaces réseau qui en font partie. 
+
+```
+
+:::
+
+Restez en mode *Realtime* et répondez aux questions suivantes.
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Essayez de faire un *ping* entre $A$ et $B$. Obtenez-vous une réponse de la part de $B$ ? 
+En regardant la configuration réseau des ordinateurs $A$ et $B$, êtes-vous surpris par ce que vous venez d'observer ?
+
+```
+
+:::
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Essayez de faire un *ping* entre $A$ et $C$. Obtenez-vous une réponse de la part de $C$ ? 
+En regardant la configuration réseau des ordinateurs $A$ et $C$, êtes-vous surpris par ce que vous venez d'observer ?
+
+```
+
+:::
+
+
+## Contenu de la tables de transfert
+
+On va maintenant regarder le contenu de la table de transfert du routeur R1.
+
+Cliquez sur le routeur $R1$, sélectionnez l'onglet *CLI* (IOS Command-Line Interface), tapez *Entrée* sur votre clavier et ensuite
+tapez la commande suivante :
+
+<center>
+
+``
+show ip route
+``
+
+</center>
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+En vous aidant des informations que vous trouvez [à cette page](https://www.ciscopress.com/articles/article.asp?p=2756479&seqNum=6){target="_blank"}, 
+expliquez le contenu de la table de transfert de $R1$.
+
+```
+
+:::
+
+
+Tout en restant en mode *Realtime*, essayez de faire un *ping* entre $A$ et 10.1.5.2. 
+Il s'agit de l'adresse IP de l'interface *Gig0/0/0* du routeur $R2$.
+
+* Vous ne devriez obtenir aucune réponse. On va maintenant essayer de comprendre pourquoi. 
+
+* Pour répondre aux questions suivantes, passez en mode *Simulation*.
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+Est-ce que le message *Echo ping request* arrive à destination ? Sur la base des informations présentes dans la table de trasfert de $R1$, 
+êtes-vous supris de ce que vous venez d'observer ?
+
+```
+
+:::
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+Est-ce que le router $R2$ arrive à trouver une route pour répondre à $A$ ? Justifiez votre réponse en vous aidant des informations présentes 
+dans la table de transfert de $R2$.
+
+ 
+```
+
+:::
+
+
+## Remplissage des tables de transfert
+
+Maintenant nous allons remplir les tables de transfert pour que les ordinateurs et les routeurs de ce réseau puissent communiquer correctement.
+
+Nous commençons par le routeur $R2$.
+
+
+::: {.infobox .warning data-latex="{warning}"}
+**Comment rajouter une route**
+
+Pour rajouter une route à une table de tranfert, il faut suivre la procédure suivante.
+
+* Cliquez sur le routeur et sélectionnez l'onglet *CLI*. 
+
+* Assurez-vous que l'invite affiche *Router>*.
+
+* Saisissez la commande ``enable``. L'invite devrait changer en *Router#*.
+
+* Saisissez la commande ``config terminal``. L'invite devrait changer en *Router (config) #*.
+
+
+Pour ajouter une route, il faut saisir la commande suivante :
+
+<center>
+
+``
+ip route PREFIX MASK NEXT-HOP 
+``
+
+</center>
+
+où: 
+
+* PREFIX spécifie l'adresse IP du sous-réseau de destination.
+
+* MASK spécifie le masque du sous-réseau de destination.
+
+* NEXT-HOP spécifie l'adresse IP de l'interface réseau à laquelle un paquet doit être envoyé pour atteindre la destination.
+ 
+
+Pour afficher la table de transfert, 
+il faut saisir deux fois la commande ``exit`` (pour quitter le mode configuration du routeur) et taper une fois la touche *Entrée* pour que l'invite 
+affiche à nouveau *Router>*. Seulement maintenant on peut saisir la commande que nous avons utilisée tout à l'heure :
+
+<center>
+``
+show ip route
+``
+</center>
+
+
+::: 
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+
+* Ajoutez une route à la table de transfert de $R2$ de manière à ce que le routeur sache comment atteindre le sous-réseau de $A$.
+
+* Affichez le contenu de la table de transfert de $R2$. 
+Voyez-vous la nouvelle route que vous venez de rajouter ? Que signifie l'étiquette *S* qui s'affiche dans la première colonne à côté de cette route ?
+
+
+
+```
+
+:::
+
+
+* Essayez de faire un *ping* de $A$ vers $R2$. Maintenant $R2$ devrait être capable de répondre à $A$.
+
+::: {.infobox .warning data-latex="{warning}"}
+**Bon à savoir**
+
+Si le premier *ping* échoue, ne désespérez pas ! 
+
+Réessayez la commande *ping* une deuxième fois. 
+Cisco Packet Tracer ne gère pas bien les temps de réponse de la commande *ping* lorsque celle-ci déclenche 
+des requêtes ARP pour obtenir les adresses MAC des appareils concernés.
+
+::: 
+
+Maintenant que vous avez compris le mécanisme, vous devez compléter les tables de tranfert des autres routeurs. 
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Complétez les tables de transfert des autres routeurs afin que tous les appareils puissent communiquer correctement.
+
+* Vérifiez que vous pouvez faire un *ping* entre tous les ordinateurs du réseau.
+
+* Sauvegardez votre travail et fermez Cisco Packet Tracer. 
+**Renommez le fichier** sur lequel vous avez travaillé en *static-routing.pkt*.
+
+```
+
+:::
+
+
+# Routage dynamique
+
+Dans cette section nous allons étudier comment remplir les tables de transfert de manière **dynamique**, c'est à dire à l'aide 
+d'un **algorithme de routage**.
+
+* **Téléchargez** à nouveau le réseau d'origine [à ce lien](/courses/network/routing.pkt).
+
+* **Renommez** le fichier en *dynamic-routing.pkt*.
+
+* Ouvrez le fichier avec Cisco Packet Tracer.
+
+
+## Présentation du protocole RIP
+
+Dans cette section nous allons utiliser le protocole de routage dynamique **RIP** (Routing Information Protocol).
+Il s'agit d'un protocole de routage couramment utilisé dans les réseaux TCP/IP de petite et moyenne taille. 
+Il s'agit d'un protocole stable qui utilise un algorithme de vecteur de distance pour calculer les routes.
+
+Le protocole RIP (Routing Information Protocol) 
+envoie des paquets de données UDP en diffusion 
+pour échanger des informations de routage. 
+
+
+## Configuration de RIP
+
+
+Pour que les routeurs s'échangent des routes via RIP, il faut activer RIP sur tous les routeurs.
+
+Nous commençons en l'activant sur le routeur R1 à titre d'exemple.
+
+::: {.infobox .warning data-latex="{warning}"}
+**Activation de RIP**
+
+* Cliquez sur le routeur et sélectionnez l'onglet *CLI*.
+
+* Saisissez la commande ``enable``. 
+
+* Saisissez la commande ``config terminal``.
+
+* Saisissez la commande ``router rip``.
+
+* Maintenant il faut saisir la commande ``network`` pour chaque sous-réseau qui est attaché au routeur. 
+Dans le cas du routeur $R1$ il faudra saisir :
+
+```
+network 192.168.1.0
+
+network 192.168.2.0
+
+network 10.1.0.0
+
+```
+
+* Saisissez maintenant la commande ``exit``.
+
+
+::: 
+
+Si vous regardez le contenu de la table de transfert de $R2$ (le voisin de $R1$), elle ne devrait pas être changée.
+En effet, il faut activer le RIP sur $R2$ pour que $R2$ reçoive les routes annoncées par $R1$.
+
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+En utilisant les commandes détaillées ci-dessus, activez le RIP sur $R2$. 
+Attendez une trentaine de secondes et vérifiez que le contenu de la table de routage de $R2$ contient bien 
+les routes annoncées par $R1$ (les routes vers 192.168.1.0 et 192.168.2.0).
+
+
+```
+
+:::
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Regardez plus attentivement les routes ajoutées dans la table de transfert de $R2$.
+
+* Que signifie l'étiquette *R* qui apparaît dans la première colonne ?
+
+* Que signifie l'information 120/X qui apparaît dans la troisième colonne ?
+
+
+```
+
+:::
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Activez le RIP sur tous les routeurs.
+
+* Ecrivez dans votre rapport le contenu de la table de transfert de chaque routeur. 
+
+* Vérifiez que chaque routeur connaisse les routes vers les différents sous-réseaux.
+
+* Assurez-vous que tous les ordinateurs arrivent à communiquer à l'aide de la commande *ping*.
+
+
+```
+
+:::
+
+
+Passez maintenant en mode *Simulation*. 
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Faites un *ping* de la machine $A$ vers la machine $G$. 
+Laissez dérouler la simulation jusqu'à ce que vous ne voyez plus de messages ICMP passer.
+
+* Est-ce que les messages ICMP suivent toujours le même chemin ?
+
+* Est-ce que vous êtes surpris par ce que vous venez d'observer ?
+
+
+```
+
+:::
+
+
+Passez un mode *Realtime* et supprimez le lien entre le routeur $R2$ et le routeur $R4$.
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+
+* Comment les tables de tranfert de chaque routeur ont-elles changé ?
+
+
+* Est-ce que les ordinateurs arrivent toujours à communiquer correctement ?
+
+
+```
+
+:::
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
