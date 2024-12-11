@@ -20984,804 +20984,555 @@ in the WHERE clause.
 
 &lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
 &lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
-&lt;p&gt;&lt;!-- Ce TP a pour objectif de vous initier à la manipulation et à l&#39;administration d&#39;équipements
-réseau courants et d&#39;illustrer par la pratique certains concepts abordés en cours concernant les
-protocoles de la pile TCP/IP.
-
-::: {.infobox .warning data-latex=&#34;{warning}&#34;}
-**Informatios importantes**
-
-Ce TP sera **évalué**. 
-
-**Remise du devoir**  : il faut remettre **un seul fichier .zip** comprenant :
-
-* Un rapport en PDF, complet d&#39;une page de garde avec vos noms et prénoms et la date. 
-Ecrivez une réponse pour chaque question. Ne vous limitez pas à des phrases courtes et ambiguës. 
-La qualité et l&#39;exhaustivité de vos réponses seront prises en compte dans la note finale.
-
-* Un fichier ``basic-config.pkt`` contenant le réseau créé dans Cisco Packet Tracer pour répondre aux questions 2.1 et 2.2.
-
-* Un fichier ``fullnet.pkt`` contenant le réseau créé dans Cisco Packet Tracer pour répondre à toutes les autres questions.
-
-
-::: 
-
-# Environnement de travail 
-
-Pour ce TP nous allons utiliser Cisco Packet Tracer. 
-Le logiciel permet de configurer et simuler un réseau. 
-Il utilise des composants de la marque Cisco, 
+&lt;p&gt;Ce TP a pour objectif de vous initier à la manipulation et à l’administration d’équipements
+réseau courants et d’illustrer par la pratique certains concepts abordés en cours concernant les
+protocoles de la pile TCP/IP.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Informatios importantes&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Ce TP sera &lt;strong&gt;évalué&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Remise du devoir&lt;/strong&gt; : il faut remettre &lt;strong&gt;un seul fichier .zip&lt;/strong&gt; comprenant :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Un rapport en PDF, complet d’une page de garde avec vos noms et prénoms et la date.
+Ecrivez une réponse pour chaque question. Ne vous limitez pas à des phrases courtes et ambiguës.
+La qualité et l’exhaustivité de vos réponses seront prises en compte dans la note finale.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Un fichier &lt;code&gt;basic-config.pkt&lt;/code&gt; contenant le réseau créé dans Cisco Packet Tracer pour répondre aux questions 2.1 et 2.2.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Un fichier &lt;code&gt;fullnet.pkt&lt;/code&gt; contenant le réseau créé dans Cisco Packet Tracer pour répondre à toutes les autres questions.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;environnement-de-travail&#34; class=&#34;section level1&#34; number=&#34;1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Environnement de travail&lt;/h1&gt;
+&lt;p&gt;Pour ce TP nous allons utiliser Cisco Packet Tracer.
+Le logiciel permet de configurer et simuler un réseau.
+Il utilise des composants de la marque Cisco,
 un important fabricant sur le marché des équipements réseau professionnels.
-D&#39;autre importants fabriquants sont : Huawei, HPE, Nokia, Netgear, Dell, Juniper, Aerohive.
-
-# Première configuration
-
-Dans cette section, nous allons configurer un simple réseau point à point entre deux PC 
-à l&#39;aide d&#39;un câble Ethernet.
-
-* Démarrez avec un document Packet Tracer vierge ;
-
-* Ajoutez deux PCs ;
-
-* Reliez les deux PC par un câble ; 
+D’autre importants fabriquants sont : Huawei, HPE, Nokia, Netgear, Dell, Juniper, Aerohive.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;première-configuration&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Première configuration&lt;/h1&gt;
+&lt;p&gt;Dans cette section, nous allons configurer un simple réseau point à point entre deux PC
+à l’aide d’un câble Ethernet.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Démarrez avec un document Packet Tracer vierge ;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Ajoutez deux PCs ;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Reliez les deux PC par un câble ;
 vous pouvez utiliser le bouton vous permettant de choisir automatiquement le cable
-(bouton avec un éclair orange come icône).
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-
-
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-1&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-1) &lt;/strong&gt;&lt;/span&gt;
-Quelles sont les informations nécessaires pour configurer correctement un PC sur ce réseau?
-
-Précisez les valeurs numériques de ces informations que vous aurez choisies pour vos deux PCs.
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
-Une fois que vous aurez configurez vos deux PCs, il faudra penser à vérifier que ces derniers peuvent communiquer correctement.
-Nous allons utiliser la commande ```ping```.
-
-::: {.infobox .activitybox data-latex=&#34;{exercisebox}&#34;}
-**Activity**
-
-* Cliquez sur l&#39;un des PC, sélectionnez l&#39;onglet Bureau et ouvrez une invite de commande.
-
-* Tapez la commande ping avec le paramètre approprié pour envoyer un message à l&#39;autre PC.
-
-* Assurez-vous d&#39;obtenir une réponse de l&#39;autre PC.
-
-:::
-
-Cisco Packet Tracer fournit aussi un outil de simulation. 
-
-::: {.infobox .activitybox data-latex=&#34;{exercisebox}&#34;}
-**Activity**
-
-* Passez en mode simulation (bouton en bas à droite de l&#39;interface de Packet Tracer) ;
-
-* Depuis l&#39;invite de commande d&#39;un PC, faites un ping vers l&#39;autre PC ;
-
-* Dans le panneau de simulation à droite, 
-cliquez sur le bouton d&#39;avancement pour dérouler l&#39;animation.
-Attendez quelques secondes (jusqu&#39;à ce que vous ne voyiez plus de paquets de type ICMP apparaître), 
-puis cliquez de nouveau sur le bouton pour arrêter la simulation. 
-Vous pouvez maintenant examiner chacun des évènements de la liste en cliquant dessus.
-
-:::
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-
-
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-2&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-2) &lt;/strong&gt;&lt;/span&gt;
-
-* Quel est le protocole utilisé par Ping ? Quelle est la signification de son acronyme ? 
-
-* Sélectionnez l&#39;un des messages échangés par les deux PC dans la fenêtre de simulation.  
-D&#39;après les informations qui s&#39;affichent, pouvez-vous dire à quelle couche du modèle TCP/IP appartient ce protocole ? 
-
-* Pouvez-vous expliquer les informations contenues dans un message de ce protocole ? 
-
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
-
-**N&#39;oubliez pas de sauvegarder l&#39;espace de travail dans un fichier nommé ``basic-config.pkt`` avant de continuer.**
-
-# Configuration d&#39;un réseau local
-
-Le réseau point à point que nous avons configuré dans la section précédente n&#39;est pas couramment utilisé. 
-
-Dans cette section, nous allons configurer un exemple réaliste de **réseau local**.
-
-
-
-::: {.infobox .activitybox data-latex=&#34;{exercisebox}&#34;}
-**Activity**
-
-* Démarrez avec un document Packet Tracer vierge ;
-
-* Ajoutez un commutateur, par exemple un 2960 (nous le nommerons C1).
-
-* Ajoutez quatre PC dans votre réseau (nous les nommerons PC1, PC2, PC3, PC4) ;
-
-* Reliez ces PC au commutateur.
-
-:::
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-
-
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-3&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-3) &lt;/strong&gt;&lt;/span&gt;
-
-a. Quelles sont les informations nécessaires pour configurer correctement un PC sur ce réseau? 
-
-b.  Pour chaque PC, donnez les valeurs numériques de ces informations.
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
-Maintenant que vous avez configuré le réseau, vous devez tester que les PCs peuvent communiquer. 
-
-
-::: {.infobox .activitybox data-latex=&#34;{exercisebox}&#34;}
-**Activity**
-
-* Passez en mode simulation (bouton en bas à droite de l&#39;interface de Packet Tracer) ;
-
-* Dans le panneau de simulation à droite, 
-cliquez sur le bouton d&#39;avancement pour dérouler l&#39;animation.
-
-* Depuis l&#39;invite de commande d&#39;un PC, faites un ping vers un autre PC ;
-
-* Déroulez la simulation jusqu&#39;à ce que vous verrez sur l&#39;invite de commande *Reply from...*. 
-Seulement à ce moment, mettez en pause la simulation.
-
-:::
-
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-
-
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-4&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-4) &lt;/strong&gt;&lt;/span&gt;
-
-a. Quels sont les protocoles qui interviennent dans ces échanges ?
-
-b. En vous aidant de ressources en ligne, pourriez-vous décrire en quelque mots chaque protocole ?
-
-c. Pourriez-vous expliquer les interactions ARP ?
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
-# Interconnection de deux réseaux
-
-Nous allons maintenant créer un **deuxième réseau**.
-
-
-::: {.infobox .activitybox data-latex=&#34;{exercisebox}&#34;}
-**Activité**
-
-* Choisissez une plage d&#39;adresses pour un deuxième réseau IPv4 distinct du premier ;
-
-* Créez un deuxième réseau comprenant au moins deux ordinateurs. N&#39;essayez pas pour le moment de connecter les deux réseaux.
-
-* Vérifiez que les ordinateurs du deuxième réseau puissent communiquer entre eux.
-
-:::
-
-Maintenant il faut connecter les deux réseaux à l&#39;aide d&#39;un **routeur**.
-
-
-::: {.infobox .activitybox data-latex=&#34;{exercisebox}&#34;}
-**Activité**
-
-* Ajoutez un routeur 1941 (que nous nommerons R1).
-
-* Le routeur a deux interfaces réseaux, nommées *GigabitEthernet0/0* et *GigabitEthernet0/1*. Le routeur permet ainsi  l&#39;interconnexion entre deux réseaux.
-
-* Ajoutez les cables nécessaires pour connecter le premier réseau au deuxième à l&#39;aide du routeur.
-
-:::
-
-Si vous avez bien fait le cablage, vous devriez remarquer des triangles rouges sur les cables reliant le routeur aux deux réseaux.
-Cela indique un problème de connectivité que nous allons résoudre dans l&#39;activité suivante.
-
-
-:::{.infobox .curiosity data-latex=&#34;curiosity&#34;}
-**Bon à savoir**
-
-Si vous passez la souris sur un cable, une info-bulle s&#39;affiche indiquant les noms des interfaces réseaux reliées par le cable. 
-Cela va vous être utile dans les activités suivantes.
-
-:::
-
-
-
-::: {.infobox .activitybox data-latex=&#34;{exercisebox}&#34;}
-**Activité**
-
-
-* Il faudra attribuer une adresse IPv4 à chacune des interfaces du routeur. **Attention**, l&#39;adresse IP d&#39;une interface doit être cohérente avec les adresses du réseau auquel l&#39;interface est connectée.
-
-* Pour ce faire, cliquez sur le routeur et sélectionnez *Config*. Vous verrez un onglet pour chaque interface dans le menu à gauche.
-
-* Attribuez une adresse IPv4 à chaque interface. 
-
-* N&#39;oubliez pas de cocher la case *On* à côté de *Port status*. Cela sert à activer l&#39;interface.
-
-:::
-
-
-Si votre configuration est correcte, les triangles rouges devraient changer de couleur et s&#39;afficher en vert. 
-La transition entre les deux couleurs pourrait prendre un certain délai, pendant lequel un cercle orange s&#39;affiche. Cela est normal, il faut juste patienter quelques secondes.
-
-:::{.infobox .curiosity data-latex=&#34;curiosity&#34;}
-**Bon à savoir**
-
-Pensez à sauvegarder votre travail !
-
-:::
-
-
-
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-
-
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-5&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-5) &lt;/strong&gt;&lt;/span&gt;
-
-a. Passez en mode *realtime* (bouton en bas à droite dans l&#39;interface de Packet Tracer).
-
-b. Ouvrez l&#39;invite de commande sur un PC du deuxième réseau et essayez de faire un ping vers l&#39;un des ordinateurs du premier réseau.
-
-c. Que se passe-t-il ? Pourriez-vous expliquer ce qui manque dans la configuration des PC pour permettre une communication entre les PC des deux réseaux ? 
-
-d. Ajoutez les informations de configuration nécessaires aux PC.
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
-Maintenant, on procède à une vérification finale.
-
-::: {.infobox .activitybox data-latex=&#34;{exercisebox}&#34;}
-**Activité**
-
-
-* Vérifiez que vous pouvez toujours faire un *ping* entre deux PC d&#39;un même réseau (par exemple PC1 et PC2). 
-Si ce n&#39;est pas le cas, cela signifie que votre configuration a regressé par rapport aux exercices précédents.
-
-* Vérifiez que vous pouvez faire un *ping* entre tout PC d&#39;un réseau et tout PC du deuxième réseau.
-
-* Pensez également à faire un *ping* d&#39;un PC vers les deux interfaces du routeur. 
-
-:::
-
-Si à l&#39;issu de l&#39;activité précédente il n&#39;y a pas eu de problèmes de communications, cela veut dire que vous avez correctement configuré votre réseau local !
-
-Il ne nous reste que comprendre un peu mieux ce qui se passe lorsqu&#39;un PC d&#39;un réseau fait un *ping* vers un PC de l&#39;autre réseau, ce qui est l&#39;objectif 
-de l&#39;activité suivante.
-
-
-::: {.infobox .activitybox data-latex=&#34;{exercisebox}&#34;}
-**Activité**
-
-
-* Passez en mode *simulation*.
-
-* Faites un *ping* d&#39;un PC vers un PC de l&#39;autre réseau.
-
-* Laissez dérouler la simulation jusqu&#39;à ce que le *ping reply* ne revienne à la source. A ce moment, mettez la simulation en pause.
-
-:::
-
-Maintenant, répondez aux questions suivantes :
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-
-
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-6&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-6) &lt;/strong&gt;&lt;/span&gt;
-
-Dans le panneau de simulation, considérez les messages ICMP (relatifs au *ping*).
-
-a. Quel est le chemin suivi par ces messages ?
-
-b. Pour chacun de ces messages: quelle est l&#39;adresse MAC source ? 
-À quel dispositif correspond cette adresse ?  
-Quelle est l&#39;adresse MAC destination ? À quel dispositif correspond cette adresse ?
-
-c. Que pouvez-vous dire à propos des adresses IP source et destination de chacun de ces messages ?
-
-d. Sur la base des observations faites aux questions précédentes, est-ce qu&#39;un  commutateur change les adresses IP/MAC source/destination des messages ?
-
-e. Sur la base des observations faites aux questions précédentes, est-ce qu&#39;un  routeur change les adresses IP/MAC source/destination des messages ?
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
-
-# Configuration d&#39;un serveur DHCP
-
-Dans les activités précédentes, nous avons manuellement configuré les adresses IP des PC. 
-Dans un réseau domestique ou d&#39;entreprise, cela obligerait toute personne souhaitant se connecter au réseau de rentrer cette configuration à la main. 
-
-
-Dans la pratique, un serveur DHCP (Dynamic Host Configuration Protocol) nous permet de configurer automatiquement les PC. 
-
-Nous allons dans un premier temps ajouter un serveur DHCP au premier réseau.
-
-
-Un serveur DHCP doit être configuré en lui donnant :
-
-* Une adresse IP statique. 
-
-* L&#39;adresse IP de la passerelle.
-
-* Une plage d&#39;adresses IPv4 que le serveur DHCP utilisera pour attribuer automatiquement une adresse IP à tout dispositif se connectant à son réseau.
-
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-
-
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-7&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-7) &lt;/strong&gt;&lt;/span&gt;
-Etant donné que le serveur DHCP sera connecté au premier réseau, répondez aux questions suivantes :
-
-a. Quelle adresse IP allez-vous attribuer au serveur DHCP ? Donnez la valeur numérique de cette adresse.
-
-b. Quelle est l&#39;adresse IP de la passerelle par défaut du serveur ? Donnez la valeur numérique de cette adresse.
-
-c. Donnez les valeurs numérique de la plage d&#39;adresses IPv4 que le serveur utilisera pour attribuer des adresses IP à des PC.
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
-Maintenant que la configuration du serveur est faite su papier, nous allons l&#39;implémenter dans l&#39;outil de simulation.
-
-
-::: {.infobox .activitybox data-latex=&#34;{exercisebox}&#34;}
-**Activité**
-
-* Ajoutez au premier réseau un terminal de type *Server*, que nous nommerons S.
-
-* Cliquez sur le serveur et ouvrez l&#39;onglet *Config*.
-
-* Changez le nom du serveur en S.
-
-* Ajoutez les informations concernant le *Default gateway* et donnez une adresse IP au serveur, selon les réponse que vous avez données à l&#39;exercice précédent.
-
-* Ouvrez l&#39;onglet *Services* et choisissez DHCP.
-
-* Configurez un *pool* qui correspond à la plage d&#39;adresses que vous avez précisée à l&#39;exercice précédent (changez le nom *Pool name*, par ex. en *network1*).
-Précisez l&#39;adresse du *Default gateway*, ignorez le *DNS server*, précisez la première adresse IP de la plage (*Start IP address*) et un masque de sous-réseau. 
-Ignorez tous les autres champs.
-
-* **Important.** Cliquez sur *Save* et pensez à activer le service DHCP en cliquant sur *On*. 
-
-* Enfin, connectez le serveur DHCP au premier réseau à l&#39;aide d&#39;un cable. Attendez quelques secondes pour que les triangles vers s&#39;affichent sur ce cable.
-
-:::
-
-
-
-Maintenant que le serveur DHCP est configuré, il faut l&#39;utiliser !
-
-
-::: {.infobox .activitybox data-latex=&#34;{exercisebox}&#34;}
-**Activité**
-
-* Sélectionnez un PC du premier réseau, ouvrez l&#39;onglet *Desktop* et ensuite un invite de commandes.
-
-* Vérifiez que vous arrivez à faire un *ping* vers le serveur DHCP $S$. Si cela n&#39;est pas le cas, revenez à l&#39;activité précédente et 
-corrigez les erreurs de configuration.
-
-
-* Si vous avez pu faire un *ping* vers le serveur DCHP, ouvrez l&#39;onglet *Config* sur le PC.
-
-* **Important.** Pensez à noter l&#39;adresse IP actuelle du PC.
-
-* Dans la section *Gateway/DNS IPv4* choisissez *DHCP* au lieu de *Static*.
-
-* Ouvrez à nouveau l&#39;onglet *Desktop* et ouvrez un invite de commandes.
-
-* Saisissez la commande *ipconfig* et vérifiez que maintenant votre PC a une nouvelle adresse IP et que la passerelle par défaut est correctement configurée.
-
-* Faites un *ping* vers un autre PC du premier réseau et vers un autre PC du deuxième réseau pour vous assurer que le PC qui a obtenu l&#39;adresse IP du serveur DHCP puisse encore communiquer avec les autres.
-
-:::
-
-
-
-:::{.infobox .curiosity data-latex=&#34;curiosity&#34;}
-**Bon à savoir**
-
-Pensez à sauvegarder votre travail !
-
-:::
-
-
-## Etude d&#39;un échange DHCP
-
-Nous allons maintenant étudier plus en profondeur les échanges entre un PC et un serveur DHCP pour bien apprendre comment 
-le protocole DHCP marche.
-
-N&#39;hésitez pas à revoir les transparents du cours pour avoir une idée générale des messages que vous devrez vous attendre à trouver.
-
-
-::: {.infobox .activitybox data-latex=&#34;{exercisebox}&#34;}
-**Activité**
-
-* Passez en mode *Simulation* et démarrez la simulation.
-
-* Selectionnez un autre PC du premier réseau (pas celui que vous avez configuré dans l&#39;activité précédente )
-
-* Activez le DHCP sur ce PC.
-
-* Laissez dérouler la simulation. Vous la metterez en pause lorsque vous ne verrez plus d&#39;échanges DHCP/ARP.
-
-:::
-
-
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-
-Regardez le premier message DHCP dans le panneau de simulation.
-
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-8&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-8) &lt;/strong&gt;&lt;/span&gt;
-
-a. Quelle est l&#39;adresse MAC source ? A quel dispositif cette adresse correspond-t-elle ?
-
-b. Quelle est l&#39;adresse MAC destination ? A quel dispositif cette adresse correspond-t-elle ?
-
-c. Quelle est l&#39;adresse IP source ? A quel dispositif cette adresse correspond-t-elle ?
-
-d. Quelle est l&#39;adresse IP destination ? A quel dispositif cette adresse correspond-t-elle ?
-
-e. Regardez les destinataires des messages DHCP qui suivent immediatement le premier, est-ce que cela est cohérent avec les adresses MAC et IP destination que vous avez notées ?
-
-f. Quel est le protocole de la couche transport utilisé dans ces messages DHCP ? Quels sont les ports source et destination ?
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
-
-Maintenant nous allons nous concentrer sur la réponse du serveur.
-
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-9&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-9) &lt;/strong&gt;&lt;/span&gt;
-Identifiez le premier message de réponse du DHCP dans le panneau de simulation.
-
-**Ignorez pour le moment les échanges ICMP et ARP.**
-
-a. Quelle est l&#39;adresse MAC source ? A quel dispositif cette adresse correspond-t-elle ?
-
-b. Quelle est l&#39;adresse MAC destination ? A quel dispositif cette adresse correspond-t-elle ?
-
-c. Quelle est l&#39;adresse IP source ? A quel dispositif cette adresse correspond-t-elle ?
-
-d. Quelle est l&#39;adresse IP destination ? A quel dispositif cette adresse correspond-t-elle ?
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
-Ensuite on va voir ce qui se passe après la réponse du serveur.
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-10&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-10) &lt;/strong&gt;&lt;/span&gt;
-
-a. Quel dispositif réagit à la réponse du serveur ?
-
-b. Quelle est l&#39;adresse de destination de cette réaction ?
-
-c. Est-ce que le serveur répond à cette réaction ?
-
-d. Vérifiez que l&#39;échange des messages que vous avez identifiés correspond bien aux messages décrits dans les supports de cours.
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
-Maintenant on va se préoccuper des messages ICMP.
-
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-11&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-11) &lt;/strong&gt;&lt;/span&gt;
-A quoi sert selon vous le message ICMP (*ping*) envoyé par le serveur ? Analysez le message pour essayer de comprendre.
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
-Avant de continuer, pensez à terminer l&#39;activité suivante.
-
-
-::: {.infobox .activitybox data-latex=&#34;{exercisebox}&#34;}
-**Activité**
-
-* Passez en mode *Realtime*.
-
-* Activez le DHCP sur tous les ordinateurs du premier réseau. Assurez-vous que chaque ordinateur a ainsi une adresse IP valide.
-
-:::
-
-
-## Serveur DHCP pour le deuxième réseau
-
-Maintenant on va ajouter la fonctionnalité DHCP sur le deuxième réseau.
-Une solution possible consisterait à ajouter  un deuxième serveur DHCP au deuxième réseau 
-et à le configurer avec une plage d&#39;addresses pour le deuxième réseau.
-
-Cette solution étant inefficace (on ne va pas prévoir un serveur DHCP pour chaque réseau), on préfère ajouter une deuxième plage d&#39;addresses sur notre serveur $S$.
-
-
-::: {.infobox .activitybox data-latex=&#34;{exercisebox}&#34;}
-**Activité**
-
-Ajoutez au serveur $S$ une deuxième plage d&#39;addresses  pour le deuxième réseau. 
-
-:::
-
-
-On essaie maintenant d&#39;activer le DHCP sur l&#39;un des ordinateurs du deuxième réseau.
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-12&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-12) &lt;/strong&gt;&lt;/span&gt;
-
-* Passez en mode *Simulation* et demarrez la simulation.
-
-* Choisissez l&#39;un des ordinateurs du deuxième réseau et activez le DCHP sur celui-ci.
-
-* Observez le chemin pris par les messages DHCP.
-
-Est-ce que les messages DHCP arrivent au serveur $S$? Pourquoi ?
-
-
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
-On vérifie la configuration réseau de l&#39;ordinateur choisi.
-
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-13&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-13) &lt;/strong&gt;&lt;/span&gt;
-
-* Cliquez sur l&#39;ordinateur choisi et ouvrez l&#39;onglet *Desktop*.
-
-* Ouvrez un invite de commandes et tapez la commande *ipconfig*.
-
-* Quelle adresse IP cet ordinateur a-t-il reçu ? Pourriez-vous expliquer en quelques mots ?
-
-* Est-ce que cet ordinateur a reçu l&#39;adresse IP de la passerelle ? Cela vous surprend ?
-
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
-
-Pour résoudre les problèmes rencontrés dans les activités précédentes, on procède de la manière suivante :
-
-
-::: {.infobox .activitybox data-latex=&#34;{exercisebox}&#34;}
-**Activité**
-
-* Cliquez sur le routeur $R1$ et ouvrez l&#39;onglet CLI. Cela vous permet d&#39;accèder au terminal (CLI - Command Line Interface) de configuration du routeur.
-
-* Le terminal devrait afficher un invite *Router&gt;*. Si cela n&#39;est pas le cas, appuyez sur la touche *Entrée* de votre clavier.
-
-* Il faut maintenant saisir des commandes pour passer en mode configuration du routeur.
-Les commandes à saisir sont, dans l&#39;ordre (après chaque commande, appuyez sur la touche *Entrée*):
-
+(bouton avec un éclair orange come icône).&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;
+Quelles sont les informations nécessaires pour configurer correctement un PC sur ce réseau?&lt;/p&gt;
+&lt;p&gt;Précisez les valeurs numériques de ces informations que vous aurez choisies pour vos deux PCs.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Une fois que vous aurez configurez vos deux PCs, il faudra penser à vérifier que ces derniers peuvent communiquer correctement.
+Nous allons utiliser la commande &lt;code&gt;ping&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Cliquez sur l’un des PC, sélectionnez l’onglet Bureau et ouvrez une invite de commande.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Tapez la commande ping avec le paramètre approprié pour envoyer un message à l’autre PC.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Assurez-vous d’obtenir une réponse de l’autre PC.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;p&gt;Cisco Packet Tracer fournit aussi un outil de simulation.&lt;/p&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Passez en mode simulation (bouton en bas à droite de l’interface de Packet Tracer) ;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Depuis l’invite de commande d’un PC, faites un ping vers l’autre PC ;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Dans le panneau de simulation à droite,
+cliquez sur le bouton d’avancement pour dérouler l’animation.
+Attendez quelques secondes (jusqu’à ce que vous ne voyiez plus de paquets de type ICMP apparaître),
+puis cliquez de nouveau sur le bouton pour arrêter la simulation.
+Vous pouvez maintenant examiner chacun des évènements de la liste en cliquant dessus.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.2  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Quel est le protocole utilisé par Ping ? Quelle est la signification de son acronyme ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Sélectionnez l’un des messages échangés par les deux PC dans la fenêtre de simulation.&lt;br /&gt;
+D’après les informations qui s’affichent, pouvez-vous dire à quelle couche du modèle TCP/IP appartient ce protocole ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Pouvez-vous expliquer les informations contenues dans un message de ce protocole ?&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;strong&gt;N’oubliez pas de sauvegarder l’espace de travail dans un fichier nommé &lt;code&gt;basic-config.pkt&lt;/code&gt; avant de continuer.&lt;/strong&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;configuration-dun-réseau-local&#34; class=&#34;section level1&#34; number=&#34;3&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Configuration d’un réseau local&lt;/h1&gt;
+&lt;p&gt;Le réseau point à point que nous avons configuré dans la section précédente n’est pas couramment utilisé.&lt;/p&gt;
+&lt;p&gt;Dans cette section, nous allons configurer un exemple réaliste de &lt;strong&gt;réseau local&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Démarrez avec un document Packet Tracer vierge ;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Ajoutez un commutateur, par exemple un 2960 (nous le nommerons C1).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Ajoutez quatre PC dans votre réseau (nous les nommerons PC1, PC2, PC3, PC4) ;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Reliez ces PC au commutateur.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
+&lt;li&gt;&lt;p&gt;Quelles sont les informations nécessaires pour configurer correctement un PC sur ce réseau?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Pour chaque PC, donnez les valeurs numériques de ces informations.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Maintenant que vous avez configuré le réseau, vous devez tester que les PCs peuvent communiquer.&lt;/p&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Passez en mode simulation (bouton en bas à droite de l’interface de Packet Tracer) ;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Dans le panneau de simulation à droite,
+cliquez sur le bouton d’avancement pour dérouler l’animation.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Depuis l’invite de commande d’un PC, faites un ping vers un autre PC ;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Déroulez la simulation jusqu’à ce que vous verrez sur l’invite de commande &lt;em&gt;Reply from…&lt;/em&gt;.
+Seulement à ce moment, mettez en pause la simulation.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.2  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
+&lt;li&gt;&lt;p&gt;Quels sont les protocoles qui interviennent dans ces échanges ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;En vous aidant de ressources en ligne, pourriez-vous décrire en quelque mots chaque protocole ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Pourriez-vous expliquer les interactions ARP ?&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;interconnection-de-deux-réseaux&#34; class=&#34;section level1&#34; number=&#34;4&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Interconnection de deux réseaux&lt;/h1&gt;
+&lt;p&gt;Nous allons maintenant créer un &lt;strong&gt;deuxième réseau&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activité&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Choisissez une plage d’adresses pour un deuxième réseau IPv4 distinct du premier ;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Créez un deuxième réseau comprenant au moins deux ordinateurs. N’essayez pas pour le moment de connecter les deux réseaux.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Vérifiez que les ordinateurs du deuxième réseau puissent communiquer entre eux.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;p&gt;Maintenant il faut connecter les deux réseaux à l’aide d’un &lt;strong&gt;routeur&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activité&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Ajoutez un routeur 1941 (que nous nommerons R1).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Le routeur a deux interfaces réseaux, nommées &lt;em&gt;GigabitEthernet0/0&lt;/em&gt; et &lt;em&gt;GigabitEthernet0/1&lt;/em&gt;. Le routeur permet ainsi l’interconnexion entre deux réseaux.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Ajoutez les cables nécessaires pour connecter le premier réseau au deuxième à l’aide du routeur.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;p&gt;Si vous avez bien fait le cablage, vous devriez remarquer des triangles rouges sur les cables reliant le routeur aux deux réseaux.
+Cela indique un problème de connectivité que nous allons résoudre dans l’activité suivante.&lt;/p&gt;
+&lt;div class=&#34;infobox curiosity&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Bon à savoir&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Si vous passez la souris sur un cable, une info-bulle s’affiche indiquant les noms des interfaces réseaux reliées par le cable.
+Cela va vous être utile dans les activités suivantes.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activité&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Il faudra attribuer une adresse IPv4 à chacune des interfaces du routeur. &lt;strong&gt;Attention&lt;/strong&gt;, l’adresse IP d’une interface doit être cohérente avec les adresses du réseau auquel l’interface est connectée.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Pour ce faire, cliquez sur le routeur et sélectionnez &lt;em&gt;Config&lt;/em&gt;. Vous verrez un onglet pour chaque interface dans le menu à gauche.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Attribuez une adresse IPv4 à chaque interface.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;N’oubliez pas de cocher la case &lt;em&gt;On&lt;/em&gt; à côté de &lt;em&gt;Port status&lt;/em&gt;. Cela sert à activer l’interface.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;p&gt;Si votre configuration est correcte, les triangles rouges devraient changer de couleur et s’afficher en vert.
+La transition entre les deux couleurs pourrait prendre un certain délai, pendant lequel un cercle orange s’affiche. Cela est normal, il faut juste patienter quelques secondes.&lt;/p&gt;
+&lt;div class=&#34;infobox curiosity&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Bon à savoir&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Pensez à sauvegarder votre travail !&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
+&lt;li&gt;&lt;p&gt;Passez en mode &lt;em&gt;realtime&lt;/em&gt; (bouton en bas à droite dans l’interface de Packet Tracer).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Ouvrez l’invite de commande sur un PC du deuxième réseau et essayez de faire un ping vers l’un des ordinateurs du premier réseau.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Que se passe-t-il ? Pourriez-vous expliquer ce qui manque dans la configuration des PC pour permettre une communication entre les PC des deux réseaux ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Ajoutez les informations de configuration nécessaires aux PC.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Maintenant, on procède à une vérification finale.&lt;/p&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activité&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Vérifiez que vous pouvez toujours faire un &lt;em&gt;ping&lt;/em&gt; entre deux PC d’un même réseau (par exemple PC1 et PC2).
+Si ce n’est pas le cas, cela signifie que votre configuration a regressé par rapport aux exercices précédents.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Vérifiez que vous pouvez faire un &lt;em&gt;ping&lt;/em&gt; entre tout PC d’un réseau et tout PC du deuxième réseau.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Pensez également à faire un &lt;em&gt;ping&lt;/em&gt; d’un PC vers les deux interfaces du routeur.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;p&gt;Si à l’issu de l’activité précédente il n’y a pas eu de problèmes de communications, cela veut dire que vous avez correctement configuré votre réseau local !&lt;/p&gt;
+&lt;p&gt;Il ne nous reste que comprendre un peu mieux ce qui se passe lorsqu’un PC d’un réseau fait un &lt;em&gt;ping&lt;/em&gt; vers un PC de l’autre réseau, ce qui est l’objectif
+de l’activité suivante.&lt;/p&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activité&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Passez en mode &lt;em&gt;simulation&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Faites un &lt;em&gt;ping&lt;/em&gt; d’un PC vers un PC de l’autre réseau.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Laissez dérouler la simulation jusqu’à ce que le &lt;em&gt;ping reply&lt;/em&gt; ne revienne à la source. A ce moment, mettez la simulation en pause.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;p&gt;Maintenant, répondez aux questions suivantes :&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.2  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Dans le panneau de simulation, considérez les messages ICMP (relatifs au &lt;em&gt;ping&lt;/em&gt;).&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
+&lt;li&gt;&lt;p&gt;Quel est le chemin suivi par ces messages ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Pour chacun de ces messages: quelle est l’adresse MAC source ?
+À quel dispositif correspond cette adresse ?&lt;br /&gt;
+Quelle est l’adresse MAC destination ? À quel dispositif correspond cette adresse ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Que pouvez-vous dire à propos des adresses IP source et destination de chacun de ces messages ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Sur la base des observations faites aux questions précédentes, est-ce qu’un commutateur change les adresses IP/MAC source/destination des messages ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Sur la base des observations faites aux questions précédentes, est-ce qu’un routeur change les adresses IP/MAC source/destination des messages ?&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;configuration-dun-serveur-dhcp&#34; class=&#34;section level1&#34; number=&#34;5&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;5&lt;/span&gt; Configuration d’un serveur DHCP&lt;/h1&gt;
+&lt;p&gt;Dans les activités précédentes, nous avons manuellement configuré les adresses IP des PC.
+Dans un réseau domestique ou d’entreprise, cela obligerait toute personne souhaitant se connecter au réseau de rentrer cette configuration à la main.&lt;/p&gt;
+&lt;p&gt;Dans la pratique, un serveur DHCP (Dynamic Host Configuration Protocol) nous permet de configurer automatiquement les PC.&lt;/p&gt;
+&lt;p&gt;Nous allons dans un premier temps ajouter un serveur DHCP au premier réseau.&lt;/p&gt;
+&lt;p&gt;Un serveur DHCP doit être configuré en lui donnant :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Une adresse IP statique.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;L’adresse IP de la passerelle.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Une plage d’adresses IPv4 que le serveur DHCP utilisera pour attribuer automatiquement une adresse IP à tout dispositif se connectant à son réseau.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5.1  &lt;/strong&gt;&lt;/span&gt;
+Etant donné que le serveur DHCP sera connecté au premier réseau, répondez aux questions suivantes :&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
+&lt;li&gt;&lt;p&gt;Quelle adresse IP allez-vous attribuer au serveur DHCP ? Donnez la valeur numérique de cette adresse.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Quelle est l’adresse IP de la passerelle par défaut du serveur ? Donnez la valeur numérique de cette adresse.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Donnez les valeurs numérique de la plage d’adresses IPv4 que le serveur utilisera pour attribuer des adresses IP à des PC.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Maintenant que la configuration du serveur est faite su papier, nous allons l’implémenter dans l’outil de simulation.&lt;/p&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activité&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Ajoutez au premier réseau un terminal de type &lt;em&gt;Server&lt;/em&gt;, que nous nommerons S.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Cliquez sur le serveur et ouvrez l’onglet &lt;em&gt;Config&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Changez le nom du serveur en S.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Ajoutez les informations concernant le &lt;em&gt;Default gateway&lt;/em&gt; et donnez une adresse IP au serveur, selon les réponse que vous avez données à l’exercice précédent.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Ouvrez l’onglet &lt;em&gt;Services&lt;/em&gt; et choisissez DHCP.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Configurez un &lt;em&gt;pool&lt;/em&gt; qui correspond à la plage d’adresses que vous avez précisée à l’exercice précédent (changez le nom &lt;em&gt;Pool name&lt;/em&gt;, par ex. en &lt;em&gt;network1&lt;/em&gt;).
+Précisez l’adresse du &lt;em&gt;Default gateway&lt;/em&gt;, ignorez le &lt;em&gt;DNS server&lt;/em&gt;, précisez la première adresse IP de la plage (&lt;em&gt;Start IP address&lt;/em&gt;) et un masque de sous-réseau.
+Ignorez tous les autres champs.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Important.&lt;/strong&gt; Cliquez sur &lt;em&gt;Save&lt;/em&gt; et pensez à activer le service DHCP en cliquant sur &lt;em&gt;On&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Enfin, connectez le serveur DHCP au premier réseau à l’aide d’un cable. Attendez quelques secondes pour que les triangles vers s’affichent sur ce cable.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;p&gt;Maintenant que le serveur DHCP est configuré, il faut l’utiliser !&lt;/p&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activité&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Sélectionnez un PC du premier réseau, ouvrez l’onglet &lt;em&gt;Desktop&lt;/em&gt; et ensuite un invite de commandes.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Vérifiez que vous arrivez à faire un &lt;em&gt;ping&lt;/em&gt; vers le serveur DHCP &lt;span class=&#34;math inline&#34;&gt;\(S\)&lt;/span&gt;. Si cela n’est pas le cas, revenez à l’activité précédente et
+corrigez les erreurs de configuration.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Si vous avez pu faire un &lt;em&gt;ping&lt;/em&gt; vers le serveur DCHP, ouvrez l’onglet &lt;em&gt;Config&lt;/em&gt; sur le PC.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Important.&lt;/strong&gt; Pensez à noter l’adresse IP actuelle du PC.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Dans la section &lt;em&gt;Gateway/DNS IPv4&lt;/em&gt; choisissez &lt;em&gt;DHCP&lt;/em&gt; au lieu de &lt;em&gt;Static&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Ouvrez à nouveau l’onglet &lt;em&gt;Desktop&lt;/em&gt; et ouvrez un invite de commandes.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Saisissez la commande &lt;em&gt;ipconfig&lt;/em&gt; et vérifiez que maintenant votre PC a une nouvelle adresse IP et que la passerelle par défaut est correctement configurée.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Faites un &lt;em&gt;ping&lt;/em&gt; vers un autre PC du premier réseau et vers un autre PC du deuxième réseau pour vous assurer que le PC qui a obtenu l’adresse IP du serveur DHCP puisse encore communiquer avec les autres.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox curiosity&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Bon à savoir&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Pensez à sauvegarder votre travail !&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;etude-dun-échange-dhcp&#34; class=&#34;section level2&#34; number=&#34;5.1&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;5.1&lt;/span&gt; Etude d’un échange DHCP&lt;/h2&gt;
+&lt;p&gt;Nous allons maintenant étudier plus en profondeur les échanges entre un PC et un serveur DHCP pour bien apprendre comment
+le protocole DHCP marche.&lt;/p&gt;
+&lt;p&gt;N’hésitez pas à revoir les transparents du cours pour avoir une idée générale des messages que vous devrez vous attendre à trouver.&lt;/p&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activité&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Passez en mode &lt;em&gt;Simulation&lt;/em&gt; et démarrez la simulation.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Selectionnez un autre PC du premier réseau (pas celui que vous avez configuré dans l’activité précédente )&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Activez le DHCP sur ce PC.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Laissez dérouler la simulation. Vous la metterez en pause lorsque vous ne verrez plus d’échanges DHCP/ARP.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Regardez le premier message DHCP dans le panneau de simulation.&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5.2  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
+&lt;li&gt;&lt;p&gt;Quelle est l’adresse MAC source ? A quel dispositif cette adresse correspond-t-elle ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Quelle est l’adresse MAC destination ? A quel dispositif cette adresse correspond-t-elle ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Quelle est l’adresse IP source ? A quel dispositif cette adresse correspond-t-elle ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Quelle est l’adresse IP destination ? A quel dispositif cette adresse correspond-t-elle ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Regardez les destinataires des messages DHCP qui suivent immediatement le premier, est-ce que cela est cohérent avec les adresses MAC et IP destination que vous avez notées ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Quel est le protocole de la couche transport utilisé dans ces messages DHCP ? Quels sont les ports source et destination ?&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Maintenant nous allons nous concentrer sur la réponse du serveur.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5.3  &lt;/strong&gt;&lt;/span&gt;
+Identifiez le premier message de réponse du DHCP dans le panneau de simulation.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Ignorez pour le moment les échanges ICMP et ARP.&lt;/strong&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
+&lt;li&gt;&lt;p&gt;Quelle est l’adresse MAC source ? A quel dispositif cette adresse correspond-t-elle ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Quelle est l’adresse MAC destination ? A quel dispositif cette adresse correspond-t-elle ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Quelle est l’adresse IP source ? A quel dispositif cette adresse correspond-t-elle ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Quelle est l’adresse IP destination ? A quel dispositif cette adresse correspond-t-elle ?&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Ensuite on va voir ce qui se passe après la réponse du serveur.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5.4  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
+&lt;li&gt;&lt;p&gt;Quel dispositif réagit à la réponse du serveur ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Quelle est l’adresse de destination de cette réaction ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Est-ce que le serveur répond à cette réaction ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Vérifiez que l’échange des messages que vous avez identifiés correspond bien aux messages décrits dans les supports de cours.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Maintenant on va se préoccuper des messages ICMP.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-11&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5.5  &lt;/strong&gt;&lt;/span&gt;
+A quoi sert selon vous le message ICMP (&lt;em&gt;ping&lt;/em&gt;) envoyé par le serveur ? Analysez le message pour essayer de comprendre.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Avant de continuer, pensez à terminer l’activité suivante.&lt;/p&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activité&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Passez en mode &lt;em&gt;Realtime&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Activez le DHCP sur tous les ordinateurs du premier réseau. Assurez-vous que chaque ordinateur a ainsi une adresse IP valide.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;serveur-dhcp-pour-le-deuxième-réseau&#34; class=&#34;section level2&#34; number=&#34;5.2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;5.2&lt;/span&gt; Serveur DHCP pour le deuxième réseau&lt;/h2&gt;
+&lt;p&gt;Maintenant on va ajouter la fonctionnalité DHCP sur le deuxième réseau.
+Une solution possible consisterait à ajouter un deuxième serveur DHCP au deuxième réseau
+et à le configurer avec une plage d’addresses pour le deuxième réseau.&lt;/p&gt;
+&lt;p&gt;Cette solution étant inefficace (on ne va pas prévoir un serveur DHCP pour chaque réseau), on préfère ajouter une deuxième plage d’addresses sur notre serveur &lt;span class=&#34;math inline&#34;&gt;\(S\)&lt;/span&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activité&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Ajoutez au serveur &lt;span class=&#34;math inline&#34;&gt;\(S\)&lt;/span&gt; une deuxième plage d’addresses pour le deuxième réseau.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;On essaie maintenant d’activer le DHCP sur l’un des ordinateurs du deuxième réseau.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-12&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5.6  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Passez en mode &lt;em&gt;Simulation&lt;/em&gt; et demarrez la simulation.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Choisissez l’un des ordinateurs du deuxième réseau et activez le DCHP sur celui-ci.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Observez le chemin pris par les messages DHCP.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Est-ce que les messages DHCP arrivent au serveur &lt;span class=&#34;math inline&#34;&gt;\(S\)&lt;/span&gt;? Pourquoi ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;On vérifie la configuration réseau de l’ordinateur choisi.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-13&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5.7  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Cliquez sur l’ordinateur choisi et ouvrez l’onglet &lt;em&gt;Desktop&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Ouvrez un invite de commandes et tapez la commande &lt;em&gt;ipconfig&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Quelle adresse IP cet ordinateur a-t-il reçu ? Pourriez-vous expliquer en quelques mots ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Est-ce que cet ordinateur a reçu l’adresse IP de la passerelle ? Cela vous surprend ?&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Pour résoudre les problèmes rencontrés dans les activités précédentes, on procède de la manière suivante :&lt;/p&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activité&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Cliquez sur le routeur &lt;span class=&#34;math inline&#34;&gt;\(R1\)&lt;/span&gt; et ouvrez l’onglet CLI. Cela vous permet d’accèder au terminal (CLI - Command Line Interface) de configuration du routeur.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Le terminal devrait afficher un invite &lt;em&gt;Router&amp;gt;&lt;/em&gt;. Si cela n’est pas le cas, appuyez sur la touche &lt;em&gt;Entrée&lt;/em&gt; de votre clavier.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Il faut maintenant saisir des commandes pour passer en mode configuration du routeur.
+Les commandes à saisir sont, dans l’ordre (après chaque commande, appuyez sur la touche &lt;em&gt;Entrée&lt;/em&gt;):&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;center&gt;
-
-``
-enable
-``
-
-``
-configure terminal
-``
-
+&lt;p&gt;&lt;code&gt;enable&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;configure terminal&lt;/code&gt;&lt;/p&gt;
 &lt;/center&gt;
-
-* La  commande suivante sert à passer en mode configuration de l&#39;interface du routeur reliée au deuxième réseau. &lt;br&gt; **Important.** Dans la commande suivante il faut remplacer XXX par le nom de l&#39;interface reliée au premier routeur. 
-Vous pouvez retrouver le nom de cette interface en passant la souris sur le cable reliant le routeur au deuxième réseau.
-
+&lt;ul&gt;
+&lt;li&gt;La commande suivante sert à passer en mode configuration de l’interface du routeur reliée au deuxième réseau. &lt;br&gt; &lt;strong&gt;Important.&lt;/strong&gt; Dans la commande suivante il faut remplacer XXX par le nom de l’interface reliée au premier routeur.
+Vous pouvez retrouver le nom de cette interface en passant la souris sur le cable reliant le routeur au deuxième réseau.&lt;/li&gt;
+&lt;/ul&gt;
 &lt;center&gt;
-
-``
-interface XXX
-``
-
+&lt;p&gt;&lt;code&gt;interface XXX&lt;/code&gt;&lt;/p&gt;
 &lt;/center&gt;
-
-* Ensuite, sasissez la commande suivante en remplaçant IPDHCP par l&#39;adresse IP de votre serveur DHCP.
-On vous demandera plus tard à quoi cette comment sert.
-
+&lt;ul&gt;
+&lt;li&gt;Ensuite, sasissez la commande suivante en remplaçant IPDHCP par l’adresse IP de votre serveur DHCP.
+On vous demandera plus tard à quoi cette comment sert.&lt;/li&gt;
+&lt;/ul&gt;
 &lt;center&gt;
-
-``
-ip helper-address IPDHCP
-``
-
+&lt;p&gt;&lt;code&gt;ip helper-address IPDHCP&lt;/code&gt;&lt;/p&gt;
 &lt;/center&gt;
-
-
-
-* Pour sortir de la configuration saisissez la commande suivante :
-
+&lt;ul&gt;
+&lt;li&gt;Pour sortir de la configuration saisissez la commande suivante :&lt;/li&gt;
+&lt;/ul&gt;
 &lt;center&gt;
-
-``end``
-
+&lt;p&gt;&lt;code&gt;end&lt;/code&gt;&lt;/p&gt;
 &lt;/center&gt;
-
-* Passez en mode *Simulation*.
-
-* Cliquez sur l&#39;ordinateur du deuxième réseau que vous aviez choisi avant, et ouvrez l&#39;invite des commandes. 
-Cochez la case *Top* que vous trouvez en bas à gauche de l&#39;invite. 
-
-* Décalez la fenêtre de l&#39;invite de manière à pouvoir avoir une vision complète des deux réseaux.
-
-* Saissez la commande ``ipconfig /renew`` dans l&#39;invite des commandes.
-
-* Démarrez la simulation et observez attentivement le chemin des messages DHCP. 
-
-* Quand la commande ``ipconfig /renew`` se termine, elle affichera dans l&#39;invite de commande la configuration réseau 
-obtenue du serveur DHCP. Si ce n&#39;est pas le cas, il faut revoir la configuration de votre serveur DHCP et de votre routeur.
-
-* Si la commande ``ipconfig /renew`` se termine et que votre ordinateur a obtenu une configuration correcte, 
-vous pouvez mettre en pause la simulation. **Ne passez pas en mode *Realtime* et ne fermez pas l&#39;invite de commandes, car sinon le panneau de simulation sera reinisialisé et 
-vous perdrez tous les messages**.
-
-:::
-
-Le moment est venu de mieux comprendre ce qui s&#39;est passé.
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-14&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-14) &lt;/strong&gt;&lt;/span&gt;
-
-a. Sur la base de ce que vous avez observé, quelle est utilité de la commande ``ip helper-address`` que vous avez sasie 
-dans l&#39;activité précédente ?
-
-b. Pourriez-vous identifier le premier message DHCP (un DHCP discover) reçu par $S$ ? Est-ce que le routeur $R1$ l&#39;a envoyé en broadcast ou 
-bien il a été envoyé directement au serveur DHCP ?
-
-c. Le service DHCP en exécution sur $S$ (c&#39;est à dire le logiciel qui est en charge de réaliser le service DHCP) 
-reçoit le message DHCP discover dépourvu des entêtes de la couche 2 et 3. 
-Comment ce logiciel arrive-t-il a déterminer qu&#39;il a reçu ce message du routeur $R1$ ? 
-**Coup de pouce.** Regardez le contenu du message à la couche DHCP (application).
-
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
-Maintenant il faut bien activer le DHCP sur tous les ordinateurs du deuxième réseau.
-
-::: {.infobox .activitybox data-latex=&#34;{exercisebox}&#34;}
-**Activité**
-
-* Passez en mode *Realtime*.
-
-* Activez le DHCP sur tous les ordinateurs du deuxième réseau. 
-Assurez-vous que chaque ordinateur a ainsi une adresse IP valide.
-
-:::
-
-:::{.infobox .curiosity data-latex=&#34;curiosity&#34;}
-**Bon à savoir**
-
-Pensez à sauvegarder votre travail !
-
-:::
-
-
-# Serveur HTTP
-
-Nous allons ajouter un serveur HTTP dans le deuxième réseau. 
-
-::: {.infobox .activitybox data-latex=&#34;{exercisebox}&#34;}
-**Activité**
-
-* Ajoutez un nouveau serveur au deuxième réseau ; nous nommerons ce serveur *mywebserver*. 
-
-* Reliez *mywebserver* au commutateur du deuxième réseau.
-
-* Cliquez sur  *mywebserver* et ouvrez l&#39;onglet *Services*, puis selectionnez HTTP.
-
-* Vous devriez voir que le service HTTP est déjà activé. En plus, le serveur gère déjà un certain nombre de fichiers HTML (des pages Web).
-
-* Maintenant cliquez sur  un ordinateur de votre réseau (l&#39;ordinateur ne doit pas nécessairement être connecté au deuxième réseau) et ouvrez l&#39;onglet *Desktop*.
-
-* Cliquez sur *Web Browser*.
-
-* Lorsque le navigateur s&#39;ouvrira, saisissez l&#39;adresse IP de *mywebserver* dans le champs *URL*.
-
-* Cliquez sur *Go* ; vous devriez voir apparaître une page Web (c&#39;est le contenu du fichier *index.html* géré par *mywebserver*).
-
-:::
-
-Maintenant  il faut étudier les échanges HTTP et les expliquer.
-
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-15&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-15) &lt;/strong&gt;&lt;/span&gt;
-Passez en mode *Simulation* et cliquez à nouveau sur *Go*. 
-Expliquez le chemin des messages HTTP et leur contenu.
-
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
-Lorsque nous naviguons sur le Web, nous ne sommes jamais amenés à rentrer des adresses IP dans le navigateur Web (fort heureusement !).
-On va voir si cela peut être le cas ici.
-
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-16&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-16) &lt;/strong&gt;&lt;/span&gt;
-* Passez en mode *Realtime*.
-
-* Dans le champ URL du navigateur saisissez l&#39;URL *mywebserver.com* et cliquez sur *Go*.
-
-a. Qu&#39;obtenez-vous ?
-
-b. Êtes-vous surpris ?
-
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
-Le moment est venu de configurer un serveur DNS.
-
-# Configuration d&#39;un serveur DNS
-
-Pour la configuration d&#39;un serveur DNS, nous n&#39;allons pas rajouter un nouvel ordinateur à notre réseau.
-Rappelez-vous qu&#39;un serveur DNS est un logiciel, et donc il n&#39;est pas interdit de le faire tourner sur le même ordinateur sur lequel d&#39;autres services sont 
-en exécution.
-
-Dans notre cas, nous allons activer le service DNS sur le serveur $S$, celui qui nous sert aussi de serveur DHCP.
-
-Vous devriez maintenant savoir comment configurer un service. 
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-17&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-17) &lt;/strong&gt;&lt;/span&gt;
-Activez le service DNS sur $S$. 
-Ajoutez au DNS un enregistrement de ressource pour que le nom du domaine *mywebserver.com* corresponde à l&#39;adresse IP du serveur HTTP *mywebserver*.
-
-a. Quel type d&#39;enregistrement de ressource allez-vous ajouter ?
-
-b. Ouvrez un navigateur sur l&#39;un des ordinateurs de votre réseau. Saisissez l&#39;URL *mywebserver.com*. Est-ce que vous arrivez à accèder à la page que vous avez vu tout à l&#39;heure ? 
-Pourquoi ? Que faut-il faire pour résoudre ce problème ?
-
-c. Une fois le problème résolu, passez en mode *Simulation* et saisissez à nouveau l&#39;URL *mywebserver.com*. Observez le chemin et le contenu des messages DNS et décrivez-les.
-
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::  --&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Passez en mode &lt;em&gt;Simulation&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Cliquez sur l’ordinateur du deuxième réseau que vous aviez choisi avant, et ouvrez l’invite des commandes.
+Cochez la case &lt;em&gt;Top&lt;/em&gt; que vous trouvez en bas à gauche de l’invite.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Décalez la fenêtre de l’invite de manière à pouvoir avoir une vision complète des deux réseaux.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Saissez la commande &lt;code&gt;ipconfig /renew&lt;/code&gt; dans l’invite des commandes.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Démarrez la simulation et observez attentivement le chemin des messages DHCP.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Quand la commande &lt;code&gt;ipconfig /renew&lt;/code&gt; se termine, elle affichera dans l’invite de commande la configuration réseau
+obtenue du serveur DHCP. Si ce n’est pas le cas, il faut revoir la configuration de votre serveur DHCP et de votre routeur.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Si la commande &lt;code&gt;ipconfig /renew&lt;/code&gt; se termine et que votre ordinateur a obtenu une configuration correcte,
+vous pouvez mettre en pause la simulation. &lt;strong&gt;Ne passez pas en mode &lt;em&gt;Realtime&lt;/em&gt; et ne fermez pas l’invite de commandes, car sinon le panneau de simulation sera reinisialisé et
+vous perdrez tous les messages&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;p&gt;Le moment est venu de mieux comprendre ce qui s’est passé.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-14&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5.8  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
+&lt;li&gt;&lt;p&gt;Sur la base de ce que vous avez observé, quelle est utilité de la commande &lt;code&gt;ip helper-address&lt;/code&gt; que vous avez sasie
+dans l’activité précédente ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Pourriez-vous identifier le premier message DHCP (un DHCP discover) reçu par &lt;span class=&#34;math inline&#34;&gt;\(S\)&lt;/span&gt; ? Est-ce que le routeur &lt;span class=&#34;math inline&#34;&gt;\(R1\)&lt;/span&gt; l’a envoyé en broadcast ou
+bien il a été envoyé directement au serveur DHCP ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Le service DHCP en exécution sur &lt;span class=&#34;math inline&#34;&gt;\(S\)&lt;/span&gt; (c’est à dire le logiciel qui est en charge de réaliser le service DHCP)
+reçoit le message DHCP discover dépourvu des entêtes de la couche 2 et 3.
+Comment ce logiciel arrive-t-il a déterminer qu’il a reçu ce message du routeur &lt;span class=&#34;math inline&#34;&gt;\(R1\)&lt;/span&gt; ?
+&lt;strong&gt;Coup de pouce.&lt;/strong&gt; Regardez le contenu du message à la couche DHCP (application).&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Maintenant il faut bien activer le DHCP sur tous les ordinateurs du deuxième réseau.&lt;/p&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activité&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Passez en mode &lt;em&gt;Realtime&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Activez le DHCP sur tous les ordinateurs du deuxième réseau.
+Assurez-vous que chaque ordinateur a ainsi une adresse IP valide.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox curiosity&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Bon à savoir&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Pensez à sauvegarder votre travail !&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;serveur-http&#34; class=&#34;section level1&#34; number=&#34;6&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;6&lt;/span&gt; Serveur HTTP&lt;/h1&gt;
+&lt;p&gt;Nous allons ajouter un serveur HTTP dans le deuxième réseau.&lt;/p&gt;
+&lt;div class=&#34;infobox activitybox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Activité&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Ajoutez un nouveau serveur au deuxième réseau ; nous nommerons ce serveur &lt;em&gt;mywebserver&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Reliez &lt;em&gt;mywebserver&lt;/em&gt; au commutateur du deuxième réseau.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Cliquez sur &lt;em&gt;mywebserver&lt;/em&gt; et ouvrez l’onglet &lt;em&gt;Services&lt;/em&gt;, puis selectionnez HTTP.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Vous devriez voir que le service HTTP est déjà activé. En plus, le serveur gère déjà un certain nombre de fichiers HTML (des pages Web).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Maintenant cliquez sur un ordinateur de votre réseau (l’ordinateur ne doit pas nécessairement être connecté au deuxième réseau) et ouvrez l’onglet &lt;em&gt;Desktop&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Cliquez sur &lt;em&gt;Web Browser&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Lorsque le navigateur s’ouvrira, saisissez l’adresse IP de &lt;em&gt;mywebserver&lt;/em&gt; dans le champs &lt;em&gt;URL&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Cliquez sur &lt;em&gt;Go&lt;/em&gt; ; vous devriez voir apparaître une page Web (c’est le contenu du fichier &lt;em&gt;index.html&lt;/em&gt; géré par &lt;em&gt;mywebserver&lt;/em&gt;).&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;p&gt;Maintenant il faut étudier les échanges HTTP et les expliquer.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-15&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 6.1  &lt;/strong&gt;&lt;/span&gt;
+Passez en mode &lt;em&gt;Simulation&lt;/em&gt; et cliquez à nouveau sur &lt;em&gt;Go&lt;/em&gt;.
+Expliquez le chemin des messages HTTP et leur contenu.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Lorsque nous naviguons sur le Web, nous ne sommes jamais amenés à rentrer des adresses IP dans le navigateur Web (fort heureusement !).
+On va voir si cela peut être le cas ici.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-16&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 6.2  &lt;/strong&gt;&lt;/span&gt;
+* Passez en mode &lt;em&gt;Realtime&lt;/em&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Dans le champ URL du navigateur saisissez l’URL &lt;em&gt;mywebserver.com&lt;/em&gt; et cliquez sur &lt;em&gt;Go&lt;/em&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
+&lt;li&gt;&lt;p&gt;Qu’obtenez-vous ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Êtes-vous surpris ?&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Le moment est venu de configurer un serveur DNS.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;configuration-dun-serveur-dns&#34; class=&#34;section level1&#34; number=&#34;7&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;7&lt;/span&gt; Configuration d’un serveur DNS&lt;/h1&gt;
+&lt;p&gt;Pour la configuration d’un serveur DNS, nous n’allons pas rajouter un nouvel ordinateur à notre réseau.
+Rappelez-vous qu’un serveur DNS est un logiciel, et donc il n’est pas interdit de le faire tourner sur le même ordinateur sur lequel d’autres services sont
+en exécution.&lt;/p&gt;
+&lt;p&gt;Dans notre cas, nous allons activer le service DNS sur le serveur &lt;span class=&#34;math inline&#34;&gt;\(S\)&lt;/span&gt;, celui qui nous sert aussi de serveur DHCP.&lt;/p&gt;
+&lt;p&gt;Vous devriez maintenant savoir comment configurer un service.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-17&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 7.1  &lt;/strong&gt;&lt;/span&gt;
+Activez le service DNS sur &lt;span class=&#34;math inline&#34;&gt;\(S\)&lt;/span&gt;.
+Ajoutez au DNS un enregistrement de ressource pour que le nom du domaine &lt;em&gt;mywebserver.com&lt;/em&gt; corresponde à l’adresse IP du serveur HTTP &lt;em&gt;mywebserver&lt;/em&gt;.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
+&lt;li&gt;&lt;p&gt;Quel type d’enregistrement de ressource allez-vous ajouter ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Ouvrez un navigateur sur l’un des ordinateurs de votre réseau. Saisissez l’URL &lt;em&gt;mywebserver.com&lt;/em&gt;. Est-ce que vous arrivez à accèder à la page que vous avez vu tout à l’heure ?
+Pourquoi ? Que faut-il faire pour résoudre ce problème ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Une fois le problème résolu, passez en mode &lt;em&gt;Simulation&lt;/em&gt; et saisissez à nouveau l’URL &lt;em&gt;mywebserver.com&lt;/em&gt;. Observez le chemin et le contenu des messages DNS et décrivez-les.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
 </description>
     </item>
     
