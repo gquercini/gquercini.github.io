@@ -7694,6 +7694,287 @@ Write the following queries in MongoDB using the aggregation framework:&lt;/p&gt
     </item>
     
     <item>
+      <title>L&#39;API Spark Core</title>
+      <link>/courses/bigdata-fr/spark-core-api/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/bigdata-fr/spark-core-api/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;!-- ############ IMPORTANT: CHANGE THESE VALUES BEFORE ANY LAB ############ --&gt;
+&lt;!-- The group to which users in the cluster belong--&gt;
+&lt;!-- User accounts are numbered from the lower to the upper limit--&gt;
+&lt;!-- ############ END OF MODIFICATIONS ############ --&gt;
+&lt;p&gt;Dans ce TP, vous allez coder des fonctions simples en utilisant l’API Spark Core ; vous analyserez les performances de ces fonctions.&lt;br /&gt;
+Nous allons considérer deux problèmes : le calcul des températures moyennes et la recherche d’amis communs dans un réseau social.&lt;/p&gt;
+&lt;div id=&#34;calcul-des-moyennes&#34; class=&#34;section level1&#34; number=&#34;1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Calcul des moyennes&lt;/h1&gt;
+&lt;p&gt;Nous considérons une collection de fichiers CSV contenant des mesures de température au format suivant :&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;année,mois,jour,heure,minute,seconde,temperature&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Vous pouvez trouver les fichiers dans le répertoire &lt;code&gt;hdfs://sar01:9000/data/temperatures/&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Voici les détails pour chaque fichier :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Le fichier &lt;code&gt;temperatures_86400.csv&lt;/code&gt; contient une mesure par jour pour les années 1980 - 2018.&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;Le fichier &lt;code&gt;temperatures_2880.csv&lt;/code&gt; contient une mesure toutes les 2880 secondes pour les années 1980 - 2018.&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;Le fichier &lt;code&gt;temperatures_86.csv&lt;/code&gt; contient une mesure toutes les 86 secondes pour l’année 1980 uniquement.&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;Le fichier &lt;code&gt;temperatures_10.csv&lt;/code&gt; contient une mesure toutes les 10 secondes pour les années 1980 - 2018.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Nous souhaitons implémenter un algorithme Spark pour générer des paires &lt;span class=&#34;math inline&#34;&gt;\((y, t_{avg})\)&lt;/span&gt;, où
+&lt;span class=&#34;math inline&#34;&gt;\(y\)&lt;/span&gt; est l’année et &lt;span class=&#34;math inline&#34;&gt;\(t_{avg}\)&lt;/span&gt; est la température moyenne de cette année.&lt;/p&gt;
+&lt;div id=&#34;première-implémentation&#34; class=&#34;section level2&#34; number=&#34;1.1&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.1&lt;/span&gt; Première implémentation&lt;/h2&gt;
+&lt;p&gt;Copiez le fichier &lt;code&gt;/usr/users/dce-admin/vialle/DCE-Spark/template_temperatures.py&lt;/code&gt;
+dans votre répertoire personnel via la commande suivante :&lt;/p&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;cp /usr/users/dce-admin/vialle/DCE-Spark/template_temperatures.py ./avg_temperatures_slow.py&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Ouvrez le fichier &lt;code&gt;avg_temperatures_slow.py&lt;/code&gt;.&lt;br /&gt;
+Le fichier contient l’implémentation de la fonction &lt;code&gt;avg_temperature_slow&lt;/code&gt; qui :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;prend en entrée un RDD, où chaque élément est une ligne d’un fichier texte donné ;&lt;/li&gt;
+&lt;li&gt;retourne un RDD, où chaque élément est une paire clé-valeur &lt;code&gt;(année, temperature moyenne)&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Dans ce même fichier, localisez les deux variables &lt;code&gt;input_path&lt;/code&gt; et &lt;code&gt;output-path&lt;/code&gt;
+et écrivez le code suivant :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;input_path = &amp;quot;hdfs://sar01:9000/data/temperatures/&amp;quot;
+output_path = &amp;quot;hdfs://sar01:9000/asi1/asi1_X/&amp;quot;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Remplacez &lt;code&gt;X&lt;/code&gt; par le numéro correspondant à votre compte !&lt;br /&gt;
+&lt;strong&gt;N’oubliez pas le / à la fin des chemins de fichiers !&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Exécutez les actions suivantes :&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Lancez le script &lt;code&gt;avg_temperatures_slow.py&lt;/code&gt; en utilisant &lt;code&gt;temperatures_86400.csv&lt;/code&gt; comme fichier d’entrée.&lt;br /&gt;
+Pour ce faire, utilisez la commande suivante :&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;spark-submit --master spark://sar01:7077 avg_temperatures_slow.py temperatures_86400.csv&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;Vous devriez trouver la sortie du programme dans le dossier suivant :&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;hdfs://sar01:9000/asi1/asi1_X/temperatures_86400.out&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Saisissez la commande suivante pour le vérifier :&lt;/p&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;hdfs dfs -ls hdfs://sar01:9000/asi1/asi1_X/temperatures_86400.out&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;Si vous souhaitez lire le résultat du calcul, vous pouvez exécuter la commande suivante :&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;hdfs dfs -cat hdfs://sar01:9000/asi1/asi1_X/temperatures_86400.out/*&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.1  &lt;/strong&gt;&lt;/span&gt;
+Dans la sortie Spark sur la ligne de commande, vous devriez voir une ligne ressemblant à ceci :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;   INFO DAGScheduler: Job 0 finished: runJob at SparkHadoopWriter.scala:78, took 3.478220 s 
+   &lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Notez le temps d’exécution que vous avez obtenu.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Lancez le même script en utilisant le fichier &lt;code&gt;temperatures_2880.csv&lt;/code&gt; comme entrée.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Quel est le temps d’exécution ? Vous semble-t-il raisonnable comparé au temps d’exécution précédent ?
+Justifiez votre réponse.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Exécutez le même script avec &lt;code&gt;temperatures_86.csv&lt;/code&gt; en entrée.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Quel est le temps d’exécution ? Comment l’expliquez-vous, sachant que
+les fichiers &lt;code&gt;temperatures_2880.csv&lt;/code&gt; et &lt;code&gt;temperatures_86.csv&lt;/code&gt; ont une taille similaire (11 Mo pour le premier, 9 Mo pour le second) ?&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;deuxième-implémentation&#34; class=&#34;section level2&#34; number=&#34;1.2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.2&lt;/span&gt; Deuxième implémentation&lt;/h2&gt;
+&lt;p&gt;Nous voulons implémenter une version améliorée du programme.&lt;br /&gt;
+Vous pouvez esquisser vos idées sur papier avant d’écrire le code.&lt;/p&gt;
+&lt;p&gt;Quand vous êtes prêt, créez une copie de &lt;code&gt;avg_temperatures_slow.py&lt;/code&gt; et renommez-la en &lt;code&gt;avg_temperatures_fast.py&lt;/code&gt;, avec la commande suivante :&lt;/p&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;cp ./avg_temperatures_slow.py ./avg_temperatures_fast.py&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.2  &lt;/strong&gt;&lt;/span&gt;
+Ouvrez le fichier et implémentez la fonction &lt;code&gt;avg_temperature_fast&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;REMARQUE.&lt;/strong&gt; N’oubliez pas de commenter l’appel à
+&lt;code&gt;avg_temperature_slow&lt;/code&gt; et de décommenter l’appel à &lt;code&gt;avg_temperature_fast&lt;/code&gt; à la fin du fichier.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.3  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Exécutez le script &lt;code&gt;avg_temperatures_fast.py&lt;/code&gt; en utilisant &lt;code&gt;temperatures_86.csv&lt;/code&gt; comme fichier d’entrée.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Quel est le temps d’exécution ? Comparez-le avec le temps obtenu dans l’exercice précédent et
+commentez la différence.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Exécutez le même script en utilisant &lt;code&gt;temperatures_10.csv&lt;/code&gt; (3 Go !) comme fichier d’entrée.&lt;br /&gt;
+Pensez-vous que le programme met trop de temps ? Pourquoi ?&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;amis-communs-dans-un-réseau-social&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Amis communs dans un réseau social&lt;/h1&gt;
+&lt;p&gt;Considérons un réseau social représenté par un graphe encodé dans un fichier texte.&lt;br /&gt;
+Chaque ligne du fichier est une liste d’identifiants séparés par des virgules.&lt;br /&gt;
+Par exemple, la ligne &lt;span class=&#34;math inline&#34;&gt;\(B,D,A\)&lt;/span&gt; signifie que &lt;span class=&#34;math inline&#34;&gt;\(B\)&lt;/span&gt; est ami avec &lt;span class=&#34;math inline&#34;&gt;\(D\)&lt;/span&gt; et &lt;span class=&#34;math inline&#34;&gt;\(A\)&lt;/span&gt;.&lt;br /&gt;
+Un extrait du fichier ressemble à ceci :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;B,D,A
+A,B,C,D
+D,A,B,C
+C,A,D
+...
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Nous supposons que la relation d’amitié est symétrique : &lt;span class=&#34;math inline&#34;&gt;\((A, B)\)&lt;/span&gt; implique &lt;span class=&#34;math inline&#34;&gt;\((B, A)\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Nous voulons obtenir la liste des amis communs pour chaque paire d’individus&lt;/strong&gt; :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;(B, C), [A, D] 
+(A, D), [B, C] 
+(C, D), [A]
+(A, C), [D] 
+(B, D), [A] 
+(A, B), [D]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;&lt;strong&gt;Une contrainte supplémentaire :&lt;/strong&gt; nous ne voulons représenter chaque couple qu’une seule fois et éviter de représenter le couple symétrique.&lt;br /&gt;
+Autrement dit, si nous produisons &lt;span class=&#34;math inline&#34;&gt;\((A, B)\)&lt;/span&gt;, nous ne voulons pas produire &lt;span class=&#34;math inline&#34;&gt;\((B, A)\)&lt;/span&gt;.&lt;/p&gt;
+&lt;p&gt;Nous utilisons les fichiers d’entrée suivants (disponibles dans le dossier &lt;code&gt;hdfs://sar01:9000/data/social-network/&lt;/code&gt;) :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;sn_tiny.csv&lt;/code&gt;. Petit réseau social, que vous pouvez utiliser pour tester votre implémentation.&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sn_10k_100k.csv&lt;/code&gt;. Réseau social avec &lt;span class=&#34;math inline&#34;&gt;\(10^4\)&lt;/span&gt; individus et &lt;span class=&#34;math inline&#34;&gt;\(10^5\)&lt;/span&gt; liens.&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sn_100k_100k.csv&lt;/code&gt;. Réseau social avec &lt;span class=&#34;math inline&#34;&gt;\(10^5\)&lt;/span&gt; individus et &lt;span class=&#34;math inline&#34;&gt;\(10^5\)&lt;/span&gt; liens.&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sn_1k_100k.csv&lt;/code&gt;. Réseau social avec &lt;span class=&#34;math inline&#34;&gt;\(10^3\)&lt;/span&gt; individus et &lt;span class=&#34;math inline&#34;&gt;\(10^5\)&lt;/span&gt; liens.&lt;br /&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;sn_1m_1m.csv&lt;/code&gt;. Réseau social avec &lt;span class=&#34;math inline&#34;&gt;\(10^6\)&lt;/span&gt; individus et &lt;span class=&#34;math inline&#34;&gt;\(10^6\)&lt;/span&gt; liens.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div id=&#34;implémentation&#34; class=&#34;section level2&#34; number=&#34;2.1&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.1&lt;/span&gt; Implémentation&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Récupérez le modèle de code avec la commande suivante :&lt;/strong&gt;&lt;/p&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;cp /usr/users/dce-admin/vialle/DCE-Spark/template_common_friends.py .&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Écrivez une implémentation qui utilise &lt;code&gt;groupByKey&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Écrivez une implémentation qui utilise &lt;code&gt;reduceByKey&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Testez les deux implémentations sur le fichier &lt;code&gt;sn_tiny.csv&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;tests-et-mesures-de-performance&#34; class=&#34;section level2&#34; number=&#34;2.2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.2&lt;/span&gt; Tests et mesures de performance&lt;/h2&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.2  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Exécutez les deux implémentations sur les autres fichiers.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Remplissez un tableau dans lequel vous indiquez : le nom et la taille de chaque fichier,
+ainsi que les temps d’exécution mesurés pour les deux implémentations.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;degré-minimum-maximum-et-moyen&#34; class=&#34;section level2&#34; number=&#34;2.3&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.3&lt;/span&gt; Degré minimum, maximum et moyen&lt;/h2&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.3  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Ajoutez une fonction dans le fichier &lt;code&gt;template_common_friends.py&lt;/code&gt; qui retourne un tuple contenant le degré minimum, le degré maximum et le degré moyen
+d’un nœud dans le réseau social.
+Vous devez utiliser des RDDs pour cela, &lt;strong&gt;n’utilisez pas &lt;code&gt;collect()&lt;/code&gt; pour récupérer le contenu des RDDs et calculer les valeurs dans des listes Python&lt;/strong&gt;.
+N’utilisez pas non plus les fonctions &lt;code&gt;max&lt;/code&gt; et &lt;code&gt;min&lt;/code&gt; sur les RDDs.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Exécutez la fonction pour tous les fichiers d’entrée fournis.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Complétez le tableau que vous avez créé dans l’exercice précédent en ajoutant le
+nombre minimum, maximum et moyen d’amis.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;analyse-des-performances&#34; class=&#34;section level2&#34; number=&#34;2.4&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.4&lt;/span&gt; Analyse des performances&lt;/h2&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.4  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;On suppose que tous les individus dans notre réseau social ont le même nombre d’amis.
+Calculez (avec papier et crayon, pas besoin de code) le nombre de
+paires intermédiaires &lt;span class=&#34;math inline&#34;&gt;\(((A, B), X)\)&lt;/span&gt; générées par votre code.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Complétez le tableau en indiquant le nombre de paires intermédiaires pour chaque fichier.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Tracez trois graphiques, où l’axe des ordonnées correspond au temps d’exécution du programme, et l’axe des abscisses correspond respectivement à :&lt;br /&gt;
+le nombre de paires intermédiaires, le degré moyen et la taille du fichier.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Quels graphiques prédisent le mieux l’évolution du temps de calcul ?&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;!-- # Average and standard deviation
+
+We use the same files as in the first question.
+Our objective is to write a Spark program that produces 
+triples $(y, t_{\mu}, t_{\sigma})$, where $y$, $t_{\mu}$ and 
+$t_{\sigma}$ are the year, the average temperature in the year and the 
+standard deviation respectively.
+
+We can express the standard deviation of $n$ values $x_1 \ldots x_n$ with the following formula:
+
+$$
+\sigma = \sqrt{\overline{x^2} - \overline{x}^2} = \sqrt{\frac{\sum_{i=1}^n (x_i)^2}{n} - \Bigg(\frac{\sum_{i=1}^n x_i}{n}\Bigg)^2} 
+$$
+
+Type the following command to get a code template:
+
+&lt;div align=&#39;center&#39;&gt;
+``
+cp /usr/users/cpu-prof/cpu_vialle/DCE-Spark/template_temperatures.py  ./avg_stddev_temp.py
+``
+&lt;/div&gt;
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-8&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-8) &lt;/strong&gt;&lt;/span&gt;
+
+* Define a new function ``avg_stddev_temperature`` in file ``avg_stddev_temp.py``.
+   
+* Execute the script and observe the results.
+
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+
+
+ --&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Advanced Spark programming</title>
       <link>/courses/bdia_old/tutorials/spark-lab-assignment/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
