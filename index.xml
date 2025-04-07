@@ -1977,6 +1977,136 @@ explicitly by typing the following command:&lt;/p&gt;
     
     <item>
       <title>Premier programme Spark sur DCE</title>
+      <link>/courses/bigdata-fr/dce-first-program/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/bigdata-fr/dce-first-program/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;!-- ############ IMPORTANT: CHANGE THESE VALUES BEFORE ANY LAB ############ --&gt;
+&lt;!-- The group to which users in the cluster belong--&gt;
+&lt;!-- User accounts are numbered from the lower to the upper limit--&gt;
+&lt;!-- ############ END OF MODIFICATIONS ############ --&gt;
+&lt;p&gt;Le &lt;a href=&#34;https://dce.pages.centralesupelec.fr/&#34; target=&#34;_blank&#34;&gt;Data Centre d’Enseignement (DCE)&lt;/a&gt; est un ensemble de
+ressources informatiques financées par l’Eurométropole de Metz
+par l’Eurométropole de Metz, la Région Grand Est, CentraleSupélec et sa fondation, et le Conseil Départemental de Moselle.&lt;/p&gt;
+&lt;p&gt;Ce tutoriel est un guide rapide pour :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Apprendre les commandes de base pour manipuler les fichiers stockés dans HDFS.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Apprendre à exécuter un programme Spark sur le DCE.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Plus d’informations sont disponibles sur le &lt;a href=&#34;https://dce.pages.centralesupelec.fr/&#34; target=&#34;_blank&#34;&gt;site officiel du DCE&lt;/a&gt;.&lt;/p&gt;
+&lt;div id=&#34;présentation-du-dce&#34; class=&#34;section level1&#34; number=&#34;1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Présentation du DCE&lt;/h1&gt;
+&lt;p&gt;L’architecture du DCE est présentée en Figure &lt;a href=&#34;#fig:cluster-metz&#34;&gt;1.1&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&#34;figure&#34; style=&#34;text-align: center&#34;&gt;&lt;span id=&#34;fig:cluster-metz&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/courses/plp/tutorials/spark-dce/reseau_dce.drawio.svg&#34; alt=&#34;Architecture du cluster (source : [documentation du DCE](https://dce.pages.centralesupelec.fr/01_cluster_overview/){target=&amp;quot;_blank&amp;quot;})&#34; width=&#34;100%&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 1.1: Architecture du cluster (source : &lt;a href=&#34;https://dce.pages.centralesupelec.fr/01_cluster_overview/&#34; target=&#34;_blank&#34;&gt;documentation du DCE&lt;/a&gt;)
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Dans ce cours, nous allons utiliser uniquement les noeuds CPU. Ces derniers sont divisés en deux groupes: le cluster Sarah et le cluster Kyle.&lt;/p&gt;
+&lt;!--# Creating your working directory in HDFS
+
+In this section, you&#39;ll be walked through the procedure to create a directory 
+in HDFS that you&#39;ll use as your working directory in the lab sessions.
+
+You user account is: ``asi1_X``, where X is between 1 and 
+40.
+
+In order to create your working directory in HDFS, type the following command in the terminal:
+
+``
+hdfs dfs -mkdir hdfs://sar01:9000/asi1/asi1_X
+``
+
+You can verify that the directory is there by listing the content of the folder hdfs://sar01:9000/asi1/
+with the following command:
+
+``
+hdfs dfs -ls hdfs://sar01:9000/asi1/
+``
+--&gt;
+&lt;/div&gt;
+&lt;div id=&#34;exécution-dun-programme-spark&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Exécution d’un programme Spark&lt;/h1&gt;
+&lt;p&gt;Les datasets sont normalement disponibles dans le dossier &lt;code&gt;/data/&lt;/code&gt;
+stocké dans HDFS.&lt;/p&gt;
+&lt;p&gt;Saisissez la commande suivante pour afifcher le contenu du dossier :&lt;/p&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;hdfs dfs -ls -h hdfs://sar01:9000/data&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;L’objectif ici est d’exécuter un code Spark pour compter le nombre d’occurrences de chaque mot dans le fichier &lt;code&gt;/data/sherlock.txt&lt;/code&gt;.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Copiez le fichier &lt;code&gt;/usr/users/dce-admin/vialle/DCE-Spark/template_wc.py&lt;/code&gt; vers votre dossier personnel en saisissant la commande suivante :&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;cp /usr/users/dce-admin/vialle/DCE-Spark/template_wc.py ./wc.py&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Saisissez la commande &lt;code&gt;ls&lt;/code&gt; pour vérifier que le fichier &lt;code&gt;wc.py&lt;/code&gt; figure bien dans votre dossier personnel.
+Ce fichier contient le code Python du programme.
+Ce fichier devrait aussi apparaître dans l’explorateur de Visual Studio Code ; si cela n’est pas le cas, cliquez sur le bouton d’actualisation de l’explorateur.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Ouvrez le fichier &lt;code&gt;wc.py&lt;/code&gt; dans Visual Studio Code.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Recherchez l’instruction suivante :&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;text_file = sc.textFile(&#34;hdfs://...&#34;)&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+et remplacez-la avec la suivante :
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;text_file = sc.textFile(&#34;hdfs://sar01:9000/data/sherlock.txt&#34;)&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Cette instruction créera un RDD nommé &lt;code&gt;text_file&lt;/code&gt; avec le contenu du fichier.&lt;/p&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;De la même manière, cherchez l’instruction suivante :&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;counts.saveAsTextFile(&#34;hdfs://...&#34;)&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;et remplacez-la par la suivante :&lt;/p&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;counts.saveAsTextFile(&#34;hdfs://sar01:9000/asi1/asi1_X/sherlock.out&#34;)&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Cette instruction créera un dossier &lt;em&gt;sherlock.out&lt;/em&gt; qui contiendra les fichiers renvoyés par le programme.&lt;/p&gt;
+&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Exécutez le programme &lt;code&gt;wc.py&lt;/code&gt; à l’aide de la commande suivante :&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;spark-submit --master spark://sar01:7077 wc.py&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;ul&gt;
+&lt;li&gt;Lorsque l’exécution est terminée, la sortie sera disponible dans le dossier
+&lt;code&gt;sherlock.out&lt;/code&gt;. Pour le vérifier, exécutez la commande suivante :&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;hdfs dfs -ls -h hdfs://sar01:9000/asi1/asi1_X/sherlock.out&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Comme d’habitude, n’oubliez pas de remplacer asi1_X par votre nom d’utilisateur.&lt;/p&gt;
+&lt;ol start=&#34;6&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Pour afficher le résultat, exécutez la commande suivante :&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;hdfs dfs -cat hdfs://sar01:9000/asi1/asi1_X/sherlock.out/*&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Fichiers de sortie&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Si vous réexécutez le programme en spécifiant un fichier de sortie qui &lt;strong&gt;existe déjà&lt;/strong&gt;,
+vous obtiendrez une erreur.
+Si vous voulez vraiment écraser le fichier de sortie, vous devez d’abord le supprimer explicitement en tapant la commande suivante :&lt;/p&gt;
+&lt;div align=&#34;center&#34;&gt;
+&lt;p&gt;&lt;code&gt;hdfs dfs -rm -r hdfs://sar01:9000/asi1/asi1_X/sherlock.out&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Premier programme Spark sur DCE</title>
       <link>/courses/bigdata-mds/labs/first-spark-program/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>/courses/bigdata-mds/labs/first-spark-program/</guid>
