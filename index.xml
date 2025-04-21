@@ -16081,6 +16081,1709 @@ Do you succeed? Are you surprised?
     </item>
     
     <item>
+      <title>Hands-on Docker</title>
+      <link>/courses/cloud-en/docker-en/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/cloud-en/docker-en/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;p&gt;In this tutorial you’ll learn:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;How to run &lt;strong&gt;containers&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;How to define and build &lt;strong&gt;images&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;How to create and use &lt;strong&gt;volumes&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;How to define and use &lt;strong&gt;networks&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Prerequisites:&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Having installed Docker on your computer or having imported the Linux virtual machine either with VirtualBox or with Multipass.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Using a virtual machine with Multipass? Click here for more info
+&lt;/summary&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Multipass commands&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;To start the virtual machine, type &lt;code&gt;multipass start cloudvm&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The folder &lt;code&gt;/home/ubuntu/labs&lt;/code&gt; in the virtual machine is mounted (i.e., linked) to the folder
+on YOUR computer (let’s call it &lt;code&gt;LAB&lt;/code&gt;) where you’ll store all your lab material.
+You specified this folder when you installed the virtual machine.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;If you don’t remember the path to the folder linked to &lt;code&gt;/home/ubuntu/labs&lt;/code&gt;, type the
+command &lt;code&gt;multipass info cloudvm&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;To open a terminal into the virtual machine, type &lt;code&gt;multipass shell cloudvm&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;When the terminal opens, the current working directory is &lt;code&gt;/home/ubuntu&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Type &lt;code&gt;cd labs&lt;/code&gt; to move to the folder where you’ll find your lab material.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;You’ll use the virtual machine terminal only to type the Docker commands.
+You can use all the tools installed on your machine to create and manage the files
+in the directory &lt;code&gt;LAB&lt;/code&gt; directly from your computer.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Once the lab is over, type &lt;code&gt;exit&lt;/code&gt; to leave the virtual machine terminal. This will lead you back
+to the terminal of your computer.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In the terminal of your computer, type &lt;code&gt;multipass stop cloudvm&lt;/code&gt; to stop the virtual machine.
+This will NOT destroy your files! It just stops the virtual machine from needlessly using the resources of your computer.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Terminology&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;You’ll use the &lt;strong&gt;terminal&lt;/strong&gt; to run Docker commands.
+The terminal is the &lt;strong&gt;client&lt;/strong&gt; that communicates with
+the Docker daemon.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Docker runs &lt;strong&gt;containers&lt;/strong&gt; on your computer.
+We’ll refer to your computer as the &lt;strong&gt;host&lt;/strong&gt;,
+the containers being the &lt;strong&gt;guests&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;last-child&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;A &lt;strong&gt;containerized application&lt;/strong&gt;
+is an application running in a container.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;running&#34; class=&#34;section level1&#34; number=&#34;1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Running containers&lt;/h1&gt;
+&lt;!--The command used to run a container 
+is ``docker run`` followed by four parameters:
+
+```shell
+docker run [options] image-name [command] [arg]
+```
+
+The four parameters are:
+
+* *options*. List of options. 
+* *image-name*. The fully qualified name of the image used to run the container. 
+* *command*. The command to be executed in the container.
+* *arg*. The arguments taken by the command executed in the container.
+
+Only the parameter *image-name* is mandatory. 
+The fully qualified name of an image is specified as a sequence of four fields, 
+formatted as follows:
+
+```shell
+registry_url/user/name:tag
+```
+
+where:
+
+* *registry_url* (optional). The URL of the registry that provides the image. 
+If its value is not specified, the image 
+will be looked up for in the 
+[DockerHub registry](https://hub.docker.com){target=&#34;_blank&#34;}.
+* *user* (optional).  The identifier of the user or organization that created the image. 
+The default value is *library*.
+* *name* (mandatory). The name of the image. 
+* *tag* (optional). It specifies the image version.
+If its value is not specified, 
+the tag *latest* is used, pointing to the latest image version. --&gt;
+&lt;!--
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-1&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-1) &lt;/strong&gt;&lt;/span&gt;
+For each of the following images, 
+specify the registry name, the user, the name and the tag.
+
+1. registry.redhat.io/rhel8/mysql-80
+
+2. alpine:3.11
+
+::::: {.last-child}
+3. alpine
+:::::
+&lt;/div&gt;\EndKnitrBlock{exercise}
+:::
+
+
+
+&lt;details&gt;
+
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+1. Registry: *registry.redhat.io*, user: *rhel8*, name: *mysql-80*,
+tag: *latest*
+
+2. Registry: *DockerHub*, user: *library*, name: *alpine*, tag: *3.11*
+
+3. Registry: *DockerHub*, user: *library*, name: *alpine*, tag: *latest*
+:::
+
+&lt;/details&gt;
+
+
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-2&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-2) &lt;/strong&gt;&lt;/span&gt;What&#39;s the difference between the following image names?
+
+1. alpine:latest
+
+2. registry.hub.docker.com/library/alpine
+
+::::: {.last-child}
+3. alpine
+:::::
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+
+:::
+
+
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+There&#39;s no difference. They all point to the same image, that is
+the latest version of *alpine* in the DockerHub registry.
+
+:::
+
+&lt;/details&gt;
+--&gt;
+&lt;p&gt;We now learn how to use the command &lt;code&gt;docker run&lt;/code&gt; and some of
+its options.
+In the following exercises, we’ll run containers from the image named
+&lt;em&gt;alpine&lt;/em&gt; that is
+&lt;a href=&#34;https://hub.docker.com/_/alpine&#34; target=&#34;_blank&#34;&gt;available on the DockerHub registry&lt;/a&gt;.
+This image provides a lightweight distribution
+(i.e., it doesn’t contain many features) of Linux.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.1  &lt;/strong&gt;&lt;/span&gt;You want to run the container from the latest version of
+the image &lt;em&gt;alpine&lt;/em&gt;.
+Which command would you write in the terminal?
+Execute it.
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The goal of this exercise is to start playing with the
+&lt;code&gt;docker run&lt;/code&gt; command.
+Since the question doesn’t say anything about the
+options, nor does it mention the command to run inside the container,
+we’d type:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker run alpine&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;!--::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-4&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-4) &lt;/strong&gt;&lt;/span&gt;Execute the command that you proposed in the previous exercise, 
+observe the output in the terminal and explain the actions 
+taken by Docker to run the container.&lt;/div&gt;\EndKnitrBlock{exercise}
+
+
+:::
+
+
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+The output obtained from executing the command should 
+look like as follows:
+
+```bash
+Unable to find image &#39;alpine:latest&#39; locally
+latest: Pulling from library/alpine
+aad63a933944: Pull complete 
+Digest: sha256:b276d875eeed9c7d3f1cfa7edb06b22ed22b14219a7d67c52c56612330348239
+Status: Downloaded newer image for alpine:latest
+```
+
+Here&#39;s what happens under the hood:
+
+1. Docker looks for an image named *alpine:latest* in the host 
+computer and cannot find it.
+
+2. Docker *pulls* (i.e., downloads) the image from the DockerHub registry.
+
+:::
+
+&lt;/details&gt;--&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.2  &lt;/strong&gt;&lt;/span&gt;Is the container still running?
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;In order to list all containers still running on the host, type the
+following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker container ls&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Your container shouldn’t appear in the output,
+because it’s not running.
+In order to see all containers, including those that are not
+running, type the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker container ls -a&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;!--::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-6&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-6) &lt;/strong&gt;&lt;/span&gt;What information is displayed for each container?&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+* The identifier of the container.
+
+* The name of the image used to run the container (it should be *alpine* for your 
+container).
+
+* The command executed within the container (it should be ``/bin/sh`` for your container).
+
+* When the container has been created.
+
+* The container current status (it should be *exited (0) x seconds ago* for your container).
+
+* The network ports used by the container (we&#39;ll study them later).
+
+* The name of the container. If you don&#39;t specify any when you 
+run the container (as is our case),
+Docker generates a random name by concatenating an adjective and 
+a famous scientist&#39;s name (e.g., *agitated_newton*).
+
+:::
+
+&lt;/details&gt;--&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.3  &lt;/strong&gt;&lt;/span&gt;By looking at the command executed within the container (&lt;code&gt;/bin/sh&lt;/code&gt;),
+can you tell why the container stopped without giving any output?
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The command is &lt;code&gt;/bin/sh&lt;/code&gt;;
+the container runs a Linux terminal.
+But since we didn’t specify what to do with that terminal
+(we didn’t run any Linux command, nor we tried to access the terminal),
+the container stopped.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;p&gt;We’re now going to do something useful with the image &lt;em&gt;alpine&lt;/em&gt;.
+Make sure you read the &lt;strong&gt;good practices&lt;/strong&gt; that you should
+adopt while playing with images and containers.&lt;/p&gt;
+&lt;div class=&#34;infobox curiosity&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Good practices&lt;/strong&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;strong&gt;Name your containers.&lt;/strong&gt; Although Docker assigns a default name to a new container,
+it’s usually a good practice to give a container a name of your
+choice to make it easily distinguishable. You can do it by using the option
+&lt;code&gt;--name&lt;/code&gt;. Try the following:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;docker run --name my-alpine alpine&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;As before, the container stops immediately.
+If you list all your containers by typing again:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker container ls -a&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;you should see a container named &lt;em&gt;my-alpine&lt;/em&gt;.&lt;/p&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;strong&gt;Remove automatically a container if you use it once.&lt;/strong&gt;
+Unless you want to reuse your container later, you can ask Docker to automatically remove it
+when it stops by using the option &lt;code&gt;--rm&lt;/code&gt;.
+This will prevent unused containers from taking up too much disk space.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Try the following:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker run --rm --name container-to-remove alpine&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;If you list all the containers you should see that there is no container
+named &lt;em&gt;container-to-remove&lt;/em&gt;.&lt;/p&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;strong&gt;Remove unused containers.&lt;/strong&gt; Stopped containers that have been run without
+using the option &lt;code&gt;--rm&lt;/code&gt; are still stored in the host.
+If you want to remove a specific
+container (e.g., &lt;em&gt;my-alpine&lt;/em&gt;), use the following command:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;docker container rm my-alpine&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;If you want to remove all stopped containers, use the
+following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker container prune&lt;/code&gt;&lt;/p&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;strong&gt;Remove unused images.&lt;/strong&gt; Images can take up a lot of disk space.
+As a result, you should remember to remove those that you don’t intend to use
+any longer.
+The commands to remove a specific image
+and prune unused ones are &lt;code&gt;docker image rm&lt;/code&gt;
+and &lt;code&gt;docker image prune -a&lt;/code&gt; respectively.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div id=&#34;pass-a-command-to-the-containerized-application&#34; class=&#34;section level2&#34; number=&#34;1.1&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.1&lt;/span&gt; Pass a command to the containerized application&lt;/h2&gt;
+&lt;p&gt;Remember that the template of &lt;code&gt;docker run&lt;/code&gt; is the following:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker run [options] image-name [command] [arg]&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The optional parameter &lt;em&gt;command&lt;/em&gt; refers to a command
+that you can pass the containerized application, possibly with some arguments
+(parameter &lt;em&gt;arg&lt;/em&gt;).&lt;/p&gt;
+&lt;p&gt;Let’s see an example.
+As we saw before, when we run a container from the image &lt;em&gt;alpine&lt;/em&gt;,
+a Linux terminal &lt;code&gt;/bin/sh&lt;/code&gt; is launched.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Notice&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The Linux terminal &lt;code&gt;/bin/sh&lt;/code&gt; is run within the
+container.
+Henceforth, we’ll use the following terms:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Host terminal.&lt;/strong&gt; The terminal that you use to
+interact with the operating system of your computer.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;last-child&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Guest terminal.&lt;/strong&gt; The terminal that is run within
+the container.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;By using the optional parameter &lt;em&gt;command&lt;/em&gt;, we can run
+a command in the guest terminal.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:command-in-guest&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.4  &lt;/strong&gt;&lt;/span&gt;
+Run a container from the image &lt;em&gt;alpine&lt;/em&gt; and execute the
+Linux command &lt;code&gt;ls&lt;/code&gt; that lists the content of the current directory.&lt;/p&gt;
+&lt;div class=&#34;last-child&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;Where are the listed files stored?
+In the host or in the container?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;code&gt;docker run --rm --name ls-test alpine ls&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The command &lt;code&gt;ls&lt;/code&gt; is run in the guest terminal, therefore
+what we see in the output is a list of files stored in the
+container.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Notice&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;In Exercise &lt;a href=&#34;#exr:command-in-guest&#34;&gt;1.4&lt;/a&gt; the command
+&lt;code&gt;ls&lt;/code&gt; is executed in the guest terminal, but its
+output is redirected to the host terminal.&lt;/p&gt;
+&lt;p&gt;In other words, when we run the container, we
+don’t interact directly with the guest terminal;
+we just send a command and the output is redirected
+to the host terminal.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Now let’s see how to execute a command in the guest terminal
+that also requires an argument.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.5  &lt;/strong&gt;&lt;/span&gt;By using the Linux utility &lt;code&gt;ping&lt;/code&gt;, check
+whether the Web site &lt;code&gt;www.centralesupelec.fr&lt;/code&gt; is reachable.
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;code&gt;docker run --rm --name ping-test alpine ping www.centralesupelec.fr&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;In order to interrupt &lt;code&gt;ping&lt;/code&gt;
+just type the key combination that you’s use to
+interrupt any other command in your terminal
+(typically Ctrl-C on Windows and Cmd-C in MacOs).&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;!--An application running in a container might need to interact 
+with the user. 
+For instance, the Linux 
+command ``rev`` reverses whatever 
+the user types on the keyboard.
+In order to interact with a container, you should use the option
+``-it`` of ``docker run``.
+
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-9&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-9) &lt;/strong&gt;&lt;/span&gt;Run a container from the image *alpine* to execute the 
+Linux command `rev` and interact with it.
+You can stop interacting with ``rev`` by typing Ctrl+C at any time.&lt;/div&gt;\EndKnitrBlock{exercise}
+
+
+:::
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+``
+docker run --rm --name rev -it alpine rev
+``
+
+After typing the command, type a word on your keyboard
+(e.g., *deeps*), press *Return* and 
+you should see the same word reversed (e.g., *speed*). 
+
+The option ``-t`` opens a guest terminal (so we can see its
+output); the option ``-i`` allows you to write directly 
+into the guest terminal.
+
+In order to stop using the guest terminal, 
+you&#39;ll need to press Ctrl+D (both in Windows and MacOs).
+
+:::
+
+&lt;/details&gt;
+
+--&gt;
+&lt;p&gt;Now run the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker run  --name my-alpine -it alpine&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; we didn’t use the option &lt;code&gt;--rm&lt;/code&gt; (the container will not be removed
+when we stop it, we’re going to use it again).
+Moreover, we didn’t specify any command to run in the guest terminal.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.6  &lt;/strong&gt;&lt;/span&gt;What do you obtain?
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;When we run a container from the image &lt;em&gt;alpine&lt;/em&gt;, the command
+&lt;code&gt;/bin/sh&lt;/code&gt; is executed within the container.
+Since we specified the option &lt;code&gt;-it&lt;/code&gt;, what we obtain is an access to the
+Linux terminal running in the container.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;starting-and-stopping-containers.&#34; class=&#34;section level2&#34; number=&#34;1.2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.2&lt;/span&gt; Starting and stopping containers.&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;docker run&lt;/code&gt; is a shorthand for two Docker commands, namely
+&lt;code&gt;docker create&lt;/code&gt;, that creates a container from an image,
+and &lt;code&gt;docker start&lt;/code&gt;, that starts the container after its creation.&lt;/p&gt;
+&lt;p&gt;Suppose now that you want to download a Web page
+by using Linux Alpine.
+You can use the Linux command &lt;code&gt;wget&lt;/code&gt; followed by the URL of the page
+that you want to download.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:wget-exo&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.7  &lt;/strong&gt;&lt;/span&gt;By using the guest terminal
+in the container &lt;em&gt;my-alpine&lt;/em&gt;,
+download
+&lt;a href=&#34;https://www.centralesupelec.fr/fr/presentation&#34; target=&#34;_blank&#34;&gt;this Web page&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&#34;last-child&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;Where will the Web page be saved? The host computer or the container?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Just type in &lt;em&gt;my-alpine&lt;/em&gt; guest terminal the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;wget https://www.centralesupelec.fr/fr/presentation&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The Web page will be saved in the current directory
+of the container. You can verify that the file is there
+by typing &lt;code&gt;ls&lt;/code&gt; in the guest terminal.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Want to copy the donwloaded file from the container to your computer?
+&lt;/summary&gt;
+&lt;p&gt;To copy the file &lt;code&gt;presentation&lt;/code&gt; to your working directory, type the following command in
+the host terminal:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;  docker cp &amp;lt;containerId&amp;gt;:/presentation .&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In the previous command, replace &lt;code&gt;&amp;lt;containerId&amp;gt;&lt;/code&gt; with the identifier of your container. You can obtain
+the identifier of the container from the output of the command &lt;code&gt;docker container ls -a&lt;/code&gt;.&lt;/p&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Where are the containers files stored?&lt;/strong&gt;&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt;
+If you use MacOS or Windows
+&lt;/summary&gt;
+&lt;p&gt;The files managed by Docker are not stored directly in your computer, but
+in the Linux virtual machine installed and operated by Docker Desktop (remember, Docker always need Linux to be executed).&lt;/p&gt;
+&lt;p&gt;Therefore, you need to open a terminal inside that Linux virtual machine by typing the following command:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;docker run -it --rm --privileged --pid=host justincormack/nsenter1&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Once the terminal is opened, you can follow the instructions given below for Linux users.&lt;/p&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;summary&gt;
+If you use Docker on Linux
+&lt;/summary&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;All files managed by Docker are stored under folder &lt;code&gt;/var/lib/docker&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;To access that folder, you need to be root (i.e., administrator). Type the command &lt;code&gt;sudo su&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;If you type &lt;code&gt;ls /var/lib/docker&lt;/code&gt; you can look at the folders stored under this directory. You’ll see that there are
+folders corresponding to the different objects managed by Docker (containers, images, volumes and networks).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;To locate the files of a specific container, you first need to get the &lt;strong&gt;container identifier&lt;/strong&gt; by typing &lt;code&gt;docker container ls -a&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Type the command &lt;code&gt;docker inspect &amp;lt;container-id&amp;gt;&lt;/code&gt; (replace &lt;code&gt;&amp;lt;container-id&amp;gt;&lt;/code&gt; with the identifier of the container that you intend to inspect).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Locate the field &lt;code&gt;UpperDir&lt;/code&gt;. The value of this field is the path to the directory (let’s call it &lt;code&gt;CONTAINER_DIR&lt;/code&gt;) that contains the upper layer of the container (the writable layer).
+It should be a path that ends by &lt;code&gt;/diff&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;If you type &lt;code&gt;cd CONTAINER_DIR&lt;/code&gt; (replace &lt;code&gt;CONTAINER_DIR&lt;/code&gt; with the value of the field &lt;code&gt;UpperDir&lt;/code&gt;) you can finally see the files stored in
+your container.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;p&gt;In &lt;em&gt;my-alpine&lt;/em&gt; guest terminal type &lt;code&gt;exit&lt;/code&gt;.
+This closes the guest terminal and, as a result, stops the
+container.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;NOTICE&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Stopping the container will not erase any of the files
+stored in the container. Removing the container will.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;If you want to start the container &lt;em&gt;my-alpine&lt;/em&gt; again, you can
+use the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker container start -ai my-alpine&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;This will open the guest terminal of the container again;
+type &lt;code&gt;ls&lt;/code&gt; to verify that
+the Web page that you downloaded before is still there.&lt;/p&gt;
+&lt;!-- &lt;details&gt;
+&lt;summary&gt;Homework (optional)&lt;/summary&gt;
+
+Suppose that you need to download all the figures of 
+[this Web page](https://www.centralesupelec.fr/fr/presentation){target=&#34;_blank&#34;}. 
+The Linux utility ``wget`` comes in handy. 
+However, you don&#39;t have Linux and you&#39;d like to 
+avoid the hassle of installing it on your computer, or in a virtual machine,
+just for this task.
+
+A great alternative is to run Linux in a Docker container. 
+Unfortunately, the Alpine distribution that we&#39;ve been playing 
+with doesn&#39;t provide
+an implementation of ``wget`` with all the options that we need.
+
+We turn to another Linux distribution, **Ubuntu**,
+for which DockerHub has 
+[several images](https://hub.docker.com/_/ubuntu/){target=&#34;_blank&#34;}.
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-11&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-11) &lt;/strong&gt;&lt;/span&gt;Run a container with Ubuntu (latest) and open a guest terminal. 
+Call the container *dl-figures*, and avoid the option 
+``--rm``, we&#39;ll use this container later.&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+``
+docker run --name dl-figures -it ubuntu
+``
+
+
+:::
+
+&lt;/details&gt;
+
+
+
+From now on, we&#39;ll be interacting with the guest Ubuntu terminal.
+If you type the command ``wget``, 
+you&#39;ll get an error (``bash: wget: command not found``).
+
+::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**Notice**
+
+The image *Ubuntu* doesn&#39;t include all the commands that you&#39;d find 
+in a full-blown Ubuntu distribution;
+the reason is to keep the size of the image small, 
+a necessary constraint given that 
+images are transferred over the Internet.  
+
+
+:::
+
+Luckily, there&#39;s a way to install `wget` in our Ubuntu distribution.
+Ubuntu provides a powerful command-line package manager called 
+**Advanced Package Tool** (APT).
+First, you need to run the following command:
+
+``
+apt update
+``
+
+which fetches the available packages from a list of sources 
+available in file `/etc/apt/sources.list`.
+
+Then, you can install `wget` by running the following command:
+
+``
+apt install -y wget
+``
+
+In order to obtain all the figures from a 
+Web page, type the following command:
+
+```shell
+wget -nd -H -p -P /my-figures -A jpg,jpeg,png,gif -e robots=off -w 0.5 https://www.centralesupelec.fr/fr/presentation
+```
+
+You should see in the current directory a new folder 
+named *my-figures* containing the downloaded figures;
+verify it by typing ``ls my-figures``.
+
+Before terminating, don&#39;t forget to read your fortune cookie.
+In the shell, run the following command:
+
+``
+apt-get install -y fortune
+``
+
+and then:
+
+``
+/usr/games/fortune -s
+``
+
+When you&#39;re done, you can simply type the command `exit` to quit 
+the guest terminal and stop the container.
+
+&lt;/details&gt; --&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;creating-images&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Creating Images&lt;/h1&gt;
+&lt;p&gt;A Docker image can be thought of as a template to create and run a container.
+An image is a file that contains a &lt;strong&gt;layered filesystem&lt;/strong&gt; with each layer being &lt;strong&gt;immutable&lt;/strong&gt;;
+this means that the files that belong to a layer cannot be
+modified or deleted, nor can files be added to a layer.&lt;/p&gt;
+&lt;p&gt;When a container is created from an image, it
+will be composed of all the image read-only layers and, on top of
+them, a writable layer (termed the &lt;strong&gt;container layer&lt;/strong&gt;),
+where all the new files created in the container will be written.
+For example, the Web page that you downloaded in Exercise &lt;a href=&#34;#exr:wget-exo&#34;&gt;1.7&lt;/a&gt;
+were stored in the writable layer of that container.&lt;/p&gt;
+&lt;!--## Interactive image creation
+
+When we run the container *dl-figures*  in Section \@ref(simple-use-case), 
+we modified the container to
+install the command ``wget``. 
+You can see the modifications by typing the 
+following command:
+
+``
+docker diff dl-figures
+``
+
+The output consists of a list of files tagged with the letter A, C or D, indicating 
+respectively that the file has been added (A), changed (C) or deleted (D). 
+In this list you&#39;ll find the downloaded figures, as well as 
+other files that have been added or modified or deleted 
+when we installed ``wget``.
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-12&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-12) &lt;/strong&gt;&lt;/span&gt;If layers, except the top one, are immutable, 
+how can files that belong to the lower layers be modified or deleted?&lt;/div&gt;\EndKnitrBlock{exercise}
+:::
+
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+All files marked with A are new and therefore are 
+added to the writable layer of the container.
+
+As for the existing files, they live in the immutable layers 
+of the image, and therefore cannot be touched directly. 
+Instead, they are copied from the bottom layers to the writable layer where 
+they are modified.
+This strategy is called **copy-on-write**.
+
+The structure of layers generates a **layered filesystem** in the image; 
+if different copies of the same file exist in different layers, 
+the copy in the uppermost layer 
+overwrites the others.
+
+:::
+
+&lt;/details&gt;
+
+
+
+We can create a new image from the container *dl-figures*, one that provides
+a Ubuntu distribution with the command ``wget`` already installed, 
+with the following command:
+
+
+```shell
+docker commit dl-figures ubuntu-with-wget
+```
+
+The command creates a new image called *ubuntu-with-wget*.
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-14&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-14) &lt;/strong&gt;&lt;/span&gt;Run a container from the image *ubuntu-with-wget* and verify that the command
+*wget* is actually installed. &lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+Just type the following command:
+
+``
+docker run --rm -it ubuntu-with-wget
+``
+In the guest terminal type ``wget``: you should see the 
+following output:
+
+``
+wget: missing URL
+Usage: wget [OPTION]... [URL]...
+
+Try `wget --help` for more options.
+``
+
+:::
+
+&lt;/details&gt;--&gt;
+&lt;div id=&#34;dockerfiles&#34; class=&#34;section level2&#34; number=&#34;2.1&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.1&lt;/span&gt; Dockerfiles&lt;/h2&gt;
+&lt;p&gt;The most common way to create an image is to use a &lt;strong&gt;Dockerfile&lt;/strong&gt;, a
+text file that contains all the instructions necessary to
+build the image.
+The advantage of the Dockerfile is that it can be interpreted
+by the Docker engine, which makes the creation of images an automated
+and repeatable task.&lt;/p&gt;
+&lt;p&gt;Suppose that we want to create a containerized
+application to download figures from a Web page.
+As a template for this application, we need to build a new
+image, that we’ll call &lt;em&gt;fig-downloader&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;The Dockerfile containing the instructions to build the image
+&lt;em&gt;fig-downloader&lt;/em&gt; is as follows:&lt;/p&gt;
+&lt;pre class=&#34;dockerfile&#34;&gt;&lt;code&gt;FROM ubuntu
+RUN apt-get update
+RUN apt-get install -y wget
+RUN mkdir -p /my-figures
+WORKDIR /my-figures
+ENTRYPOINT [&amp;quot;wget&amp;quot;, &amp;quot;-nd&amp;quot;, &amp;quot;-r&amp;quot;, &amp;quot;-A&amp;quot;, &amp;quot;jpg,jpeg,bmp,png,gif&amp;quot;]
+CMD [&amp;quot;https://www.centralesupelec.fr/fr/presentation&amp;quot;]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Here’s the explanation:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;We use the image &lt;em&gt;ubuntu&lt;/em&gt; as the &lt;strong&gt;base image&lt;/strong&gt;.
+This corresponds to the instruction &lt;code&gt;FROM ubuntu&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;We install the utility &lt;code&gt;wget&lt;/code&gt; in the base image.
+This corresponds to the
+instructions &lt;code&gt;RUN apt-get update&lt;/code&gt; and &lt;code&gt;RUN apt-get install -y wget&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;We create a directory &lt;code&gt;my-figures&lt;/code&gt; under the root directory of the image.
+This corresponds to the instruction &lt;code&gt;RUN mkdir -p /my-figures&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;We set the newly created directory &lt;em&gt;/my-figures&lt;/em&gt; as the
+&lt;strong&gt;working directory&lt;/strong&gt; of the image. This corresponds to the
+instruction &lt;code&gt;WORKDIR /my-figures&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;We specify the command to be executed when a container is run from this image.
+This corresponds to the instruction&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;ENTRYPOINT [&#34;wget&#34;, &#34;-nd&#34;, &#34;-r&#34;, &#34;-A&#34;, &#34;jpg,jpeg,bmp,png,gif&#34;]&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;This instruction means: execute &lt;code&gt;wget&lt;/code&gt; with the options
+&lt;code&gt;-nd&lt;/code&gt;, &lt;code&gt;-r&lt;/code&gt;, &lt;code&gt;-A&lt;/code&gt;;
+the last option takes a list of file
+extensions (&lt;code&gt;jpg,jpeg,bmp,png,gif&lt;/code&gt;) as its argument.&lt;/p&gt;
+&lt;ol start=&#34;6&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Remember that the utility &lt;code&gt;wget&lt;/code&gt; takes the URL of the Web page as
+an argument. The URL will be specified when we run the container from
+the image &lt;em&gt;fig-downloader&lt;/em&gt;.
+Optionally, we can specify a default argument by using the
+keyword CMD. The meaning of the instruction:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;CMD [&#34;https://www.centralesupelec.fr/fr/presentation&#34;]&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;is: if we don’t give any URL when we run the container, the figures will
+be downloaded from
+&lt;a href=&#34;https://www.centralesupelec.fr/fr/presentation&#34; target=&#34;_blank&#34;&gt;https://www.centralesupelec.fr/fr/presentation&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-15&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;What’s the relation between the Dockerfile lines and the image layers?
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Each line corresponds to a new layer.
+The first line corresponds to the bottom layer;
+the last line to the top layer.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:dockerfile-creation&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.2  &lt;/strong&gt;&lt;/span&gt;Could you identify a problem in this Dockerfile?
+Modify the Dockerfile accordingly.
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;When creating an image, we should keep the number of layers relatively
+small; in fact, the more the layers, the bigger the image will be.
+Here we create three separate layers with three RUN commands; we can
+simply merge the three layers.
+The resulting Dockerfile will be:&lt;/p&gt;
+&lt;pre class=&#34;dockerfile&#34;&gt;&lt;code&gt;FROM ubuntu
+RUN apt-get update &amp;amp;&amp;amp; \
+    apt-get install -y wget &amp;amp;&amp;amp; \
+    mkdir -p /my-figures
+WORKDIR /my-figures
+ENTRYPOINT [&amp;quot;wget&amp;quot;, &amp;quot;-nd&amp;quot;, &amp;quot;-r&amp;quot;, &amp;quot;-A&amp;quot;, &amp;quot;jpg,jpeg,bmp,png,gif&amp;quot;]
+CMD [&amp;quot;https://www.centralesupelec.fr/fr/presentation&amp;quot;]&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;building-an-image&#34; class=&#34;section level2&#34; number=&#34;2.2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.2&lt;/span&gt; Building an image&lt;/h2&gt;
+&lt;p&gt;We’re now going to build an image from a Dockerfile.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Create a directory named &lt;em&gt;fig-downloader&lt;/em&gt; in your computer with
+a file named &lt;em&gt;Dockerfile&lt;/em&gt; inside.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In the &lt;em&gt;Dockerfile&lt;/em&gt; write the set of instructions that
+you proposed in Exercise &lt;a href=&#34;#exr:dockerfile-creation&#34;&gt;2.2&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;In the terminal, set the working directory to &lt;em&gt;fig-downloader&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Build an image called &lt;em&gt;fig-downloader&lt;/em&gt; by executing the following command:&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;docker build -t fig-downloader .&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The &lt;code&gt;.&lt;/code&gt; at the end of the command means that the Docker engine will
+look for a file named &lt;em&gt;Dockerfile&lt;/em&gt; in the working directory.&lt;/p&gt;
+&lt;!--
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-16&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-16) &lt;/strong&gt;&lt;/span&gt;Once the image is built, type the command ``docker image ls -a``. 
+What are the images with repository and tag ``&lt;none&gt;``?
+Why are there three of such images?&lt;/div&gt;\EndKnitrBlock{exercise}
+
+
+:::
+
+&lt;/div&gt;
+
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+These are the **intermediate images**. 
+Once a layer is compiled, an intermediate image is created that 
+contains that layer and all the layers underneath.
+In other words, the intermediate image 
+corresponding to the layer $i$ contains all files 
+up to the layer $i$, including layers 1 through $i-1$.
+
+The intermediate layers are used by the **build cache**, 
+of which we&#39;ll see an example later.
+
+Although there are five layers in the new image, there are only 
+three intermediate images because:
+
+* the base image is *ubuntu:eoan*.
+* the image corresponding to the top layer is the final image *fig-downloader*.
+
+:::
+
+&lt;/details&gt;
+--&gt;
+&lt;div class=&#34;infobox curiosity&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Good to know&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;If you give the Dockerfile a different name (say, &lt;em&gt;Dockerfile-fig-downloader&lt;/em&gt;),
+the command to build the image will be:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker build -t fig-downloader -f Dockerfile-fig-downloader .&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The option &lt;code&gt;-f&lt;/code&gt; is used to specify the name of the Dockerfile.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;In order to verify that the new image has been created, type the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker images&lt;/code&gt;&lt;/p&gt;
+&lt;!-- Let&#39;s dive deeper into the anatomy of an image.
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-17&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-17) &lt;/strong&gt;&lt;/span&gt;Run the following command:
+
+``
+docker history fig-downloader
+`` 
+
+and analyze the layers of the new image. 
+
+* Why do some layers have an ID, while others 
+are marked as &lt;i&gt;missing&lt;/i&gt;?
+
+::::: {.last-child}
+* Can you find the identifiers of the intermediate images?
+:::::
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+
+:::
+
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+The layers with an ID correspond to the layers of 
+the new image, including the top layer and the base image.
+The layers marked as *missing* are those that compose the 
+base image. Those layers are not stored in  
+your computer, 
+simply because they belong to an image 
+that hasn&#39;t been built on your computer 
+and you downloaded from the DockerHub registry.
+
+By looking at the output of ``docker image ls -a`` and the output of this command,
+we see that the layers between the base image and the top layer have the 
+same identifiers as the intermediate images.
+
+:::
+
+&lt;/details&gt;
+
+--&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:dl-1-container&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.3  &lt;/strong&gt;&lt;/span&gt;Run the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker run --name dl-1 fig-downloader&lt;/code&gt;&lt;/p&gt;
+What does it do? Where are the downloaded pictures?
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;We downloaded the figures
+&lt;a href=&#34;https://www.centralesupelec.fr/fr/presentation&#34; target=&#34;_blank&#34;&gt;of this page&lt;/a&gt;.
+The downloaded pictures are in the folder &lt;em&gt;/my-figures&lt;/em&gt;
+of the container &lt;em&gt;dl-1&lt;/em&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-18&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.4  &lt;/strong&gt;&lt;/span&gt;Run the following command:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;docker run --name dl-2 fig-downloader https://www.centralesupelec.fr/&lt;/code&gt;&lt;/pre&gt;
+What does it do? Where are the downloaded pictures?
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;We downloaded the figures
+&lt;a href=&#34;https://www.centralesupelec.fr&#34; target=&#34;_blank&#34;&gt;of this page&lt;/a&gt;.
+We basically overwrote the URL specified by the CMD keyword with a new
+one.
+The downloaded pictures are in the folder &lt;em&gt;/my-figures&lt;/em&gt;
+of the container &lt;em&gt;dl-2&lt;/em&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;containerized-python-application&#34; class=&#34;section level2&#34; number=&#34;2.3&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.3&lt;/span&gt; Containerized Python application&lt;/h2&gt;
+&lt;p&gt;Download &lt;a href=&#34;/courses/cloud-computing/tutorial-docker/word-frequency.zip&#34;&gt;this archive file&lt;/a&gt;
+and unzip it into your working directory.
+In this archive you’ll find:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;A Dockerfile.&lt;/li&gt;
+&lt;li&gt;A Python script &lt;em&gt;main.py&lt;/em&gt; that asks the user to enter the URL and the language of a Web page,
+and prints the 10 most frequent words occurring in that page.&lt;/li&gt;
+&lt;li&gt;A file &lt;em&gt;requirements.txt&lt;/em&gt; with the list of the Python packages
+needed to run the given script.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The content of the Dockerfile is as follows:&lt;/p&gt;
+&lt;pre class=&#34;dockerfile&#34;&gt;&lt;code&gt;FROM python:3.7-slim
+RUN mkdir -p /app
+WORKDIR /app
+COPY ./main.py ./requirements.txt /app/
+RUN pip install -r requirements.txt
+ENTRYPOINT [&amp;quot;python&amp;quot;, &amp;quot;main.py&amp;quot;]&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-19&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.5  &lt;/strong&gt;&lt;/span&gt;Describe what this Dockerfile does.
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;Takes &lt;em&gt;python:3.7-slim&lt;/em&gt; as the base image.&lt;/li&gt;
+&lt;li&gt;Creates a new folder &lt;em&gt;app&lt;/em&gt; in the image under the root directory.&lt;/li&gt;
+&lt;li&gt;Changes the working directory to &lt;em&gt;/app&lt;/em&gt;.&lt;/li&gt;
+&lt;li&gt;Copies the files &lt;em&gt;main.py&lt;/em&gt; and &lt;em&gt;requirements.txt&lt;/em&gt; from the local
+computer to the directory &lt;em&gt;/app&lt;/em&gt; in the image.&lt;/li&gt;
+&lt;li&gt;Runs the command &lt;code&gt;pip install&lt;/code&gt; to install the Python libraries
+specified in the file &lt;em&gt;requirements.txt&lt;/em&gt;.&lt;/li&gt;
+&lt;li&gt;Executes the command &lt;code&gt;python main.py&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34; word-latex=&#34;{exercisebox}&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-20&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.6  &lt;/strong&gt;&lt;/span&gt;Build an image called &lt;em&gt;wordfreq&lt;/em&gt; from this Dockerfile.
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;code&gt;docker build -t wordfreq .&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-21&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.7  &lt;/strong&gt;&lt;/span&gt;Without changing the Dockerfile, rebuild the same image.
+What do you notice?
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The build is very fast.
+Since we didn’t change the Dockerfile, the image
+is rebuilt by using the image layers created
+previously.
+This is clearly indicated by the word &lt;strong&gt;CACHED&lt;/strong&gt; written
+at each layer.
+Using the already stored layers is called &lt;strong&gt;build cache&lt;/strong&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-22&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.8  &lt;/strong&gt;&lt;/span&gt;What happens if you modify a line in the Python script and
+you rebuild the image?
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Add any instruction at the end of &lt;em&gt;main.py&lt;/em&gt;, such as:&lt;/p&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;print(&amp;quot;Finish!&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;then rebuild the image.
+The three bottom layers are not affected by the modification, therefore
+they benefit from the build cache.
+Layer 4 is the first affected by the modification.
+This layer, and those above, need therefore to be
+rebuilt.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-23&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.9  &lt;/strong&gt;&lt;/span&gt;Based on the previous considerations,
+can you tell what’s wrong with this Dockerfile?
+Modify the Dockerfile accordingly and rebuild the image.
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Each time we modify &lt;em&gt;main.py&lt;/em&gt; and we rebuild the image,
+the layer 4 and 5 are recreated, meaning that all the Python packages
+are downloaded and installed.
+Depending on the size and number of the packages, this might
+take some while.
+A better way to structure the Dockerfile is to install the
+packages before copying the Python script to the image.
+Here is how we should modify the Dockerfile:&lt;/p&gt;
+&lt;pre class=&#34;dockerfile&#34;&gt;&lt;code&gt;FROM python:3.7-slim
+RUN mkdir -p /app
+WORKDIR /app
+COPY ./requirements.txt /app/
+RUN pip install -r requirements.txt
+COPY ./main.py /app/
+ENTRYPOINT [&amp;quot;python&amp;quot;, &amp;quot;main.py&amp;quot;]&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-24&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.10  &lt;/strong&gt;&lt;/span&gt;Modify &lt;em&gt;main.py&lt;/em&gt; by adding a new line of code and rebuild the image.
+What changed?
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The Python packages are not reinstalled, as a result rebuilding the image&lt;br /&gt;
+takes much less time than before.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;p&gt;Play with the application by running the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker run --rm -it  wordfreq&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The containerized application will prompt you to insert the URL of a webpage and
+the language of the page (in English).
+The output will be the 20 most used words in the webpage.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;data-volumes&#34; class=&#34;section level1&#34; number=&#34;3&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Data Volumes&lt;/h1&gt;
+&lt;p&gt;In Exercise &lt;a href=&#34;#exr:dl-1-container&#34;&gt;2.3&lt;/a&gt; you’ve been asked to run a container named
+&lt;em&gt;dl-1&lt;/em&gt; to download some figures from a Web page.
+The figures were downloaded into the
+directory &lt;em&gt;/my-figures&lt;/em&gt; of the container.
+But we left a question unanswered.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;How do we transfer those figures from the container to the host computer?&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;The solution is to use &lt;strong&gt;volumes&lt;/strong&gt;.&lt;/p&gt;
+&lt;!--One way to go about that is to run the following command in the host terminal:
+
+``
+docker cp dl-1:/my-figures .
+``
+
+This will copy the directory */my-figures* from the container *dl-1* to
+the host computer working directory.
+You can verify it by yourself.
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-25&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-25) &lt;/strong&gt;&lt;/span&gt;Can you tell why this solution is less than ideal?&lt;/div&gt;\EndKnitrBlock{exercise}
+
+
+:::
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+1. After running the container we need to do an additional action to copy
+the figures from the container to the host computer.
+
+2. The container is created and run only to download some figures.
+We&#39;d like to remove it automatically (with the option ``--rm``) when its 
+execution is over. However, if we do so, the pictures will be lost before 
+we can copy them to the host computer.
+
+:::
+
+&lt;/details&gt;
+
+## Using a host volume
+
+A better solution is to **mount** (i.e., attach) 
+a directory of the host computer at the container&#39;s directory 
+*/my-figures* when we run it.
+Let&#39;s see how it works.
+
+**Step 1.** Create a directory named *figs-volume* in your working directory.
+
+**Step 2.** Type and execute the following command:
+
+```shell
+docker run --rm -v $(pwd)/figs-volume:/my-figures fig-downloader
+```
+
+This command runs a container from the image *fig-downloader*. 
+
+* With the option ``-v`` we specify  that we want to mount the directory
+*\$(pwd)/figs-volume* (*\$(pwd)* indicates the host working directory)
+at the directory *figs-volume* in the container;
+
+* The option ``--rm`` indicates that we want the container to be 
+removed when its execution is over.
+
+**Step 3.** Verify that the pictures are in the folder *figs-volume*.
+
+In this example, we&#39;ve used the directory *figs-volume* as a 
+**volume** (essentially, an external storage area) of the container;
+when the container is destroyed, the volume remains with all its data.--&gt;
+&lt;div id=&#34;docker-volumes&#34; class=&#34;section level2&#34; number=&#34;3.1&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.1&lt;/span&gt; Docker volumes&lt;/h2&gt;
+&lt;p&gt;A volume can be seen as a virtual storage device attached to a container.
+All files there are written to a volume survive the containerized application that
+created them. In other words, when a container is destroyed,
+all the files created by the application in the container remain in the volume.&lt;/p&gt;
+&lt;p&gt;Let’s create a new Docker volume called &lt;em&gt;data-volume&lt;/em&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker volume create data-volume&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox curiosity&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Good to know (advanced notion)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Where the data will be actually stored?&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;You can inspect the new volume by typing the
+following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker volume inspect data-volume&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;A &lt;em&gt;mount point&lt;/em&gt; is indicated; that’s the folder where the data
+will be actually stored.
+If your computer runs Linux, that folder will be available
+on the host; if your computer runs Windows or MacOS,
+you’ll not find that folder on your computer.
+Instead, it will be available in the virtual machine
+that Docker use on MacOS and Windows.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Do you want to see the directory? (Instructions for Windows and MacOS)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;One way to look into the hidden VM is to run
+the following containerized application:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker run -it --rm --privileged --pid=host justincormack/nsenter1&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;This application will open a guest terminal into the VM.
+You can then use the commands &lt;code&gt;cd&lt;/code&gt; and &lt;code&gt;ls&lt;/code&gt;
+to browse to the directory indicated as the mount path
+of the new volume.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;sharing-data&#34; class=&#34;section level3&#34; number=&#34;3.1.1&#34;&gt;
+&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.1.1&lt;/span&gt; Sharing data&lt;/h3&gt;
+&lt;p&gt;A Docker volume can be used to share data between containers.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-26&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;Run a container from the image &lt;code&gt;ubuntu&lt;/code&gt;,
+specifying the options to:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Remove the container once its execution is over.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Interact with the guest Linux terminal in the container.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;last-child&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;Mount the volume &lt;em&gt;data-volume&lt;/em&gt; at the container’s directory &lt;em&gt;/data&lt;/em&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;code&gt;docker run --rm -it -v data-volume:/data ubuntu&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Type the following command in the guest Linux terminal to create a file
+&lt;em&gt;test-file.txt&lt;/em&gt; in the directory &lt;em&gt;/data&lt;/em&gt;:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;echo &#34;This is a new file&#34; &amp;gt; /data/test-file.txt&lt;/code&gt;&lt;/p&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Print to the console the content of the file with the following command:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;cat /data/test-file.txt&lt;/code&gt;&lt;/p&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Type &lt;code&gt;exit&lt;/code&gt; to leave the guest terminal. Since we’ve specified the option &lt;code&gt;--rm&lt;/code&gt;, the container
+is &lt;strong&gt;destroyed&lt;/strong&gt;. Now we’re going to verify that &lt;code&gt;test-file.txt&lt;/code&gt; is still accessible.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-27&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.2  &lt;/strong&gt;&lt;/span&gt;Run a container from the image &lt;em&gt;alpine:latest&lt;/em&gt;,
+specifying the options to:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Remove the container once its execution is over.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Interact with the guest Linux terminal in the container.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;last-child&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;Mount the volume &lt;em&gt;data-volume&lt;/em&gt; to the directory &lt;em&gt;/my-data&lt;/em&gt;
+of the container.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;code&gt;docker container run --rm -it -v data-volume:/my-data alpine&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-28&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.3  &lt;/strong&gt;&lt;/span&gt;Verify that you can read the file &lt;em&gt;test-file.txt&lt;/em&gt;.
+Which folder would you look in?
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;We need to look in the folder &lt;em&gt;/my-data&lt;/em&gt; because this is where
+we mounted &lt;em&gt;data-volume&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;cat /my-data/test-file.txt&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;p&gt;Type &lt;code&gt;exit&lt;/code&gt; to exit the guest terminal and terminate the container.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;networks&#34; class=&#34;section level1&#34; number=&#34;4&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Networks&lt;/h1&gt;
+&lt;p&gt;In order to let containers communicate and, therefore, co-operate,
+Docker defines a simple networking model known as
+the &lt;strong&gt;container network model&lt;/strong&gt; (figure &lt;a href=&#34;#fig:cnm-docker&#34;&gt;4.1&lt;/a&gt;).&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt;
+If you use a Linux virtual machine with Multipass
+&lt;/summary&gt;
+&lt;p&gt;In this section, you’ll need to open several terminals in the virtual machine.
+You can do it easily by using &lt;code&gt;byobu&lt;/code&gt;, an advanced window manager already available in your virtual machine.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Just type &lt;code&gt;byobu&lt;/code&gt; to launch the window manager.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;If you want to open a new terminal, just press F2.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;If you want to switch from a terminal to another, just press F3 (to move to previous terminal) or F4
+(to move to next terminal).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;If you want to close a terminal, just type &lt;code&gt;exit&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;When you close all terminals, &lt;code&gt;byobu&lt;/code&gt; will stop executing.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+&lt;div class=&#34;figure&#34; style=&#34;text-align: center&#34;&gt;&lt;span id=&#34;fig:cnm-docker&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/courses/cloud-computing/tutorial-docker/cnm.png&#34; alt=&#34;The Docker container network model&#34; width=&#34;100%&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 4.1: The Docker container network model
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-29&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.1  &lt;/strong&gt;&lt;/span&gt;Describe the output of the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker network ls&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The command lists all the networks created by Docker on
+your computer.
+For each network, the values of four attributes are shown:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The identifier.&lt;/li&gt;
+&lt;li&gt;The name.&lt;/li&gt;
+&lt;li&gt;The driver used by the network.&lt;/li&gt;
+&lt;li&gt;The scope of the network (local or global).
+A local scope means that the network connects containers
+running on the same host, as opposed to a global scope that
+means that containers on different hosts can communicate.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Depending on the containers that you used
+in the past, you might see different networks.
+However, three networks are worth noting:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The network named &lt;strong&gt;bridge&lt;/strong&gt;, that uses the driver &lt;strong&gt;bridge&lt;/strong&gt; and a local scope.
+By default, any new container is attached to this network.&lt;/li&gt;
+&lt;li&gt;The network named &lt;strong&gt;host&lt;/strong&gt;, that uses the driver &lt;strong&gt;host&lt;/strong&gt; and a local scope.
+It’s used when we want a container to directly use the network interface of the host.
+It’s important to remember that this network should only be used when analyzing the
+host’s network traffic. In the other cases, using this network exposes
+the container to all sorts of security risks.&lt;/li&gt;
+&lt;li&gt;The network named &lt;strong&gt;none&lt;/strong&gt;, that uses the driver &lt;strong&gt;null&lt;/strong&gt; and a local scope.
+Attaching a container to this network means that the container
+isn’t connected to any network, and therefore it’s completely isolated.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-30&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.2  &lt;/strong&gt;&lt;/span&gt;The following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker network inspect bridge&lt;/code&gt;&lt;/p&gt;
+outputs the configuration of the network &lt;strong&gt;bridge&lt;/strong&gt;.
+By looking at this configuration, can you tell
+what IP addresses will be given to the containers attached to this
+network? What’s the IP address of the router of this network?
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The information is specified in the field named &lt;strong&gt;IPAM&lt;/strong&gt;, more specifically:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Subnet&lt;/strong&gt; indicates the range of IP addresses used by the network.
+The value of this field should be 172.17.0.0/16;
+the addresses range from 172.17.0.1 to 172.17.255.255.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Gateway&lt;/strong&gt; indicates the IP address of the router of the network.
+The value should be 172.17.0.1&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div id=&#34;creating-networks&#34; class=&#34;section level2&#34; number=&#34;4.1&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.1&lt;/span&gt; Creating networks&lt;/h2&gt;
+&lt;p&gt;By default, any new container is attached to the network named &lt;em&gt;bridge&lt;/em&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-31&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.3  &lt;/strong&gt;&lt;/span&gt;
+Explain why it is not a good practice to
+attach all our containers to the same network.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;All new containers will be able to communicate over this network.
+This is not a good idea.
+If a hacker can compromise any of these containers, s/he might
+be able to attack the other containers as well.
+As a rule of thumb, we should attach two containers to the same network &lt;strong&gt;only&lt;/strong&gt; on a
+need-to-communicate basis.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;p&gt;In order to create a new network, you can use the following command:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker network create network_name&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-32&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.4  &lt;/strong&gt;&lt;/span&gt;Create two networks named &lt;em&gt;buckingham&lt;/em&gt; and &lt;em&gt;rochefort&lt;/em&gt; that
+use the driver &lt;em&gt;bridge&lt;/em&gt; (see figure &lt;a href=&#34;#fig:cnm-docker&#34;&gt;4.1&lt;/a&gt;).
+By using the &lt;code&gt;docker network inspect&lt;/code&gt; command,
+look at the IP addresses of the new networks and write them down.
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Just run the following commands:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker network create buckingham&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker network create rochefort&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The IP addresses for the network &lt;em&gt;buckingham&lt;/em&gt; are
+172.18.0.0/16 (addresses from 172.18.0.1 to 172.18.255.255);
+The IP addresses for the network &lt;em&gt;rochefort&lt;/em&gt; are:
+172.19.0.0/16 (assuming that you create &lt;em&gt;buckingham&lt;/em&gt;
+before &lt;em&gt;rochefort&lt;/em&gt;).&lt;/p&gt;
+&lt;p&gt;The IP addresses may be different on your machines.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-33&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.5  &lt;/strong&gt;&lt;/span&gt;Create three containers &lt;em&gt;athos&lt;/em&gt;, &lt;em&gt;porthos&lt;/em&gt; and &lt;em&gt;aramis&lt;/em&gt; and attach them
+to the two networks &lt;em&gt;buckingham&lt;/em&gt; and &lt;em&gt;rochefort&lt;/em&gt; as displayed
+in figure &lt;a href=&#34;#fig:cnm-docker&#34;&gt;4.1&lt;/a&gt;.
+&lt;strong&gt;The three containers will open a Linux Alpine shell&lt;/strong&gt;.
+You’ll need to launch the commands in three separate tabs of your terminal window.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;What will the IP addresses of the three containers be in the two networks?
+Remember that &lt;em&gt;porthos&lt;/em&gt; is attached to two networks, therefore it’ll have two
+network interfaces (endpoints) and, as a result, two IP addresses.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;last-child&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;Verify your answers by inspecting the two networks (use the
+command &lt;code&gt;docker network inspect&lt;/code&gt;).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Here are the commands to run &lt;em&gt;athos&lt;/em&gt; and &lt;em&gt;aramis&lt;/em&gt; while connecting
+them to &lt;em&gt;buckingham&lt;/em&gt; and &lt;em&gt;rochefort&lt;/em&gt; respectively.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker run --rm -it --name athos --network buckingham  alpine&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker run --rm -it --name aramis --network rochefort   alpine&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Here’s the command to run &lt;em&gt;porthos&lt;/em&gt; and attach it to
+&lt;em&gt;buckingham&lt;/em&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker run --rm -it --name porthos --network buckingham   alpine&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The following command attaches &lt;em&gt;porthos&lt;/em&gt; to the second network &lt;em&gt;rochefort&lt;/em&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker network connect rochefort porthos&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;As for the IP addresses, each network has IP addresses
+in the range 172.x.0.0/16, where x is 18 in the
+network &lt;em&gt;buckingham&lt;/em&gt; and 19 in the network &lt;em&gt;rochefort&lt;/em&gt;.
+The address 172.x.0.1 is reserved for the router.
+Therefore, the containers will be assigned
+IP addresses from 172.x.0.2.
+In this solution, we created &lt;em&gt;athos&lt;/em&gt;, &lt;em&gt;aramis&lt;/em&gt; and &lt;em&gt;portos&lt;/em&gt;
+in this order.
+Therefore, the IP addresses will be:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;In network &lt;em&gt;buckingham&lt;/em&gt;:
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;athos&lt;/em&gt;: 172.18.0.2&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;porthos&lt;/em&gt;: 172.18.0.3&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;In network &lt;em&gt;rochefort&lt;/em&gt;:
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;aramis&lt;/em&gt;: 172.19.0.2&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;porthos&lt;/em&gt;: 172.19.0.3&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You can actually verify this configuration by inspecting
+the two networks with the following commands:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker network inspect buckingham&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker network inspect rochefort&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;The IP addresses might be different on your machines.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;communication-between-containers&#34; class=&#34;section level2&#34; number=&#34;4.2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.2&lt;/span&gt; Communication between containers&lt;/h2&gt;
+&lt;p&gt;Let’s see if and when the three containers can communicate.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-34&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.6  &lt;/strong&gt;&lt;/span&gt;Which containers are able to communicate?
+Justify your answer.
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The only containers that cannot communicate are &lt;em&gt;athos&lt;/em&gt; and &lt;em&gt;aramis&lt;/em&gt;,
+because they’re not connected to the same network.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-35&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.7  &lt;/strong&gt;&lt;/span&gt;Try to ping &lt;em&gt;porthos&lt;/em&gt; from &lt;em&gt;athos&lt;/em&gt; by using its IP address.&lt;/p&gt;
+&lt;div class=&#34;last-child&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;Which IP address of &lt;em&gt;porthos&lt;/em&gt; would you use?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;We need to use the IP address assigned to the endpoint linking
+&lt;em&gt;porthos&lt;/em&gt; to the network &lt;em&gt;buckingham&lt;/em&gt;, to which &lt;em&gt;athos&lt;/em&gt; is connected.
+In our case, this is 172.18.0.3.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-36&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.8  &lt;/strong&gt;&lt;/span&gt;Try to ping &lt;em&gt;porthos&lt;/em&gt; from &lt;em&gt;athos&lt;/em&gt; by using its name.
+Do you succeed? Are you surprised?
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;We succeed. Indeed, the network &lt;em&gt;buckingham&lt;/em&gt; provides a DNS server, that
+can translate names into IP addresses.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;p&gt;You can now exit the three containers.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Introduction to Docker</title>
       <link>/courses/cloudalbert/tutorials/docker-tutorial/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -17628,6 +19331,1164 @@ can translate names into IP addresses.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/details&gt;
 &lt;p&gt;You can now exit the three containers.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Atelier pratique sur Docker</title>
+      <link>/courses/cloud-fr/docker-fr/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/cloud-fr/docker-fr/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Dans ce TD, vous apprendrez à :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;exécuter des &lt;strong&gt;conteneurs&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;définir et construire des &lt;strong&gt;images&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;créer et utiliser des &lt;strong&gt;volumes&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;définir et utiliser des &lt;strong&gt;réseaux&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Prérequis :&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Avoir installé Docker sur votre ordinateur ou avoir importé la machine virtuelle Linux soit avec VirtualBox, soit avec Multipass.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Vous utilisez une machine virtuelle avec Multipass ? Cliquez ici pour plus d’infos
+&lt;/summary&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Commandes Multipass&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Pour démarrer la machine virtuelle, tapez &lt;code&gt;multipass start cloudvm&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Le dossier &lt;code&gt;/home/ubuntu/labs&lt;/code&gt; dans la machine virtuelle est monté (c’est-à-dire lié) au dossier
+sur VOTRE ordinateur (appelons-le &lt;code&gt;LAB&lt;/code&gt;) où vous stockerez tous les fichiers que vous créérez pendant les TD et les TP.
+Vous avez spécifié ce dossier lors de l’installation de la machine virtuelle.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Si vous ne vous souvenez plus du chemin vers le dossier lié à &lt;code&gt;/home/ubuntu/labs&lt;/code&gt;, tapez la
+commande &lt;code&gt;multipass info cloudvm&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Pour ouvrir un terminal dans la machine virtuelle, tapez &lt;code&gt;multipass shell cloudvm&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Lorsque le terminal s’ouvre, le dossier courant est &lt;code&gt;/home/ubuntu&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Tapez &lt;code&gt;cd labs&lt;/code&gt; pour vous déplacer vers le dossier où vous trouverez votre matériel de TP.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Vous utiliserez le terminal de la machine virtuelle uniquement pour taper les commandes Docker.
+Vous pouvez utiliser tous les outils installés sur votre machine pour créer et gérer les fichiers
+dans le dossier &lt;code&gt;LAB&lt;/code&gt; directement depuis votre ordinateur.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Une fois le TP terminé, tapez &lt;code&gt;exit&lt;/code&gt; pour quitter le terminal de la machine virtuelle. Vous reviendrez alors
+au terminal de votre ordinateur.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Dans le terminal de votre ordinateur, tapez &lt;code&gt;multipass stop cloudvm&lt;/code&gt; pour arrêter la machine virtuelle.
+Cela ne détruira PAS vos fichiers ! Cela arrête simplement la machine virtuelle pour qu’elle n’utilise plus inutilement les ressources de votre ordinateur.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Terminologie&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Vous utiliserez le &lt;strong&gt;terminal&lt;/strong&gt; pour exécuter des commandes Docker.
+Le terminal est le &lt;strong&gt;client&lt;/strong&gt; qui communique avec
+le démon Docker.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Docker exécute des &lt;strong&gt;conteneurs&lt;/strong&gt; sur votre ordinateur.
+Nous ferons référence à votre ordinateur comme étant l’&lt;strong&gt;hôte&lt;/strong&gt;,
+les conteneurs étant les &lt;strong&gt;invités&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;last-child&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;Une &lt;strong&gt;application conteneurisée&lt;/strong&gt;
+est une application qui s’exécute dans un conteneur.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;running&#34; class=&#34;section level1&#34; number=&#34;1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Exécuter des conteneurs&lt;/h1&gt;
+&lt;p&gt;Nous allons maintenant apprendre à utiliser la commande &lt;code&gt;docker run&lt;/code&gt; ainsi que quelques-unes de
+ses options.&lt;br /&gt;
+Dans les exercices suivants, nous exécuterons des conteneurs à partir de l’image nommée
+&lt;em&gt;alpine&lt;/em&gt; qui est
+&lt;a href=&#34;https://hub.docker.com/_/alpine&#34; target=&#34;_blank&#34;&gt;disponible sur le registre DockerHub&lt;/a&gt;.&lt;br /&gt;
+Cette image fournit une distribution légère
+(c’est-à-dire qu’elle ne contient pas beaucoup de fonctionnalités) de Linux.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.1  &lt;/strong&gt;&lt;/span&gt;Vous souhaitez exécuter un conteneur à partir de la dernière version de
+l’image &lt;em&gt;alpine&lt;/em&gt;.&lt;br /&gt;
+Quelle commande devez-vous taper dans le terminal ?&lt;br /&gt;
+Exécutez-la.
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Le but de cet exercice est de commencer à jouer avec la commande &lt;code&gt;docker run&lt;/code&gt;.
+Comme la question ne dit rien à propos des options, et ne mentionne pas non plus la commande à exécuter à l’intérieur du conteneur, on taperait :&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker run alpine&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.2  &lt;/strong&gt;&lt;/span&gt;Le conteneur est-il toujours en cours d’exécution ?
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Afin de lister tous les conteneurs encore en cours d’exécution sur l’hôte, tapez la commande suivante :&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker container ls&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Votre conteneur ne devrait pas apparaître dans le résultat,
+car il n’est pas en cours d’exécution.
+Pour voir tous les conteneurs, y compris ceux qui ne sont pas
+en cours d’exécution, tapez la commande suivante :&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker container ls -a&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.3  &lt;/strong&gt;&lt;/span&gt;En regardant la commande exécutée dans le conteneur (&lt;code&gt;/bin/sh&lt;/code&gt;),
+pouvez-vous dire pourquoi le conteneur s’est arrêté sans donner aucune sortie ?
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;La commande est &lt;code&gt;/bin/sh&lt;/code&gt; ;
+le conteneur exécute un terminal Linux.
+Mais comme nous n’avons pas spécifié ce qu’il fallait faire avec ce terminal
+(nous n’avons lancé aucune commande Linux, ni essayé d’accéder au terminal),
+le conteneur s’est arrêté.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;p&gt;Nous allons maintenant faire quelque chose d’utile avec l’image &lt;em&gt;alpine&lt;/em&gt;.
+Assurez-vous de lire les &lt;strong&gt;bonnes pratiques&lt;/strong&gt; que vous devriez
+adopter lorsque vous utilisez des images et des conteneurs.&lt;/p&gt;
+&lt;div class=&#34;infobox curiosity&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Bonnes pratiques&lt;/strong&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;strong&gt;Nommez vos conteneurs.&lt;/strong&gt; Bien que Docker attribue un nom par défaut à un nouveau conteneur,
+c’est généralement une bonne pratique de donner à un conteneur un nom de votre
+choix pour le rendre facilement distinguable. Vous pouvez le faire en utilisant l’option
+&lt;code&gt;--name&lt;/code&gt;. Essayez ce qui suit :&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;docker run --name my-alpine alpine&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Comme précédemment, le conteneur s’arrête immédiatement.
+Si vous listez tous vos conteneurs en tapant à nouveau :&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker container ls -a&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;vous devriez voir un conteneur nommé &lt;em&gt;my-alpine&lt;/em&gt;.&lt;/p&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;strong&gt;Supprimez automatiquement un conteneur si vous allez l’utiliser une seule fois.&lt;/strong&gt;
+À moins que vous ne vouliez réutiliser votre conteneur plus tard, vous pouvez demander à Docker de le supprimer automatiquement
+lorsqu’il s’arrête en utilisant l’option &lt;code&gt;--rm&lt;/code&gt;.
+Cela empêchera les conteneurs inutilisés de prendre trop d’espace sur disque.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Essayez ce qui suit :&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker run --rm --name container-to-remove alpine&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Si vous listez tous les conteneurs, vous devriez voir qu’il n’y a pas de conteneur
+nommé &lt;em&gt;container-to-remove&lt;/em&gt;.&lt;/p&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;strong&gt;Supprimez les conteneurs que vous n’utilisez plus.&lt;/strong&gt; Les conteneurs arrêtés qui ont été exécutés sans
+l’option &lt;code&gt;--rm&lt;/code&gt; sont toujours stockés sur votre machine hôte.
+Si vous voulez supprimer un conteneur
+spécifique (par exemple, &lt;em&gt;my-alpine&lt;/em&gt;), utilisez la commande suivante :&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;docker container rm my-alpine&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Si vous souhaitez supprimer tous les conteneurs arrêtés, utilisez la commande
+suivante :&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker container prune&lt;/code&gt;&lt;/p&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;strong&gt;Supprimez les images inutilisées.&lt;/strong&gt; Les images peuvent prendre beaucoup d’espace sur disque.
+Par conséquent, vous devriez penser à supprimer celles que vous n’avez plus l’intention d’utiliser.
+Les commandes pour supprimer une image spécifique
+et élaguer les images inutilisées sont respectivement &lt;code&gt;docker image rm&lt;/code&gt;
+et &lt;code&gt;docker image prune -a&lt;/code&gt;.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div id=&#34;passer-une-commande-à-une-application-conteneurisée&#34; class=&#34;section level2&#34; number=&#34;1.1&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.1&lt;/span&gt; Passer une commande à une application conteneurisée&lt;/h2&gt;
+&lt;p&gt;Rappelez-vous que la commande &lt;code&gt;docker run&lt;/code&gt; suit le modèle suivant :&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker run [options] nom-image [commande] [args]&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Le paramètre optionnel &lt;em&gt;commande&lt;/em&gt; fait référence à une commande
+que vous pouvez passer à l’application conteneurisée, éventuellement avec quelques arguments
+(paramètre &lt;em&gt;args&lt;/em&gt;).&lt;/p&gt;
+&lt;p&gt;Voyons un exemple.
+Comme nous l’avons vu précédemment, lorsque nous lançons un conteneur à partir de l’image &lt;em&gt;alpine&lt;/em&gt;,
+un terminal Linux &lt;code&gt;/bin/sh&lt;/code&gt; est lancé.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Remarque&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Le terminal Linux &lt;code&gt;/bin/sh&lt;/code&gt; est exécuté dans le conteneur.
+Par la suite, nous utiliserons les termes suivants :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Terminal hôte&lt;/strong&gt; Le terminal que vous utilisez pour
+interagir avec le système d’exploitation de votre ordinateur.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;last-child&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Terminal invité.&lt;/strong&gt; Le terminal qui s’exécute dans le container.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;En utilisant le paramètre optionnel &lt;em&gt;commande&lt;/em&gt;, nous pouvons exécuter
+une commande dans le terminal de l’invité.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:command-in-guest&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.4  &lt;/strong&gt;&lt;/span&gt;
+Lancez un conteneur à partir de l’image &lt;em&gt;alpine&lt;/em&gt; et exécutez la commande Linux
+&lt;code&gt;ls&lt;/code&gt; qui liste le contenu du dossier courant.&lt;/p&gt;
+&lt;div class=&#34;last-child&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;Où sont stockés les fichiers listés ?
+Dans l’hôte ou dans le conteneur ?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;code&gt;docker run --rm --name ls-test alpine ls&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;La commande &lt;code&gt;ls&lt;/code&gt; est exécutée dans le terminal de l’invité, par conséquent
+ce que nous voyons dans la sortie est une liste de fichiers stockés dans le conteneur.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Remarque&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Dans l’exercice &lt;a href=&#34;#exr:command-in-guest&#34;&gt;1.4&lt;/a&gt; la commande
+&lt;code&gt;ls&lt;/code&gt; est exécutée dans le terminal invité, mais sa sortie
+est redirigée vers le terminal hôte.&lt;/p&gt;
+&lt;p&gt;En d’autres termes, lorsque nous lançons le conteneur, nous
+n’interagissons pas directement avec le terminal invité ;
+nous envoyons juste une commande et la sortie est redirigée
+vers le terminal hôte.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;On va maintenant voir comment exécuter une commande avec arguments dans le terminal invité.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.5  &lt;/strong&gt;&lt;/span&gt;
+En utilisant l’utilitaire Linux &lt;code&gt;ping&lt;/code&gt;, vérifiez
+si le site Web &lt;code&gt;www.centralesupelec.fr&lt;/code&gt; est accessible.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;code&gt;docker run --rm --name ping-test alpine ping www.centralesupelec.fr&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Pour interrompre &lt;code&gt;ping&lt;/code&gt;
+, il suffit de taper la combinaison de touches que vous utilisez pour
+interrompre n’importe quelle autre commande dans votre terminal
+(typiquement Ctrl-C sous Windows et Cmd-C sous MacOs).&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;p&gt;Maintenant, exécutez la commande suivante :&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker run  --name my-alpine -it alpine&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Remarque :&lt;/strong&gt; nous n’avons pas utilisé l’option &lt;code&gt;--rm&lt;/code&gt; (le conteneur ne sera pas supprimé
+lorsque nous l’arrêterons, nous allons le réutiliser).
+De plus, nous n’avons pas spécifié de commande à exécuter dans le terminal invité.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.6  &lt;/strong&gt;&lt;/span&gt;Qu’obtenez-vous ?
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Lorsque nous exécutons un conteneur à partir de l’image &lt;em&gt;alpine&lt;/em&gt;, la commande
+&lt;code&gt;/bin/sh&lt;/code&gt; est exécutée dans le conteneur.
+Comme nous avons spécifié l’option &lt;code&gt;-it&lt;/code&gt;, ce que nous obtenons est un accès au terminal Linux
+fonctionnant dans le conteneur.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;démarrer-et-arrêter-les-conteneurs.&#34; class=&#34;section level2&#34; number=&#34;1.2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.2&lt;/span&gt; Démarrer et arrêter les conteneurs.&lt;/h2&gt;
+&lt;p&gt;&lt;code&gt;docker run&lt;/code&gt; est un raccourci pour deux commandes Docker, à savoir
+&lt;code&gt;docker create&lt;/code&gt;, qui crée un conteneur à partir d’une image,
+et &lt;code&gt;docker start&lt;/code&gt;, qui démarre le conteneur après sa création.&lt;/p&gt;
+&lt;p&gt;Supposons maintenant que vous souhaitiez télécharger une page Web
+en utilisant Linux Alpine.
+Vous pouvez utiliser la commande Linux &lt;code&gt;wget&lt;/code&gt; suivie de l’URL de la page
+que vous voulez télécharger.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:wget-exo&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.7  &lt;/strong&gt;&lt;/span&gt;En utilisant le terminal invité
+dans le conteneur &lt;em&gt;my-alpine&lt;/em&gt;,
+téléchargez
+&lt;a href=&#34;https://www.centralesupelec.fr/fr/presentation&#34; target=&#34;_blank&#34;&gt;cette page Web&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&#34;last-child&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;Où la page Web sera-t-elle sauvegardée ? Sur l’ordinateur hôte ou dans le conteneur ?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Tapez la commande suivante dans le terminal invité :&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;wget https://www.centralesupelec.fr/fr/presentation&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;La page Web sera enregistrée dans le dossier courant
+du conteneur. Vous pouvez vérifier que le fichier est bien là
+en tapant &lt;code&gt;ls&lt;/code&gt; dans le terminal de l’invité.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Voulez-vous copier le fichier téléchargé vers votre ordinateur ?
+&lt;/summary&gt;
+&lt;p&gt;Pour copier le fichier &lt;code&gt;presentation&lt;/code&gt; vers votre dossier de travail, tapez la commande suivante dans
+le terminal de l’hôte :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;docker cp &amp;lt;containerId&amp;gt;:/presentation .&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Dans la commande précédente, remplacez &lt;code&gt;&amp;lt;containerId&amp;gt;&lt;/code&gt; par l’identifiant de votre conteneur. Vous pouvez obtenir
+l’identifiant du conteneur à partir de la sortie de la commande &lt;code&gt;docker container ls -a&lt;/code&gt;.&lt;/p&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Où sont stockés les fichiers du conteneur ?&lt;/strong&gt;&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Si vous utilisez MacOS ou Windows
+&lt;/summary&gt;
+&lt;p&gt;Les fichiers gérés par Docker ne sont pas stockés directement sur votre ordinateur, mais
+dans la machine virtuelle Linux installée et exploitée par Docker Desktop (n’oubliez pas que Docker a toujours besoin de Linux pour être exécuté).&lt;/p&gt;
+&lt;p&gt;Par conséquent, vous devez ouvrir un terminal à l’intérieur de cette machine virtuelle Linux en tapant la commande suivante :&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker run -it --rm --privileged --pid=host justincormack/nsenter1&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Une fois le terminal ouvert, vous pouvez suivre les instructions données ci-dessous pour les utilisateurs de Linux.&lt;/p&gt;
+&lt;/details&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Si vous utilisez Docker sur Linux
+&lt;/summary&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Tous les fichiers gérés par Docker sont stockés dans le dossier &lt;code&gt;/var/lib/docker&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Pour accéder à ce dossier, vous devez être root (c’est-à-dire administrateur). Tapez la commande &lt;code&gt;sudo su&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Si vous tapez &lt;code&gt;ls /var/lib/docker&lt;/code&gt; vous pouvez voir les dossiers stockés dans ce dossier. Vous verrez qu’il y a des
+dossiers correspondant aux différents objets gérés par Docker (conteneurs, images, volumes et réseaux).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Pour localiser les fichiers d’un conteneur spécifique, vous devez d’abord obtenir l’&lt;strong&gt;identifiant du conteneur&lt;/strong&gt; en tapant &lt;code&gt;docker container ls -a&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Tapez la commande &lt;code&gt;docker inspect &amp;lt;container-id&amp;gt;&lt;/code&gt; (remplacez &lt;code&gt;&amp;lt;container-id&amp;gt;&lt;/code&gt; par l’identifiant du conteneur que vous avez l’intention d’inspecter).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Localisez le champ &lt;code&gt;UpperDir&lt;/code&gt;. La valeur de ce champ est le chemin vers le dossier (appelons-le &lt;code&gt;CONTAINER_DIR&lt;/code&gt;) qui contient la couche conteneur (celle qui peut être modifiée).
+Ce doit être un chemin qui se termine par &lt;code&gt;/diff&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Si vous tapez &lt;code&gt;cd CONTAINER_DIR&lt;/code&gt; (remplacez &lt;code&gt;CONTAINER_DIR&lt;/code&gt; par la valeur du champ &lt;code&gt;UpperDir&lt;/code&gt;) vous pouvez enfin voir les fichiers stockés dans
+votre conteneur.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;p&gt;Dans le terminal invité &lt;em&gt;my-alpine&lt;/em&gt;, tapez &lt;code&gt;exit&lt;/code&gt;.
+Cela ferme le terminal invité et, par conséquent, arrête le conteneur.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Remarque&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;L’arrêt du conteneur n’efface aucun des fichiers
+stockés dans le conteneur. La suppression du conteneur le fera.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Si vous souhaitez redémarrer le conteneur &lt;em&gt;my-alpine&lt;/em&gt;, vous pouvez
+utiliser la commande suivante :&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker container start -ai my-alpine&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Cela ouvrira à nouveau le terminal invité du conteneur ;
+tapez &lt;code&gt;ls&lt;/code&gt; pour vérifier que
+la page Web que vous avez téléchargée auparavant est toujours là.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;création-dimages&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Création d’images&lt;/h1&gt;
+&lt;p&gt;Une image Docker peut être considérée comme un modèle pour créer et exécuter un conteneur.
+Une image est un fichier qui contient un &lt;strong&gt;système de fichiers en couches&lt;/strong&gt;, chaque couche étant &lt;strong&gt;immuable&lt;/strong&gt; ;
+cela signifie que les fichiers qui appartiennent à une couche ne peuvent pas être
+modifiés ou supprimés, et que des fichiers ne peuvent pas être ajoutés à une couche.&lt;/p&gt;
+&lt;p&gt;Lorsqu’un conteneur est créé à partir d’une image, il
+sera composé de toutes les couches en lecture seule de l’image et, par-dessus
+celles-ci, d’une couche en écriture (appelée &lt;strong&gt;couche conteneur&lt;/strong&gt;),
+où tous les nouveaux fichiers créés dans le conteneur seront écrits.
+Par exemple, la page Web que vous avez téléchargée dans l’exercice &lt;a href=&#34;#exr:wget-exo&#34;&gt;1.7&lt;/a&gt;
+a été stockée dans la couche conteneur.&lt;/p&gt;
+&lt;div id=&#34;dockerfiles&#34; class=&#34;section level2&#34; number=&#34;2.1&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.1&lt;/span&gt; Dockerfiles&lt;/h2&gt;
+&lt;p&gt;La façon la plus utilisée de créer une image est d’utiliser un &lt;strong&gt;Dockerfile&lt;/strong&gt;, un fichier texte
+qui contient toutes les instructions nécessaires pour
+construire l’image.
+L’avantage du Dockerfile est qu’il peut être interprété
+par le moteur Docker, ce qui fait de la création d’images une tâche automatisée
+et répétable.&lt;/p&gt;
+&lt;p&gt;Supposons que nous voulions créer une application conteneurisée
+pour télécharger des images à partir d’une page Web.
+Comme modèle pour cette application, nous devons construire une nouvelle image
+, que nous appellerons &lt;em&gt;fig-downloader&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Le fichier Docker contenant les instructions pour construire l’image
+&lt;em&gt;fig-downloader&lt;/em&gt; est le suivant :&lt;/p&gt;
+&lt;pre class=&#34;dockerfile&#34;&gt;&lt;code&gt;FROM ubuntu
+RUN apt-get update
+RUN apt-get install -y wget
+RUN mkdir -p /my-figures
+WORKDIR /my-figures
+ENTRYPOINT [&amp;quot;wget&amp;quot;, &amp;quot;-nd&amp;quot;, &amp;quot;-r&amp;quot;, &amp;quot;-A&amp;quot;, &amp;quot;jpg,jpeg,bmp,png,gif&amp;quot;]
+CMD [&amp;quot;https://www.centralesupelec.fr/fr/presentation&amp;quot;]&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Voici l’explication :&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Nous utilisons l’image &lt;em&gt;ubuntu&lt;/em&gt; comme &lt;strong&gt;image de base&lt;/strong&gt;.
+Cela correspond à l’instruction &lt;code&gt;FROM ubuntu&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Nous installons l’utilitaire &lt;code&gt;wget&lt;/code&gt; dans l’image de base.
+Cela correspond aux instructions
+&lt;code&gt;RUN apt-get update&lt;/code&gt; et &lt;code&gt;RUN apt-get install -y wget&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Nous créons un dossier &lt;code&gt;my-figures&lt;/code&gt; sous le dossier racine de l’image.
+Cela correspond à l’instruction &lt;code&gt;RUN mkdir -p /my-figures&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Nous définissons le dossier &lt;em&gt;/my-figures&lt;/em&gt; comme
+&lt;strong&gt;dossier de travail&lt;/strong&gt; de l’image. Cela correspond à l’instruction
+&lt;code&gt;WORKDIR /my-figures&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Nous spécifions la commande à exécuter lorsqu’un conteneur est lancé à partir de cette image.
+Cela correspond à l’instruction :&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;ENTRYPOINT [&#34;wget&#34;, &#34;-nd&#34;, &#34;-r&#34;, &#34;-A&#34;, &#34;jpg,jpeg,bmp,png,gif&#34;]&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Cette instruction signifie : exécuter &lt;code&gt;wget&lt;/code&gt; avec les options
+&lt;code&gt;-nd&lt;/code&gt;, &lt;code&gt;-r&lt;/code&gt;, &lt;code&gt;-A&lt;/code&gt; ;
+la dernière option prend une liste d’extensions de fichiers
+(&lt;code&gt;jpg,jpeg,bmp,png,gif&lt;/code&gt;) en arguments.&lt;/p&gt;
+&lt;ol start=&#34;6&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Rappelez-vous que l’utilitaire &lt;code&gt;wget&lt;/code&gt; prend l’URL de la page Web en argument. L’URL sera spécifiée lorsque nous lancerons le conteneur à partir de
+l’image &lt;em&gt;fig-downloader&lt;/em&gt;.
+En option, nous pouvons spécifier un argument par défaut en utilisant le mot-clé CMD.
+La signification de l’instruction :&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;CMD [&#34;https://www.centralesupelec.fr/fr/presentation&#34;]&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;est la suivante : si nous n’indiquons pas d’URL lorsque nous lançons le conteneur, les images seront
+téléchargés à partir de
+&lt;a href=&#34;https://www.centralesupelec.fr/fr/presentation&#34; target=&#34;_blank&#34;&gt;https://www.centralesupelec.fr/fr/presentation&lt;/a&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;Quelle est la relation entre les lignes du fichier Docker et les couches de l’image ?
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Chaque ligne correspond à une nouvelle couche.
+La première ligne correspond à la couche inférieure ;
+la dernière ligne correspond à la couche supérieure.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:dockerfile-creation&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.2  &lt;/strong&gt;&lt;/span&gt;Pouvez-vous identifier un problème dans ce Dockerfile ?
+Modifiez le fichier Docker en conséquence.
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Lors de la création d’une image, il faut limiter le nombre de couche ; en fait, plus il y a de couches, plus l’image sera grande.
+Ici, nous créons trois couches distinctes avec trois commandes RUN ; nous pouvons
+simplement fusionner les trois couches.
+Le fichier Docker sera ainsi :&lt;/p&gt;
+&lt;pre class=&#34;dockerfile&#34;&gt;&lt;code&gt;FROM ubuntu
+RUN apt-get update &amp;amp;&amp;amp; \
+    apt-get install -y wget &amp;amp;&amp;amp; \
+    mkdir -p /my-figures
+WORKDIR /my-figures
+ENTRYPOINT [&amp;quot;wget&amp;quot;, &amp;quot;-nd&amp;quot;, &amp;quot;-r&amp;quot;, &amp;quot;-A&amp;quot;, &amp;quot;jpg,jpeg,bmp,png,gif&amp;quot;]
+CMD [&amp;quot;https://www.centralesupelec.fr/fr/presentation&amp;quot;]&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;création-dune-image&#34; class=&#34;section level2&#34; number=&#34;2.2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.2&lt;/span&gt; Création d’une image&lt;/h2&gt;
+&lt;p&gt;Nous allons maintenant créer (en anglais, &lt;em&gt;build&lt;/em&gt;) une image à partir d’un Dockerfile.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Créez un dossier nommé &lt;em&gt;fig-downloader&lt;/em&gt; sur votre ordinateur avec
+un fichier nommé &lt;em&gt;Dockerfile&lt;/em&gt; à l’intérieur.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Dans le &lt;em&gt;Dockerfile&lt;/em&gt;, écrivez l’ensemble des instructions que
+vous avez proposées dans l’exercice &lt;a href=&#34;#exr:dockerfile-creation&#34;&gt;2.2&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;En utilisant le terminal, déplacez-vous dans le dossier de travail &lt;em&gt;fig-downloader&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Créez une image appelée &lt;em&gt;fig-downloader&lt;/em&gt; en exécutant la commande suivante :&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;docker build -t fig-downloader .&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Le &lt;code&gt;.&lt;/code&gt; à la fin de la commande signifie que le moteur Docker
+cherchera un fichier nommé &lt;em&gt;Dockerfile&lt;/em&gt; dans le dossier de travail.&lt;/p&gt;
+&lt;div class=&#34;infobox curiosity&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Bon à savoir&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Si vous donnez au Dockerfile un nom différent (par exemple, &lt;em&gt;Dockerfile-fig-downloader&lt;/em&gt;),
+la commande pour créer l’image sera :&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker build -t fig-downloader -f Dockerfile-fig-downloader .&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;L’option &lt;code&gt;-f&lt;/code&gt; est utilisée pour spécifier le nom du Dockerfile.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Afin de vérifier que la nouvelle image a été créée, tapez la commande suivante :&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker images&lt;/code&gt;&lt;/p&gt;
+&lt;!-- Let&#39;s dive deeper into the anatomy of an image.
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercice**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-7&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-7) &lt;/strong&gt;&lt;/span&gt;Run the following command:
+
+``
+docker history fig-downloader
+`` 
+
+and analyze the layers of the new image. 
+
+* Why do some layers have an ID, while others 
+are marked as &lt;i&gt;missing&lt;/i&gt;?
+
+::::: {.last-child}
+* Can you find the identifiers of the intermediate images?
+:::::
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+
+:::
+
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+The layers with an ID correspond to the layers of 
+the new image, including the top layer and the base image.
+The layers marked as *missing* are those that compose the 
+base image. Those layers are not stored in  
+your computer, 
+simply because they belong to an image 
+that hasn&#39;t been built on your computer 
+and you downloaded from the DockerHub registry.
+
+By looking at the output of ``docker image ls -a`` and the output of this command,
+we see that the layers between the base image and the top layer have the 
+same identifiers as the intermediate images.
+
+:::
+
+&lt;/details&gt;
+
+--&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:dl-1-container&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.3  &lt;/strong&gt;&lt;/span&gt;Exécutez la commande suivante :&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker run --name dl-1 fig-downloader&lt;/code&gt;&lt;/p&gt;
+Que fait-il ? Où se trouvent les images téléchargées ?
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Nous avons téléchargé les figures
+&lt;a href=&#34;https://www.centralesupelec.fr/fr/presentation&#34; target=&#34;_blank&#34;&gt;de cette page&lt;/a&gt;.
+Les images téléchargées se trouvent dans le dossier &lt;em&gt;/my-figures&lt;/em&gt;
+du conteneur &lt;em&gt;dl-1&lt;/em&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.4  &lt;/strong&gt;&lt;/span&gt;Exécutez la commande suivante :&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker run --name dl-2 fig-downloader https://www.centralesupelec.fr/&lt;/code&gt;&lt;/p&gt;
+Qu’est-ce que cela fait ? Où se trouvent les images téléchargées ?
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Nous avons téléchargé les images
+&lt;a href=&#34;https://www.centralesupelec.fr&#34; target=&#34;_blank&#34;&gt;de cette page&lt;/a&gt;.
+En fait, nous avons remplacé l’URL spécifiée par le mot-clé CMD par une nouvelle URL.
+Les images téléchargées se trouvent dans le dossier &lt;em&gt;/my-figures&lt;/em&gt;
+du conteneur &lt;em&gt;dl-2&lt;/em&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;containerized-python-application&#34; class=&#34;section level2&#34; number=&#34;2.3&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.3&lt;/span&gt; Containerized Python application&lt;/h2&gt;
+&lt;p&gt;Téléchargez &lt;a href=&#34;/courses/cloud-computing/tutorial-docker/word-frequency.zip&#34;&gt;cet archive&lt;/a&gt;
+et décompressez-le dans votre dossier de travail.
+Dans cette archive, vous trouverez :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Un Dockerfile.&lt;/li&gt;
+&lt;li&gt;Un script Python &lt;em&gt;main.py&lt;/em&gt; qui demande à l’utilisateur d’entrer l’URL et la langue d’une page Web,
+et imprime les 10 mots les plus fréquents dans cette page.&lt;/li&gt;
+&lt;li&gt;Un fichier &lt;em&gt;requirements.txt&lt;/em&gt; contenant la liste des paquets Python
+nécessaires pour exécuter le script donné.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Le contenu du Dockerfile est le suivant :&lt;/p&gt;
+&lt;pre class=&#34;dockerfile&#34;&gt;&lt;code&gt;FROM python:3.7-slim
+RUN mkdir -p /app
+WORKDIR /app
+COPY ./main.py ./requirements.txt /app/
+RUN pip install -r requirements.txt
+ENTRYPOINT [&amp;quot;python&amp;quot;, &amp;quot;main.py&amp;quot;]&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.5  &lt;/strong&gt;&lt;/span&gt;Décrivez ce que fait ce Dockerfile.
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;Prend &lt;em&gt;python:3.7-slim&lt;/em&gt; comme image de base.&lt;/li&gt;
+&lt;li&gt;Crée un nouveau dossier &lt;em&gt;app&lt;/em&gt; dans l’image sous le dossier racine.&lt;/li&gt;
+&lt;li&gt;Modifie le dossier de travail en &lt;em&gt;/app&lt;/em&gt;.&lt;/li&gt;
+&lt;li&gt;Copie les fichiers &lt;em&gt;main.py&lt;/em&gt; et &lt;em&gt;requirements.txt&lt;/em&gt;
+vers le dossier &lt;em&gt;/app&lt;/em&gt; stocké dans l’image.&lt;/li&gt;
+&lt;li&gt;Exécute la commande &lt;code&gt;pip install&lt;/code&gt; pour installer les bibliothèques Python
+spécifiées dans le fichier &lt;em&gt;requirements.txt&lt;/em&gt;.&lt;/li&gt;
+&lt;li&gt;Exécute la commande &lt;code&gt;python main.py&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34; word-latex=&#34;{exercisebox}&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.6  &lt;/strong&gt;&lt;/span&gt;Créez une image &lt;em&gt;wordfreq&lt;/em&gt; en utilisant ce Dockerfile.
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;code&gt;docker build -t wordfreq .&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-11&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.7  &lt;/strong&gt;&lt;/span&gt;Sans modifier le Dockerfile, récréez la même image.
+Que constatez-vous ?
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;La création est très rapide.
+Comme nous n’avons pas changé le Dockerfile, l’image
+est récréée en utilisant les couches de l’image créée
+précédemment.
+Ceci est clairement indiqué par le mot &lt;strong&gt;CACHED&lt;/strong&gt; écrit
+à côté de chaque couche.
+L’utilisation des couches déjà stockées est appelée &lt;strong&gt;build cache&lt;/strong&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-12&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.8  &lt;/strong&gt;&lt;/span&gt;Que se passe-t-il si vous modifiez une ligne du script Python et que
+vous récréez l’image ?
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Ajoutez une instruction à la fin de &lt;em&gt;main.py&lt;/em&gt;, comme par exemple :&lt;/p&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;print(&amp;quot;Finish!&amp;quot;)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Ensuite récréez l’image.
+Les trois couches inférieures ne sont pas affectées par la modification, donc
+elles bénéficient du build cache.
+La couche 4 est la première à être affectée par la modification.
+Cette couche, ainsi que les couches supérieures, doivent donc être récrées.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-13&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.9  &lt;/strong&gt;&lt;/span&gt;Sur la base des considérations précédentes,
+pouvez-vous dire ce qui ne va pas avec ce Dockerfile ?
+Modifiez le Dockerfile en conséquence et reconstruisez l’image.
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Chaque fois que nous modifions &lt;em&gt;main.py&lt;/em&gt; et que nous récréons l’image,
+les couches 4 et 5 sont recréées, ce qui signifie que tous les paquets Python
+sont téléchargés et installés.
+En fonction de la taille et du nombre de paquets, cela peut
+prendre un certain temps.
+Une meilleure façon de structurer le Dockerfile est d’installer les paquets
+avant de copier le script Python vers l’image.
+Voici comment modifier le Dockerfile :&lt;/p&gt;
+&lt;pre class=&#34;dockerfile&#34;&gt;&lt;code&gt;FROM python:3.7-slim
+RUN mkdir -p /app
+WORKDIR /app
+COPY ./requirements.txt /app/
+RUN pip install -r requirements.txt
+COPY ./main.py /app/
+ENTRYPOINT [&amp;quot;python&amp;quot;, &amp;quot;main.py&amp;quot;]&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-14&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.10  &lt;/strong&gt;&lt;/span&gt;Modifiez &lt;em&gt;main.py&lt;/em&gt; en ajoutant une nouvelle ligne de code et récréez l’image.
+Qu’est-ce qui a changé ?
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Les paquets Python ne sont pas réinstallés ; la création de l’image
+prend beaucoup moins de temps qu’auparavant.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;p&gt;Jouez avec l’application en exécutant la commande suivante :&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker run --rm -it wordfreq&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;L’application conteneurisée vous demandera d’insérer l’URL d’une page web et
+la langue de la page (en anglais).
+Le résultat sera les 20 mots les plus utilisés dans la page web.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;volumes-de-données&#34; class=&#34;section level1&#34; number=&#34;3&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Volumes de données&lt;/h1&gt;
+&lt;p&gt;Dans l’exercice &lt;a href=&#34;#exr:dl-1-container&#34;&gt;2.3&lt;/a&gt;, il vous a été demandé d’exécuter un conteneur nommé
+&lt;em&gt;dl-1&lt;/em&gt; pour télécharger des chiffres à partir d’une page Web.
+Les figures ont été téléchargées dans le dossier
+&lt;em&gt;/my-figures&lt;/em&gt; du conteneur.
+Mais nous avons laissé une question sans réponse.&lt;/p&gt;
+&lt;p&gt;**Comment transférer ces chiffres du conteneur vers l’ordinateur hôte ?&lt;/p&gt;
+&lt;p&gt;La solution consiste à utiliser des &lt;strong&gt;volumes&lt;/strong&gt;.&lt;/p&gt;
+&lt;div id=&#34;docker-volumes&#34; class=&#34;section level2&#34; number=&#34;3.1&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.1&lt;/span&gt; Docker volumes&lt;/h2&gt;
+&lt;p&gt;Un volume peut être considéré comme un périphérique de stockage virtuel attaché à un conteneur.
+Tous les fichiers sont écrits sur un volume qui ne sera pas supprimé lorsque le conteneur est supprimé.&lt;/p&gt;
+&lt;p&gt;Créons un nouveau volume Docker appelé &lt;em&gt;data-volume&lt;/em&gt; :&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker volume create data-volume&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox curiosity&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Bon à savoir (notion avancée)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Où les données seront-elles réellement stockées ? &lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Vous pouvez inspecter le nouveau volume en tapant la commande
+suivante :&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker volume inspect data-volume&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Un &lt;em&gt;point de montage&lt;/em&gt; est indiqué ; il s’agit du dossier dans lequel les données
+seront effectivement stockées.
+Si vous êtes sou Linux, ce dossier sera disponible sur l’hôte ;
+si vous êtes sous Windows ou MacOS,
+vous ne trouverez pas ce dossier sur votre ordinateur.
+Il sera disponible dans la machine virtuelle
+que Docker utilise sur MacOS et Windows.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Voulez-vous voir le dossier ? (Instructions pour Windows et MacOS)&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Une façon de voir la VM cachée est d’exécuter
+l’application conteneurisée suivante :&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker run -it --rm --privileged --pid=host justincormack/nsenter1&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Cette application ouvrira un terminal invité dans la VM.
+Vous pouvez ensuite utiliser les commandes &lt;code&gt;cd&lt;/code&gt; et &lt;code&gt;ls&lt;/code&gt;
+pour naviguer jusqu’au dossier indiqué comme chemin de montage
+du nouveau volume.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;partage-de-données&#34; class=&#34;section level3&#34; number=&#34;3.1.1&#34;&gt;
+&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.1.1&lt;/span&gt; Partage de données&lt;/h3&gt;
+&lt;p&gt;Un volume Docker peut être utilisée pour permettre à deux conteneurs Docker de partager des données.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-15&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;Exécutez un conteneur à partir de l’image &lt;code&gt;ubuntu&lt;/code&gt;,
+en spécifiant les options pour :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;supprimer le conteneur une fois son exécution terminée.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;interagir avec le terminal Linux invité dans le conteneur.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;last-child&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;monter le volume &lt;em&gt;data-volume&lt;/em&gt; dans le dossier &lt;em&gt;/data&lt;/em&gt; du conteneur.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;code&gt;docker run --rm -it -v data-volume:/data ubuntu&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Tapez la commande suivante dans le terminal Linux invité pour créer un fichier
+&lt;em&gt;test-file.txt&lt;/em&gt; dans le dossier &lt;em&gt;/data&lt;/em&gt; :&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;echo &#34;This is a new file&#34; &amp;gt; /data/test-file.txt&lt;/code&gt;&lt;/p&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Affichez sur le terminal le contenu du fichier avec la commande suivante :&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;code&gt;cat /data/test-file.txt&lt;/code&gt;&lt;/p&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Tapez &lt;code&gt;exit&lt;/code&gt; pour quitter le terminal invité. Puisque nous avons spécifié l’option &lt;code&gt;--rm&lt;/code&gt;, le conteneur
+est &lt;strong&gt;supprimez&lt;/strong&gt;. Maintenant, nous allons vérifier que &lt;code&gt;test-file.txt&lt;/code&gt; est toujours accessible.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-16&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.2  &lt;/strong&gt;&lt;/span&gt;Exécutez un conteneur à partir de l’image &lt;em&gt;alpine:latest&lt;/em&gt;,
+en spécifiant les options pour :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;supprimer le conteneur une fois son exécution terminée.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;interagir avec le terminal Linux invité dans le conteneur.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;last-child&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;monter le volume &lt;em&gt;data-volume&lt;/em&gt; dans le dossier &lt;em&gt;/my-data&lt;/em&gt;
+du conteneur.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;code&gt;docker container run --rm -it -v data-volume:/my-data alpine&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-17&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.3  &lt;/strong&gt;&lt;/span&gt;Vérifiez que vous pouvez lire le fichier &lt;em&gt;test-file.txt&lt;/em&gt;.
+Dans quel dossier allez-vous chercher ?
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Nous devons regarder dans le dossier &lt;em&gt;/my-data&lt;/em&gt; car c’est là que
+nous avons monté &lt;em&gt;data-volume&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;cat /my-data/test-file.txt&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;p&gt;Tapez &lt;code&gt;exit&lt;/code&gt; pour sortir du terminal invité et arrêter le conteneur.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;réseaux&#34; class=&#34;section level1&#34; number=&#34;4&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Réseaux&lt;/h1&gt;
+&lt;p&gt;Afin de permettre aux conteneurs de communiquer et, par conséquent, de coopérer,
+Docker définit un modèle de réseau simple connu sous le nom de
+&lt;strong&gt;container network model&lt;/strong&gt; (figure (fig:cnm-docker)).&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Si vous utilisez une machine virtuelle Linux avec Multipass
+&lt;/summary&gt;
+&lt;p&gt;Dans cette section, vous devrez ouvrir plusieurs terminaux dans la machine virtuelle.
+Vous pouvez le faire facilement en utilisant &lt;code&gt;byobu&lt;/code&gt;, un gestionnaire de fenêtres avancé déjà disponible dans votre machine virtuelle.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Tapez simplement &lt;code&gt;byobu&lt;/code&gt; pour lancer le gestionnaire de fenêtres.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Si vous voulez ouvrir un nouveau terminal, appuyez simplement sur F2.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Si vous voulez passer d’un terminal à un autre, appuyez simplement sur F3 (pour passer au terminal précédent) ou F4
+(pour passer au terminal suivant).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Si vous voulez fermer un terminal, tapez simplement &lt;code&gt;exit&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Lorsque vous fermez tous les terminaux, &lt;code&gt;byobu&lt;/code&gt; cesse de s’exécuter.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/details&gt;
+&lt;div class=&#34;figure&#34; style=&#34;text-align: center&#34;&gt;&lt;span id=&#34;fig:cnm-docker&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/courses/cloud-computing/tutorial-docker/cnm.png&#34; alt=&#34;Le modèle de réseau de Docker&#34; width=&#34;100%&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 4.1: Le modèle de réseau de Docker
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-18&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.1  &lt;/strong&gt;&lt;/span&gt;Décrivez la sortie de la commande suivante :&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker network ls&lt;/code&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;La commande répertorie tous les réseaux créés par Docker sur
+votre ordinateur.
+Pour chaque réseau, les valeurs de quatre attributs sont affichées :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;L’identifiant.&lt;/li&gt;
+&lt;li&gt;Le nom.&lt;/li&gt;
+&lt;li&gt;Le pilote utilisé par le réseau.&lt;/li&gt;
+&lt;li&gt;La portée du réseau (locale ou globale).
+Une portée locale signifie que le réseau relie des conteneurs
+fonctionnant sur le même hôte, alors qu’une portée globale&lt;br /&gt;
+signifie que des conteneurs situés sur des hôtes différents peuvent communiquer.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Il est possible que vous voyez différents réseaux, si vous avez déjà utilisé Docker avant ce cours.
+Cependant, trois réseaux méritent d’être signalés :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Le réseau nommé &lt;strong&gt;bridge&lt;/strong&gt;, qui utilise le pilote &lt;strong&gt;bridge&lt;/strong&gt; et a une portée locale.
+Par défaut, tout nouveau conteneur est attaché à ce réseau.&lt;/li&gt;
+&lt;li&gt;Le réseau nommé &lt;strong&gt;host&lt;/strong&gt;, qui utilise le pilote &lt;strong&gt;host&lt;/strong&gt; et a une portée locale.
+Il est utilisé lorsque nous voulons qu’un conteneur utilise directement l’interface réseau de l’hôte.
+Il est important de se rappeler que ce réseau ne doit être utilisé que pour analyser le trafic réseau de l’hôte. Dans les autres cas, l’utilisation de ce réseau expose
+le conteneur à toutes sortes de risques de sécurité.&lt;/li&gt;
+&lt;li&gt;Le réseau nommé &lt;strong&gt;none&lt;/strong&gt;, qui utilise le pilote &lt;strong&gt;null&lt;/strong&gt; et a une portée locale.
+Attacher un conteneur à ce réseau signifie que le conteneur
+n’est connecté à aucun réseau, et qu’il est donc complètement isolé.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-19&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.2  &lt;/strong&gt;&lt;/span&gt;La commande suivante :&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker network inspect bridge&lt;/code&gt;&lt;/p&gt;
+affiche la configuration du réseau &lt;strong&gt;bridge&lt;/strong&gt;.
+En regardant cette configuration, pouvez-vous dire
+quelles adresses IP seront données aux conteneurs attachés à ce réseau
+? Quelle est l’adresse IP du routeur de ce réseau ?
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Les informations sont spécifiées dans le champ nommé &lt;strong&gt;IPAM&lt;/strong&gt;, plus précisément :&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Sous-réseau&lt;/strong&gt; indique la plage d’adresses IP utilisée par le réseau.
+La valeur de ce champ doit être 172.17.0.0/16 ;
+les adresses vont de 172.17.0.1 à 172.17.255.255.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Gateway&lt;/strong&gt; indique l’adresse IP du routeur du réseau.
+La valeur doit être 172.17.0.1.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div id=&#34;création-des-réseaux&#34; class=&#34;section level2&#34; number=&#34;4.1&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.1&lt;/span&gt; Création des réseaux&lt;/h2&gt;
+&lt;p&gt;Par défaut, tout nouveau conteneur est rattaché au réseau nommé &lt;em&gt;bridge&lt;/em&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-20&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.3  &lt;/strong&gt;&lt;/span&gt;
+Expliquez pourquoi ce n’est pas une bonne pratique d’attacher
+tous nos conteneurs au même réseau.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Tous les nouveaux conteneurs pourront communiquer sur ce réseau.
+Ce n’est pas une bonne idée.
+Si un attaquant parvient à compromettre l’un de ces conteneurs, il pourrait
+être en mesure d’attaquer également les autres conteneurs.
+En règle générale, nous devrions attacher deux conteneurs au même réseau &lt;strong&gt;uniquement&lt;/strong&gt; s’il est nécessaire qu’ils communiquent.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;p&gt;Nous pouvons utiliser la commande suivante pour créer un réseau.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker network create network_name&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-21&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.4  &lt;/strong&gt;&lt;/span&gt;Créez deux réseaux nommés &lt;em&gt;buckingham&lt;/em&gt; et &lt;em&gt;rochefort&lt;/em&gt; qui
+utilisent le pilote &lt;em&gt;bridge&lt;/em&gt; (voir figure &lt;a href=&#34;#fig:cnm-docker&#34;&gt;4.1&lt;/a&gt;).
+En utilisant la commande &lt;code&gt;docker network inspect&lt;/code&gt;,
+regardez les adresses IP des nouveaux réseaux et notez-les.
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Exécutez les commandes suivantes :&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker network create buckingham&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker network create rochefort&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Les adresses IP du réseau &lt;em&gt;buckingham&lt;/em&gt; sont
+172.18.0.0/16 (adresses de 172.18.0.1 à 172.18.255.255) ;
+Les adresses IP du réseau &lt;em&gt;rochefort&lt;/em&gt; sont :
+172.19.0.0/16 (en supposant que vous créez &lt;em&gt;buckingham&lt;/em&gt;
+avant &lt;em&gt;rochefort&lt;/em&gt;).&lt;/p&gt;
+&lt;p&gt;Les adresses IP peuvent être différentes sur vos machines.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-22&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.5  &lt;/strong&gt;&lt;/span&gt;
+Créez trois conteneurs &lt;em&gt;athos&lt;/em&gt;, &lt;em&gt;porthos&lt;/em&gt; et &lt;em&gt;aramis&lt;/em&gt; et attachez-les
+aux deux réseaux &lt;em&gt;buckingham&lt;/em&gt; et &lt;em&gt;rochefort&lt;/em&gt; comme indiqué
+dans la figure &lt;a href=&#34;#fig:cnm-docker&#34;&gt;4.1&lt;/a&gt;.
+&lt;strong&gt;Les trois conteneurs ouvriront un shell Linux Alpine&lt;/strong&gt;.
+Vous devrez lancer les commandes dans trois onglets distincts de votre terminal.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Quelles seront les adresses IP des trois conteneurs dans les deux réseaux ?
+Rappelez-vous que &lt;em&gt;porthos&lt;/em&gt; est attaché à deux réseaux, il aura donc deux interfaces réseau
+(endpoints) et, par conséquent, deux adresses IP.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;last-child&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;Vérifiez vos réponses en inspectant les deux réseaux (utilisez la commande
+&lt;code&gt;docker network inspect&lt;/code&gt;).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Voici les commandes pour exécuter &lt;em&gt;athos&lt;/em&gt; et &lt;em&gt;aramis&lt;/em&gt; tout en les connectant
+à &lt;em&gt;buckingham&lt;/em&gt; et &lt;em&gt;rochefort&lt;/em&gt; respectivement.&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker run --rm -it --name athos --network buckingham  alpine&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker run --rm -it --name aramis --network rochefort   alpine&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Voici la commande pour exécuter &lt;em&gt;porthos&lt;/em&gt; et l’attacher à
+&lt;em&gt;buckingham&lt;/em&gt; :&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker run --rm -it --name porthos --network buckingham   alpine&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;La commande suivante attache &lt;em&gt;porthos&lt;/em&gt; au second réseau &lt;em&gt;rochefort&lt;/em&gt; :&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker network connect rochefort porthos&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;En ce qui concerne les adresses IP, chaque réseau a des adresses IP
+dans l’intervalle 172.x.0.0/16, où x est 18 dans le réseau
+&lt;em&gt;buckingham&lt;/em&gt; et 19 dans le réseau &lt;em&gt;rochefort&lt;/em&gt;.
+L’adresse 172.x.0.1 est réservée au routeur.
+Par conséquent, les conteneurs se verront attribuer des adresses IP
+à partir de 172.x.0.2.
+Dans cette solution, nous avons créé &lt;em&gt;athos&lt;/em&gt;, &lt;em&gt;aramis&lt;/em&gt; et &lt;em&gt;portos&lt;/em&gt;
+dans cet ordre.
+Par conséquent, les adresses IP seront les suivantes :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Réseau &lt;em&gt;buckingham&lt;/em&gt;:
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;athos&lt;/em&gt;: 172.18.0.2&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;porthos&lt;/em&gt;: 172.18.0.3&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;Réseau &lt;em&gt;rochefort&lt;/em&gt;:
+&lt;ul&gt;
+&lt;li&gt;&lt;em&gt;aramis&lt;/em&gt;: 172.19.0.2&lt;/li&gt;
+&lt;li&gt;&lt;em&gt;porthos&lt;/em&gt;: 172.19.0.3&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Vous pouvez vérifier cette configuration en inspectant
+les deux réseaux avec les commandes suivantes :&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker network inspect buckingham&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;docker network inspect rochefort&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Les adresses IP peuvent être différentes sur vos machines.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;communication-entre-les-conteneurs&#34; class=&#34;section level2&#34; number=&#34;4.2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;4.2&lt;/span&gt; Communication entre les conteneurs&lt;/h2&gt;
+&lt;p&gt;Maintenant on va vérifier quels conteneuers arrivent à communiquer entre eux.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-23&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.6  &lt;/strong&gt;&lt;/span&gt;Quels conteneurs arrivent à communiquer ? Justifiez votre réponse.
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Les seuls conteneurs qui ne peuvent pas communiquer sont &lt;em&gt;athos&lt;/em&gt; et &lt;em&gt;aramis&lt;/em&gt;,
+parce qu’ils ne sont pas connectés au même réseau.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-24&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.7  &lt;/strong&gt;&lt;/span&gt;
+Essayez d’envoyer un ping à &lt;em&gt;porthos&lt;/em&gt; depuis &lt;em&gt;athos&lt;/em&gt; en utilisant son adresse IP.&lt;/p&gt;
+&lt;div class=&#34;last-child&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;Quelle adresse IP de &lt;em&gt;porthos&lt;/em&gt; utiliseriez-vous ?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Nous devons utiliser l’adresse IP attribuée à l’&lt;em&gt;endoint&lt;/em&gt; reliant
+&lt;em&gt;porthos&lt;/em&gt; au réseau &lt;em&gt;buckingham&lt;/em&gt;, auquel &lt;em&gt;athos&lt;/em&gt; est connecté.
+Dans notre cas, il s’agit de 172.18.0.3.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-25&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.8  &lt;/strong&gt;&lt;/span&gt;Essayez d’envoyer un ping à &lt;em&gt;porthos&lt;/em&gt; depuis &lt;em&gt;athos&lt;/em&gt; en utilisant son nom.
+Réussissez-vous ? Êtes-vous surpris ?
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Nous y parvenons. En effet, le réseau &lt;em&gt;buckingham&lt;/em&gt; fournit un serveur DNS, qui
+peut traduire les noms en adresses IP.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;p&gt;Vous pouvez maintenant arrêter les conteneurs.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 </description>
