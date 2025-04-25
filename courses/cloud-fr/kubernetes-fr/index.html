@@ -1,0 +1,1708 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Gianluca Quercini">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Introduction à Docker Compose et Kubernetes">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/courses/cloud-fr/kubernetes-fr/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="rgb(0, 136, 204)">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_3.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_3.png">
+
+  <link rel="canonical" href="/courses/cloud-fr/kubernetes-fr/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="Gianluca Quercini">
+  <meta property="og:url" content="/courses/cloud-fr/kubernetes-fr/">
+  <meta property="og:title" content="Docker Compose et Kubernetes | Gianluca Quercini">
+  <meta property="og:description" content="Introduction à Docker Compose et Kubernetes"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
+  
+    
+    
+  
+
+  
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Docker Compose et Kubernetes | Gianluca Quercini</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#experience"><span>Experience</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#publications"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  
+
+  
+
+<div class="container-fluid docs">
+  <div class="row flex-xl-nowrap">
+    <div class="col-12 col-md-3 col-xl-2 docs-sidebar">
+      
+
+
+<script src="/js/toggle-menu.js"></script>
+
+
+
+
+
+
+
+  
+    
+  
+
+
+
+
+<form class="docs-search d-flex align-items-center">
+  <button class="btn docs-toggle d-md-none p-0 mr-3" type="button" data-toggle="collapse" data-target="#docs-nav" aria-controls="docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    <span><i class="fas fa-bars"></i></span>
+  </button>
+
+  
+</form>
+
+<nav class="collapse docs-links" id="docs-nav">
+  
+
+  
+  
+  
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="docker-tutorial-fr" class="docs-toc-link" href="/courses/cloud-fr/docker-fr/">Atelier pratique sur Docker</a>
+    
+
+  </div>
+  
+  <div class="docs-toc-item active">
+
+    <a onclick=open_menu_on_click(this) id="tutorial-kube-fr" class="docs-toc-link" href="/courses/cloud-fr/kubernetes-fr/">Docker Compose et Kubernetes</a>
+    
+
+  </div>
+  
+  
+</nav>
+
+    </div>
+
+    
+
+    <main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 docs-content" role="main">
+
+      <article class="article">
+
+        <div class="docs-article-container">
+          <div class="heading">Cloud computing</div>
+          <h1>Docker Compose et Kubernetes</h1>
+          <hr>
+          <div class="logo">
+            
+            </div>
+
+          <div class="article-style">
+            
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p><link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/cloud-computing.css"></p>
+<div class="infobox warning">
+<p><strong>Warning</strong></p>
+<p><strong>Si vous utilisez la VM Linux</strong>, vous devez modifier la configuration matérielle de la VM avant de la démarrer.
+Vous pouvez également <a href="https://webtv.centralesupelec.fr/permalink/v12619ffbdbb7mpc6xbp/" target="_blank">regarder cette vidéo</a>.
+Voici les modifications nécessaires :</p>
+<ul>
+<li><p>Augmenter la mémoire principale à 4 Go.</p></li>
+<li><p>Fixer le nombre de CPU à 2.</p></li>
+</ul>
+<p>Sans ces modifications, Kubernetes pourrait ne pas fonctionner correctement.</p>
+</div>
+<p>Dans ce TD, vous apprendrez à :</p>
+<ul>
+<li><p><strong>Créer</strong> et <strong>déployer</strong> une <strong>application multiservice</strong> avec <strong>Docker Compose</strong>.</p></li>
+<li><p><strong>Pousser une image</strong> vers <strong>DockerHub</strong>.</p></li>
+<li><p><strong>Déployer</strong> une <strong>application multiservice</strong> avec <strong>Kubernetes</strong>.</p></li>
+</ul>
+<div class="infobox warning">
+<p><strong>Warning</strong></p>
+<p>Ce TD est adapté des exemples présentés dans les chapitres
+14 et 20 du livre
+<a href="https://www.packtpub.com/product/learn-docker-fundamentals-of-docker-19-x-second-edition/9781838827472" target="_blank">G. Schenker, <em>Learn Docker - Fundamentals of Docker 19.x</em> (March 2020)</a>.</p>
+</div>
+<div id="docker-compose" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Docker Compose</h1>
+<p>Dans cette section, vous allez créer et déployer une application multiservice en utilisant <a href="https://docs.docker.com/compose/" target="_blank"><strong>Docker Compose</strong></a>.</p>
+<p>Téléchargez <a href="/courses/cloud-computing/tutorial-kube/pet-store.zip">cet archive</a> et décompressez-le dans un dossier de votre ordinateur.
+L’archive contient tous les fichiers nécessaires pour créer et exécuter
+une application web composée de deux services :</p>
+<ul>
+<li><p><strong>web</strong>. C’est le <strong>frontend</strong> (la partie avec laquelle l’utilisateur interagit)
+de l’application.
+Il se compose de code HTML et JavaScript.</p></li>
+<li><p><strong>db</strong>. C’est le <strong>backend</strong> (la partie cachée à l’utilisateur).
+Il s’agit d’une base de données (relationnelle) <a href="https://www.postgresql.org/" target="_blank">PostgreSQL</a>.</p></li>
+</ul>
+<p>La structure de l’application est présentée dans la figure <a href="#fig:pet-store-struct">1.1</a>.
+Le dossier racine de l’application contient deux sous-dossiers, un pour chaque service
+(<code>database</code> et <code>web</code>).</p>
+<div class="figure" style="text-align: center"><span id="fig:pet-store-struct"></span>
+<img src="/courses/cloud-computing/tutorial-kube/pet-store-files.png" alt="Structure de l'application." width="100%" />
+<p class="caption">
+Figure 1.1: Structure de l’application.
+</p>
+</div>
+<div class="infobox curiosity">
+<p><strong>Good to know</strong></p>
+<ul>
+<li><p>Les fichiers avec l’extension <code>.conf</code> dans le dossier <code>database</code> contiennent les paramètres de configuration de la base de données PostgreSQL.</p></li>
+<li><p>Le fichier <code>init-db.sql</code> dans le dossier <code>database</code> contient les requêtes SQL pour alimenter la base de données avec des données (photos de chats).</p></li>
+<li><p>Le dossier <code>web</code> contient le code HTML et JavaScript de l’application web.
+Le fichier <code>package.json</code> contient les dépendances à installer.</p></li>
+</ul>
+</div>
+<p>Les deux dossiers contiennet un <strong>Dockerfile</strong> chacun.
+Le Dockerfile qui se trouve dans le dossier <code>database</code> est le suivant :</p>
+<pre class="dockerfile"><code>FROM postgres
+COPY init-db.sql /docker-entrypoint-initdb.d/
+RUN chown postgres:postgres /docker-entrypoint-initdb.d/*.sql
+ENV POSTGRES_USER dockeruser
+ENV POSTGRES_PASSWORD dockerpass
+ENV POSTGRES_DB pets</code></pre>
+<p>Ce Dockerfile utilise comme base une image existante appelée <code>postgres</code>,
+qui est <a href="https://hub.docker.com/_/postgres" target="_blank">documentée ici</a>.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1.1  </strong></span>
+Considérez l’instruction suivante :</p>
+<p><code>COPY init-db.sql /docker-entrypoint-initdb.d/</code></p>
+<p>En lisant la documentation de l’image <code>postgres</code>,
+répondez aux deux questions suivantes :</p>
+<ul>
+<li><p>Où se trouve le dossier <code>/docker-entrypoint-initdb.d/</code> ?</p></li>
+<li><p>Pourquoi copions-nous le fichier <code>init-db.sql</code> vers ce dossier ?</p></li>
+</ul>
+</div>
+</div>
+<p>Les trois dernières lignes du fichier Docker contiennent un mot-clé (<code>ENV</code>)
+que nous n’avons jamais rencontré auparavant.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 1.2  </strong></span>
+Lisez à nouveau la documentation de l’image <code>postgres</code>
+et essayez d’expliquer la signification des trois dernières lignes du Dockerfile.</p>
+</div>
+</div>
+<p>Le Dockerfile de l’application Web est le suivant :</p>
+<pre class="dockerfile"><code>FROM node:9.6-alpine
+RUN mkdir /app
+WORKDIR /app
+COPY package.json /app/
+RUN npm install
+COPY ./src /app/src
+EXPOSE 3000
+CMD node src/server.js</code></pre>
+<p>Le Dockerfile utilise l’image <code>node:9.6-alpine</code> comme base ; Cette image contient
+un environnement Node.js, permettant l’exécution de JavaScript côté serveur.
+Les instructions du Dockerfile ressemblent à celles des exemples que nous avons vus dans le premier TD.</p>
+<div class="infobox curiosity">
+<p><strong>Bon à savoir</strong></p>
+<ul>
+<li><p>La commande <code>npm install</code> installe toutes les dépendances spécifiées dans le fichier <code>package.json</code>.
+Les bibliothèques sont téléchargées depuis le <a href="https://docs.npmjs.com/about-npm" target="blank">registre du gestionnaire de paquet npm</a>.</p></li>
+<li><p>L’instruction <code>EXPOSE 3000</code> informe que le conteneur
+sera disponible au port 3000 lorsqu’il sera exécuté à partir de l’image.</p></li>
+</ul>
+<p>Dans la <a href="https://docs.docker.com/engine/reference/builder/#expose" target="blank">documentation de Docker</a>
+nous apprenons
+que l’instruction <code>EXPOSE</code> ne publie pas le port.
+Elle a vocation à être une sorte de documentation
+à destination des utilisateurs de l’image.</p>
+<p>Afin de publier réellement le port, nous utiliserons le fichier
+<code>docker-compose.yml</code>.</p>
+</div>
+<div id="description-de-lapplication" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> Description de l’application</h2>
+<p>L’application que nous considérons présente les éléments constitutifs d’une animalerie en ligne.
+Dans la version actuelle, l’application se limite à montrer quelques photos de chats.</p>
+<p>Le dossier racine de l’application contient un fichier nommé
+<code>docker-compose.yml</code> qui contient la <strong>configuration</strong> de l’application.
+Le contenu du fichier est le suivant. Il s’agit d’une séquence de paires clé-valeur.
+Chaque clé est aussi appelé un <strong>champ</strong>.</p>
+<pre><code>version: &quot;3.6&quot;
+services:
+  web:
+    build: web
+    image: pet-store-web
+    networks:
+      - backend
+    ports:
+      - 5000:3000
+  db:
+    build: database
+    image: pet-store-db
+    networks:
+      - backend
+    volumes:
+      - pets-data:/var/lib/postgresql/data
+
+networks:
+  backend:
+
+volumes:
+  pets-data:</code></pre>
+<p>Il y a trois sections principales :</p>
+<ul>
+<li><p><code>services</code>. Définit les services de l’application. Ici, deux services
+sont définis : <code>web</code> et <code>db</code>.</p></li>
+<li><p><code>networks</code>. Définit les réseaux utilisés par l’application.
+Ici, un réseau est défini : <code>backend</code>.</p></li>
+<li><p><code>volumes</code>. Définit les volumes utilisés par l’application.
+Ici, un volume est défini : <code>pets-data</code>.
+Le volume est attaché au dossier <code>/var/lib/postgresql/data</code>
+(qui se trouve dans le conteneur).</p></li>
+</ul>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 1.3  </strong></span>
+Quel champ indique à Docker Compose où trouver le fichier
+Dockerfile des deux services ?</p>
+</div>
+</div>
+<p>Quand on créera l’application en utilisant la configuration spécifiée dans le fichier <code>docker-compose.yml</code>,
+on créera deux images, une pour chaque service.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 1.4  </strong></span>
+Quel sera le nom des deux images ?
+Quel champ du fichier <code>docker-compose.yml</code> vous donne cette information ?</p>
+</div>
+</div>
+</div>
+<div id="création-de-lapplication" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> Création de l’application</h2>
+<p>Nous allons maintenant créer l’application.</p>
+<ul>
+<li><p>Ouvrez un terminal et, en utilisant la commande <code>cd</code>, positionnez-vous dans le dossier racine <code>pet-store</code>.</p></li>
+<li><p>Exécutez la commande suivante :</p></li>
+</ul>
+<p><code>docker compose build</code></p>
+<ul>
+<li><p>Pendant la création, vous pourriez lire un avertissement de <code>npm</code>. Ignorez-le.</p></li>
+<li><p>Lorsque la création est terminée, vérifiez que les deux images correspondant aux deux services ont bien été créées (quelle commande docker vous faut-il ici ?).</p></li>
+</ul>
+</div>
+<div id="exécutiuon-de-lapplication" class="section level2" number="1.3">
+<h2><span class="header-section-number">1.3</span> Exécutiuon de l’application</h2>
+<p>Nous allons maintenant exécuter l’application via la commande suivante :</p>
+<p><code>docker compose up</code></p>
+<details>
+<summary>
+Si vous utilisez une machine virtuelle Linux avec Multipass
+</summary>
+<p>Dans cette section, vous aurez besoin d’ouvrir plusieurs terminaux dans la machine virtuelle.
+Vous pouvez le faire facilement en utilisant <code>byobu</code>, un gestionnaire de fenêtres avancé déjà disponible dans votre machine virtuelle.</p>
+<ul>
+<li><p>Tapez simplement <code>byobu</code> pour lancer le gestionnaire de fenêtres.</p></li>
+<li><p>Si vous voulez ouvrir un nouveau terminal, appuyez simplement sur F2.</p></li>
+<li><p>Si vous voulez passer d’un terminal à un autre, appuyez simplement sur F3 (pour aller au terminal précédent) ou F4 (pour aller au terminal suivant).
+(pour passer au terminal suivant).</p></li>
+<li><p>Si vous voulez fermer un terminal, tapez simplement <code>exit</code>.</p></li>
+<li><p>Lorsque vous fermez tous les terminaux, <code>byobu</code> cesse de s’exécuter.</p></li>
+</ul>
+</details>
+<div class="infobox warning">
+<p><strong>Attention</strong></p>
+<p>Si votre application ne démarre pas parce que le numéro de port que vous avez choisi est déjà utilisé,
+essayez d’utiliser un autre port.</p>
+<p>N’utilisez pas les ports suivants, car ils sont considérés comme dangereux par les navigateurs :</p>
+<p>1, 7, 9, 11, 13, 15, 17, 19, 20, 21, 22, 23, 25, 37, 42, 43, 53, 69, 77, 79, 87, 95, 101, 102, 103, 104, 109, 110, 111, 113, 115, 117, 119, 123, 135, 137, 139, 143, 161, 179, 389, 427, 465, 512, 513, 514, 515, 526, 530, 531, 532, 540, 548, 554, 556, 563, 587, 601, 636, 993, 995, 1719, 1720, 1723, 2049, 3659, 4045, 5060, 5061, 6000, 6566, 6665, 6666, 6667, 6668, 6669, 6697, 10080</p>
+</div>
+<p>L’exécution de la commande affichera une série de messages à l’écran.
+Lorsque les messages s’arrêtent (le dernier message devrait être « database system is ready to accept connections »),
+ouvrez un nouveau terminal ou un nouvel onglet dans la fenêtre du terminal actuel.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 1.5  </strong></span>
+Vérifiez que le réseau et les volumes associés à l’application ont bien été créés.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 1.6  </strong></span>
+Combien de conteneurs seront associés à l’application ?</p>
+</div>
+</div>
+<p>Vous pouvez vérifier la réponse à la question précédente en tapant la commande suivante :</p>
+<p><code>docker compose ps</code></p>
+<p>Cette commande est exactement équivalente à <code>docker container ls</code>, sauf qu’elle n’affiche que les conteneurs associés à l’application
+que nous venons d’exécuter.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 1.7  </strong></span>
+Dans la sortie de la commande <code>docker compose ps</code>, pouvez-vous expliquer la signification de ce qui suit ?</p>
+<p><code>0.0.0.0:5000-&gt;3000/tcp</code></p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 1.8  </strong></span>
+Pouvez-vous dire quelle URL vous devez taper dans votre navigateur web
+pour accéder à l’application ?</p>
+<details>
+<summary>
+Si vous utilisez une machine virtuelle Linux avec Multipass
+</summary>
+<p>Afin d’ouvrir une fenêtre de navigateur Web dans la VM, vous devez ouvrir une nouvelle fenêtre de terminal sur votre ordinateur et suivre ces instructions :</p>
+<ol style="list-style-type: decimal">
+<li><p>Tapez <code>multipass ls</code> pour énumerer toutes les machines virtuelles gérées par <code>Multipass</code>.</p></li>
+<li><p>Copiez la première adresse IP associée à la machine virtuelle <code>cloudvm</code>.</p></li>
+<li><p>Tapez la commande suivante :</p></li>
+</ol>
+<p align="left">
+<code>xpra start ssh://ubuntu@ip/ --start=firefox</code>
+</p>
+<p>où vous remplacerez <code>ip</code> par l’adresse IP que vous avez copiée ci-dessus.</p>
+<ol start="4" style="list-style-type: decimal">
+<li>Une fenêtre Firefox devrait apparaître.</li>
+</ol>
+</details>
+</div>
+</div>
+<div class="infobox warning">
+<p><strong>Attention</strong></p>
+<p>Si vous voulez voir les photos des chats, vous devez ajouter
+<code>/pet</code> à l’URL que vous avez trouvée à la question précédente.
+Ceci est déterminé dans le fichier <code>server.js</code>.</p>
+</div>
+</div>
+<div id="arrêt-de-lapplication" class="section level2" number="1.4">
+<h2><span class="header-section-number">1.4</span> Arrêt de l’application</h2>
+<p>Vous pouvez arrêter l’application via la commande suivante :</p>
+<p><code>docker compose down</code></p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-9" class="exercise"><strong>Exercise 1.9  </strong></span>
+L’arrêt de l’application supprime-t-il les réseaux créés pour l’application ?
+Qu’en est-il des volumes ?</p>
+</div>
+</div>
+</div>
+<div id="mise-à-léchelle-dun-service" class="section level2" number="1.5">
+<h2><span class="header-section-number">1.5</span> Mise à l’échelle d’un service</h2>
+<p>Lorsque nous exécutons l’application, nous pouvons spécifier le nombre d’instances de chaque service.
+Ceci est utile lorsque nous nous attendons à ce que notre application soit sollicitée par de nombreux utilisateurs ;
+la charge de travail sera automatiquement équilibrée entre toutes les instances du service.</p>
+<p>Nous pouvons exécuter 3 instances du service <code>web</code> via la commande suivante :</p>
+<p><code>docker compose up --scale web=3 -d</code></p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-10" class="exercise"><strong>Exercise 1.10  </strong></span>
+L’exécution de la commande précédente entraîne une erreur.</p>
+<ul>
+<li><p>Pouvez-vous expliquer pourquoi ?</p></li>
+<li><p>Quelle correction au fichier <code>docker-compose.yml</code> proposeriez-vous ?</p></li>
+</ul>
+</div>
+</div>
+<div class="infobox warning">
+<p><strong>Attention</strong></p>
+<p>Vous devez arrêter l’application avant de la relancer.
+En fait, même si nous avons eu une erreur, une instance du service <code>db</code> et une instance du service <code>web</code> seront toujours en cours d’exécution.</p>
+</div>
+<ul>
+<li><p>Modifiez le fichier <code>docker-compose.yml</code> et relancez l’application.</p></li>
+<li><p>Exécutez la commande suivante et vérifiez que vous avez bien trois instances du service <code>web</code> en cours d’exécution.</p></li>
+</ul>
+<p><code>docker compose ps</code></p>
+<ul>
+<li>Essayez de vous connecter à l’application en utilisant les trois numéros de port indiqués dans la sortie de la commande précédente.</li>
+</ul>
+<div class="infobox warning">
+<p><strong>Attention</strong></p>
+<p>N’oubliez pas d’arrêter l’application avant de continuer le TD.</p>
+</div>
+</div>
+</div>
+<div id="pousser-une-application" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Pousser une application</h1>
+<p>Une fois que nous avons créé une application, nous pourrions vouloir la
+partager en la poussant vers le registre DockerHub ou tout autre registre de conteneurs, qu’il soit privé ou public.</p>
+<div id="créer-un-compte-sur-dockerhub" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Créer un compte sur DockerHub</h2>
+<p>Vous devez créer un compte sur le <a href="https://hub.docker.com/" target="_blank">site web de DockerHub</a>
+afin d’effectuer cette activité.</p>
+</div>
+<div id="renommer-les-images" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Renommer les images</h2>
+<p>Afin de pousser vos images vers le registre, vous devez les renommer, de sorte que le nouveau nom
+ait la structure suivante :</p>
+<p><code>votre-nom-d'utilisateur/nom-de-l'image:image-tag</code></p>
+<p>Par exemple, puisque mon nom d’utilisateur est <code>quercinigia</code>, je vais renommer
+les deux images <code>pet-store-web</code> et <code>pet-store-db</code> via la commande <code>docker tag</code> comme suit :</p>
+<p><code>docker tag pet-store-web quercinigia/pet-store-web:1.0</code></p>
+<p><code>docker tag pet-store-db quercinigia/pet-store-db:1.0</code></p>
+<p>J’ai choisi 1.0 comme tag, mais n’hésitez pas à en choisir un autre.</p>
+</div>
+<div id="se-connecter" class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> Se connecter</h2>
+<p>Vous devez vous connecter à votre compte DockerHub.</p>
+<details>
+<summary>
+Instructions pour Docker Desktop (macOS et Windows)
+</summary>
+<ul>
+<li><p>Utilisateurs mcOS: <a href="https://webtv.centralesupelec.fr/videos/log-in-docker-macos/" target="_blank">Regardez cette vidéo</a>.</p></li>
+<li><p>Utilisateurs Windows: <a href="https://webtv.centralesupelec.fr/videos/log-in-docker-windows/" target="_blank">Regardez cette vidéo</a>.</p></li>
+</ul>
+</details>
+<details>
+<summary>
+Instructions pour la machine virtuelle Linux
+</summary>
+<p>Connectez-vous au DockerHub via la commande suivante (remplacez YOUR-USERNAME avec votre nom d’utilisateur):</p>
+<p><code>docker login -u YOUR-USERNAME</code></p>
+<div class="infobox warning">
+<p><strong>Attention</strong></p>
+<p>Il se peut que vous receviez un avertissement indiquant que
+votre mot de passe sera stocké en clair.
+Il existe des méthodes pour éviter cela.
+Ces méthodes sortent du cadre de ce cours,
+vous pouvez lire davantage <a href="https://www.techrepublic.com/article/how-to-setup-secure-credential-storage-for-docker/" target="_blank">ici</a>.</p>
+</div>
+</details>
+</div>
+<div id="pousser-les-images" class="section level2" number="2.4">
+<h2><span class="header-section-number">2.4</span> Pousser les images</h2>
+<p>Une fois que vous avez réussi à vous connecter, vous pouvez taper les commandes suivantes dans le terminal
+pour pousser les deux images de votre application :</p>
+<p><code>docker push VOTRE-USERNAME/pet-store-web:1.0</code></p>
+<p><code>docker push VOTRE-USERNAME/pet-store-db:1.0</code></p>
+<p>N’oubliez pas de remplacer VOTRE-USERNAME par votre nom d’utilisateur.</p>
+<p>Une fois la tâche terminée, vérifiez que les images apparaissent
+dans <a href="https://hub.docker.com/repositories" target="_blank">le registre Docker</a>.</p>
+<div class="infobox curiosity">
+<p><strong>Bon à savoir</strong></p>
+<p>Ici, nous avons étiqueté et téléchargé manuellement les deux images.
+Cette méthode devient rapidement ennuyeuse lorsque l’application consiste en
+plus de deux images.
+Une autre façon de procéder est la suivante :</p>
+<ul>
+<li>Spécifiez les noms des images avec votre nom d’utilisateur dans le fichier <strong>docker-compose.yml</strong>.
+Par exemple, dans mon <strong>docker-compose.yml</strong> j’écrirais :</li>
+</ul>
+<pre><code>services:
+  web:
+    build: web
+    image: quercinigia/pet-store-web:1.0
+  ...
+  db:
+    build: database
+    image: quercinigia/pet-store-db:1.0
+  ...</code></pre>
+<ul>
+<li>Créez l’application via la commande suivante :</li>
+</ul>
+<p><code>docker compose build</code></p>
+<ul>
+<li>Poussez les images de l’application via la commande suivante :</li>
+</ul>
+<p><code>docker compose push</code></p>
+<p>De cette manière, nous pouvons pousser autant d’images que nous souhaitons via une seule commande.</p>
+</div>
+</div>
+</div>
+<div id="introduction-à-kubernetes" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Introduction à Kubernetes</h1>
+<p>Kubernetes est l’<strong>orchestrateur</strong> le plus populaire à ce jour.
+Il est utilisé pour gérer une application multiservice, généralement déployée sur plusieurs <strong>hôtes</strong> composant un <strong>cluster</strong>.</p>
+<p>En utilisant Docker Compose, un <strong>service</strong> correspond à une <strong>image Docker</strong>.
+et
+une <strong>instance de service</strong> à un <strong>conteneur Docker</strong>.</p>
+<p>En revanche, dans Kubernetes, l’unité de calcul est un <strong>Pod</strong>, c’est-à-dire une <strong>collection de conteneurs</strong>.
+En d’autres termes, nous ne raisonnons plus en termes de conteneurs,
+mais en termes de Pods. Bien entendu, un Pod peut également être constitué d’un seul conteneur.</p>
+<div class="infobox curiosity">
+<p><strong>Bon à savoir</strong></p>
+<p>En pratique, nous avons rarement à manipuler des Pods directement dans Kubernetes,
+car il existe des objets plus avancés qui les gèrent.
+Nous utiliserons ces objets dans les sections suivantes.</p>
+</div>
+<div id="activation-de-kubernetes" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Activation de Kubernetes</h2>
+<details>
+<summary>
+Instructions pour Docker Desktop (macOS etWindows)
+</summary>
+<p>Suivez les instructions documentées
+<a href="https://docs.docker.com/desktop/kubernetes/" target="_blank">dans cette page</a></p>
+<p>Avant de continer, n’oubliez pas de vérifier que Kubernetes est actif via la commande suivante :</p>
+<p><code>kubectl get nodes</code></p>
+<p>Vous devriez voir un noeud appelé <code>docker-desktop</code> dont le statut est READY.
+Si le statut n’est pas READY, attendez quelques secondes avant de retaper la commande.</p>
+<div class="infobox warning">
+<p><strong>Attention</strong></p>
+<p>Si vous n’arrivez pas à activer Kubernetes sous Docker Desktop,
+installez <strong>minikube</strong>, en suivant <a href="https://minikube.sigs.k8s.io/docs/start/" target="_blank">ces instructions</a>.</p>
+</div>
+</details>
+<details>
+<summary>
+Instructions pour la machine virtuelle Linux
+</summary>
+<p>Dans la VM Linux, vous trouverez <strong>Minikube</strong>, un cluster Kubernetes avec un seul nœud.</p>
+<p>Veuillez suivre <strong>toutes les instructions</strong> suivantes :</p>
+<ul>
+<li>Démarrez le cluster via la commande suivante :</li>
+</ul>
+<p><code>minikube start</code></p>
+<ul>
+<li>Vérifiez que Kubernetes est correctement activé via la commande suivante :</li>
+</ul>
+<p><code>kubectl get nodes</code></p>
+<p>Vous devriez voir un noeud appelé <code>minikube</code> dont le statut est READY.
+Si le statut n’est pas READY, attendez quelques secondes avant de retaper la commande.</p>
+<ul>
+<li>Ouvrez un <strong>nouveau terminal</strong> et tapez la commande :</li>
+</ul>
+<p><code>minikube tunnel</code></p>
+<p>Lorsque l’on vous demandera d’entrer un mot de passe, tapez simplement la touché entrée.
+La commande commencera à produire des résultats.
+<strong>Laissez ce terminal ouvert</strong> et retournez au terminal précédent.</p>
+<div class="infobox curiosity">
+<p><strong>Tunnel</strong></p>
+<p>Le tunnel Minikube est utilisé pour créer une route vers les services de type <code>LoadBalancer</code>.
+Si vous n’activez pas le tunnel, vous ne pourrez pas utiliser ces services dans les exercices ci-dessous.</p>
+</div>
+</details>
+</div>
+<div id="déploiement-dun-pod" class="section level2" number="3.2">
+<h2><span class="header-section-number">3.2</span> Déploiement d’un Pod</h2>
+<p>Pour déployer <a href="https://kubernetes.io/docs/concepts/workloads/pods/" target="_blank">un Pod</a>,
+il faut d’abord lui donner sa <strong>spécification</strong>, c’est-à-dire son nom
+et les conteneurs qui le composent avec leurs paramètres.
+De manière similaire à Docker Compose, un Pod est spécifié de manière <strong>déclarative</strong> avec un fichier de configuration YAML.</p>
+<p>Considérons la spécification suivante.</p>
+<pre><code>apiVersion: v1
+kind: Pod
+metadata:
+  name: web-pod
+  labels:
+    app: web-pod
+spec:
+  containers:
+  - name: web
+    image: nginx:alpine
+    ports:
+    - containerPort: 80</code></pre>
+<p>Voici une explication des champs de la spécification.</p>
+<ul>
+<li><p><em>apiVersion</em>. Définit la version du schéma de cette spécification.</p></li>
+<li><p><em>kind</em>. Le type de ressource que nous avons l’intention de créer.</p></li>
+<li><p><em>metadata</em>. Les métadonnées de la ressource. La liste de
+toutes les métadonnées est spécifiée <a href="https://kubernetes.io/docs/reference/kubernetes-api/common-definitions/object-meta/#ObjectMeta" target="blank">ici</a>.</p></li>
+<li><p><em>spec</em>. La spécification du comportement souhaité du Pod.
+La liste des spécifications possibles se trouve <a href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/Pod-v1/#PodSpec" target="blank">ici</a>.</p></li>
+</ul>
+<p>Essentiellement, la spécification précédente définit un Pod avec un conteneur qui est lancé à partir de l’image
+<code>nginx:alpine</code> (un serveur Web) et qui écoute le port 80.</p>
+<div class="infobox activitybox">
+<p><strong>Activité</strong></p>
+<ul>
+<li><p>Copiez la spécification ci-dessus dans un fichier nommé <code>sample-pod.yaml</code> (ou tout autre nom de votre choix).</p></li>
+<li><p>En utilisant la commande <code>cd</code> dans le terminal, placez-vous dans le répertoire où se trouve le fichier <code>sample-pod.yaml</code>.</p></li>
+<li><p>Déployez le Pod en tapant la commande suivante :</p></li>
+</ul>
+<p><code>kubectl create -f sample-pod.yaml</code></p>
+<ul>
+<li>Vérifiez que le Pod est déployé en tapant la commande suivante :</li>
+</ul>
+<p><code>kubectl get pods</code></p>
+<p>La première fois que vous exécutez la dernière commande, vous pouvez voir que le pod n’est pas encore prêt.
+Vous devez attendre que l’image <code>nginx:alpine</code> soit téléchargée de DockerHub.
+Attendez quelques secondes et réessayez la commande jusqu’à ce que le Pod soit marqué comme étant en cours d’exécution.</p>
+<p>Vous pouvez également obtenir plus d’informations sur le Pod en cours d’exécution (par exemple, l’adresse IP qui lui a été attribuée)
+en tapant la commande suivante :</p>
+<p><code>kubectl get pod -o wide web-pod</code></p>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-11" class="exercise"><strong>Exercise 3.1  </strong></span>
+Ouvrez un navigateur web et tapez <code>http://localhost:80</code>.</p>
+<ul>
+<li><p>Qu’obtenez-vous ? Que se passe-t-il si vous essayez d’utiliser l’IP du Pod au lieu de <code>locahost</code> ?</p></li>
+<li><p>Que devrions-nous définir pour résoudre le problème ?</p></li>
+</ul>
+</div>
+</div>
+<p>La configuration suivante définit un service de type <strong>LoadBalancer</strong>:</p>
+<pre><code>apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    targetPort: 80
+    protocol: TCP
+    name: http
+  selector:
+      app: web-pod</code></pre>
+<div class="infobox curiosity">
+<p><strong>Bon à savoir</strong></p>
+<p>Un service <strong>LoadBalancer</strong> est un service <strong>NodePort</strong>.
+qui offre une fonctionnalité d’équilibrage de charge.
+Il est associé à une adresse IP
+que les applications clientes (externes au cluster Kubernetes) peuvent utiliser pour accéder au service.</p>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-12" class="exercise"><strong>Exercise 3.2  </strong></span>
+Qu’est-ce le champ <code>selector</code> dans la définition du Service ?</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-13" class="exercise"><strong>Exercise 3.3  </strong></span>
+Quelle est la signification de <code>port</code> et <code>targetPort</code> ?</p>
+</div>
+</div>
+<div class="infobox activitybox">
+<p><strong>Activité</strong></p>
+<ul>
+<li><p>Copiez et collez la spécification du service dans un fichier nommé <code>sample-service.yaml</code> (ou tout autre nom de votre choix).</p></li>
+<li><p>En utilisant la commande <code>cd</code> dans le terminal, placez-vous dans le répertoire où se trouve le fichier <code>sample-service.yaml</code>.</p></li>
+<li><p>Déployez le service via la commande suivante :</p></li>
+</ul>
+<p><code>kubectl create -f sample-service.yaml</code></p>
+<ul>
+<li>Vérifiez que le service est déployé via la commande suivante :</li>
+</ul>
+<p><code>kubectl get services</code></p>
+<p>Cette commande renvoie tous les services en cours d’exécution dans Kubernetes.
+Pour chaque service, vous obtenez également un nom.
+Pour cibler uniquement le service que vous venez de créer, tapez simplement la commande suivante :</p>
+<p><code>kubectl get svc/nginx-service</code></p>
+<p>Le nom de votre service est <code>nginx-service</code> (comme spécifié dans le fichier <code>sample-service.yml</code>) ;
+`svc`` est seulement l’espace de noms où tous les services Kubernetes sont placés.</p>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-14" class="exercise"><strong>Exercise 3.4  </strong></span></p>
+<p>En regardant la sortie de la commande <code>kubectl get svc/nginx-service</code>,
+quelle URL devez-vous saisir dans le navigateur Web pour accéder au service ?</p>
+</div>
+</div>
+<div class="infobox warning">
+<p><strong>Attention</strong></p>
+<p>Arrêtez le Pod et le service avant de continuer. Voici les commandes nécessaires :</p>
+<p><code>kubectl delete po/web-pod</code></p>
+<p><code>kubectl delete svc/nginx-service</code></p>
+</div>
+</div>
+</div>
+<div id="kubernetes-déploiement-dune-application" class="section level1" number="4">
+<h1><span class="header-section-number">4</span> Kubernetes : déploiement d’une application</h1>
+<p>Dans cette section, nous allons déployer notre animalerie en ligne sur Kubernetes.
+Pour rappel, notre application se compose de deux services : <code>web</code> et <code>db</code>.</p>
+<p>Pour définir une application dans Kubernetes,
+nous devons utiliser deux types d’objets <strong>pour chaque service</strong> de l’application :</p>
+<ul>
+<li><p>Une <strong>ressource de charge de travail</strong> qui donne la spécification du service, telle que
+les Pods qui composent le service lui-même (images, paramètres réseau) et les métadonnées, telles que
+le nombre d’instances souhaité.</p></li>
+<li><p>Un objet <strong>Service</strong>. Comme nous l’avons vu précédemment, un objet Service
+est associée à une adresse IP qui permet aux applications clientes,
+à l’intérieur et à l’extérieur du cluster Kubernetes, de se connecter au service.</p></li>
+</ul>
+<p>Lorsque nous définissons une application dans Kubernetes, nous avons rarement, voire jamais, besoin de manipuler directement des Pods.
+Nous pouvons faire recours à des objets plus avancés, appelés <strong>Contrôleurs</strong>, pour une
+définition de l’état <strong>souhaité</strong> de l’application elle-même.
+Le type de contrôleur que nous devons utiliser dépend de la nature du service
+lui-même : <strong>sans état</strong> ou <strong>avec état</strong>.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-15" class="exercise"><strong>Exercise 4.1  </strong></span></p>
+<ul>
+<li><p>Le service <code>web</code> de notre application est-il avec ou sans état ?</p></li>
+<li><p>Le service <code>db</code> de notre application est-il sans état ou avec état ?</p></li>
+</ul>
+</div>
+</div>
+<div id="le-service-web-deployment" class="section level2" number="4.1">
+<h2><span class="header-section-number">4.1</span> Le service <code>web</code> : Deployment</h2>
+<p>Pour les <strong>services sans état</strong>, nous pouvons utiliser
+un objet <a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/" target="_blank"><strong>Deployment</strong></a>
+pour le déploiement d’un groupe de Pods identiques qui seront lancés sur plusieurs nœuds du cluster Kubernetes.</p>
+<p>Nous définissons ici la spécification d’un Deployment correspondant au service <code>web</code>.</p>
+<pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: pets
+      service: web
+  template:
+    metadata:
+      labels:
+        app: pets
+        service: web
+    spec:
+      containers:
+      - image: quercinigia/pet-store-web:1.0
+        name: web
+        ports:
+        - containerPort: 3000
+          protocol: TCP</code></pre>
+<p>Voici l’explication de la spécification :</p>
+<ul>
+<li><p>Un Deployment nommé <code>web</code> est créé, comme indiqué dans le champ <code>metadata.name</code>.</p></li>
+<li><p>Le Deployment crée trois Pods identiques, comme indiqué dans le champ <code>spec.replicas</code>.</p></li>
+<li><p>Le Deployment gère tous les Pods ayant <strong>les deux labels</strong> <code>app : pets</code> et
+<code>service : web</code>. Ceci est indiqué dans le champ <code>spec.selector.matchLabels</code>.
+Ce champ est utilisé pour indiquer au Deployment comment trouver ses Pods.</p></li>
+<li><p>La configuration des Pods qui font partie de ce Deployment est donnée dans le champ <code>spec.template</code> et ses sous-champs.</p></li>
+<li><p>Chaque Pod du Deployment a les labels <code>app : pets</code> et <code>service : web</code>.
+Ceci est indiqué dans le champ <code>spec.template.metadata.labels</code>.
+Notez que nous spécifions ici exactement les mêmes valeurs que nous avons indiquées dans le champ <code>spec.selector.matchLabels</code>.</p></li>
+<li><p>Chaque Pod a exactement un conteneur, nommé <code>web</code>, exécuté à partir de l’image
+<code>quercinigia/pet-store-web:1.0</code> stockée sur le DockerHub. Le conteneur écoutera le port 3000
+et utilisera le protocole TCP. Ceci est spécifié dans le champ <code>spec.template.spec.containers</code>.</p></li>
+</ul>
+<div class="infobox activitybox">
+<p><strong>Activité</strong></p>
+<ul>
+<li><p>Copiez et collez la spécification précédente dans un nouveau fichier <code>web-deployment.yaml</code> (ou tout autre nom de votre choix).
+Assurez-vous de <strong>remplacer</strong> l’image <code>quercinigia/pet-store-web:1.0</code>
+avec celle que vous avez poussée vers votre registre DockerHub.</p></li>
+<li><p>Utilisez la commande <code>cd</code> dans le terminal pour vous positionner dans le répertoire
+où le fichier <code>web-deployment.yaml</code> est stocké.</p></li>
+<li><p>Déployez ce Deployment dans Kubernetes en tapant la commande suivante :</p></li>
+</ul>
+<p><code>kubectl create -f web-deployment.yaml</code></p>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-16" class="exercise"><strong>Exercise 4.2  </strong></span>
+Saisissez la commande suivante :</p>
+<p><code>kubectl get all</code></p>
+<p>Quels objets ont été créés par cette commande ?</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-17" class="exercise"><strong>Exercise 4.3  </strong></span>
+Obtenez le nom de l’un des Pods en cours d’exécution et
+supprimez-le en utilisant la commande suivante :</p>
+<p><code>kubectl delete nom-du-pod</code></p>
+<p>Si la commande bloque le terminal, n’hésitez pas à taper Ctrl-C pour
+reprendre le contrôle du terminal.</p>
+<p>Tapez à nouveau la commande suivante :</p>
+<p><code>kubectl get all</code></p>
+<p>Combien de Pods voyez-vous ? Est-ce surprenant ?</p>
+</div>
+</div>
+</div>
+<div id="le-service-web-service" class="section level2" number="4.2">
+<h2><span class="header-section-number">4.2</span> Le service <code>web</code> : Service</h2>
+<p>Nous allons maintenant définir un <strong>Service</strong> pour que les utilisateurs puissent accèder au service Web.
+Voici la définition :</p>
+<pre><code>apiVersion: v1
+kind: Service
+metadata:
+  name: web
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    targetPort: 3000
+    protocol: TCP
+  selector:
+    app: pets
+    service: web</code></pre>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-18" class="exercise"><strong>Exercise 4.4  </strong></span>
+Décrivez la spécification de ce service.</p>
+</div>
+</div>
+<div class="infobox activitybox">
+<p><strong>Activité</strong></p>
+<ul>
+<li><p>Copiez et collez la spécification précédente dans un nouveau fichier <code>web-service.yaml</code> (ou tout autre nom de votre choix).</p></li>
+<li><p>Utilisez la commande <code>cd</code> dans le terminal pour vous positionner dans le répertoire où le fichier <code>web-service.yaml</code> est stocké.</p></li>
+<li><p>Créez le service avec la commande suivante :</p></li>
+</ul>
+<p><code>kubectl create -f web-service.yaml</code></p>
+<ul>
+<li>Vérifiez que le service a été créé avec la commande suivante :</li>
+</ul>
+<p><code>kubectl get services</code></p>
+<ul>
+<li>Localisez l’IP externe (appelons-le EXTERNAL-IP) du service web et tapez l’URL <code>http://EXTERNAL-IP:8080</code> dans votre navigateur Web.<br />
+Vous devriez voir une page Web où la phrase <em>Pet store</em> apparaît.</li>
+</ul>
+</div>
+</div>
+<div id="le-service-db-statefulset" class="section level2" number="4.3">
+<h2><span class="header-section-number">4.3</span> Le service <code>db</code> : StatefulSet</h2>
+<p>Kubernetes a défini un type spécial de ReplicaSet pour les services avec état,
+appelé <a href="https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/" target="_blank"><strong>StatefulSet</strong></a>.</p>
+<p>Mous allons maintenant définir un StatefulSet pour donner la spécification du service <code>db</code>.</p>
+<pre><code>apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db
+spec:
+  selector:
+    matchLabels:
+      app: pets
+      service: db
+  serviceName: db
+  template:
+    metadata:
+      labels:
+        app: pets
+        service: db
+    spec:
+      containers:
+      - image: quercinigia/pet-store-db:1.0
+        name: db
+        ports:
+        - containerPort: 5432
+        volumeMounts:
+        - mountPath: /var/lib/postgresql/data
+          name: pets-data
+  volumeClaimTemplates:
+  - metadata:
+      name: pets-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Mi</code></pre>
+<p>Vous ne devriez pas avoir de mal à comprendre la signification des champs de cette spécification.
+dans cette spécification.
+Les champs sont également
+documentés dans la <a href="https://kubernetes.io/docs/reference/kubernetes-api/workload-resources/stateful-set-v1/#StatefulSetSpec" target="_blank">documentation officielle de Kubernetes</a>.
+Deux points méritent d’être expliqués.
+Premièrement, la spécification d’un <code>StatefulSet</code> a besoin d’un attribut <code>serviceName</code> qui indique le nom du service responsable de l’identification réseau
+des Pods gérés par le StatefulSet.
+Cet attribut est obligatoire.</p>
+<p>Une autre nouveauté est le champ <code>volumeClaimTemplates</code>.
+Un <code>volume claim template</code> permet de définir les besoins de stockage d’un Pod.
+La demande aboutira à la génération d’un volume
+<code>pets-data</code> (où PostgreSQL conserve les données).
+De plus, les paramètres suivants sont donnés :</p>
+<ul>
+<li><p>Le mode d’accès <code>ReadWriteOnce</code> signifie que le volume peut être monté en lecture-écriture par un seul nœud.
+en lecture-écriture par un seul nœud du cluster Kubernetes.
+Les modes d’accès sont <a href="https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes" target="_blank">documentés ici</a>.</p></li>
+<li><p>Nous demandons au moins 100Mo de stockage pour la base de données.</p></li>
+</ul>
+<div class="infobox activitybox">
+<p><strong>Activité</strong></p>
+<ul>
+<li><p>Copiez et collez la spécification précédente dans un nouveau fichier <code>db-stateful-set.yaml</code> (ou un nom de votre choix).
+Assurez-vous de <strong>remplacer</strong> l’image <code>quercinigia/pet-store-db:1.0</code>
+avec celle que vous avez poussée vers votre registre DockerHub.</p></li>
+<li><p>Utilisez la commande <code>cd</code> dans le terminal pour vous positionner dans le répertoire où le fichier <code>db-stateful-set.yaml</code> est stocké.</p></li>
+<li><p>Déployez ce StatefulSet dans Kubernetes en tapant la commande suivante :</p></li>
+</ul>
+<p><code>kubectl create -f db-stateful-set.yaml</code></p>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-19" class="exercise"><strong>Exercise 4.5  </strong></span>
+Saisissez la commande :
+<code>kubectl get all</code></p>
+<p>Quels objets ont été créés lorsque vous avez déployé le StatefulSet ?</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-20" class="exercise"><strong>Exercise 4.6  </strong></span>
+Ouvrez une fenêtre dans votre navigateur et saisissez l’URL suivante :</p>
+<details>
+<summary>
+Si vous utilisez Docker Desktop
+</summary>
+<p><code>http://localhost:8080/pet</code></p>
+</details>
+<details>
+<summary>
+Si vous utilisez Minikube
+</summary>
+<p><code>http://minikube-ip:8080/pet</code></p>
+<p>où vous remplacerez <code>minikube-ip</code> par l’adresse IP externe associée au
+service <code>web</code>.</p>
+</details>
+<p>Juste après, tapez la commande <code>kubectl get all</code>.
+Qu’observez-vous ? Pouvez-vous en expliquer la raison ?</p>
+</div>
+</div>
+<p>Dans la sortie de la commande <code>get kubectl all</code>, regardez les noms des
+Pods correspondant au service <code>web</code>.
+Prenez le nom de n’importe lequel de ces Pods,
+et mettez-le à la place de NAME-OF-POD dans la commande suivante :</p>
+<p><code>kubectl logs NAME-OF-POD --previous</code></p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-21" class="exercise"><strong>Exercise 4.7  </strong></span>
+La sortie de la commande précédente confirme-t-elle l’explication donnée dans la question précédente ?</p>
+</div>
+</div>
+</div>
+</div>
+<div id="le-service-db-service" class="section level1" number="5">
+<h1><span class="header-section-number">5</span> Le service <code>db</code> : Service</h1>
+<p>D’après les observations ci-dessus, nous comprenons qu’il nous faut définir
+un service pour permettre les connexions à la base de données.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-22" class="exercise"><strong>Exercise 5.1  </strong></span>
+Le service <code>db</code> doit-il être accessible aux applications clientes externes au cluster Kubernetes ?</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-23" class="exercise"><strong>Exercise 5.2  </strong></span>
+Compte tenu de la réponse à la question précédente, quel devrait être le type de ce service ?</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-24" class="exercise"><strong>Exercise 5.3  </strong></span>
+Ecrivez la spécification du service <code>db</code> dans un fichier nommé <code>db-service.yaml</code> (ou tout autre nom de votre choix).</p>
+<p><strong>Attention.</strong> Dans le fichier <code>db-stateful-set.yaml</code>, le champ <code>spec.serviceName</code> indique le nom que le service devra avoir.</p>
+</div>
+</div>
+<div class="infobox activitybox">
+<p><strong>Activité</strong></p>
+<ul>
+<li>Déployer le service en tapant la commande suivante :</li>
+</ul>
+<p><code>kubectl create -f db-service.yaml</code></p>
+<ul>
+<li>Vérifiez que le service a bien été créé avec la commande suivante : <code>kubectl create -f db-service.yaml</code> :</li>
+</ul>
+<p><code>kubectl get all</code></p>
+<ul>
+<li>Vérifiez que vous pouvez atteindre l’application en saisissant l’URL `<code>http://localhost:8080/pet</code> (utilisateurs de Minikube :
+remplacez <code>localhost</code> par l’adresse IP externe associée au service <code>web</code> !).
+<strong>Il peut arriver</strong> que le service de base de données ne soit pas encore prêt, et vous obtiendrez donc une erreur de connexion.
+Attendez quelques secondes et réessayez.</li>
+</ul>
+</div>
+<div id="arrêt-de-lapplication-1" class="section level2" number="5.1">
+<h2><span class="header-section-number">5.1</span> Arrêt de l’application</h2>
+<p>Une fois que vous avez terminé avec l’application, vous pouvez l’arrêter avec les commandes suivantes :</p>
+<p><code>kubectl delete svc/web</code></p>
+<p><code>kubectl delete svc/db</code></p>
+<p><code>kubectl delete deploy/web</code></p>
+<p><code>kubectl delete statefulset/db</code></p>
+<p>L’ordre dans lequel vous tapez ces commandes n’a pas d’importance.</p>
+<p>Si vous tapez plusieurs fois la commande :</p>
+<p><code>kubectl get all</code></p>
+<p>vous devriez voir que les ressources disparaissent progressivement.</p>
+</div>
+<div id="conclusion" class="section level2" number="5.2">
+<h2><span class="header-section-number">5.2</span> Conclusion</h2>
+<p>Dans les exercices précédents, nous avons déployé une application avec deux services, pour laquelle nous avons dû créer
+quatre fichiers et taper autant de commandes.
+Pour des applications plus importantes, cela devient un peu ennuyeux.
+Nous pouvons écrire toutes les définitions dans un seul fichier (par exemple, <code>pets.yaml</code>)
+où chaque spécification est terminée par —.</p>
+<p>Voici un exemple, où nous écrivons la spécification du
+Service et Deployment associés au service <code>web</code>.</p>
+<pre><code>apiVersion: v1
+kind: Service
+metadata:
+  name: web
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    targetPort: 3000
+    protocol: TCP
+  selector:
+    app: pets
+    service: web
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: pets
+      service: web
+  template:
+    metadata:
+      labels:
+        app: pets
+        service: web
+    spec:
+      containers:
+      - image: quercinigia/pet-store-web:1.0
+        name: web
+        ports:
+        - containerPort: 3000
+          protocol: TCP</code></pre>
+</div>
+</div>
+
+          </div>
+
+          
+
+
+
+          
+        </div>
+
+        
+      </article>
+
+      
+
+    </main>
+  </div>
+</div>
+
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.1/anchor.min.js" integrity="sha256-pB/deHc9CGfFpJRjC43imB29Rse8tak+5eXqntO94ck=" crossorigin="anonymous"></script>
+    <script>
+      anchors.add();
+    </script>
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.3da86581634ab22d5bb3fc4505df30a5.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
