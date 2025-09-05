@@ -1,0 +1,2220 @@
+---
+title: "Kubernetes deployment on Cloud"
+heading: Cloud computing
+linktitle: lab-kube-en
+output:
+  bookdown::pdf_book:
+    toc: false
+    includes:
+      in_header: ../../../latex-files/preamble.tex
+    number_sections: yes
+  blogdown::html_page:
+    number_sections: yes
+  html_document:
+    df_print: paged
+menu:
+  cloud-en:
+    name: Kubernetes deployment on Cloud
+    parent: 
+    identifier: lab-kube-en
+    weight: 3
+params:
+  solution: false
+summary: Kubernetes deployment on Cloud
+draft: no
+type: docs
+---
+
+
+
+
+<link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/cloud-computing.css">
+
+
+# Objectives {-}
+
+In this lab assignment you will:
+
+* Build and deploy a multi-service application with **Docker Compose**.
+
+* Deploy a multi-service application on a **local Kubernetes cluster**.
+
+* Deploy a multi-service application on a **Kubernetes cluster** on **Microsoft Azure**.
+
+
+# Submission {-}
+
+
+* In order to submit your work, you need to answer all the questions 
+that you **[find here](https://centralesupelec.edunao.com/mod/quiz/view.php?id=151760){target=_blank}**.
+
+* **Only one member** of the group must fill in the questionnaire.
+
+* You can answer the open questions either in French or in English.
+
+* Some questions require you to upload files. 
+
+* You can pause the test at any moment. Your answers will be stored; you'll find them when you resume the test.
+
+* After answering the last question, you need to click on the button *Terminer le test* (*Finish attempt* if you use the interface in English) to submit the questionnaire.
+**The submission is final. After submitting, you cannot change your answers anymore.**
+
+* **Deadline: 14 May 2025, 23h59**
+
+
+
+# Context {-}
+
+We intend to build and deploy a Web application called *TripMeal* that let users share their favorite recipes.
+You can download the application 
+[here](/courses/cloud-computing/kube-lab/tripmeal.zip).
+The source code has been readapted from 
+[this GitHub repository](https://github.com/DanielAndreasen/TripMeal){target="_blank"}.
+
+
+The downloaded file is an archive. 
+Extracting the archive will create a folder named 
+``tripmeal_sujet``.
+
+# Bulding and deploying with Docker Compose
+
+
+You're going to build and deploy the application using Docker Compose. 
+In the folder ``tripmeal_sujet`` you should see a file named *docker-compose.yml*.
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Answer on Edunao. What is the file *docker-compose.yml* used for?
+
+```
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+The folder contains:
+
+* A file \x60\x60docker-compose.yml\x60\x60 that will contain the instructions
+to build and deploy the application.
+
+* A subdirectory for each service composing the application. Each subdirectory 
+contains the source code of the corresponding service, as well as a Dockerfile
+with the instructions to build an image for the service.
+
+:::
+
+</details>"}`
+
+
+Look at the files and folders inside the folder ``tripmeal_sujet``.
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Answer on Edunao. How many services does the application *TripMeal* have?
+
+```
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+The application consists of two services:
+
+- web: It is a web application, developed with a combination of HTML, 
+Python and Flask
+
+- db: It is a relational database. From the Dockerfile, which is already given,
+we understand that the DBMS used is MySQL.
+
+:::
+
+</details>"}`
+
+
+The ``Dockerfile`` in the directory ``db`` is already implemented. 
+Open it and read the content to answer the following  questions.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Answer on Edunao. Which DataBase Management System (DBMS) is used in the *TripMeal* application?
+
+```
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+MySQL. You can see it from the Dockerfile of the db service.
+
+:::
+
+</details>"}`
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Answer on Edunao. What is the version (tag) of the image used for the database management system of *TripMeal*? 
+Find the documentation of the image and use it to answer this question.
+
+```
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+The documentation is available at [here](https://hub.docker.com/_/mysql){target=\"_blank\"}. 
+Since no tag is specified in the Dockerfile, the latest version is selected.
+
+:::
+
+</details>"}`
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Where does Docker get the base image for the database management system from?
+
+```
+
+:::
+
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+From the Docker official registry. In fact, in the Dockerfile we only give  the name of the image and we don't specify
+any reference to another registry. Therefore, by default, Docker looks into its own registry.
+
+Of course, if the image is already available locally, Docker does not look for it in the registry.
+
+:::
+
+</details>"}`
+
+
+
+## Dockerfile in folder ``web``
+
+If you open folder ``web``, you'll see that the Dockerfile is empty.
+
+
+::: {.infobox .activitybox data-latex="{exercisebox}"}
+**Activity**
+
+Complete the ``Dockerfile`` in the directory ``web``.
+
+* You need a Python 3.7 environment to run the application.
+
+* The application consists of several files and folders. You need to include all of them into a Docker image.
+
+* Add the following instruction in your Dockerfile:
+
+``
+RUN chmod -x path_to_file_app
+``
+
+where ``path_to_file_app`` is the path to the file ``app.py`` **inside the image**.
+This will prevent an ``Exec format error`` from occurring.
+
+
+:::
+
+
+Time to make sure that we can build an image from this Dockerfile and we can run a container from that image.
+
+
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+
+* Build an image from the Dockerfile that you've just completed using the ``docker build`` command. 
+You can give the image any name you want. For simplicity, I assume that you call it ``web-test``.
+
+* Run a container from this image by typing the following command. The command will only work if you type 
+it from the  directory where the file ``tripmeal.env`` is stored. 
+
+
+``
+docker run --env-file tripmeal.env -p 3000:5000 web-test
+``
+
+* Open a Web browser and type the following URL: ``localhost:3000``. You should see the interface of the application. If that's not the case, stop the container, 
+and correct the Dockerfile. 
+
+* If you click on the links *New recipe*, *All recipes*, *Weekly menu* and *Login* in the application interface, you will get a connection error to the database server. 
+This is normal and will be fixed later.
+
+
+If the image passes the test, **upload the Dockerfile to Edunao.**
+
+
+
+```
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+Different solutions exist, here is a proposition.
+It is important that we build a minimal image, so 
+we choose the environment python:3-7-slim.
+
+\x60\x60\x60
+FROM python:3.7-slim
+RUN mkdir -p /app & \\
+    mkdir -p /app/templates & \\
+    mkdir -p /app/static
+RUN /usr/local/bin/python -m pip install --upgrade pip
+COPY ./static /app/static/
+COPY ./templates /app/templates/
+COPY requirements.txt /app/
+WORKDIR /app
+RUN pip install -r requirements.txt
+COPY app.py dbconnect.py /app/
+ENTRYPOINT [\"python\",\"app.py\"]
+\x60\x60\x60
+
+:::
+
+</details>"}`
+
+
+## The environment variables
+
+When testing the image of the service ``web``, you may have noticed that we passed the file ``tripmeal.env`` as an argument to the command ``docker run``.
+This file contains the definition of **environment variables** that are used in the application. 
+Open this file and look at the environment variables to answer the following questions.
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Answer on Edunao. What does the environment variable SERVER_PORT refer to? 
+
+
+```
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+SERVER_PORT refers to the port where the the web application will be waiting for incoming requests.
+
+:::
+
+</details>"}`
+
+
+
+<!-- ::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Answer on Edunao. Which of the following sentences are true?
+
+a. When you execute TripMeal, SERVER_PORT will be opened on the network interface of the host computer (your computer).
+
+b. When you execute TripMeal, SERVER_PORT will be opened on the network interface of a container.
+
+c. In order to access the Web interface of TripMeal, you'll need to map SERVER_PORT to a port number p; p will be opened on the network interface of the host computer (your computer).
+
+d. When you execute TripMeal, you'll be able to access the Web interface by typing the URL localhost:$SERVER_PORT in your browser.
+
+
+```
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+b. and c. are true.
+
+
+:::
+
+</details>"}` -->
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Answer on Edunao. 
+When you write the file ``docker-compose.yml``, you'll need to give the database service a name. 
+Which of the environment variables tells you the name that you must use?
+
+
+```
+
+:::
+
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+The variable that tells us the name of the database service is DATABASE_HOST. 
+The web service connects to the database that is found at DATABASE_HOST.
+In our case, the host is a container. Evidently, Docker Compose uses the 
+name of the service as the host name for the container.
+
+
+:::
+
+</details>"}`
+
+
+## Volumes and networks
+
+The *TripMeal* application keeps user information and recipe information in a database.
+Therefore, you'll need to define a Docker **volume** to hold the data.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Answer on Edunao. Look at the documentation of the base image of the database management system of the application.
+Which directory inside the database image will you attach the volume to?
+
+```
+
+:::
+
+
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+Looking at the documentation of the MySQL image, the path is 
+/var/lib/mysql. 
+
+
+:::
+
+</details>"}`
+
+
+The containers composing the *TripMeal* application need to communicate through a Docker **network**.
+
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Answer on Edunao. If you don't explicitly create any network, the containers will be able to communicate anyway. 
+How do you explain it? 
+
+
+**Note.** You can answer this question after writing the Docker compose file and running the application.
+
+```
+
+:::
+
+
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+By default, containers that are not explicitly connected to a network are automatically connected 
+to the network called bridge, which is the default network in Docker.
+Therefore, the services of the application TripMeal can communicate through this network.
+
+
+:::
+
+</details>"}`
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Answer on Edunao. Why is not creating a network for the application considered a bad idea, 
+even if the application works?
+
+
+```
+
+:::
+
+
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+All containers created on the host machine will be connected to a single network.
+As a result, all containers can communicate. 
+If only one container is compromised, the attacker will have a shot at compromising 
+all of them. 
+
+
+:::
+
+</details>"}`
+
+
+
+
+
+## The compose file
+
+
+You're finally ready to complete the file ``docker-compose.yml``. 
+
+
+::: {.infobox .activitybox data-latex="{exercisebox}"}
+**Activity**
+
+Write the file ``docker-compose.yml``. 
+
+* Remember that you need to pass the **environment variables** 
+to your application. 
+
+* As a documentation of Docker Compose you can use:
+
+    * The [examples that we've seen together](/courses/cloud-computing/tutorials/tutorial-kube){target="_blank"}.
+
+    * The overview presented on the [official Docker website](https://docs.docker.com/compose/){target="_blank"}.
+
+    * You can also find the full specification of Compose [here](https://github.com/compose-spec/compose-spec/blob/master/spec.md){target="_blank"}.
+
+
+* Run the application and test it. You should be able to see the Web interface of the application, create an account, share a recipe and 
+look at the list of shared recipes.
+
+
+* If you experience problems, you might find the command ``docker-compose logs`` useful.
+
+:::
+
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+\x60\x60\x60
+version: \"3\"
+
+services:
+    web:
+        build: web
+        image: quercinigia/trip-meal-web
+        env_file: tripmeal.env
+        networks:
+            - tripmeal-network
+        ports:
+            - \"5000:5000\"
+    db: 
+        build: database  
+        image: quercinigia/trip-meal-db
+        env_file: tripmeal.env
+        networks:
+            - tripmeal-network
+        volumes:
+            - db-data:/var/lib/mysql
+
+volumes:
+    db-data:
+
+networks:
+    tripmeal-network:
+\x60\x60\x60
+
+:::
+
+</details>"}`
+
+
+If you successfully deployed the application, you can continue.
+
+::: {.infobox .warning data-latex="{warning}"}
+**Shut down the application!**
+
+Shut down both the application before you move on.
+
+:::
+
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Upload your file ``docker-compose.yml`` to Edunao.
+
+
+```
+
+:::
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+```{exercise}
+
+<u>Use Docker Compose</u> to push all the images that you built in this section to 
+your DockerHub registry.
+
+**In the answer to this exercise write the link to the uploaded images.**
+
+
+```
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+We can use DockerCompose to push the images. 
+The command is: 
+
+\x60\x60\x60
+docker-compose push
+\x60\x60\x60
+
+:::
+
+</details>"}`
+
+
+
+# Local Kubernetes cluster
+
+We intend to deploy the application *TripMeal* on 
+a **local Kubernetes cluster** (either Docker Desktop or Minikube).
+
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Answer on Edunao. For each service of the application *TripMeal*, specify 
+the Kubernetes objects that you need to create and their types.
+Justify your answers.
+
+```
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+For the service \x60\x60web\x60\x60 we need two objects:
+
+* A **deployment**, which is collection of identical pods, each pod being an instance 
+of the service. Deployments are often used for stateless services, which is the case of the 
+\x60\x60web\x60\x60 service.
+
+* A **LoadBalancer service**. We need it in order to expose the service so that a client can connect to it.
+
+For the service \x60\x60db\x60\x60 we need two objects:
+
+* A **StatefulSet**, which is a sort of Deployment used for stateful services.
+
+* A **ClusterIP service**, used to expose the service internally in the Kubernetes cluster.
+The database is only used the by service  \x60\x60web\x60\x60, 
+it doesn't need to be accessed from external clients.
+
+:::
+
+</details>"}`
+
+
+## Environment variables 
+
+One way to pass the environment variables to the containerized applications is to 
+use a special Kubernetes resource called a **ConfigMap**.
+The following is an example (taken from [here](https://www.techworld-with-nana.com/post/kubernetes-configmap-and-secret-explained){target="_blank"}) 
+of a ConfigMap with a database connection configuration:
+
+```yml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    data: my-config
+data:
+    db-host: "cluster-mysql.database"
+    db-port: "3306"
+    db-name: "my-db"
+```
+
+In the specification of this ConfigMap, we indicate:
+
+* The name of the ConfigMap (in the ``metadata`` field);
+* The values of some configuration keys (in the ``data`` section).
+
+It is advisable to write the specification of a ConfigMap in **its own file** (for example ``my-config.yml``).
+
+The ConfigMap is then used in the specification of a Pod, as the following example shows.
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+   name: my-app
+spec:
+   containers:
+   - name: my-app
+     image: my-app-image
+     env:
+     - name: DB_HOST
+         valueFrom:
+            configMapKeyRef:
+               name: my-config
+               key: db-host
+    - name: DB_PORT
+         valueFrom:
+            configMapKeyRef:
+               name: my-config
+               key: db-port
+    - name: DB_NAME
+         valueFrom:
+            configMapKeyRef:
+               name: my-config
+               key: db-name      
+```
+
+In this specification, the environment variables are all defined in section ``env``.
+For each environment variable (for instance, DB_HOST), we give its name, the 
+reference to the ConfigMap (``my-config`` in our example) and the key in the 
+ConfigMap (``db-host``) that holds the value of the variable.
+
+Let's now create a ConfigMap for the application TripMeal!
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Create a file ``tripmeal-env.yml`` and write the specification of a ConfigMap 
+to set the values of the environment variables listed in file ``tripmeal.env``.
+
+
+* Create the ConfigMap using the command ``kubectl apply -f tripmeal-env.yml``.
+
+* Check that the ConfigMap is created with the command ``kubectl get ConfigMap``.
+
+* **Upload the file to Edunao.**
+
+
+
+```
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+\x60\x60\x60 yml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tripmeal-config
+data:
+  db-name: \"tripmealdb\"
+  db-user: \"root\"
+  db-pwd: \"my-secret-pw\"
+  db-host: \"db\"
+  db-port: \"3306\"
+  tripmeal-key: \"my-secret-key\"
+  server-port: \"5000\"
+\x60\x60\x60
+
+:::
+
+</details>"}`
+
+
+We now deploy the Web interface.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Create a file ``tripmeal-kube.yml`` and write the specification of the necessary resources to deploy the 
+web interface (ignore the database for now). 
+Use the ConfigMap that you created in the previous exercise to set the value of  the necessary environment variables.
+
+* Deploy the web interface via the command:
+
+``
+kubectl apply -f tripmeal-kube.yml
+``
+
+* Confirm that you can access the home page of the web interface using your browser (it is normal if you get an error if you try to log in or use any functionality that triggers an action on the database).
+
+```
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+\x60\x60\x60 yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 8080
+    targetPort: 5000
+    protocol: TCP
+  selector:
+    app: tripmeal
+    service: web
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tripmeal
+      service: web
+  template:
+    metadata:
+      labels:
+        app: tripmeal
+        service: web
+    spec:
+      containers:
+      - image: quercinigia/trip-meal-web:latest
+        name: web
+        ports:
+        - containerPort: 5000
+          protocol: TCP
+        env:
+        - name: DATABASE_NAME
+          valueFrom: 
+            configMapKeyRef: 
+              name: tripmeal-config
+              key: db-name
+        - name: DATABASE_USER
+          valueFrom: 
+            configMapKeyRef: 
+              name: tripmeal-config
+              key: db-user
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom: 
+            configMapKeyRef: 
+              name: tripmeal-config
+              key: db-pwd
+        - name: DATABASE_HOST
+          valueFrom: 
+            configMapKeyRef: 
+              name: tripmeal-config
+              key: db-host
+        - name: DATABASE_PORT
+          valueFrom: 
+            configMapKeyRef: 
+              name: tripmeal-config
+              key: db-port
+        - name: TRIPMEAL_KEY
+          valueFrom: 
+            configMapKeyRef: 
+              name: tripmeal-config
+              key: tripmeal-key
+        - name: SERVER_PORT
+          valueFrom: 
+            configMapKeyRef: 
+              name: tripmeal-config
+              key: server-port
+\x60\x60\x60
+
+:::
+
+</details>"}`
+
+Now we deploy the DBMS.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Add to file ``tripmeal-kube.yml`` the specification of the necessary resources to deploy the 
+DBMS.
+Use the ConfigMap that you created in the previous exercise to set the value of  the necessary environment variables.
+
+* Deploy the DBMS via the command:
+
+``
+kubectl apply -f tripmeal-kube.yml
+``
+
+* Confirm that all functionalities of the application work as intended.
+
+**Upload the file ``tripmeal-kube.yml`` to Edunao.**
+
+```
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+\x60\x60\x60 yml
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+spec:
+  type: ClusterIP
+  ports:
+  - port: 3306
+    protocol: TCP
+  selector:
+    app: tripmeal
+    service: db
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: db
+spec:
+  selector:
+    matchLabels:
+      app: tripmeal
+      service: db
+  serviceName: db
+  template:
+    metadata:
+      labels:
+        app: tripmeal
+        service: db
+    spec:
+      containers:
+      - image: quercinigia/trip-meal-db:latest
+        name: db
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: tripmeal-data
+        env:
+        - name: DATABASE_NAME
+          valueFrom: 
+            configMapKeyRef: 
+              name: tripmeal-config
+              key: db-name
+        - name: DATABASE_USER
+          valueFrom: 
+            configMapKeyRef: 
+              name: tripmeal-config
+              key: db-user
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom: 
+            configMapKeyRef: 
+              name: tripmeal-config
+              key: db-pwd
+        - name: DATABASE_HOST
+          valueFrom: 
+            configMapKeyRef: 
+              name: tripmeal-config
+              key: db-host
+        - name: DATABASE_PORT
+          valueFrom: 
+            configMapKeyRef: 
+              name: tripmeal-config
+              key: db-port
+  volumeClaimTemplates:
+  - metadata:
+      name: tripmeal-data
+    spec:
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 100Mi
+\x60\x60\x60
+
+:::
+
+</details>"}`
+
+
+## Secrets
+
+In the previous section, we used ConfigMaps to pass sensitive information (such as the database username and the password) 
+to the application.
+Sensitive information are better handled with another Kubernetes resource called a **Secret**.
+
+The specification of a secret is similar to a ConfigMap's.
+
+```yml
+apiVersion: v1
+kind: Secret
+metadata:
+    data: my-secret
+type: Opaque
+data:
+    db-user: "myusername"
+    db-pwd: "mypwd"
+```
+
+The type Opaque refers to the fact that this secret stores unstructured key-value pairs. Other types exist that constrain the 
+content of the secret to a more specific format.
+
+::: {.infobox .activitybox data-latex="{exercisebox}"}
+**Activity**
+
+
+Copy this specification to a file named ``mysecret.yml`` and 
+create the secret with the following command:
+
+``
+kubectl apply -f mysecret.yml
+``
+
+Then show the specification of the secret with the following command:
+
+``
+kubectl get secret my-secret -o yaml
+``
+
+Look at the section ``data``: both username and password are stored using the **[base64 encoding](https://en.wikipedia.org/wiki/Base64#Output_padding){target="_blank"}**.
+
+:::
+
+It is important to note that the base64 encoding is **not an encryption method**.
+In other words, Kubernetes stores all secrets in **plain text by default** in the ``etcd`` database .
+
+::: {.infobox .activitybox data-latex="{exercisebox}"}
+**Good to know**
+
+The correct management of secrets is a complex topic that is out of the scope of this course.
+One essential step to ensure a correct secret management is 
+enabling **encryption at rest** in Kubernetes.
+This is done by applying a configuration on the Kubernetes node that runs the 
+``api-server``; this configuration must specify the encryption key used to encrypt all secrets
+to store them safely in etcd.
+
+Two options exist:
+
+* the encryption key is stored in plain text in the node. As long as unauthorized users cannot access the node, the key is safe, but this solution is clearly not a perfect solution.
+* the encryption key is managed by an external key management server (KMS). In this option, a different encryption key (Data Encryption Key, or DEK) is generated for each secret; the secret is encrypted with DEK.
+  The DEK is also encrypted with another key (Key Encryption Key, or KEK); both the encrypted secret and the encrypted DEK are stored on the key management server. This option has the advantage of 
+  using a different key for each secret. 
+
+Encryption at rest cannot be applied on Kubernetes deployed in Docker Desktop. 
+When deploying to Azure, encryption at rest can be enabled and Kubernetes can be configured to use Azure Key Vault as key management server.
+
+For an in-depth coverage of Kubernetes secrets management, refer [to this book](https://learning.oreilly.com/library/view/kubernetes-secrets-management/9781617298912/){target=_"blank"}.
+
+
+:::
+
+The following specification shows an example of how to use a secret in a Pod's specification:
+
+```yml
+apiVersion: v1
+kind: Pod
+metadata:
+   name: my-app
+spec:
+   containers:
+   - name: my-app
+     image: my-app-image
+     env:
+     - name: DB_USER
+         valueFrom:
+            secretKeyRef:
+               name: my-secret
+               key: db-user
+    - name: DB_PASSWORD
+         valueFrom:
+            secretKeyRef:
+               name: my-secret
+               key: db-pwd
+    
+```
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Using the examples shown above:
+
+* define a secret specification for the database user and password in a new file ``tripmeal-secret.yml``.
+
+* modify the specification of your Pods in file ``tripmeal-kube.yml`` to use the secret to set the database user and password.
+
+* remember to **remove** the definition of the environment variables for the database user and password from file ``tripmeal-env.yml``.
+
+**Apply the changes** and confirm that the application works as intended.
+
+**Upload the files : ``tripmeal-secret.yml``, ``tripmeal-kube.yml`` and ``tripmeal-env.yml`` to Edunao.**
+
+
+
+```
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+It is sufficient to create a new file \x60\x60 tripmeal-secret.yml\x60\x60 with the following contents:
+
+\x60\x60\x60 yml
+apiVersion: v1
+kind: Secret
+metadata:
+    name: db-secret
+type: Opaque
+stringData:
+    db-user: \"root\"
+    db-pwd: \"my-secret-pw\"
+\x60\x60\x60
+
+The secret is applied with the command:
+
+\x60\x60
+kubectl apply -f tripmeal-secret.yml
+\x60\x60
+
+The rows:
+
+\x60\x60\x60 yml
+db-user: \"root\"
+db-pwd: \"my-secret-pw1\"
+\x60\x60\x60
+
+must be removed from file \x60 tripmeal-env.yml\x60, followed by the command:
+
+\x60\x60
+kubectl apply -f tripmeal-env.yml
+\x60\x60
+
+to apply the new configuration.
+
+Finally, the Deployment and the Statefulset specification must be updated to refer to the secret 
+for the two environment variables DATABASE_USER and MYSQL_ROOT_PASSWORD:
+
+\x60\x60\x60 yml
+- name: DATABASE_USER
+          valueFrom: 
+            secretKeyRef: 
+              name: db-secret
+              key: db-user
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom: 
+            secretKeyRef: 
+              name: db-secret
+              key: db-pwd
+\x60\x60\x60
+
+Finally, we type the command:
+
+\x60\x60
+kubectl apply -f tripmeal-kube.yml
+\x60\x60
+
+to apply the new configuration of the Deployment and the StatefulSet.
+
+:::
+
+</details>"}`
+
+
+
+::: {.infobox .warning data-latex="{warning}"}
+**Shut down the application!**
+
+Shut down the application by removing all the Kubernetes objects.
+
+:::
+
+
+
+
+# Kubernetes cluster on Microsoft Azure
+
+At this point you should have successfully deployed the application on your local Kubernetes cluster.
+
+You're now going to create a Kubernetes cluster on **Microsoft Azure** 
+and deploy *TripMeal* on that cluster.
+
+::: {.infobox .warning data-latex="{warning}"}
+**Warning**
+
+If you haven't activated it yet:
+
+* Connect to [this webpage](https://azure.microsoft.com/en-us/free/students/){target="_blank"}.
+
+* Click on ``Start free``.
+
+* Sign in by using your CentraleSupélec credentials.
+
+* Follow the instructions.
+
+
+:::
+
+During this activity, you'll need to answer some questions that encourage you to 
+gain a deeper knowledge of the Azure platform and better understand the commands that you type.
+**Feel free to read the documentation on the Azure platform in order to answer the questions.**
+
+## Login to Azure through CLI
+
+::: {.infobox .warning data-latex="{warning}"}
+**Warning**
+
+If you get the message *command not found* when you type ``az``, it means that you haven't installed 
+the Azure CLI yet. 
+You'll find more information on the [Edunao course page](https://centralesupelec.edunao.com/course/view.php?id=8081#section-4){target="_blank"}.
+
+Make sure you run version 2.25 or higher of the Azure CLI, by typing:
+
+``
+az --version
+``
+
+**If you use a VM with Multipass you'll need to install the Azure CLI with the following command:**
+
+``
+curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
+``
+
+**If you use a VM either with Multipass or with VirtualBox you'll need to re-install kubectl:**
+
+* Type the following command so as the command ``kubectl`` does not refer to ``minikube kubectl`` anymore:
+
+``
+unalias kubectl
+``
+
+* Type the following command to install a new version of ``kubectl``:
+
+``
+sudo az aks install-cli
+``
+
+
+:::
+
+Whether you're on Windows, macOS or Linux, you need to **open a terminal**.
+
+In order  to log in to your Azure account, type the following command:
+
+``
+az login
+``
+
+A Web page will open in your default Web browser, where you can type your username and 
+password (your CentraleSupélec credentials).
+After authenticating your Azure account, you can go back to the terminal, where you should see
+some information about your account, such as:
+
+```
+[
+  {
+    "cloudName": "AzureCloud",
+    "homeTenantId": "<id>",
+    "id": "<id>",
+    "isDefault": true,
+    "managedByTenants": [],
+    "name": "Azure for Students",
+    "state": "Enabled",
+    "tenantId": "<id>",
+    "user": {
+      "name": "<email-address>",
+      "type": "user"
+    }
+  }
+]
+```
+
+## Deploy and use Azure Container Registry
+
+When we run TripMeal on a local Kubernetes cluster, we assumed that our computer
+could have a direct access to the Internet and, therefore, to the DockerHub registry, where we 
+could pull the images of the TripMeal services.
+When we run a containerized application in production, we cannot make this assumption 
+as the production servers have often no direct access to the Internet.
+
+
+We need to place the images in a container registry that is in the same context 
+as our production servers. 
+Since we're going to run the application on Azure, we can use the 
+**Azure Container Registry (ACR)**.
+
+### Registry creation
+
+First, we need to create a **resource group**.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Answer on Edunao. What is a **resource group** in Azure and how is it useful?
+
+```
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+It is a logical container of resources that are managed together,
+typically because they belong to the same application.
+Resource groups are useful to manage with a single click 
+the whole set of resources (e.g., the permissions). 
+For instance, when we want to decommission the application, we can remove 
+all the resources with just one command/one click.
+
+
+:::
+
+</details>"}`
+
+
+The command to create a new resource group is the following
+(replace RES_GRP_NAME with a name of your choice).
+
+``
+az group create --name  RES_GRP_NAME --location francecentral
+``
+
+::: {.infobox .warning data-latex="{warning}"}
+**Warning**
+
+If ``francecentral`` does not work for your account, the previous command will normally suggest a possible location.
+Choose one that is near you.
+
+:::
+
+You can verify that the resources are correctly created by looking [in the Azure portal](https://portal.azure.com/){target="_blank"}.
+
+Next, we need to create a **container registry** with the following command
+(replace RES_GRP_NAME with the name of your resource group and REG_NAME with a name of your choice for the registry).
+
+
+``
+az acr create --resource-group RES_GRP_NAME --name REG_NAME --sku Basic
+``
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+```{exercise}
+
+In the previous command, we used the option ``sku``. Answer to a question on Edunao.
+
+```
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+The answers are found  [in this page](https://learn.microsoft.com/en-us/azure/container-registry/container-registry-skus){target=\"_blank\"}.
+
+:::
+
+</details>"}`
+
+
+
+
+### Registry login
+
+After creating the registry, we can log into it with the following command:
+
+``
+az acr login --name REG_NAME
+``
+
+### Image tagging
+
+We're almost ready to push the images that compose the application *TripMeal* to the registry.
+In order to do that, we need to **tag** (i.e., rename) our images so that their names are 
+preceded by the **login server name** of the registry.
+
+In order to get the name of the **login server name** 
+(that we denote here as ``acrloginserver``) of your registry, you can type 
+the following command:
+
+``
+az acr list --resource-group RES_GRP_NAME --query "[].{acrLoginServer:loginServer}" --output table
+``
+
+Your ``acrloginserver`` will be something like ``xxx.azurecr.io``.
+
+::: {.infobox .activitybox data-latex="{exercisebox}"}
+**Activity**
+
+
+Tag the images that correspond to the services of the  application *TripMeal* so that
+their name is similar to: ``acrloginserver/nameofimage:latest``. You can use the 
+command ``docker tag``.
+
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+We can use the \x60\x60docker tag\x60\x60 function.
+For instance, in my case I use the following two commands 
+to rename my two images:
+
+\x60\x60
+docker tag quercinigia/trip-meal-web:latest tripmealacr.azurecr.io/trip-meal-web:latest
+\x60\x60
+
+\x60\x60
+docker tag quercinigia/trip-meal-db:latest tripmealacr.azurecr.io/trip-meal-db:latest
+\x60\x60
+
+
+
+:::
+
+</details>"}`
+
+### Pushing the images
+
+We can push the images with the following command (use your image name 
+instead of ``xxx.azurecr.io/imagename:latest``).
+
+``
+docker push xxx.azurecr.io/imagename:latest
+``
+
+Make sure to **type this command for each image** that you want to push.
+
+::: {.infobox .warning data-latex="{warning}"}
+**Warning**
+
+It might take few minutes before the images are completely pushed to the registry.
+
+:::
+
+Finally, verify that the images are actually in the registry with the following command:
+
+``
+az acr repository list --name REG_NAME --output table
+``
+
+Alternatively, you can connect to [your Azure portal](https://portal.azure.com/){target="_blank"}
+and visually browse your resources. 
+
+## Deploy a Kubernetes cluster
+
+We now deploy a **Kubernetes cluster on Azure**.
+
+### Cluster creation
+
+We create the cluster with the following command (replace CLUSTER_NAME 
+with a name of your choice. As before, RES_GRP_NAME is the name of your resource group 
+and REG_NAME is the name of the container registry).
+
+```{r, engine = 'bash', eval = FALSE}
+az aks create \
+    --resource-group RES_GRP_NAME \
+    --name CLUSTER_NAME \
+    --node-count 2 \
+    --generate-ssh-keys \
+    --attach-acr REG_NAME
+```
+
+::: {.infobox .warning data-latex="{warning}"}
+**Warning**
+
+If you get an error on your SSH key, then your key is not in the right format. 
+
+Here is how we suggest you to proceed.
+
+1. Open your home directory in Visual Studio.
+
+2. Locate the hidden folder  ``.ssh``.
+
+3. You should have a file named ``id_rsa.pub`` under folder ``.ssh``.  Open it.
+
+4. Copy the whole content of the file.
+
+5. Create a new file under folder ``.ssh``. Give it a name of your choice (for instance, ``id_kube_rsa.pub``).
+
+6. Paste the content into the new file, while making sure that you don't have any whitespace before 
+the first character.
+
+7. Save and close the file.
+
+8. Type the command ``az aks create`` and replace the ``--generate--ssh-keys`` option with ``--ssh-key-value ~/.ssh/id_kube_rsa.pub``.
+
+
+
+
+
+
+:::
+
+The cluster will take a while to start. Time for a coffee!
+But before, answer the following question!
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+```{exercise}
+
+What is the meaning of the option ``node-count`` in the previous command?
+
+```
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+
+
+The number of nodes in the Kubernetes cluster. Here we specify 2.
+Note that this refers to the number of worker nodes.
+In fact, the control plane is managed by Azure. 
+It is still possible though to create a custom advanced configuration to control 
+the number of master and etcd nodes.
+
+
+
+:::
+
+</details>"}`
+
+### Connect to the cluster
+
+We can configure ``kubectl`` to connect to the newly created cluster.
+You need to type the following command:
+
+``
+az aks get-credentials --resource-group RES_GRP_NAME --name CLUSTER_NAME
+``
+
+Now, your Kubernetes cluster should be visible locally.
+To verify it, type the following command:
+
+``
+kubectl config get-contexts
+``
+
+Here *context* refers to the Kubernetes clusters that *kubectl* has access to.
+The Kubernetes cluster that you created on Azure should be visible in the output; an asterisk
+should appear in front of its name, indicating that it is the *current context* 
+(that is the Kubernetes cluster being currently referenced by ``kubectl``).
+
+Type the following command:
+
+``
+kubectl get nodes
+``
+
+You should see the information about the nodes in the cluster.
+
+## Deploy the application 
+
+We're almost done! The images are in the registry, the Kubernetes cluster is up and running.
+The only missing piece of the puzzle is our application *TripMeal*.
+
+First thing to do is to slightly modify the file ``tripmeal.yml`` that you created at the end
+of the previous section.
+
+::: {.infobox .activitybox data-latex="{exercisebox}"}
+**Activity**
+
+Look at the names of the images of each service in that file. How must these names change?
+Modify the file accordingly (**no need to upload it on Edunao**).
+
+
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+
+The existing names refer to the images on the DockerHub registry.
+We must change them so that they refer to the images on our Azure container registry.
+
+:::
+
+</details>"}`
+
+It is the moment you've been waiting for! 
+Deploy your application by typing the following command:
+
+``
+kubectl apply -f tripmeal.yml
+``
+
+Look at Kubernetes objects created after this command:
+
+``
+kubectl get all
+``
+
+Wait for all the components to be up and running. 
+Get the external IP address of the web service and try to connect to the application,
+in the same way you did in the previous section.
+
+**If you can play with the application like you did in your local deployment it means that you reached 
+the conclusion of this assignment! Bravo!**
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+```{exercise}
+
+Submit a **video** like that the one that [**you can see here**](https://webtv.centralesupelec.fr/permalink/v1261a00b74dbbzwk2vr/){target="_blank"}.
+
+The video must **clearly** show that:
+
+* You're connected to **your Azure portal** (Email address on the top right corner of the portal).
+
+* All the passages that you see in the sample video: you need to show the **public IP address**
+of the application that you deployed, use that address to connect to your application and play 
+with the application to show that it works correctly.
+
+
+```
+:::
+
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+```{exercise}
+
+
+You can access your application using the IP address followed by the port number. 
+It would be cool if you could access the application by typing an URL, and without specifying a port number. 
+
+Modify the specification of your Kubernetes external service to allow the connection to your app via an URL. Here are some hints:
+
+* You can use the field ``service.beta.kubernetes.io/azure-dns-label-name``.
+
+* Get some help from ChatGPT to set up the value of this field and find out the URL that you'll need to type to access the app.
+
+
+**Upload your specification file on Edunao.**
+
+
+```
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+We have to modify the definition of the web service in the file \x60\x60tripmeal.yml\x60\x60
+More precisely, here is the new definition:
+
+\x60\x60\x60
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    service.beta.kubernetes.io/azure-dns-label-name: mytripmeal
+  name: web
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 5000
+    protocol: TCP
+  selector:
+    app: tripmeal
+    service: web
+\x60\x60\x60
+
+We added the field \x60\x60metadata.annotations\x60\x60 and specify a DNS label.
+Also, the port number must be 80 (the port for a HTTP service, so that we don't need to specify it anymore).
+Then we need to restart the service.
+If everything goes well, the application is reachable at the following address:
+
+\x60\x60
+http://mytripmeal.francecentral.cloudapp.azure.com:5000/
+\x60\x60
+
+The URL is composed by the DNS label that we specified + the region where we deployed the cluster +
+cloudapp.azure.com
+
+
+
+:::
+
+</details>"}`
+
+# Conclusion {-}
+
+Make sure you follow these instructions:
+
+* Take down your application in Kubernetes by using the following command:
+
+``
+kubectl delete -f tripmeal.yml
+`` 
+
+* Change the context of the ``kubectl`` command so that it points back 
+to a local Kubernetes cluster. Type the following command, where 
+CONTEXT_NAME will be ``docker-desktop`` or ``minikube``, depending on which local Kubernetes cluster 
+you use.
+
+``
+kubectl config use-context CONTEXT_NAME
+``
+
+* **Destroy all the resources** linked to the application
+*TripMeal* on Microsoft Azure, otherwise you'll get billed even if you don't use them!
+You can destroy all the resources by simply deleting the resource group to which they belong.
+You can do it through the Azure portal or by typing the following command (replace RES_GRP_NAME with the name
+of the resource group that you intend to remove).
+
+``
+az group delete --name RES_GRP_NAME
+``
+
+* You can check the balance of your Azure credit [here](https://www.microsoftazuresponsorships.com/Balance){target="_blank"}.
+
+* You can stop Docker and Kubernetes if you don't need it anymore. 
+
+<!-- https://stackoverflow.com/questions/55271912/flask-cli-throws-oserror-errno-8-exec-format-error-when-run-through-docker-->
+
+<!-- merge 1.2 with 1.3, so that we can ask students to point out exactly the common layers -->
+
+<!-- # Docker networking model
+
+We developed a simple chat room in Python that you can download 
+[here](/courses/cloud-computing/kube-lab/chat-room.zip). 
+The code has been adapted from [this GitHub project](https://github.com/pricheal/python-client-server/){target="_blank"}.
+
+Participants use a *client* program to connect to the chat room;
+the chat room is managed by a *server* application  that receives the 
+client connections and forwards the messages between the users.
+The archive contains the following files:
+
+* *client.py*. Implementation of the chat room client.
+* *server.py*. Implementation of the chat room server.
+* *utils.py*. Library with utility functions used in both *client.py* and *server.py*.
+
+The application is written in Python and it **requires Python 3.7**. 
+The application doesn't need any third-party library, the packages included in a minimal Python environment are enough.
+
+
+
+
+::: {.infobox .exercisebox  data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise label="client-server-methodology"}
+ 
+
+a. Is a single Docker image for this application enough? Justify your answer.
+
+b. Given your answer to the previous question, how many Docker images do you need to create? 
+
+```
+
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+a. One image is not enough, because the client and the server are two separate processes.
+
+2. We need to create two images, one for the client and one for the server.
+
+:::
+
+</details>"}`
+
+We now build the images for the application.
+
+:::{.infobox .curiosity data-latex="curiosity"}
+**Good to know**
+
+If you need to inspect the file system of an
+image that you create (e.g., to verify that the files that you 
+copied are actually there), you can open a terminal 
+in the image by using the following command:
+
+``
+docker run -it --entrypoint sh IMAGE_NAME
+``
+
+:::
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+Build the image(s) for the application. For each image:
+
+a. Upload the Dockerfile to Edunao.
+b. Write the **exact** command that you used to build the image.
+
+```
+
+::: {.infobox .warning data-latex="{warning}"}
+**Warning**
+
+The size of the images should be kept as small as possible.
+Remember to include in the images only what you need to build and run the application.
+
+:::
+
+If you built more than one image:
+
+c. Do they have some common layers? Which ones?
+
+d. If so, is it something that has an impact on the build time and how?
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+For both the client and the server we need a Python environment. 
+We use the Python environment *slim* as a base image to minimize the size of the image. 
+Students who choose this base image are rewarded. 
+If they choose another (bigger) Python environment, that is fine, but they don't get 
+the totality of the points.
+If they use an OS as a base image (e.g., ubuntu), they get penalized.
+
+The Dockerfile for the client (let's call it *Dockerfile-client*)
+is as follows.
+
+\x60\x60\x60dockerfile
+FROM python:3.7-slim
+RUN mkdir -p /app
+WORKDIR /app
+COPY ./client.py ./utils.py /app/
+ENTRYPOINT [\"python\", \"client.py\"]
+\x60\x60\x60
+
+We build the image with the following command:
+
+\x60\x60
+docker build -t chat-client -f Dockerfile-client .
+\x60\x60
+
+The Dockerfile for the server (let's call it *Dockerfile-server*) 
+is as follows.
+
+\x60\x60\x60dockerfile
+FROM python:3.7-slim
+RUN mkdir -p /app
+WORKDIR /app
+COPY ./server.py ./utils.py /app/
+ENTRYPOINT [\"python\", \"server.py\"]
+\x60\x60\x60
+
+We build the image with the following command:
+
+\x60\x60
+docker build -t chat-server -f Dockerfile-server .
+\x60\x60
+
+c. The base image is the same for both images. The layers 2 and 3 are identical
+
+d. Assuming that we build the client first, this build will take longer if
+the python-slim image has not been downloaded yet from the registry.
+Layers 2 and 3 already exist when the server is built.
+This is indicated by the phrase \"Using cache\" when we build the server.
+It is important that here the students talk about the build cache mechanism.
+
+
+:::
+
+</details>"}`
+
+
+
+
+
+
+## Client and server on the same network
+
+We want to execute:
+
+* One instance of the server.
+
+* Two instances of the client.
+
+The server, as well as the clients, will 
+**run in Docker containers attached to the same network**.
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+```{exercise}
+
+We want to make sure that:
+
+1. The server and the clients can communicate with each other.
+
+2. Other Docker containers **cannot** communicate neither with the server nor with the clients.  
+
+How can you satisfy both requirements in Docker? Explain your solution 
+and justify it.
+
+```
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+If we create the three containers without specifying any network configuration, then
+the three containers will be attached to the default \x60\x60bridge\x60\x60 network.
+This way, we can satisfy the first requirement, but not the second (other containers attached
+to \x60\x60bridge\x60\x60 will be able to communicate with the clients and the server).
+
+We need to create a new network in Docker, let's call it \x60\x60chat-room\x60\x60 that 
+will be used exclusively for the server and the two clients.
+
+:::
+
+</details>"}`
+
+::: {.infobox .warning data-latex="{warning}"}
+**Warning**
+
+Only one instance of the server is running. 
+Two instances of the client run at the same time.
+
+1. In order to execute the server, we need to **pass a port number as a parameter**. Choose one in the range [49152–65535].
+
+2. In order to execute the client, we need to **pass as parameters the IP address of the server and the port** which the server listens to (the one that you specified at 1.).
+
+:::
+
+
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+```{exercise label=client-server-single-network}
+
+Execute the server and the two clients by using the network configuration that you
+explained in the previous exercise.
+
+* The server writes messages on the terminal. Remember to launch the container with the appropriate 
+options in order to actually see those messages.
+
+* Users need to interact with the client, that is: read and write messages. 
+Remember to launch the container with the appropriate options in order to actually see those messages.
+
+Write the **exact commands** that you typed for 
+both configuring the network and launching the server and the clients.  **Explain these commands.**
+
+```
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+First, we create the new network \x60\x60chat-room\x60\x60 by typing the following command:
+
+\x60\x60
+docker network create chat-room
+\x60\x60
+
+Next, we launch the server with the following command:
+
+\x60\x60
+docker container run --rm -t --name chat-server --network chat-room chat-server 60876
+\x60\x60
+
+The server takes in a port number as a parameter.
+If the students launch the server without specifying it, they'll get an error message
+that should lead them to understand what's missing.
+
+In another terminal, we type the following command to run the first client:
+
+\x60\x60
+docker container run --rm -it --name chat-client1 --network chat-room  chat-client chat-server 60876
+\x60\x60
+
+Note that we attach the client to the same network as the server. 
+When we launch the client, we need to pass as parameters the server host (here we can use the 
+container's name \x60\x60chat-server\x60\x60 of the server or its IP address) and the port number 
+(same as we specified when we launched the server).
+When we launch the client, we'll need to specify a username and then we can start typing messages in the chat room.
+
+Finally, we open another terminal to launch the second client with the following command:
+
+\x60\x60
+docker container run --rm -it --name chat-client2 --network chat-room  chat-client chat-server 60876
+\x60\x60
+
+The only thing that changes wrt the previous command is the name that we give the new container 
+(\x60\x60chat-client2\x60\x60).
+
+We can play with the chat to verify that the clients can exchange messages.
+
+:::
+
+</details>"}`
+
+::: {.infobox .warning data-latex="{warning}"}
+**Shut the application down!**
+
+Shut both the clients and the server down  before you move on.
+
+* On the client-side, type ``#quit`` at any moment to exit the chat room.
+
+* Type Ctrl-C to stop the server.
+
+:::
+
+
+## Client and server on different networks
+
+We want to execute:
+
+* One instance of the server.
+
+* Two instances of the client.
+
+However, **neither client** is connected to the same network as the server.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Why can't you launch the containers with the same settings as 
+in Exercise \@ref(exr:client-server-single-network)?
+
+What do you propose as a solution instead?
+
+
+```
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+The hostname \x60\x60chat-server\x60\x60 is not reachable from the clients, because they're not in the 
+same network as the server. 
+So, the only way out is to use the mechanism of port mapping.
+That is: we launch the server on the container port 60876
+but we also use the option \x60\x60-p\x60\x60 to map that port to any available port
+(say, 7070) on the **host computer**.
+This way, the clients can connect to the server by specifying the IP address
+of the host machine and 7070 as the port number.
+
+:::
+
+</details>"}`
+
+
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+```{exercise}
+
+Execute the server and the two clients by making sure that neither client is connected to the 
+same network as the server.
+
+Write the **exact commands** that you typed 
+for both configuring the network and launching the server and the clients.
+**Explain these commands.**
+
+
+```
+
+:::
+
+`r if(params$solution) {"<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+As before, we can still connect the server to the network 
+\x60\x60chat-room\x60\x60.
+However, since we want our server to be reachable from outside that network,
+we need to publish a port on the host. 
+The option \x60\x60-p\x60\x60 in the following command maps the container 
+internal port 60876 to the port 7070 on the host computer.
+
+\x60\x60
+docker container run --rm -it --name chat-server --network chat-room -p 7070:60876 chat-server 60876
+\x60\x60
+
+Now, let's create a new network that we call \x60\x60net-clients\x60\x60 
+to which we'll be attaching the two clients:
+
+\x60\x60
+docker network create net-clients
+\x60\x60
+
+And we finally launch the two clients. As host of the server, 
+we need to type the IP address assigned to the host.
+In my case, the IP address assigned to my host is 192.168.1.8
+
+\x60\x60
+docker container run --rm -it --name chat-client1 --network net-clients chat-client  192.168.1.8 7070
+\x60\x60
+
+The second client is launched as follows:
+
+\x60\x60
+docker container run --rm -it --name chat-client2 --network net-clients chat-client  192.168.1.8 7070
+\x60\x60
+
+
+:::
+
+</details>"}`
+
+::: {.infobox .warning data-latex="{warning}"}
+**Shut the application down!**
+
+Shut both the clients and the server down before you move on.
+
+* On the client-side, type ``#quit`` at any moment to exit the chat room.
+
+* Type Ctrl-C to stop the server.
+
+::: -->

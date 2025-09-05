@@ -7740,973 +7740,6 @@ Shut both the clients and the server down before you move on.
     </item>
     
     <item>
-      <title>Kubernetes deployment on Cloud</title>
-      <link>/courses/cloud-en/kubelab-en/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/courses/cloud-en/kubelab-en/</guid>
-      <description>
-&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
-
-
-&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
-&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
-&lt;div id=&#34;objectives&#34; class=&#34;section level1 unnumbered&#34;&gt;
-&lt;h1&gt;Objectives&lt;/h1&gt;
-&lt;p&gt;In this lab assignment you will:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Build and deploy a multi-service application with &lt;strong&gt;Docker Compose&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Deploy a multi-service application on a &lt;strong&gt;local Kubernetes cluster&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Deploy a multi-service application on a &lt;strong&gt;Kubernetes cluster&lt;/strong&gt; on &lt;strong&gt;Microsoft Azure&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;div id=&#34;submission&#34; class=&#34;section level1 unnumbered&#34;&gt;
-&lt;h1&gt;Submission&lt;/h1&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;In order to submit your work, you need to answer all the questions
-that you &lt;strong&gt;&lt;a href=&#34;https://centralesupelec.edunao.com/mod/quiz/view.php?id=151760&#34; target=&#34;_blank&#34;&gt;find here&lt;/a&gt;&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;strong&gt;Only one member&lt;/strong&gt; of the group must fill in the questionnaire.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;You can answer the open questions either in French or in English.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Some questions require you to upload files.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;You can pause the test at any moment. Your answers will be stored; you’ll find them when you resume the test.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;After answering the last question, you need to click on the button &lt;em&gt;Terminer le test&lt;/em&gt; (&lt;em&gt;Finish attempt&lt;/em&gt; if you use the interface in English) to submit the questionnaire.
-&lt;strong&gt;The submission is final. After submitting, you cannot change your answers anymore.&lt;/strong&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;strong&gt;Deadline: 14 May 2025, 23h59&lt;/strong&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;div id=&#34;context&#34; class=&#34;section level1 unnumbered&#34;&gt;
-&lt;h1&gt;Context&lt;/h1&gt;
-&lt;p&gt;We intend to build and deploy a Web application called &lt;em&gt;TripMeal&lt;/em&gt; that let users share their favorite recipes.
-You can download the application
-&lt;a href=&#34;/courses/cloud-computing/kube-lab/tripmeal.zip&#34;&gt;here&lt;/a&gt;.
-The source code has been readapted from
-&lt;a href=&#34;https://github.com/DanielAndreasen/TripMeal&#34; target=&#34;_blank&#34;&gt;this GitHub repository&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;The downloaded file is an archive.
-Extracting the archive will create a folder named
-&lt;code&gt;tripmeal_sujet&lt;/code&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;bulding-and-deploying-with-docker-compose&#34; class=&#34;section level1&#34; number=&#34;1&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Bulding and deploying with Docker Compose&lt;/h1&gt;
-&lt;p&gt;You’re going to build and deploy the application using Docker Compose.
-In the folder &lt;code&gt;tripmeal_sujet&lt;/code&gt; you should see a file named &lt;em&gt;docker-compose.yml&lt;/em&gt;.&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.1  &lt;/strong&gt;&lt;/span&gt;
-Answer on Edunao. What is the file &lt;em&gt;docker-compose.yml&lt;/em&gt; used for?&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;Look at the files and folders inside the folder &lt;code&gt;tripmeal_sujet&lt;/code&gt;.&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.2  &lt;/strong&gt;&lt;/span&gt;
-Answer on Edunao. How many services does the application &lt;em&gt;TripMeal&lt;/em&gt; have?&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;The &lt;code&gt;Dockerfile&lt;/code&gt; in the directory &lt;code&gt;db&lt;/code&gt; is already implemented.
-Open it and read the content to answer the following questions.&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.3  &lt;/strong&gt;&lt;/span&gt;
-Answer on Edunao. Which DataBase Management System (DBMS) is used in the &lt;em&gt;TripMeal&lt;/em&gt; application?&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.4  &lt;/strong&gt;&lt;/span&gt;
-Answer on Edunao. What is the version (tag) of the image used for the database management system of &lt;em&gt;TripMeal&lt;/em&gt;?
-Find the documentation of the image and use it to answer this question.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.5  &lt;/strong&gt;&lt;/span&gt;
-Where does Docker get the base image for the database management system from?&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;dockerfile-in-folder-web&#34; class=&#34;section level2&#34; number=&#34;1.1&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.1&lt;/span&gt; Dockerfile in folder &lt;code&gt;web&lt;/code&gt;&lt;/h2&gt;
-&lt;p&gt;If you open folder &lt;code&gt;web&lt;/code&gt;, you’ll see that the Dockerfile is empty.&lt;/p&gt;
-&lt;div class=&#34;infobox activitybox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Complete the &lt;code&gt;Dockerfile&lt;/code&gt; in the directory &lt;code&gt;web&lt;/code&gt;.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;You need a Python 3.7 environment to run the application.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The application consists of several files and folders. You need to include all of them into a Docker image.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Add the following instruction in your Dockerfile:&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;code&gt;RUN chmod -x path_to_file_app&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;where &lt;code&gt;path_to_file_app&lt;/code&gt; is the path to the file &lt;code&gt;app.py&lt;/code&gt; &lt;strong&gt;inside the image&lt;/strong&gt;.
-This will prevent an &lt;code&gt;Exec format error&lt;/code&gt; from occurring.&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;Time to make sure that we can build an image from this Dockerfile and we can run a container from that image.&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.6  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Build an image from the Dockerfile that you’ve just completed using the &lt;code&gt;docker build&lt;/code&gt; command.
-You can give the image any name you want. For simplicity, I assume that you call it &lt;code&gt;web-test&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Run a container from this image by typing the following command. The command will only work if you type
-it from the directory where the file &lt;code&gt;tripmeal.env&lt;/code&gt; is stored.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;code&gt;docker run --env-file tripmeal.env -p 3000:5000 web-test&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Open a Web browser and type the following URL: &lt;code&gt;localhost:3000&lt;/code&gt;. You should see the interface of the application. If that’s not the case, stop the container,
-and correct the Dockerfile.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;If you click on the links &lt;em&gt;New recipe&lt;/em&gt;, &lt;em&gt;All recipes&lt;/em&gt;, &lt;em&gt;Weekly menu&lt;/em&gt; and &lt;em&gt;Login&lt;/em&gt; in the application interface, you will get a connection error to the database server.
-This is normal and will be fixed later.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;If the image passes the test, &lt;strong&gt;upload the Dockerfile to Edunao.&lt;/strong&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;the-environment-variables&#34; class=&#34;section level2&#34; number=&#34;1.2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.2&lt;/span&gt; The environment variables&lt;/h2&gt;
-&lt;p&gt;When testing the image of the service &lt;code&gt;web&lt;/code&gt;, you may have noticed that we passed the file &lt;code&gt;tripmeal.env&lt;/code&gt; as an argument to the command &lt;code&gt;docker run&lt;/code&gt;.
-This file contains the definition of &lt;strong&gt;environment variables&lt;/strong&gt; that are used in the application.
-Open this file and look at the environment variables to answer the following questions.&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.7  &lt;/strong&gt;&lt;/span&gt;
-Answer on Edunao. What does the environment variable SERVER_PORT refer to?&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;!-- ::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-
-
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-8&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-8) &lt;/strong&gt;&lt;/span&gt;
-Answer on Edunao. Which of the following sentences are true?
-
-a. When you execute TripMeal, SERVER_PORT will be opened on the network interface of the host computer (your computer).
-
-b. When you execute TripMeal, SERVER_PORT will be opened on the network interface of a container.
-
-c. In order to access the Web interface of TripMeal, you&#39;ll need to map SERVER_PORT to a port number p; p will be opened on the network interface of the host computer (your computer).
-
-d. When you execute TripMeal, you&#39;ll be able to access the Web interface by typing the URL localhost:$SERVER_PORT in your browser.
-
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
- --&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.8  &lt;/strong&gt;&lt;/span&gt;
-Answer on Edunao.
-When you write the file &lt;code&gt;docker-compose.yml&lt;/code&gt;, you’ll need to give the database service a name.
-Which of the environment variables tells you the name that you must use?&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;volumes-and-networks&#34; class=&#34;section level2&#34; number=&#34;1.3&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.3&lt;/span&gt; Volumes and networks&lt;/h2&gt;
-&lt;p&gt;The &lt;em&gt;TripMeal&lt;/em&gt; application keeps user information and recipe information in a database.
-Therefore, you’ll need to define a Docker &lt;strong&gt;volume&lt;/strong&gt; to hold the data.&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.9  &lt;/strong&gt;&lt;/span&gt;
-Answer on Edunao. Look at the documentation of the base image of the database management system of the application.
-Which directory inside the database image will you attach the volume to?&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;The containers composing the &lt;em&gt;TripMeal&lt;/em&gt; application need to communicate through a Docker &lt;strong&gt;network&lt;/strong&gt;.&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-11&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.10  &lt;/strong&gt;&lt;/span&gt;
-Answer on Edunao. If you don’t explicitly create any network, the containers will be able to communicate anyway.
-How do you explain it?&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Note.&lt;/strong&gt; You can answer this question after writing the Docker compose file and running the application.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-12&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.11  &lt;/strong&gt;&lt;/span&gt;
-Answer on Edunao. Why is not creating a network for the application considered a bad idea,
-even if the application works?&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;the-compose-file&#34; class=&#34;section level2&#34; number=&#34;1.4&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.4&lt;/span&gt; The compose file&lt;/h2&gt;
-&lt;p&gt;You’re finally ready to complete the file &lt;code&gt;docker-compose.yml&lt;/code&gt;.&lt;/p&gt;
-&lt;div class=&#34;infobox activitybox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Write the file &lt;code&gt;docker-compose.yml&lt;/code&gt;.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Remember that you need to pass the &lt;strong&gt;environment variables&lt;/strong&gt;
-to your application.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;As a documentation of Docker Compose you can use:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;The &lt;a href=&#34;/courses/cloud-computing/tutorials/tutorial-kube&#34; target=&#34;_blank&#34;&gt;examples that we’ve seen together&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The overview presented on the &lt;a href=&#34;https://docs.docker.com/compose/&#34; target=&#34;_blank&#34;&gt;official Docker website&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;You can also find the full specification of Compose &lt;a href=&#34;https://github.com/compose-spec/compose-spec/blob/master/spec.md&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Run the application and test it. You should be able to see the Web interface of the application, create an account, share a recipe and
-look at the list of shared recipes.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;If you experience problems, you might find the command &lt;code&gt;docker-compose logs&lt;/code&gt; useful.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;p&gt;If you successfully deployed the application, you can continue.&lt;/p&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Shut down the application!&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Shut down both the application before you move on.&lt;/p&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-13&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.12  &lt;/strong&gt;&lt;/span&gt;
-Upload your file &lt;code&gt;docker-compose.yml&lt;/code&gt; to Edunao.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-14&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.13  &lt;/strong&gt;&lt;/span&gt;
-&lt;u&gt;Use Docker Compose&lt;/u&gt; to push all the images that you built in this section to
-your DockerHub registry.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;In the answer to this exercise write the link to the uploaded images.&lt;/strong&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;local-kubernetes-cluster&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Local Kubernetes cluster&lt;/h1&gt;
-&lt;p&gt;We intend to deploy the application &lt;em&gt;TripMeal&lt;/em&gt; on
-a &lt;strong&gt;local Kubernetes cluster&lt;/strong&gt; (either Docker Desktop or Minikube).&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-15&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;
-Answer on Edunao. For each service of the application &lt;em&gt;TripMeal&lt;/em&gt;, specify
-the Kubernetes objects that you need to create and their types.
-Justify your answers.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;environment-variables&#34; class=&#34;section level2&#34; number=&#34;2.1&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.1&lt;/span&gt; Environment variables&lt;/h2&gt;
-&lt;p&gt;One way to pass the environment variables to the containerized applications is to
-use a special Kubernetes resource called a &lt;strong&gt;ConfigMap&lt;/strong&gt;.
-The following is an example (taken from &lt;a href=&#34;https://www.techworld-with-nana.com/post/kubernetes-configmap-and-secret-explained&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;)
-of a ConfigMap with a database connection configuration:&lt;/p&gt;
-&lt;pre class=&#34;yml&#34;&gt;&lt;code&gt;apiVersion: v1
-kind: ConfigMap
-metadata:
-    data: my-config
-data:
-    db-host: &amp;quot;cluster-mysql.database&amp;quot;
-    db-port: &amp;quot;3306&amp;quot;
-    db-name: &amp;quot;my-db&amp;quot;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;In the specification of this ConfigMap, we indicate:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;The name of the ConfigMap (in the &lt;code&gt;metadata&lt;/code&gt; field);&lt;/li&gt;
-&lt;li&gt;The values of some configuration keys (in the &lt;code&gt;data&lt;/code&gt; section).&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;It is advisable to write the specification of a ConfigMap in &lt;strong&gt;its own file&lt;/strong&gt; (for example &lt;code&gt;my-config.yml&lt;/code&gt;).&lt;/p&gt;
-&lt;p&gt;The ConfigMap is then used in the specification of a Pod, as the following example shows.&lt;/p&gt;
-&lt;pre class=&#34;yml&#34;&gt;&lt;code&gt;apiVersion: v1
-kind: Pod
-metadata:
-   name: my-app
-spec:
-   containers:
-   - name: my-app
-     image: my-app-image
-     env:
-     - name: DB_HOST
-         valueFrom:
-            configMapKeyRef:
-               name: my-config
-               key: db-host
-    - name: DB_PORT
-         valueFrom:
-            configMapKeyRef:
-               name: my-config
-               key: db-port
-    - name: DB_NAME
-         valueFrom:
-            configMapKeyRef:
-               name: my-config
-               key: db-name      &lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;In this specification, the environment variables are all defined in section &lt;code&gt;env&lt;/code&gt;.
-For each environment variable (for instance, DB_HOST), we give its name, the
-reference to the ConfigMap (&lt;code&gt;my-config&lt;/code&gt; in our example) and the key in the
-ConfigMap (&lt;code&gt;db-host&lt;/code&gt;) that holds the value of the variable.&lt;/p&gt;
-&lt;p&gt;Let’s now create a ConfigMap for the application TripMeal!&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-16&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.2  &lt;/strong&gt;&lt;/span&gt;
-Create a file &lt;code&gt;tripmeal-env.yml&lt;/code&gt; and write the specification of a ConfigMap
-to set the values of the environment variables listed in file &lt;code&gt;tripmeal.env&lt;/code&gt;.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Create the ConfigMap using the command &lt;code&gt;kubectl apply -f tripmeal-env.yml&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Check that the ConfigMap is created with the command &lt;code&gt;kubectl get ConfigMap&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;strong&gt;Upload the file to Edunao.&lt;/strong&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;We now deploy the Web interface.&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-17&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.3  &lt;/strong&gt;&lt;/span&gt;
-Create a file &lt;code&gt;tripmeal-kube.yml&lt;/code&gt; and write the specification of the necessary resources to deploy the
-web interface (ignore the database for now).
-Use the ConfigMap that you created in the previous exercise to set the value of the necessary environment variables.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Deploy the web interface via the command:&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;code&gt;kubectl apply -f tripmeal-kube.yml&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Confirm that you can access the home page of the web interface using your browser (it is normal if you get an error if you try to log in or use any functionality that triggers an action on the database).&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;Now we deploy the DBMS.&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-18&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.4  &lt;/strong&gt;&lt;/span&gt;
-Add to file &lt;code&gt;tripmeal-kube.yml&lt;/code&gt; the specification of the necessary resources to deploy the
-DBMS.
-Use the ConfigMap that you created in the previous exercise to set the value of the necessary environment variables.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Deploy the DBMS via the command:&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;code&gt;kubectl apply -f tripmeal-kube.yml&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Confirm that all functionalities of the application work as intended.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;Upload the file &lt;code&gt;tripmeal-kube.yml&lt;/code&gt; to Edunao.&lt;/strong&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;secrets&#34; class=&#34;section level2&#34; number=&#34;2.2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.2&lt;/span&gt; Secrets&lt;/h2&gt;
-&lt;p&gt;In the previous section, we used ConfigMaps to pass sensitive information (such as the database username and the password)
-to the application.
-Sensitive information are better handled with another Kubernetes resource called a &lt;strong&gt;Secret&lt;/strong&gt;.&lt;/p&gt;
-&lt;p&gt;The specification of a secret is similar to a ConfigMap’s.&lt;/p&gt;
-&lt;pre class=&#34;yml&#34;&gt;&lt;code&gt;apiVersion: v1
-kind: Secret
-metadata:
-    data: my-secret
-type: Opaque
-data:
-    db-user: &amp;quot;myusername&amp;quot;
-    db-pwd: &amp;quot;mypwd&amp;quot;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;The type Opaque refers to the fact that this secret stores unstructured key-value pairs. Other types exist that constrain the
-content of the secret to a more specific format.&lt;/p&gt;
-&lt;div class=&#34;infobox activitybox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Copy this specification to a file named &lt;code&gt;mysecret.yml&lt;/code&gt; and
-create the secret with the following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;kubectl apply -f mysecret.yml&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;Then show the specification of the secret with the following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;kubectl get secret my-secret -o yaml&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;Look at the section &lt;code&gt;data&lt;/code&gt;: both username and password are stored using the &lt;strong&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Base64#Output_padding&#34; target=&#34;_blank&#34;&gt;base64 encoding&lt;/a&gt;&lt;/strong&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;It is important to note that the base64 encoding is &lt;strong&gt;not an encryption method&lt;/strong&gt;.
-In other words, Kubernetes stores all secrets in &lt;strong&gt;plain text by default&lt;/strong&gt; in the &lt;code&gt;etcd&lt;/code&gt; database .&lt;/p&gt;
-&lt;div class=&#34;infobox activitybox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Good to know&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;The correct management of secrets is a complex topic that is out of the scope of this course.
-One essential step to ensure a correct secret management is
-enabling &lt;strong&gt;encryption at rest&lt;/strong&gt; in Kubernetes.
-This is done by applying a configuration on the Kubernetes node that runs the
-&lt;code&gt;api-server&lt;/code&gt;; this configuration must specify the encryption key used to encrypt all secrets
-to store them safely in etcd.&lt;/p&gt;
-&lt;p&gt;Two options exist:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;the encryption key is stored in plain text in the node. As long as unauthorized users cannot access the node, the key is safe, but this solution is clearly not a perfect solution.&lt;/li&gt;
-&lt;li&gt;the encryption key is managed by an external key management server (KMS). In this option, a different encryption key (Data Encryption Key, or DEK) is generated for each secret; the secret is encrypted with DEK.
-The DEK is also encrypted with another key (Key Encryption Key, or KEK); both the encrypted secret and the encrypted DEK are stored on the key management server. This option has the advantage of
-using a different key for each secret.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Encryption at rest cannot be applied on Kubernetes deployed in Docker Desktop.
-When deploying to Azure, encryption at rest can be enabled and Kubernetes can be configured to use Azure Key Vault as key management server.&lt;/p&gt;
-&lt;p&gt;For an in-depth coverage of Kubernetes secrets management, refer &lt;a href=&#34;https://learning.oreilly.com/library/view/kubernetes-secrets-management/9781617298912/&#34; target=&#34;_&amp;quot;blank&amp;quot;&#34;&gt;to this book&lt;/a&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;The following specification shows an example of how to use a secret in a Pod’s specification:&lt;/p&gt;
-&lt;pre class=&#34;yml&#34;&gt;&lt;code&gt;apiVersion: v1
-kind: Pod
-metadata:
-   name: my-app
-spec:
-   containers:
-   - name: my-app
-     image: my-app-image
-     env:
-     - name: DB_USER
-         valueFrom:
-            secretKeyRef:
-               name: my-secret
-               key: db-user
-    - name: DB_PASSWORD
-         valueFrom:
-            secretKeyRef:
-               name: my-secret
-               key: db-pwd
-    &lt;/code&gt;&lt;/pre&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-19&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.5  &lt;/strong&gt;&lt;/span&gt;
-Using the examples shown above:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;define a secret specification for the database user and password in a new file &lt;code&gt;tripmeal-secret.yml&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;modify the specification of your Pods in file &lt;code&gt;tripmeal-kube.yml&lt;/code&gt; to use the secret to set the database user and password.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;remember to &lt;strong&gt;remove&lt;/strong&gt; the definition of the environment variables for the database user and password from file &lt;code&gt;tripmeal-env.yml&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;Apply the changes&lt;/strong&gt; and confirm that the application works as intended.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Upload the files : &lt;code&gt;tripmeal-secret.yml&lt;/code&gt;, &lt;code&gt;tripmeal-kube.yml&lt;/code&gt; and &lt;code&gt;tripmeal-env.yml&lt;/code&gt; to Edunao.&lt;/strong&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Shut down the application!&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Shut down the application by removing all the Kubernetes objects.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;kubernetes-cluster-on-microsoft-azure&#34; class=&#34;section level1&#34; number=&#34;3&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Kubernetes cluster on Microsoft Azure&lt;/h1&gt;
-&lt;p&gt;At this point you should have successfully deployed the application on your local Kubernetes cluster.&lt;/p&gt;
-&lt;p&gt;You’re now going to create a Kubernetes cluster on &lt;strong&gt;Microsoft Azure&lt;/strong&gt;
-and deploy &lt;em&gt;TripMeal&lt;/em&gt; on that cluster.&lt;/p&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;If you haven’t activated it yet:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Connect to &lt;a href=&#34;https://azure.microsoft.com/en-us/free/students/&#34; target=&#34;_blank&#34;&gt;this webpage&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Click on &lt;code&gt;Start free&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Sign in by using your CentraleSupélec credentials.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Follow the instructions.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;p&gt;During this activity, you’ll need to answer some questions that encourage you to
-gain a deeper knowledge of the Azure platform and better understand the commands that you type.
-&lt;strong&gt;Feel free to read the documentation on the Azure platform in order to answer the questions.&lt;/strong&gt;&lt;/p&gt;
-&lt;div id=&#34;login-to-azure-through-cli&#34; class=&#34;section level2&#34; number=&#34;3.1&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.1&lt;/span&gt; Login to Azure through CLI&lt;/h2&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;If you get the message &lt;em&gt;command not found&lt;/em&gt; when you type &lt;code&gt;az&lt;/code&gt;, it means that you haven’t installed
-the Azure CLI yet.
-You’ll find more information on the &lt;a href=&#34;https://centralesupelec.edunao.com/course/view.php?id=8081#section-4&#34; target=&#34;_blank&#34;&gt;Edunao course page&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Make sure you run version 2.25 or higher of the Azure CLI, by typing:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;az --version&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;If you use a VM with Multipass you’ll need to install the Azure CLI with the following command:&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;If you use a VM either with Multipass or with VirtualBox you’ll need to re-install kubectl:&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Type the following command so as the command &lt;code&gt;kubectl&lt;/code&gt; does not refer to &lt;code&gt;minikube kubectl&lt;/code&gt; anymore:&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;code&gt;unalias kubectl&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Type the following command to install a new version of &lt;code&gt;kubectl&lt;/code&gt;:&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;code&gt;sudo az aks install-cli&lt;/code&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;Whether you’re on Windows, macOS or Linux, you need to &lt;strong&gt;open a terminal&lt;/strong&gt;.&lt;/p&gt;
-&lt;p&gt;In order to log in to your Azure account, type the following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;az login&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;A Web page will open in your default Web browser, where you can type your username and
-password (your CentraleSupélec credentials).
-After authenticating your Azure account, you can go back to the terminal, where you should see
-some information about your account, such as:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;[
-  {
-    &amp;quot;cloudName&amp;quot;: &amp;quot;AzureCloud&amp;quot;,
-    &amp;quot;homeTenantId&amp;quot;: &amp;quot;&amp;lt;id&amp;gt;&amp;quot;,
-    &amp;quot;id&amp;quot;: &amp;quot;&amp;lt;id&amp;gt;&amp;quot;,
-    &amp;quot;isDefault&amp;quot;: true,
-    &amp;quot;managedByTenants&amp;quot;: [],
-    &amp;quot;name&amp;quot;: &amp;quot;Azure for Students&amp;quot;,
-    &amp;quot;state&amp;quot;: &amp;quot;Enabled&amp;quot;,
-    &amp;quot;tenantId&amp;quot;: &amp;quot;&amp;lt;id&amp;gt;&amp;quot;,
-    &amp;quot;user&amp;quot;: {
-      &amp;quot;name&amp;quot;: &amp;quot;&amp;lt;email-address&amp;gt;&amp;quot;,
-      &amp;quot;type&amp;quot;: &amp;quot;user&amp;quot;
-    }
-  }
-]&lt;/code&gt;&lt;/pre&gt;
-&lt;/div&gt;
-&lt;div id=&#34;deploy-and-use-azure-container-registry&#34; class=&#34;section level2&#34; number=&#34;3.2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.2&lt;/span&gt; Deploy and use Azure Container Registry&lt;/h2&gt;
-&lt;p&gt;When we run TripMeal on a local Kubernetes cluster, we assumed that our computer
-could have a direct access to the Internet and, therefore, to the DockerHub registry, where we
-could pull the images of the TripMeal services.
-When we run a containerized application in production, we cannot make this assumption
-as the production servers have often no direct access to the Internet.&lt;/p&gt;
-&lt;p&gt;We need to place the images in a container registry that is in the same context
-as our production servers.
-Since we’re going to run the application on Azure, we can use the
-&lt;strong&gt;Azure Container Registry (ACR)&lt;/strong&gt;.&lt;/p&gt;
-&lt;div id=&#34;registry-creation&#34; class=&#34;section level3&#34; number=&#34;3.2.1&#34;&gt;
-&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.2.1&lt;/span&gt; Registry creation&lt;/h3&gt;
-&lt;p&gt;First, we need to create a &lt;strong&gt;resource group&lt;/strong&gt;.&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-20&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;
-Answer on Edunao. What is a &lt;strong&gt;resource group&lt;/strong&gt; in Azure and how is it useful?&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;p&gt;The command to create a new resource group is the following
-(replace RES_GRP_NAME with a name of your choice).&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;az group create --name  RES_GRP_NAME --location francecentral&lt;/code&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;If &lt;code&gt;francecentral&lt;/code&gt; does not work for your account, the previous command will normally suggest a possible location.
-Choose one that is near you.&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;You can verify that the resources are correctly created by looking &lt;a href=&#34;https://portal.azure.com/&#34; target=&#34;_blank&#34;&gt;in the Azure portal&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Next, we need to create a &lt;strong&gt;container registry&lt;/strong&gt; with the following command
-(replace RES_GRP_NAME with the name of your resource group and REG_NAME with a name of your choice for the registry).&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;az acr create --resource-group RES_GRP_NAME --name REG_NAME --sku Basic&lt;/code&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-21&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.2  &lt;/strong&gt;&lt;/span&gt;
-In the previous command, we used the option &lt;code&gt;sku&lt;/code&gt;. Answer to a question on Edunao.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;registry-login&#34; class=&#34;section level3&#34; number=&#34;3.2.2&#34;&gt;
-&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.2.2&lt;/span&gt; Registry login&lt;/h3&gt;
-&lt;p&gt;After creating the registry, we can log into it with the following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;az acr login --name REG_NAME&lt;/code&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;div id=&#34;image-tagging&#34; class=&#34;section level3&#34; number=&#34;3.2.3&#34;&gt;
-&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.2.3&lt;/span&gt; Image tagging&lt;/h3&gt;
-&lt;p&gt;We’re almost ready to push the images that compose the application &lt;em&gt;TripMeal&lt;/em&gt; to the registry.
-In order to do that, we need to &lt;strong&gt;tag&lt;/strong&gt; (i.e., rename) our images so that their names are
-preceded by the &lt;strong&gt;login server name&lt;/strong&gt; of the registry.&lt;/p&gt;
-&lt;p&gt;In order to get the name of the &lt;strong&gt;login server name&lt;/strong&gt;
-(that we denote here as &lt;code&gt;acrloginserver&lt;/code&gt;) of your registry, you can type
-the following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;az acr list --resource-group RES_GRP_NAME --query &#34;[].{acrLoginServer:loginServer}&#34; --output table&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;Your &lt;code&gt;acrloginserver&lt;/code&gt; will be something like &lt;code&gt;xxx.azurecr.io&lt;/code&gt;.&lt;/p&gt;
-&lt;div class=&#34;infobox activitybox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Tag the images that correspond to the services of the application &lt;em&gt;TripMeal&lt;/em&gt; so that
-their name is similar to: &lt;code&gt;acrloginserver/nameofimage:latest&lt;/code&gt;. You can use the
-command &lt;code&gt;docker tag&lt;/code&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;pushing-the-images&#34; class=&#34;section level3&#34; number=&#34;3.2.4&#34;&gt;
-&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.2.4&lt;/span&gt; Pushing the images&lt;/h3&gt;
-&lt;p&gt;We can push the images with the following command (use your image name
-instead of &lt;code&gt;xxx.azurecr.io/imagename:latest&lt;/code&gt;).&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker push xxx.azurecr.io/imagename:latest&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;Make sure to &lt;strong&gt;type this command for each image&lt;/strong&gt; that you want to push.&lt;/p&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;It might take few minutes before the images are completely pushed to the registry.&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;Finally, verify that the images are actually in the registry with the following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;az acr repository list --name REG_NAME --output table&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;Alternatively, you can connect to &lt;a href=&#34;https://portal.azure.com/&#34; target=&#34;_blank&#34;&gt;your Azure portal&lt;/a&gt;
-and visually browse your resources.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;deploy-a-kubernetes-cluster&#34; class=&#34;section level2&#34; number=&#34;3.3&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.3&lt;/span&gt; Deploy a Kubernetes cluster&lt;/h2&gt;
-&lt;p&gt;We now deploy a &lt;strong&gt;Kubernetes cluster on Azure&lt;/strong&gt;.&lt;/p&gt;
-&lt;div id=&#34;cluster-creation&#34; class=&#34;section level3&#34; number=&#34;3.3.1&#34;&gt;
-&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.3.1&lt;/span&gt; Cluster creation&lt;/h3&gt;
-&lt;p&gt;We create the cluster with the following command (replace CLUSTER_NAME
-with a name of your choice. As before, RES_GRP_NAME is the name of your resource group
-and REG_NAME is the name of the container registry).&lt;/p&gt;
-&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;az aks create \
-    --resource-group RES_GRP_NAME \
-    --name CLUSTER_NAME \
-    --node-count 2 \
-    --generate-ssh-keys \
-    --attach-acr REG_NAME&lt;/code&gt;&lt;/pre&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;If you get an error on your SSH key, then your key is not in the right format.&lt;/p&gt;
-&lt;p&gt;Here is how we suggest you to proceed.&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;Open your home directory in Visual Studio.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Locate the hidden folder &lt;code&gt;.ssh&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;You should have a file named &lt;code&gt;id_rsa.pub&lt;/code&gt; under folder &lt;code&gt;.ssh&lt;/code&gt;. Open it.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Copy the whole content of the file.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Create a new file under folder &lt;code&gt;.ssh&lt;/code&gt;. Give it a name of your choice (for instance, &lt;code&gt;id_kube_rsa.pub&lt;/code&gt;).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Paste the content into the new file, while making sure that you don’t have any whitespace before
-the first character.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Save and close the file.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Type the command &lt;code&gt;az aks create&lt;/code&gt; and replace the &lt;code&gt;--generate--ssh-keys&lt;/code&gt; option with &lt;code&gt;--ssh-key-value ~/.ssh/id_kube_rsa.pub&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;p&gt;The cluster will take a while to start. Time for a coffee!
-But before, answer the following question!&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-23&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.3  &lt;/strong&gt;&lt;/span&gt;
-What is the meaning of the option &lt;code&gt;node-count&lt;/code&gt; in the previous command?&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;connect-to-the-cluster&#34; class=&#34;section level3&#34; number=&#34;3.3.2&#34;&gt;
-&lt;h3&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.3.2&lt;/span&gt; Connect to the cluster&lt;/h3&gt;
-&lt;p&gt;We can configure &lt;code&gt;kubectl&lt;/code&gt; to connect to the newly created cluster.
-You need to type the following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;az aks get-credentials --resource-group RES_GRP_NAME --name CLUSTER_NAME&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;Now, your Kubernetes cluster should be visible locally.
-To verify it, type the following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;kubectl config get-contexts&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;Here &lt;em&gt;context&lt;/em&gt; refers to the Kubernetes clusters that &lt;em&gt;kubectl&lt;/em&gt; has access to.
-The Kubernetes cluster that you created on Azure should be visible in the output; an asterisk
-should appear in front of its name, indicating that it is the &lt;em&gt;current context&lt;/em&gt;
-(that is the Kubernetes cluster being currently referenced by &lt;code&gt;kubectl&lt;/code&gt;).&lt;/p&gt;
-&lt;p&gt;Type the following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;kubectl get nodes&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;You should see the information about the nodes in the cluster.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;deploy-the-application&#34; class=&#34;section level2&#34; number=&#34;3.4&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.4&lt;/span&gt; Deploy the application&lt;/h2&gt;
-&lt;p&gt;We’re almost done! The images are in the registry, the Kubernetes cluster is up and running.
-The only missing piece of the puzzle is our application &lt;em&gt;TripMeal&lt;/em&gt;.&lt;/p&gt;
-&lt;p&gt;First thing to do is to slightly modify the file &lt;code&gt;tripmeal.yml&lt;/code&gt; that you created at the end
-of the previous section.&lt;/p&gt;
-&lt;div class=&#34;infobox activitybox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Activity&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Look at the names of the images of each service in that file. How must these names change?
-Modify the file accordingly (&lt;strong&gt;no need to upload it on Edunao&lt;/strong&gt;).&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;It is the moment you’ve been waiting for!
-Deploy your application by typing the following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;kubectl apply -f tripmeal.yml&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;Look at Kubernetes objects created after this command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;kubectl get all&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;Wait for all the components to be up and running.
-Get the external IP address of the web service and try to connect to the application,
-in the same way you did in the previous section.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;If you can play with the application like you did in your local deployment it means that you reached
-the conclusion of this assignment! Bravo!&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-24&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.4  &lt;/strong&gt;&lt;/span&gt;
-Submit a &lt;strong&gt;video&lt;/strong&gt; like that the one that &lt;a href=&#34;https://webtv.centralesupelec.fr/permalink/v1261a00b74dbbzwk2vr/&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;you can see here&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;The video must &lt;strong&gt;clearly&lt;/strong&gt; show that:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;You’re connected to &lt;strong&gt;your Azure portal&lt;/strong&gt; (Email address on the top right corner of the portal).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;All the passages that you see in the sample video: you need to show the &lt;strong&gt;public IP address&lt;/strong&gt;
-of the application that you deployed, use that address to connect to your application and play
-with the application to show that it works correctly.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-25&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.5  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;You can access your application using the IP address followed by the port number.
-It would be cool if you could access the application by typing an URL, and without specifying a port number.&lt;/p&gt;
-&lt;p&gt;Modify the specification of your Kubernetes external service to allow the connection to your app via an URL. Here are some hints:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;You can use the field &lt;code&gt;service.beta.kubernetes.io/azure-dns-label-name&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Get some help from ChatGPT to set up the value of this field and find out the URL that you’ll need to type to access the app.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;Upload your specification file on Edunao.&lt;/strong&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;conclusion&#34; class=&#34;section level1 unnumbered&#34;&gt;
-&lt;h1&gt;Conclusion&lt;/h1&gt;
-&lt;p&gt;Make sure you follow these instructions:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Take down your application in Kubernetes by using the following command:&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;code&gt;kubectl delete -f tripmeal.yml&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Change the context of the &lt;code&gt;kubectl&lt;/code&gt; command so that it points back
-to a local Kubernetes cluster. Type the following command, where
-CONTEXT_NAME will be &lt;code&gt;docker-desktop&lt;/code&gt; or &lt;code&gt;minikube&lt;/code&gt;, depending on which local Kubernetes cluster
-you use.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;code&gt;kubectl config use-context CONTEXT_NAME&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Destroy all the resources&lt;/strong&gt; linked to the application
-&lt;em&gt;TripMeal&lt;/em&gt; on Microsoft Azure, otherwise you’ll get billed even if you don’t use them!
-You can destroy all the resources by simply deleting the resource group to which they belong.
-You can do it through the Azure portal or by typing the following command (replace RES_GRP_NAME with the name
-of the resource group that you intend to remove).&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;code&gt;az group delete --name RES_GRP_NAME&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;You can check the balance of your Azure credit &lt;a href=&#34;https://www.microsoftazuresponsorships.com/Balance&#34; target=&#34;_blank&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;You can stop Docker and Kubernetes if you don’t need it anymore.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;!-- https://stackoverflow.com/questions/55271912/flask-cli-throws-oserror-errno-8-exec-format-error-when-run-through-docker--&gt;
-&lt;!-- merge 1.2 with 1.3, so that we can ask students to point out exactly the common layers --&gt;
-&lt;!-- # Docker networking model
-
-We developed a simple chat room in Python that you can download 
-[here](/courses/cloud-computing/kube-lab/chat-room.zip). 
-The code has been adapted from [this GitHub project](https://github.com/pricheal/python-client-server/){target=&#34;_blank&#34;}.
-
-Participants use a *client* program to connect to the chat room;
-the chat room is managed by a *server* application  that receives the 
-client connections and forwards the messages between the users.
-The archive contains the following files:
-
-* *client.py*. Implementation of the chat room client.
-* *server.py*. Implementation of the chat room server.
-* *utils.py*. Library with utility functions used in both *client.py* and *server.py*.
-
-The application is written in Python and it **requires Python 3.7**. 
-The application doesn&#39;t need any third-party library, the packages included in a minimal Python environment are enough.
-
-
-
-
-::: {.infobox .exercisebox  data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-
-
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:client-server-methodology&#34;&gt;&lt;strong&gt;(\#exr:client-server-methodology) &lt;/strong&gt;&lt;/span&gt; 
-
-a. Is a single Docker image for this application enough? Justify your answer.
-
-b. Given your answer to the previous question, how many Docker images do you need to create? 
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-
-:::
-
-
-
-We now build the images for the application.
-
-:::{.infobox .curiosity data-latex=&#34;curiosity&#34;}
-**Good to know**
-
-If you need to inspect the file system of an
-image that you create (e.g., to verify that the files that you 
-copied are actually there), you can open a terminal 
-in the image by using the following command:
-
-``
-docker run -it --entrypoint sh IMAGE_NAME
-``
-
-:::
-
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-
-
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-26&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-26) &lt;/strong&gt;&lt;/span&gt;Build the image(s) for the application. For each image:
-
-a. Upload the Dockerfile to Edunao.
-b. Write the **exact** command that you used to build the image.
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-::: {.infobox .warning data-latex=&#34;{warning}&#34;}
-**Warning**
-
-The size of the images should be kept as small as possible.
-Remember to include in the images only what you need to build and run the application.
-
-:::
-
-If you built more than one image:
-
-c. Do they have some common layers? Which ones?
-
-d. If so, is it something that has an impact on the build time and how?
-
-:::
-
-
-
-
-
-
-
-
-## Client and server on the same network
-
-We want to execute:
-
-* One instance of the server.
-
-* Two instances of the client.
-
-The server, as well as the clients, will 
-**run in Docker containers attached to the same network**.
-
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-27&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-27) &lt;/strong&gt;&lt;/span&gt;
-We want to make sure that:
-
-1. The server and the clients can communicate with each other.
-
-2. Other Docker containers **cannot** communicate neither with the server nor with the clients.  
-
-How can you satisfy both requirements in Docker? Explain your solution 
-and justify it.
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
-
-
-::: {.infobox .warning data-latex=&#34;{warning}&#34;}
-**Warning**
-
-Only one instance of the server is running. 
-Two instances of the client run at the same time.
-
-1. In order to execute the server, we need to **pass a port number as a parameter**. Choose one in the range [49152–65535].
-
-2. In order to execute the client, we need to **pass as parameters the IP address of the server and the port** which the server listens to (the one that you specified at 1.).
-
-:::
-
-
-
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:client-server-single-network&#34;&gt;&lt;strong&gt;(\#exr:client-server-single-network) &lt;/strong&gt;&lt;/span&gt;
-Execute the server and the two clients by using the network configuration that you
-explained in the previous exercise.
-
-* The server writes messages on the terminal. Remember to launch the container with the appropriate 
-options in order to actually see those messages.
-
-* Users need to interact with the client, that is: read and write messages. 
-Remember to launch the container with the appropriate options in order to actually see those messages.
-
-Write the **exact commands** that you typed for 
-both configuring the network and launching the server and the clients.  **Explain these commands.**
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
-
-
-::: {.infobox .warning data-latex=&#34;{warning}&#34;}
-**Shut the application down!**
-
-Shut both the clients and the server down  before you move on.
-
-* On the client-side, type ``#quit`` at any moment to exit the chat room.
-
-* Type Ctrl-C to stop the server.
-
-:::
-
-
-## Client and server on different networks
-
-We want to execute:
-
-* One instance of the server.
-
-* Two instances of the client.
-
-However, **neither client** is connected to the same network as the server.
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-
-
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-28&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-28) &lt;/strong&gt;&lt;/span&gt;
-Why can&#39;t you launch the containers with the same settings as 
-in Exercise \@ref(exr:client-server-single-network)?
-
-What do you propose as a solution instead?
-
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
-
-
-
-
-
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-
-
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-29&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-29) &lt;/strong&gt;&lt;/span&gt;
-Execute the server and the two clients by making sure that neither client is connected to the 
-same network as the server.
-
-Write the **exact commands** that you typed 
-for both configuring the network and launching the server and the clients.
-**Explain these commands.**
-
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
-
-
-
-::: {.infobox .warning data-latex=&#34;{warning}&#34;}
-**Shut the application down!**
-
-Shut both the clients and the server down before you move on.
-
-* On the client-side, type ``#quit`` at any moment to exit the chat room.
-
-* Type Ctrl-C to stop the server.
-
-::: --&gt;
-&lt;/div&gt;
-</description>
-    </item>
-    
-    <item>
       <title>MongoDB</title>
       <link>/courses/bdia_old/tutorials/mongodb-tutorial/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -15760,14 +14793,6 @@ the platform registers the date when the relationship is established.&lt;/p&gt;
 Give the &lt;strong&gt;conceptual schema&lt;/strong&gt; of the database with an ER diagram.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-1/social-network-solution.png&#34; alt=&#34;Social network solution&#34;&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -15777,33 +14802,6 @@ Translate the conceptual schema into a logical schema.
 For each table, underline the primary key and specify the foreign keys.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The &lt;strong&gt;collection of tables&lt;/strong&gt; is the following:&lt;/p&gt;
-&lt;pre&gt;
-&lt;TT&gt;UserAccount&lt;/TT&gt;  (&lt;u&gt;nickname&lt;/u&gt;, first_name, last_name, city, country)
-
-&lt;TT&gt;Post&lt;/TT&gt;         (&lt;u&gt;post_id&lt;/u&gt;, content, date, time, lat, long, nickname)
-
-&lt;TT&gt;EmailAddress&lt;/TT&gt; (&lt;u&gt;email_address&lt;/u&gt;, nickname)
-
-&lt;TT&gt;Relationship&lt;/TT&gt; (&lt;u&gt;nickname_src&lt;/u&gt;, &lt;u&gt;nickname_dst&lt;/u&gt;, type, date)
-
-&lt;TT&gt;Tag&lt;/TT&gt;          (&lt;u&gt;post_id&lt;/u&gt;, &lt;u&gt;nickname&lt;/u&gt;)
-
-&lt;/pre&gt;
-&lt;p&gt;The &lt;strong&gt;foreign keys&lt;/strong&gt; are the following:&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Post(nickname)&lt;/TT&gt; → &lt;TT&gt;UserAccount(nickname)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;EmailAddress(nickname)&lt;/TT&gt; → &lt;TT&gt;EmailAddress(nickname)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Relationship(nickname_src)&lt;/TT&gt; → &lt;TT&gt;UserAccount(nickname)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Relationship(nickname_dst)&lt;/TT&gt; → &lt;TT&gt;UserAccount(nickname)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Tag(post_id)&lt;/TT&gt; → &lt;TT&gt;Post(post_id)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Tag(nickname)&lt;/TT&gt; → &lt;TT&gt;UserAccount(nickname)&lt;/TT&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;database-of-a-banking-system&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
@@ -15836,18 +14834,6 @@ a customer can be granted several loans and open as many accounts as s/he wishes
 &lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;Which primary key would you choose for the entity Bank? Justify your answer.
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Since no
-two banks have the same &lt;em&gt;code_bank&lt;/em&gt; or &lt;em&gt;name&lt;/em&gt;,
-either property can be chosen as the primary key
-of the entity &lt;TT&gt;Bank&lt;/TT&gt;.
-Both can be considered as valid &lt;strong&gt;candidate keys&lt;/strong&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -15856,17 +14842,6 @@ Both can be considered as valid &lt;strong&gt;candidate keys&lt;/strong&gt;.&lt;
 as a valid candidate key for the entity &lt;TT&gt;Bank&lt;/TT&gt;? Justify your answer.
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The answer is &lt;strong&gt;no&lt;/strong&gt;.
-While there aren’t any banks that have
-the same value for {&lt;em&gt;code_bank&lt;/em&gt;, &lt;em&gt;name&lt;/em&gt;},
-two subsets ({&lt;em&gt;code_bank&lt;/em&gt;} and {&lt;em&gt;name&lt;/em&gt;}) are candidate keys.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -15877,14 +14852,6 @@ by adding the cardinalities to the relations.
 Justify your choices when any ambiguity arises.
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-1/banking-system-er-complete.png&#34; alt=&#34;Banking system solution&#34;&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -15893,32 +14860,6 @@ Solution
 For each table, underline the primary keys and specify the foreign keys.
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The &lt;strong&gt;collection of tables&lt;/strong&gt; is the following:&lt;/p&gt;
-&lt;pre&gt;
-&lt;TT&gt;Bank&lt;/TT&gt;     (&lt;u&gt;code_bank&lt;/u&gt;, name, address)
-
-&lt;TT&gt;Branch&lt;/TT&gt;   (&lt;u&gt;branch_id&lt;/u&gt;, address, code_bank)
-
-&lt;TT&gt;Account&lt;/TT&gt;  (&lt;u&gt;acct_nbr&lt;/u&gt;, acct_type, balance, branch_id, ssn)
-
-&lt;TT&gt;Loan&lt;/TT&gt;     (&lt;u&gt;loan_nbr&lt;/u&gt;, loan_type, amount, branch_id, ssn)
-
-&lt;TT&gt;Customer&lt;/TT&gt; (&lt;u&gt;ssn&lt;/u&gt;, first_name, last_name, telephone, address)
-
-&lt;/pre&gt;
-&lt;p&gt;The &lt;strong&gt;foreign keys&lt;/strong&gt; are the following:&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Branch(code_bank)&lt;/TT&gt; → &lt;TT&gt;Bank(code_bank)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Account(branch_id)&lt;/TT&gt; → &lt;TT&gt;Branch(branch_id)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Account(ssn)&lt;/TT&gt; → &lt;TT&gt;Customer(ssn)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Loan(branch_id)&lt;/TT&gt; → &lt;TT&gt;Branch(branch_id)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Loan(ssn)&lt;/TT&gt; → &lt;TT&gt;Customer(ssn)&lt;/TT&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;car-dealership-database&#34; class=&#34;section level1&#34; number=&#34;3&#34;&gt;
@@ -15954,14 +14895,6 @@ and each mechanic may work on many cars.&lt;/p&gt;
 &lt;span id=&#34;exr:command-in-guest&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;Give the &lt;strong&gt;conceptual schema&lt;/strong&gt; of the database with an ER diagram.
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-1/car-dealership.png&#34; alt=&#34;Car dealership solution&#34;&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -15971,30 +14904,6 @@ For each table, underline the primary keys and specify the foreign keys.
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The &lt;strong&gt;collection of tables&lt;/strong&gt; is the following:&lt;/p&gt;
-&lt;pre&gt;
-  Car          (&lt;u&gt;serial_number&lt;/u&gt;, make, model, colour, is_new)
-  Customer     (&lt;u&gt;cust_id&lt;/u&gt;, cust_first_name, cust_last_name, cust_phone)
-  Invoice      (&lt;u&gt;invoice_number&lt;/u&gt;, date, price, car_serial_number, sp_id, cust_id)
-  Salesperson  (&lt;u&gt;sp_id&lt;/u&gt;, sp_first_name, sp_last_name)
-  Mechanic     (&lt;u&gt;mec_id&lt;/u&gt;, mec_first_name, mec_last_name)
-  Ticket       (&lt;u&gt;ticket_number&lt;/u&gt;, date_open, date_return, car_serial_number)
-  Repair       (&lt;u&gt;ticket_number&lt;/u&gt;, &lt;u&gt;mec_id&lt;/u&gt;)&lt;/pre&gt;
-&lt;/pre&gt;
-&lt;p&gt;The &lt;strong&gt;foreign keys&lt;/strong&gt; are the following:&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Invoice(cust_id)&lt;/TT&gt; → &lt;TT&gt;Customer(cust_id)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Invoice(car_serial_number)&lt;/TT&gt; → &lt;TT&gt;Car(serial_number)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Invoice(sp_id)&lt;/TT&gt; → &lt;TT&gt;Salesperson(sp_id)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Ticket(car_serial_number)&lt;/TT&gt; → &lt;TT&gt;Car(serial_number)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Repair(ticket_number)&lt;/TT&gt; → &lt;TT&gt;Ticket(ticket_number)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Repair(mec_id)&lt;/TT&gt; → &lt;TT&gt;Mechanic(mec_id)&lt;/TT&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 </description>
@@ -30312,56 +29221,7 @@ Derive a minimal set $\mathcal{G}$ of functional dependencies that is equivalent
 
 :::
 
-
-&lt;details&gt;
-&lt;summary&gt;Solution&lt;/summary&gt;
-
-::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
-
-We first need to write the functional dependencies in canonical form 
-(the right-side of each FD must consist of only one column).
-
-The FD (2.) can be rewritten using the decomposition axiom.
-
-1. $AB \rightarrow C$
-
-2. $D \rightarrow B$
-
-3. $D \rightarrow C$
-
-4. $A \rightarrow B$
-
-Next, we need to make sure that all functional dependencies are left-irreducible.
-
-All functional dependencies except the first one are trivially left-irreducible (the determinant consists of 
-only one column).
-The first has two columns in the determinant, therefore we need to check whether we
-can eliminate one of the two columns and still preserve an equivalent set of functional dependencies.
-
-We apply Armstrong&#39;s axioms to compute the closure of this set of functional dependencies.
-
-From (1.) and (4.), we can apply the pseudotransitivity axiom and we obtain:
-
-$$A \rightarrow B \wedge AB \rightarrow C \implies AA \rightarrow C \implies A \rightarrow C$$
-
-Since $A \rightarrow C$ is in the closure, the column $B$ in FD (1.) is useless 
-and can therefore be omitted.
-
-The set $\mathcal{G}$ consists of the following FDs:
-
-* $A \rightarrow C$
-
-* $D \rightarrow B$
-
-* $D \rightarrow C$
-
-* $A \rightarrow B$
-
-None of these functional dependencies are redundant.
-
-:::
-
-&lt;/details&gt; --&gt;
+ --&gt;
 &lt;div id=&#34;question-1&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Question 1&lt;/h1&gt;
 &lt;p&gt;Let &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; be a relational table with five columns &lt;span class=&#34;math inline&#34;&gt;\((A, B, C, D, E)\)&lt;/span&gt;.
@@ -30381,20 +29241,6 @@ The following set of functional dependencies hold:&lt;/p&gt;
 Find all the candidate keys of table &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;A candidate key is a set of columns on which all the other columns are functionally dependent.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;From the functional dependencies 2 to 5, we see that all columns are functionally dependent on C.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;From the functional dependency 1, we see that C is functionally dependent on {A, B}.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;By transitivity, all columns are also functionally dependent on {A, B}.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;In conclusion, we have two candidate keys: {A, B} and {C}.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -30407,23 +29253,6 @@ We assume that &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is in 
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Based on the answer to the first exercise, we have that:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;A, B and C are prime columns.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;D, E are non-prime columns.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;We conclude that:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;&lt;b&gt;R is in 2NF&lt;/b&gt;. In fact, all non-prime columns depend entirely on both candidate keys.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;b&gt;R is not in 3NF&lt;/b&gt;. In fact, the functional dependency 5. is between two non-prime columns.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -30434,31 +29263,6 @@ what changes would you make to turn &lt;span class=&#34;math inline&#34;&gt;\(R\
 &lt;p&gt;&lt;strong&gt;Important.&lt;/strong&gt; For each table that you create, specify the primary key and the foreign keys.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The table is not in 3NF.
-The functional dependency that violates the 3NF condition is the 5.&lt;/p&gt;
-&lt;p&gt;We need to create a new table R1, where:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;the primary key is the determinant in the functional dependency that violates 3NF (D).&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;We then move all columns that are dependent on D (only E in our case) from R to R1.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Note that D is kept in R so that we can use it to link R with R1.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;In summary:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[R = \{A, B, C, D\}\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[R_1 = \{D, E\}\]&lt;/span&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;The primary key of R is {C} (we can also choose A, B if we want).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The primary key of R1 is {D}.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The column D in R is a foreign key referencing the column D in R1.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;question-2&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Question 2&lt;/h1&gt;
@@ -30484,20 +29288,6 @@ Let &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; be a relational t
 &lt;p&gt;&lt;strong&gt;Justify your answer.&lt;/strong&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;From the definition of candidate key, we derive two functional dependencies:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AB \rightarrow C\]&lt;/span&gt;
-&lt;span class=&#34;math display&#34;&gt;\[AB \rightarrow D\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;Both functional dependencies are in canonical form (the right-side only consist of one column).
-Trivially, both functional dependencies are left-irreducible (we cannot remove any of the columns
-in the determinant without losing information).&lt;/p&gt;
-&lt;p&gt;Trivially, there is no redundancy in this set.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -30508,29 +29298,6 @@ the functional dependency &lt;span class=&#34;math inline&#34;&gt;\(B \rightarro
 &lt;p&gt;&lt;strong&gt;Justify your answer&lt;/strong&gt; and, in case of a negative answer, specify the minimal set of functional dependencies.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;We consider the following functional dependencies:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AB \rightarrow C\quad (1)\]&lt;/span&gt;
-&lt;span class=&#34;math display&#34;&gt;\[AB \rightarrow D\quad (2)\]&lt;/span&gt;
-&lt;span class=&#34;math display&#34;&gt;\[B \rightarrow D\quad (3)\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;Intuitively, if D depends on B (and B alone), the fact that we add A, or any other column, to the left side, does not change this fact.
-Therefore, the functional dependency (2) is redundant.&lt;/p&gt;
-&lt;p&gt;Let’s prove it with the Armstrong’s axioms.&lt;/p&gt;
-&lt;p&gt;By using the augmentation axiom on (3) we obtain:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AB \rightarrow AD\quad (4)\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;By applying the decomposition axiom on (4) we obtain:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AB \rightarrow A\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AB \rightarrow D\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;Since we managed to derive (2) from (3), we formally proved that (2) is redundant.&lt;/p&gt;
-&lt;p&gt;In summary, a minimal set of functional dependencies include the following functional dependencies:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AB\rightarrow C \]&lt;/span&gt;
-&lt;span class=&#34;math display&#34;&gt;\[B\rightarrow D \]&lt;/span&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -30543,25 +29310,6 @@ We assume that &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is in 
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;From the statement of the exercise we know that {A, B} is the only candidate key.
-Therefore:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;A and B are prime columns.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;C and D are non-prime columns.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Given the minimal set of functional dependencies obtained from the previous exercise, we conclude that:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;&lt;strong&gt;R is not in 2NF&lt;/strong&gt;. In fact, the non-prime column D is functionally dependent on
-only one part of the candidate key (the column B).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;strong&gt;R is not in 3NF&lt;/strong&gt;, because it is not in 2NF.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -30572,34 +29320,6 @@ Normalize &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; to the 3NF 
 &lt;p&gt;&lt;strong&gt;Justify your choices.&lt;/strong&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The functional dependency that violates the 2NF is:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[B \rightarrow D\]&lt;/span&gt;.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;We create a new table R1, where the determinant (B) of this
-functional dependency is the primary key.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;We move the columns that depend on B (here, only D) from table R to table R1.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;In summary, we have the following tables:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[R = (A, B, C)\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[R_1 = (B, D)\]&lt;/span&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;{A, B} is the primary key of R.&lt;/li&gt;
-&lt;li&gt;{B} is the primary key of R1.&lt;/li&gt;
-&lt;li&gt;Column B in R is a foreign key referencing column B in table R1.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;We can see that R is in 3NF because:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;The only non-prime column is now C, therefore there is no partial dependency on the candidate key and there cannot be any
-dependency between non-prime columns.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Similar considerations apply to R1.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;question-3&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Question 3&lt;/h1&gt;
@@ -30620,16 +29340,6 @@ If not, which functional dependencies must be removed to obtain a minimal set?&l
 &lt;p&gt;&lt;strong&gt;Justify your answer.&lt;/strong&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The given set is not minimal, because the functional dependency 2. can be
-obtained by transitivity from 1. and 3.
-Therefore, we need to remove 2. to obtain a minimal set of functional dependencies.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -30640,43 +29350,6 @@ determine the candidate keys of &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt
 &lt;p&gt;&lt;strong&gt;Justify your answer.&lt;/strong&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Let’s recall our minimal set of functional dependencies:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[A \rightarrow B\quad (1)\]&lt;/span&gt;
-&lt;span class=&#34;math display&#34;&gt;\[B \rightarrow C\quad (2)\]&lt;/span&gt;
-&lt;span class=&#34;math display&#34;&gt;\[D \rightarrow E\quad (3)\]&lt;/span&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;There aren’t any columns that are functionally dependent on C and E.
-Therefore, these two columns cannot be part of any candidate key (they are non-prime columns).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;E functionally depends on only D; therefore, D must be part of the candidate key.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;However, D alone does not imply all the other columns. We need to add either A or B or both.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;It is easy to see that A cannot be functionally dependent on B. Therefore, {B, D} will never imply A and therefore this set cannot be a candidate key.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The only options left are : {A, D} or {A, B, D}.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Let’s consider {A, D}.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;By applying the Armstrong’s composition axiom on (1) and (3), we get:&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AD \rightarrow BE\quad (4)\]&lt;/span&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;By applying the Armstrong’s decomposition axiom on (4) we obtain:&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AD \rightarrow B\quad (5)\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AD \rightarrow E\quad (6)\]&lt;/span&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;By transitivity from (5) and (2) we obtain:&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AD \rightarrow C\quad (7)\]&lt;/span&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;By applying Armostrong’s union axiom on (4) and (7), we obtain:&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AD \rightarrow BCE\quad (8)\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;We can conclude that {A, D} is a candidate key.
-{A,B,D} is also a key, but since it contains {A, D} it is not a candidate key.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -30686,17 +29359,6 @@ Given the candidate keys that you found in the previous exercise, which columns 
 Which ones are non-prime?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;Prime columns: A, D.&lt;/li&gt;
-&lt;li&gt;Non-prime columns: B, C, E&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -30706,21 +29368,6 @@ We assume that R is in 1NF. Which normal form is R in?&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Justify your answer.&lt;/strong&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;&lt;strong&gt;R is in only in 1NF.&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;It cannot be in 2NF because:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;The non-prime column B has a partial dependency on the candidate key (because of functional dependency 1.).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The non-prime column E has a partial dependency on the candidate key (because of functional dependency 4.).&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Note that, even if we consider the minimal set of functional dependencies, C is still dependent on A (by transitivity).&lt;/p&gt;
-&lt;p&gt;Therefore, we have three functional dependencies that violate the 2NF.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -30731,40 +29378,6 @@ How would you turn R into 3NF?&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Specify primary and foreign keys&lt;/strong&gt; of all tables that you create.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Both prime columns A and D participate in at least one functional dependency that violates the 2NF.
-Therefore, we need to create two more tables R1 and R2.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;R1 will have A as its primary key.&lt;/li&gt;
-&lt;li&gt;R2 will have D as its primary key.&lt;/li&gt;
-&lt;li&gt;Columns B and C are moved from R to R1 (because they depend on A); columns E is moved from R to R2 (because it depends on D).&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;In summary, we have the following tables:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[R(A, D)\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[R1(A, B, C)\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[R2(D, E)\]&lt;/span&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Note that the primary key of R is {A, D}.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Column A in table R is a foreign key referencing column A in table R1.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Column D in table R is a foreign key referencing column D in table R2.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Let’s verify whether these three tables are in 3NF:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Table R is trivially in 3NF: in fact, there are no non-prime columns.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Table R1 is not 3NF: in fact, C depends on B and they are both non-prime columns.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Table R2 is trivially in 3NF. In fact, the only candidate key is composed of just one column (therefore, partial dependencies are not possible) ; also, there is only one non-prime column, so dependencies between non-prime columns are not possible.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;We still have to turn R1 to 3NF. We repeat the same logic.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;We create a table R3, where B is the primary key. We move C from R1 to R3.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Column B in R1 is a foreign key referencing column B in R3.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
@@ -32101,19 +30714,6 @@ insert into film_actor (actor_id, film_id) values(1, 25)
 What is the reaction of the DBMS?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;This statement should insert a new row in table &lt;TT&gt;film_actor&lt;/TT&gt;,
-where the value of &lt;TT&gt;actor_id&lt;/TT&gt; is 1 and the value of
-&lt;TT&gt;film_id&lt;/TT&gt; is 25.&lt;/p&gt;
-&lt;p&gt;The DBMS returns an error because there is already a row
-with these values and the two columns
-&lt;TT&gt;film_actor&lt;/TT&gt;, &lt;TT&gt;film_id&lt;/TT&gt; form the primary key.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -32125,19 +30725,6 @@ the table &lt;TT&gt;Film&lt;/TT&gt;.&lt;/p&gt;
 &lt;p&gt;Execute the command. What happens?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;PRE&gt;
-delete from film where film_id=1
-&lt;/PRE&gt;
-&lt;p&gt;The statement is rejected because there are rows in other tables
-that reference the row that we intend to delete.
-This is the effect of the foreign key constraint.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;!--
 ::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
 **Exercise**
@@ -32171,18 +30758,6 @@ to table &lt;TT&gt;film&lt;/TT&gt; coherent with the behavior observed
 in the previous exercise?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The foreign key linking table &lt;TT&gt;film_actor&lt;/TT&gt; to table
-&lt;TT&gt;film&lt;/TT&gt; is defined with the option RESTRICT on delete.
-This is coherent with the behavior that we observed
-in the previous exercise. Referenced rows cannot be deleted if
-there are still referencing rows.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -32201,16 +30776,6 @@ WHERE  f.title=&#39;ACE GOLDFINGER&#39;
 (columns &lt;TT&gt;film_id_in_table_film&lt;/TT&gt; and &lt;TT&gt;film_id_in_table_film_actor&lt;/TT&gt;).&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The query returns the list of all actors in the film titled Ace Goldfinger.
-We note that the identifier of the film in both tables is identical (2), as it should
-because the query joins the two tables on the equality of these two values.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -32222,26 +30787,6 @@ film ACE GOLDFINGER in table &lt;TT&gt;Film&lt;/TT&gt;.&lt;/p&gt;
 What changed? Explain in details what happened.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The statement to modify the &lt;TT&gt;film_id&lt;/TT&gt; of the given film is as follows:&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;
-UPDATE film
-SET film_id=10000
-WHERE title=‘ACE GOLDFINGER’
-&lt;/TT&gt;&lt;/p&gt;
-&lt;p&gt;After executing the same query as the previous exercise, we see that
-the identifier of the film has changed in the table &lt;TT&gt;film_actor&lt;/TT&gt; too.
-This is expected, because the foreign key constraint between the
-colum &lt;TT&gt;film_id&lt;/TT&gt; in table &lt;TT&gt;film_actor&lt;/TT&gt; and the column
-&lt;TT&gt;film_id&lt;/TT&gt; in table &lt;TT&gt;film&lt;/TT&gt; has the option ON UPDATE CASCADE.
-This means that if we modify the identifier of the film in table
-&lt;TT&gt;film&lt;/TT&gt;, the modification is propagated to all the referencing columns.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -32256,21 +30801,6 @@ WHERE film_id=10000
 &lt;p&gt;What does it? What happens? Explain.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The statement intends to set the identifier of the film
-titled Ace Goldfinger (in the previous exercise we gave it the identifier 10000)
-back to its original value.
-However, we execute the statement on the table &lt;TT&gt;film_actor&lt;/TT&gt;.
-The action is not allowed, as the identifier 2 does not correspond to
-any film in table &lt;TT&gt;film&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;The foreign key enforces the referential integrity constraint.
-A row cannot refer to a non-existing entity in the referenced table.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;basic-queries&#34; class=&#34;section level1&#34; number=&#34;3&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Basic queries&lt;/h1&gt;
@@ -32287,28 +30817,6 @@ Write the following SQL queries:&lt;/p&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;pre&gt;
-select * 
-from customer
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select first_name, last_name 
-from customer
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select first_name, last_name 
-from customer
-where store_id=1
-&lt;/pre&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;sorting-and-paginating&#34; class=&#34;section level1&#34; number=&#34;4&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Sorting and paginating&lt;/h1&gt;
@@ -32326,31 +30834,6 @@ Sort by last name in ascending order and by first name in descending order.&lt;/
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;pre&gt;
-select last_name, first_name 
-from customer
-order by last_name asc
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select last_name, first_name 
-from customer
-order by last_name asc, first_name DESC
-limit 100
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select first_name, last_name 
-from customer
-where store_id=1
-&lt;/pre&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;aggregating-queries&#34; class=&#34;section level1&#34; number=&#34;5&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;5&lt;/span&gt; Aggregating queries&lt;/h1&gt;
@@ -32373,47 +30856,6 @@ greater than or equal to 3.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;pre&gt;
-select count(*) 
-from film
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select  count (distinct last_name) 
-from actor
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select sum(amount) 
-from payment
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select avg(rental_duration), min(rental_duration), max(rental_duration) 
-from film
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select film_id, count(*) as nb_actors
-from film_actor
-group by film_id
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select film_id, store_id, count(*) as nb_films
-from inventory
-group by film_id, store_id
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select film_id, store_id, count(*) as nb_films
-from inventory
-group by film_id, store_id
-having count(*) &gt;=3
-&lt;/pre&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;join-queries&#34; class=&#34;section level1&#34; number=&#34;6&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;6&lt;/span&gt; Join queries&lt;/h1&gt;
@@ -32434,53 +30876,6 @@ movies in the category &lt;em&gt;Family&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;pre&gt;
-select first_name, last_name
-from staff join store using(store_id)
-where store_id=1
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select first_name, last_name
-from film join film_actor using(film_id) join actor using(actor_id)
-where title=&#39;ACE GOLDFINGER&#39;
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select first_name, last_name, count(*) as nb_films
-from actor join film_actor using(actor_id)
-group by actor_id
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select first_name, last_name, count(*) as nb_films
-from actor join film_actor using(actor_id)
-group by actor_id
-order by nb_films desc
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select first_name, last_name, count(*) as nb_films
-from actor join film_actor using(actor_id)
-group by actor_id
-having count(*) &gt;= 10
-order by nb_films desc
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select cust.customer_id, first_name, last_name, count(*) as nb_films
-from customer cust join rental using(customer_id) 
-  join inventory using(inventory_id)
-    join film_category using(film_id)
-    join category cat using(category_id)
-where cat.name=&#39;Family&#39;
-group by customer_id
-having count(*) between 5 and 10
-&lt;/pre&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
