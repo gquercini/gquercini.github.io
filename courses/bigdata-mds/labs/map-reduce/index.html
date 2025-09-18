@@ -639,6 +639,18 @@ année, mois, température moyenne du mois.</p>
 <span class="math inline">\((annee, temperature\_moyenne)\)</span>.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre class="python"><code>def map(line):
+    values = line.split(&quot;,&quot;)
+    return (values[0], float(values[-1]))</code></pre>
+<pre class="python"><code>def reduce(year, temperatures_in_year):
+    return (year, sum(temperatures_in_year) / len(temperatures_in_year))</code></pre>
+</div>
+</details>
 <p>Supposons maintenant que nous ayons un grand fichier CSV
 stocké dans un système de fichiers distribué (par exemple, HDFS),
 contenant une série de mesures au format « Année,Mois,Jour,Heure,Minute,Seconde,Température ».
@@ -652,6 +664,17 @@ Comme précédemment, nous souhaitons calculer les paires clé-valeur (année, t
 Quel est le nombre maximum de mesures par an ?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Comme nous pouvons avoir jusqu’à une mesure par seconde, le nombre maximum de mesures <span class="math inline">\(M_{max}\)</span> pour une année est donné par la formule suivante :</p>
+<p><span class="math display">\[
+M_{max} = 365 \times 24 \times 60 \times 60 \approx 31.5 \times 10^6
+\]</span></p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -660,6 +683,18 @@ Quel est le nombre maximum de mesures par an ?</p>
 Compte tenu de la réponse à la question précédente, discutez de l’efficacité de la première implémentation de l’algorithme.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Étant donné qu’il peut y avoir jusqu’à 31 millions de valeurs
+associées à une clé, le goulot d’étranglement du calcul serait l’opération de shuffle, puisque nous devons copier un grand nombre de paires
+(clé, valeur) des mappers vers les reducers.</p>
+<p>De plus, un reducer peut avoir à
+boucler sur une énorme liste de valeurs afin de calculer leur moyenne.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -669,6 +704,34 @@ En fonction de la réponse à la question précédente,
 proposez une meilleure implémentation pour traiter le fichier CSV.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>La fonction <code>map()</code> ne change pas par rapport à l’exercice précédent.</p>
+<pre class="python"><code>def map(line):
+    values = line.split(&quot;,&quot;)
+    return (values[0], float(values[-1])) </code></pre>
+<p>Maintenant on code la fonction <code>combine()</code> qui agira sur les couples clé-valeur renvoyées par
+chaque tâche Map.
+Concrètement, lorsqu’une tâche Map termine d’appliquer la fonction <code>map()</code> sur toutes les lignes
+de son bloc, une opération de shuffle est réalisée pour rassembler toutes les valeurs à la clé correspondante.
+Ainsi, la fonction <code>combine()</code> prend en argument un couple, dont la clé (une année) est associée à la liste de toutes ses valeurs (les températures de l’année).
+La fonction renvoie un couple dont la clé représente toujours une année, mais la valeur est, elle-même, un couple, dont le premier élément est la somme des
+températures sur l’année et le deuxième élément est la longueur de la liste des températures.</p>
+<p>Ce faisant, on enverra aux reducers seulement un couple pour chaque année, réduisant ainsi le nombre de données qui seront transmises via le réseau.</p>
+<pre class="python"><code>def combine(year, temperatures_in_year):
+    return (year, (sum(temperatures_in_year), len(temperatures_in_year)))</code></pre>
+<p>La fonction <code>reduce()</code> prend en arguments un couple, dont la clé représente une année et la valeur est une liste de couples reçues après l’étape de
+<code>combine()</code>. Il faudra ainsi sommer toutes les températures et toutes les longueurs, et ensuite calculer la moyenne.</p>
+<pre class="python"><code>def reduce(year, sum_len_tuples):
+    sum_temps = sum(s for (s, _) in sum_len_tuples)
+    nb_temps = sum(l for (_, l) in sum_len_tuples)
+        
+    return (year, sum_temps/nb_temps)</code></pre>
+</div>
+</details>
 </div>
 <div id="common-friends" class="section level1" number="2">
 <h1><span class="header-section-number">2</span> Amis communs dans un réseau social</h1>
@@ -687,7 +750,7 @@ C,D,A
 <pre><code>(A, B), [D]
 (A, C), [D] 
 (A, D), [B, C] 
-(B, C), [D] 
+(B, C), [D, A] 
 (B, D), [A] 
 (C, D), [A]</code></pre>
 <p>Comme contrainte supplémentaire, nous voulons représenter un couple une seule fois et éviter de représenter un couple symétrique.
@@ -700,6 +763,27 @@ En d’autres termes, si nous produisons <span class="math inline">\((A, B)\)</s
 Proposez une implémentation MapReduce pour trouver les amis communs dans un réseau social satisfaisant les contraintes données.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Le résultat de notre algorithme doit être une une collection de couples,
+dont le premier élément représente un couple d’individus et le deuxième élément représente la liste des amis communs à ces individus.</p>
+<p>On en déduit qu’il faudrait choisir un couple d’individus en tant que clé.</p>
+<p>Or, la fonction <code>map()</code> agit ligne par ligne. La question que nous devons nous poser est la suivante :
+pouvons-nous déduire une information à propos d’amis communs entre deux individus?</p>
+<p>Prenons l’example de la ligne : A,D,B,C.
+À partir de cette ligne, nous savons que A est l’ami commun à tous les couples de ses amis : (B, D), (C, D) et (B, C).</p>
+<p>Cela nous indique comment implémenter la fonction <code>map()</code>.</p>
+<pre class="python"><code>def map(line):
+    values = line.split(&quot;,&quot;)
+    return [((x, y), values[0]) for x in values[1:] for y in values[1:] if x &lt; y] </code></pre>
+<p>À noter que la condition <code>x&lt;y</code> nous garantit que nous ne produirons jamais de couples symétriques.</p>
+<p>La phase de shuffle associera ensuite à chaque couple d’individus tous leurs amis communs.
+Ceci étant déjà le résultat voulu, nous n’avons pas besoin de coder une fonction <code>reduce()</code> (fonction identité).</p>
+</div>
+</details>
 </div>
 <div id="calcul-de-la-moyenne-et-de-lécart-type" class="section level1" number="3">
 <h1><span class="header-section-number">3</span> Calcul de la moyenne et de l’écart-type</h1>
@@ -725,6 +809,16 @@ est plus appropriée dans un algorithme MapReduce ?
 Pourquoi ?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>La deuxième équation est plus appropriée car elle permet de calculer la somme des éléments et le carré des éléments pas à pas
+en utilisant conjointement <code>map()</code> et <code>combine()</code>.</p>
+<p>Au contraire, si nous utilisons la première équation, nous devons d’abord calculer la moyenne et ensuite l’utiliser pour calculer la variance.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -733,6 +827,24 @@ Pourquoi ?</p>
 Proposez une implémentation MapReduce pour calculer la moyenne et l’écart-type des températures pour chaque année.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre class="python"><code>def map(line):
+    values = line.split(&quot;,&quot;)
+    return (values[0], float(values[-1])) </code></pre>
+<pre class="python"><code>def combine(year, temperatures_in_year):
+    return (year, (sum(temperatures_in_year), sum(x**2 for x in temperatures_in_year), len(temperatures_in_year)))</code></pre>
+<pre class="python"><code>def reduce(year, sum_len_tuples):
+    sum_temps = sum(s for (s, _, _) in sum_len_tuples)
+    sum_sq_temps = sum(sq for (_, sq, _) in sum_len_tuples)
+    nb_temps = sum(l for (_, _, l) in sum_len_tuples)
+        
+    return (year, (sum_temps/nb_temps, math.sqrt(sum_sq_temps/nb_temps - (sum_temps/nb_temps)**2)))</code></pre>
+</div>
+</details>
 <!--
 # Creating an inverted index
 
@@ -753,6 +865,32 @@ collection of documents.
 :::
 
 
+
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex="{exercisebox}"}
+
+The input to the map will be a key-value pair, where 
+the key is the name of a file $f$ and the value is the 
+content $C$ of the file.
+
+map: $(f, C) \rightarrow [(w, f)\ \forall w \in C]$
+
+reduce: $(w, L) \rightarrow (w, L)$
+
+where $L$ is the list of the files containing the word $w$.
+
+We note that the reduce function is the identity.
+
+Note also that in the map function we can add instructions 
+to preprocess the text. For example, we can eliminate some words
+that are not useful in the index (e.g., the stopwords) or remove 
+special symbols.
+
+:::
+
+</details>
 
 
 -->
