@@ -648,6 +648,18 @@ Write a MapReduce algorithm that generates key-value pairs
 <span class="math inline">\((year, average\_temperature)\)</span>.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre class="python"><code>def map(line):
+    values = line.split(&quot;,&quot;)
+    return (values[0], float(values[-1]))</code></pre>
+<pre class="python"><code>def reduce(year, temperatures_in_year):
+    return (year, sum(temperatures_in_year) / len(temperatures_in_year))</code></pre>
+</div>
+</details>
 <p>Suppose now that we have a large CSV file
 stored in a distributed file system (e.g., HDFS),
 containing a series of measurements in the format “Year, Month, Day, Minute, Second, Temperature”.
@@ -662,6 +674,18 @@ a MapReduce algorithm.</p>
 What is the maximum number of measurements in a year?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Since we can have up to one measurement per second, the maximum number of
+measurements <span class="math inline">\(M_{max}\)</span> for a certain year is given by the following formula:</p>
+<p><span class="math display">\[
+M_{max} = 365 \times 24 \times 60 \times 60 \approx 31.5 \times 10^6
+\]</span></p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -671,6 +695,19 @@ Considering the answer to the previous question, discuss the efficiency
 of the first implementation of the algorithm.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Since there might be up to 31 million values
+associated with a key, the bottleneck of the computation would be
+the shuffle operation, since we need to copy a high number of
+(key,value) pairs from the mappers to the reducers.</p>
+<p>Also, a reducer might have to
+loop over a huge list of values in order to compute their average.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -680,6 +717,40 @@ Based on the answer to the previous question,
 propose a better implementation to handle the CSV file.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Function <code>map()</code> is the same as in the previous exercise.</p>
+<pre class="python"><code>def map(line):
+    values = line.split(&quot;,&quot;)
+    return (values[0], float(values[-1])) </code></pre>
+<p>Now we code the function <code>combine()</code>
+which will apply some computation on key-value pairs returned by the Map task.
+More precisely, after a Map task applies the function <code>map()</code> on all
+lines of a block, a local shuffle operation is executed to group all values associated with the same key.
+The function <code>combine()</code> takes in a couple, of which the key (a year)
+is associated with the list of all its values (the year’s temperatures).
+The function returns a couple, where the key still represents a year and the value is itself a couple;
+the first element of this couple is the sum all of year’s temperatures,
+the second element is the number of temperatures in the year.
+Please note that all these considerations are applied to data within a single bloc.
+Therefore, the shuffle and the combine did not move data across blocks.
+The result is that from each block we send out to the reducers only a couple per year,
+which significantly reduces the amount of data sent over the network.</p>
+<pre class="python"><code>def combine(year, temperatures_in_year):
+    return (year, (sum(temperatures_in_year), len(temperatures_in_year)))</code></pre>
+<p>The function <code>reduce()</code> takes in a a couple,
+where the key is a year and the value is a list of couples, as output by
+the function <code>combine()</code>.</p>
+<pre class="python"><code>def reduce(year, sum_len_tuples):
+    sum_temps = sum(s for (s, _) in sum_len_tuples)
+    nb_temps = sum(l for (_, l) in sum_len_tuples)
+        
+    return (year, sum_temps/nb_temps)</code></pre>
+</div>
+</details>
 </div>
 <div id="common-friends" class="section level1" number="2">
 <h1><span class="header-section-number">2</span> Common friends in a social network</h1>
@@ -713,6 +784,31 @@ Propose a MapReduce implementation to find the common friends in a
 social network satisfying the given constraints.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>The result of our algorithm is a collection of couples,
+where the first element represents a couple of individuals,
+and the second element is the common friends of the two individuals.</p>
+<p>We infer that a couple of individuals is a proper choice for a key.</p>
+<p>Now, the function <code>map()</code> only takes in a single line.
+The question we need to ask ourselves is: can we obtain a solution to our problem on
+that single line? Otherwise stated, can we still get common friends between couple of individuals from
+one single line?</p>
+<p>Take the example of line: A,D,B,C.
+From this line, we know that A is a common friend of his friends : (B, D), (C, D) and (B, C).</p>
+<p>This gives us an idea as to the implementation of the function <code>map()</code>.</p>
+<pre class="python"><code>def map(line):
+    values = line.split(&quot;,&quot;)
+    return [((x, y), values[0]) for x in values[1:] for y in values[1:] if x &lt; y] </code></pre>
+<p>Note that the condition <code>x&lt;y</code> guarantees that we never output summetrical couples.</p>
+<p>The shuffle step will then associate the list of common friends to each couple of individuals.
+This is exactly what we want, therefore there is no need for a
+<code>reduce()</code> function (identity function).</p>
+</div>
+</details>
 <!--
 # Creating an inverted index
 
@@ -733,6 +829,32 @@ collection of documents.
 :::
 
 
+
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex="{exercisebox}"}
+
+The input to the map will be a key-value pair, where 
+the key is the name of a file $f$ and the value is the 
+content $C$ of the file.
+
+map: $(f, C) \rightarrow [(w, f)\ \forall w \in C]$
+
+reduce: $(w, L) \rightarrow (w, L)$
+
+where $L$ is the list of the files containing the word $w$.
+
+We note that the reduce function is the identity.
+
+Note also that in the map function we can add instructions 
+to preprocess the text. For example, we can eliminate some words
+that are not useful in the index (e.g., the stopwords) or remove 
+special symbols.
+
+:::
+
+</details>
 -->
 </div>
 <div id="computing-average-and-standard-deviation" class="section level1" number="3">
@@ -760,6 +882,18 @@ is more appropriate in a Map-Reduce algorithm?
 Why?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>The second equation is more appropriate because it allows the computation
+of the sum of the elements and of the square of the elements step by step
+by using map and combine together.</p>
+<p>Instead, if we use the first equation, we need first to compute the average and then use it
+to compute the variance.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -769,6 +903,24 @@ Propose a MapReduce implementation to compute the average and the standard
 deviation of the temperatures for each year.
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre class="python"><code>def map(line):
+    values = line.split(&quot;,&quot;)
+    return (values[0], float(values[-1])) </code></pre>
+<pre class="python"><code>def combine(year, temperatures_in_year):
+    return (year, (sum(temperatures_in_year), sum(x**2 for x in temperatures_in_year), len(temperatures_in_year)))</code></pre>
+<pre class="python"><code>def reduce(year, sum_len_tuples):
+    sum_temps = sum(s for (s, _, _) in sum_len_tuples)
+    sum_sq_temps = sum(sq for (_, sq, _) in sum_len_tuples)
+    nb_temps = sum(l for (_, _, l) in sum_len_tuples)
+        
+    return (year, (sum_temps/nb_temps, math.sqrt(sum_sq_temps/nb_temps - (sum_temps/nb_temps)**2)))</code></pre>
+</div>
+</details>
 </div>
 
           </div>

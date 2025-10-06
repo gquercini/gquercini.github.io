@@ -24877,6 +24877,18 @@ Write a MapReduce algorithm that generates key-value pairs
 &lt;span class=&#34;math inline&#34;&gt;\((year, average\_temperature)\)&lt;/span&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;def map(line):
+    values = line.split(&amp;quot;,&amp;quot;)
+    return (values[0], float(values[-1]))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;def reduce(year, temperatures_in_year):
+    return (year, sum(temperatures_in_year) / len(temperatures_in_year))&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;Suppose now that we have a large CSV file
 stored in a distributed file system (e.g., HDFS),
 containing a series of measurements in the format “Year, Month, Day, Minute, Second, Temperature”.
@@ -24891,6 +24903,18 @@ a MapReduce algorithm.&lt;/p&gt;
 What is the maximum number of measurements in a year?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Since we can have up to one measurement per second, the maximum number of
+measurements &lt;span class=&#34;math inline&#34;&gt;\(M_{max}\)&lt;/span&gt; for a certain year is given by the following formula:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+M_{max} = 365 \times 24 \times 60 \times 60 \approx 31.5 \times 10^6
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -24900,6 +24924,19 @@ Considering the answer to the previous question, discuss the efficiency
 of the first implementation of the algorithm.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Since there might be up to 31 million values
+associated with a key, the bottleneck of the computation would be
+the shuffle operation, since we need to copy a high number of
+(key,value) pairs from the mappers to the reducers.&lt;/p&gt;
+&lt;p&gt;Also, a reducer might have to
+loop over a huge list of values in order to compute their average.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -24909,6 +24946,40 @@ Based on the answer to the previous question,
 propose a better implementation to handle the CSV file.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Function &lt;code&gt;map()&lt;/code&gt; is the same as in the previous exercise.&lt;/p&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;def map(line):
+    values = line.split(&amp;quot;,&amp;quot;)
+    return (values[0], float(values[-1])) &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now we code the function &lt;code&gt;combine()&lt;/code&gt;
+which will apply some computation on key-value pairs returned by the Map task.
+More precisely, after a Map task applies the function &lt;code&gt;map()&lt;/code&gt; on all
+lines of a block, a local shuffle operation is executed to group all values associated with the same key.
+The function &lt;code&gt;combine()&lt;/code&gt; takes in a couple, of which the key (a year)
+is associated with the list of all its values (the year’s temperatures).
+The function returns a couple, where the key still represents a year and the value is itself a couple;
+the first element of this couple is the sum all of year’s temperatures,
+the second element is the number of temperatures in the year.
+Please note that all these considerations are applied to data within a single bloc.
+Therefore, the shuffle and the combine did not move data across blocks.
+The result is that from each block we send out to the reducers only a couple per year,
+which significantly reduces the amount of data sent over the network.&lt;/p&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;def combine(year, temperatures_in_year):
+    return (year, (sum(temperatures_in_year), len(temperatures_in_year)))&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The function &lt;code&gt;reduce()&lt;/code&gt; takes in a a couple,
+where the key is a year and the value is a list of couples, as output by
+the function &lt;code&gt;combine()&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;def reduce(year, sum_len_tuples):
+    sum_temps = sum(s for (s, _) in sum_len_tuples)
+    nb_temps = sum(l for (_, l) in sum_len_tuples)
+        
+    return (year, sum_temps/nb_temps)&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;common-friends&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Common friends in a social network&lt;/h1&gt;
@@ -24942,6 +25013,31 @@ Propose a MapReduce implementation to find the common friends in a
 social network satisfying the given constraints.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The result of our algorithm is a collection of couples,
+where the first element represents a couple of individuals,
+and the second element is the common friends of the two individuals.&lt;/p&gt;
+&lt;p&gt;We infer that a couple of individuals is a proper choice for a key.&lt;/p&gt;
+&lt;p&gt;Now, the function &lt;code&gt;map()&lt;/code&gt; only takes in a single line.
+The question we need to ask ourselves is: can we obtain a solution to our problem on
+that single line? Otherwise stated, can we still get common friends between couple of individuals from
+one single line?&lt;/p&gt;
+&lt;p&gt;Take the example of line: A,D,B,C.
+From this line, we know that A is a common friend of his friends : (B, D), (C, D) and (B, C).&lt;/p&gt;
+&lt;p&gt;This gives us an idea as to the implementation of the function &lt;code&gt;map()&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;def map(line):
+    values = line.split(&amp;quot;,&amp;quot;)
+    return [((x, y), values[0]) for x in values[1:] for y in values[1:] if x &amp;lt; y] &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Note that the condition &lt;code&gt;x&amp;lt;y&lt;/code&gt; guarantees that we never output summetrical couples.&lt;/p&gt;
+&lt;p&gt;The shuffle step will then associate the list of common friends to each couple of individuals.
+This is exactly what we want, therefore there is no need for a
+&lt;code&gt;reduce()&lt;/code&gt; function (identity function).&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;!--
 # Creating an inverted index
 
@@ -24962,6 +25058,32 @@ collection of documents.
 :::
 
 
+
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+The input to the map will be a key-value pair, where 
+the key is the name of a file $f$ and the value is the 
+content $C$ of the file.
+
+map: $(f, C) \rightarrow [(w, f)\ \forall w \in C]$
+
+reduce: $(w, L) \rightarrow (w, L)$
+
+where $L$ is the list of the files containing the word $w$.
+
+We note that the reduce function is the identity.
+
+Note also that in the map function we can add instructions 
+to preprocess the text. For example, we can eliminate some words
+that are not useful in the index (e.g., the stopwords) or remove 
+special symbols.
+
+:::
+
+&lt;/details&gt;
 --&gt;
 &lt;/div&gt;
 &lt;div id=&#34;computing-average-and-standard-deviation&#34; class=&#34;section level1&#34; number=&#34;3&#34;&gt;
@@ -24989,6 +25111,18 @@ is more appropriate in a Map-Reduce algorithm?
 Why?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The second equation is more appropriate because it allows the computation
+of the sum of the elements and of the square of the elements step by step
+by using map and combine together.&lt;/p&gt;
+&lt;p&gt;Instead, if we use the first equation, we need first to compute the average and then use it
+to compute the variance.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -24998,6 +25132,24 @@ Propose a MapReduce implementation to compute the average and the standard
 deviation of the temperatures for each year.
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;def map(line):
+    values = line.split(&amp;quot;,&amp;quot;)
+    return (values[0], float(values[-1])) &lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;def combine(year, temperatures_in_year):
+    return (year, (sum(temperatures_in_year), sum(x**2 for x in temperatures_in_year), len(temperatures_in_year)))&lt;/code&gt;&lt;/pre&gt;
+&lt;pre class=&#34;python&#34;&gt;&lt;code&gt;def reduce(year, sum_len_tuples):
+    sum_temps = sum(s for (s, _, _) in sum_len_tuples)
+    sum_sq_temps = sum(sq for (_, sq, _) in sum_len_tuples)
+    nb_temps = sum(l for (_, _, l) in sum_len_tuples)
+        
+    return (year, (sum_temps/nb_temps, math.sqrt(sum_sq_temps/nb_temps - (sum_temps/nb_temps)**2)))&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
