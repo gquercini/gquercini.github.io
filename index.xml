@@ -29250,7 +29250,56 @@ Derive a minimal set $\mathcal{G}$ of functional dependencies that is equivalent
 
 :::
 
- --&gt;
+
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+We first need to write the functional dependencies in canonical form 
+(the right-side of each FD must consist of only one column).
+
+The FD (2.) can be rewritten using the decomposition axiom.
+
+1. $AB \rightarrow C$
+
+2. $D \rightarrow B$
+
+3. $D \rightarrow C$
+
+4. $A \rightarrow B$
+
+Next, we need to make sure that all functional dependencies are left-irreducible.
+
+All functional dependencies except the first one are trivially left-irreducible (the determinant consists of 
+only one column).
+The first has two columns in the determinant, therefore we need to check whether we
+can eliminate one of the two columns and still preserve an equivalent set of functional dependencies.
+
+We apply Armstrong&#39;s axioms to compute the closure of this set of functional dependencies.
+
+From (1.) and (4.), we can apply the pseudotransitivity axiom and we obtain:
+
+$$A \rightarrow B \wedge AB \rightarrow C \implies AA \rightarrow C \implies A \rightarrow C$$
+
+Since $A \rightarrow C$ is in the closure, the column $B$ in FD (1.) is useless 
+and can therefore be omitted.
+
+The set $\mathcal{G}$ consists of the following FDs:
+
+* $A \rightarrow C$
+
+* $D \rightarrow B$
+
+* $D \rightarrow C$
+
+* $A \rightarrow B$
+
+None of these functional dependencies are redundant.
+
+:::
+
+&lt;/details&gt; --&gt;
 &lt;div id=&#34;question-1&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Question 1&lt;/h1&gt;
 &lt;p&gt;Let &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; be a relational table with five columns &lt;span class=&#34;math inline&#34;&gt;\((A, B, C, D, E)\)&lt;/span&gt;.
@@ -29270,6 +29319,20 @@ The following set of functional dependencies hold:&lt;/p&gt;
 Find all the candidate keys of table &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;A candidate key is a set of columns on which all the other columns are functionally dependent.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;From the functional dependencies 2 to 5, we see that all columns are functionally dependent on C.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;From the functional dependency 1, we see that C is functionally dependent on {A, B}.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;By transitivity, all columns are also functionally dependent on {A, B}.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In conclusion, we have two candidate keys: {A, B} and {C}.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -29282,6 +29345,23 @@ We assume that &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is in 
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Based on the answer to the first exercise, we have that:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;A, B and C are prime columns.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;D, E are non-prime columns.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We conclude that:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;b&gt;R is in 2NF&lt;/b&gt;. In fact, all non-prime columns depend entirely on both candidate keys.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;b&gt;R is not in 3NF&lt;/b&gt;. In fact, the functional dependency 5. is between two non-prime columns.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -29292,6 +29372,31 @@ what changes would you make to turn &lt;span class=&#34;math inline&#34;&gt;\(R\
 &lt;p&gt;&lt;strong&gt;Important.&lt;/strong&gt; For each table that you create, specify the primary key and the foreign keys.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The table is not in 3NF.
+The functional dependency that violates the 3NF condition is the 5.&lt;/p&gt;
+&lt;p&gt;We need to create a new table R1, where:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;the primary key is the determinant in the functional dependency that violates 3NF (D).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We then move all columns that are dependent on D (only E in our case) from R to R1.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Note that D is kept in R so that we can use it to link R with R1.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In summary:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[R = \{A, B, C, D\}\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[R_1 = \{D, E\}\]&lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The primary key of R is {C} (we can also choose A, B if we want).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The primary key of R1 is {D}.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The column D in R is a foreign key referencing the column D in R1.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;question-2&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Question 2&lt;/h1&gt;
@@ -29317,6 +29422,20 @@ Let &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; be a relational t
 &lt;p&gt;&lt;strong&gt;Justify your answer.&lt;/strong&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;From the definition of candidate key, we derive two functional dependencies:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AB \rightarrow C\]&lt;/span&gt;
+&lt;span class=&#34;math display&#34;&gt;\[AB \rightarrow D\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Both functional dependencies are in canonical form (the right-side only consist of one column).
+Trivially, both functional dependencies are left-irreducible (we cannot remove any of the columns
+in the determinant without losing information).&lt;/p&gt;
+&lt;p&gt;Trivially, there is no redundancy in this set.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -29327,6 +29446,29 @@ the functional dependency &lt;span class=&#34;math inline&#34;&gt;\(B \rightarro
 &lt;p&gt;&lt;strong&gt;Justify your answer&lt;/strong&gt; and, in case of a negative answer, specify the minimal set of functional dependencies.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;We consider the following functional dependencies:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AB \rightarrow C\quad (1)\]&lt;/span&gt;
+&lt;span class=&#34;math display&#34;&gt;\[AB \rightarrow D\quad (2)\]&lt;/span&gt;
+&lt;span class=&#34;math display&#34;&gt;\[B \rightarrow D\quad (3)\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Intuitively, if D depends on B (and B alone), the fact that we add A, or any other column, to the left side, does not change this fact.
+Therefore, the functional dependency (2) is redundant.&lt;/p&gt;
+&lt;p&gt;Let’s prove it with the Armstrong’s axioms.&lt;/p&gt;
+&lt;p&gt;By using the augmentation axiom on (3) we obtain:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AB \rightarrow AD\quad (4)\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;By applying the decomposition axiom on (4) we obtain:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AB \rightarrow A\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AB \rightarrow D\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Since we managed to derive (2) from (3), we formally proved that (2) is redundant.&lt;/p&gt;
+&lt;p&gt;In summary, a minimal set of functional dependencies include the following functional dependencies:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AB\rightarrow C \]&lt;/span&gt;
+&lt;span class=&#34;math display&#34;&gt;\[B\rightarrow D \]&lt;/span&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -29339,6 +29481,25 @@ We assume that &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is in 
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;From the statement of the exercise we know that {A, B} is the only candidate key.
+Therefore:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;A and B are prime columns.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;C and D are non-prime columns.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Given the minimal set of functional dependencies obtained from the previous exercise, we conclude that:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;R is not in 2NF&lt;/strong&gt;. In fact, the non-prime column D is functionally dependent on
+only one part of the candidate key (the column B).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;R is not in 3NF&lt;/strong&gt;, because it is not in 2NF.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -29349,6 +29510,34 @@ Normalize &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; to the 3NF 
 &lt;p&gt;&lt;strong&gt;Justify your choices.&lt;/strong&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The functional dependency that violates the 2NF is:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[B \rightarrow D\]&lt;/span&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;We create a new table R1, where the determinant (B) of this
+functional dependency is the primary key.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;We move the columns that depend on B (here, only D) from table R to table R1.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In summary, we have the following tables:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[R = (A, B, C)\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[R_1 = (B, D)\]&lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;{A, B} is the primary key of R.&lt;/li&gt;
+&lt;li&gt;{B} is the primary key of R1.&lt;/li&gt;
+&lt;li&gt;Column B in R is a foreign key referencing column B in table R1.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We can see that R is in 3NF because:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The only non-prime column is now C, therefore there is no partial dependency on the candidate key and there cannot be any
+dependency between non-prime columns.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Similar considerations apply to R1.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;question-3&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Question 3&lt;/h1&gt;
@@ -29369,6 +29558,16 @@ If not, which functional dependencies must be removed to obtain a minimal set?&l
 &lt;p&gt;&lt;strong&gt;Justify your answer.&lt;/strong&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The given set is not minimal, because the functional dependency 2. can be
+obtained by transitivity from 1. and 3.
+Therefore, we need to remove 2. to obtain a minimal set of functional dependencies.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -29379,6 +29578,43 @@ determine the candidate keys of &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt
 &lt;p&gt;&lt;strong&gt;Justify your answer.&lt;/strong&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Let’s recall our minimal set of functional dependencies:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[A \rightarrow B\quad (1)\]&lt;/span&gt;
+&lt;span class=&#34;math display&#34;&gt;\[B \rightarrow C\quad (2)\]&lt;/span&gt;
+&lt;span class=&#34;math display&#34;&gt;\[D \rightarrow E\quad (3)\]&lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;There aren’t any columns that are functionally dependent on C and E.
+Therefore, these two columns cannot be part of any candidate key (they are non-prime columns).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;E functionally depends on only D; therefore, D must be part of the candidate key.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;However, D alone does not imply all the other columns. We need to add either A or B or both.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;It is easy to see that A cannot be functionally dependent on B. Therefore, {B, D} will never imply A and therefore this set cannot be a candidate key.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The only options left are : {A, D} or {A, B, D}.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Let’s consider {A, D}.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;By applying the Armstrong’s composition axiom on (1) and (3), we get:&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AD \rightarrow BE\quad (4)\]&lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;By applying the Armstrong’s decomposition axiom on (4) we obtain:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AD \rightarrow B\quad (5)\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AD \rightarrow E\quad (6)\]&lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;By transitivity from (5) and (2) we obtain:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AD \rightarrow C\quad (7)\]&lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;By applying Armostrong’s union axiom on (4) and (7), we obtain:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AD \rightarrow BCE\quad (8)\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;We can conclude that {A, D} is a candidate key.
+{A,B,D} is also a key, but since it contains {A, D} it is not a candidate key.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -29388,6 +29624,17 @@ Given the candidate keys that you found in the previous exercise, which columns 
 Which ones are non-prime?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;Prime columns: A, D.&lt;/li&gt;
+&lt;li&gt;Non-prime columns: B, C, E&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -29397,6 +29644,21 @@ We assume that R is in 1NF. Which normal form is R in?&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Justify your answer.&lt;/strong&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;strong&gt;R is in only in 1NF.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;It cannot be in 2NF because:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The non-prime column B has a partial dependency on the candidate key (because of functional dependency 1.).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The non-prime column E has a partial dependency on the candidate key (because of functional dependency 4.).&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Note that, even if we consider the minimal set of functional dependencies, C is still dependent on A (by transitivity).&lt;/p&gt;
+&lt;p&gt;Therefore, we have three functional dependencies that violate the 2NF.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -29407,6 +29669,40 @@ How would you turn R into 3NF?&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Specify primary and foreign keys&lt;/strong&gt; of all tables that you create.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Both prime columns A and D participate in at least one functional dependency that violates the 2NF.
+Therefore, we need to create two more tables R1 and R2.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;R1 will have A as its primary key.&lt;/li&gt;
+&lt;li&gt;R2 will have D as its primary key.&lt;/li&gt;
+&lt;li&gt;Columns B and C are moved from R to R1 (because they depend on A); columns E is moved from R to R2 (because it depends on D).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In summary, we have the following tables:&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[R(A, D)\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[R1(A, B, C)\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[R2(D, E)\]&lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Note that the primary key of R is {A, D}.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Column A in table R is a foreign key referencing column A in table R1.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Column D in table R is a foreign key referencing column D in table R2.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Let’s verify whether these three tables are in 3NF:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Table R is trivially in 3NF: in fact, there are no non-prime columns.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Table R1 is not 3NF: in fact, C depends on B and they are both non-prime columns.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Table R2 is trivially in 3NF. In fact, the only candidate key is composed of just one column (therefore, partial dependencies are not possible) ; also, there is only one non-prime column, so dependencies between non-prime columns are not possible.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We still have to turn R1 to 3NF. We repeat the same logic.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;We create a table R3, where B is the primary key. We move C from R1 to R3.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Column B in R1 is a foreign key referencing column B in R3.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
