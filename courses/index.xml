@@ -4350,390 +4350,6 @@ ORDER BY r.rate DESC;
     </item>
     
     <item>
-      <title>Normalization theory</title>
-      <link>/courses/gadexed_en/tutorials/normalization/</link>
-      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      <guid>/courses/gadexed_en/tutorials/normalization/</guid>
-      <description>
-
-
-&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
-&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
-&lt;p&gt;In this tutorial you’ll learn:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;How to obtain a &lt;strong&gt;non-redundant set of functional dependencies&lt;/strong&gt;.&lt;/li&gt;
-&lt;li&gt;How to determine the &lt;strong&gt;candidate keys&lt;/strong&gt; of a table given its functional dependencies.&lt;/li&gt;
-&lt;li&gt;How to determine the &lt;strong&gt;normal form&lt;/strong&gt; of a table.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div id=&#34;question-1&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Question 1&lt;/h1&gt;
-&lt;p&gt;We consider a relational table &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; with four columns &lt;span class=&#34;math inline&#34;&gt;\(A\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(B\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(C\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(D\)&lt;/span&gt;.
-Let &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{F}\)&lt;/span&gt; be the following set of functional dependencies:&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(AB \rightarrow C\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(D \rightarrow BC\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(A \rightarrow B\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1  &lt;/strong&gt;&lt;/span&gt;
-Derive a minimal set &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{G}\)&lt;/span&gt; of functional dependencies that is equivalent to &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{F}\)&lt;/span&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;We first need to write the functional dependencies in canonical form
-(the right-side of each FD must consist of only one column).&lt;/p&gt;
-&lt;p&gt;The FD (2.) can be rewritten using the decomposition axiom.&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(AB \rightarrow C\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(D \rightarrow B\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(D \rightarrow C\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(A \rightarrow B\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;Next, we need to make sure that all functional dependencies are left-irreducible.&lt;/p&gt;
-&lt;p&gt;All functional dependencies except the first one is trivially left-irreducible (the determinant consists of
-only one column).
-The first has two columns in the determinant, therefore we need to check whether we
-can eliminate one of the two columns and still preserve an equivalent set of functional dependencies.&lt;/p&gt;
-&lt;p&gt;We apply Armstrong’s axioms to compute the closure of this set of functional dependencies.&lt;/p&gt;
-&lt;p&gt;From (1.) and (4.), we can apply the pseudotransitivity axiom and we obtain:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[A \rightarrow B \wedge AB \rightarrow C \implies AA \rightarrow C \implies A \rightarrow C\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;Since &lt;span class=&#34;math inline&#34;&gt;\(A \rightarrow C\)&lt;/span&gt; is in the cover, the column &lt;span class=&#34;math inline&#34;&gt;\(B\)&lt;/span&gt; in FD (1.) is useless
-and can therefore be omitted.&lt;/p&gt;
-&lt;p&gt;The set &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{G}\)&lt;/span&gt; consists of the following FDs:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(A \rightarrow C\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(D \rightarrow B\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(D \rightarrow C\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(A \rightarrow B\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;None of these functional dependencies are redundant.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;/div&gt;
-&lt;div id=&#34;question-2&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Question 2&lt;/h1&gt;
-&lt;p&gt;Let &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; be a relational table with five columns &lt;span class=&#34;math inline&#34;&gt;\((A, B, C, D, E)\)&lt;/span&gt;.
-The following set &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{F}\)&lt;/span&gt; of functional dependencies hold:&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(AB \rightarrow C\)&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(C \rightarrow A\)&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(C \rightarrow B\)&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(C \rightarrow D\)&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(D \rightarrow E\)&lt;/span&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2  &lt;/strong&gt;&lt;/span&gt;
-Specify the candidate keys of the table &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;A candidate key is a set of columns that imply all the other columns.&lt;/p&gt;
-&lt;p&gt;First, let’s try sets composed of only one column: &lt;span class=&#34;math inline&#34;&gt;\(\{A\}\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(\{B\}\)&lt;/span&gt;,
-&lt;span class=&#34;math inline&#34;&gt;\(\{C\}\)&lt;/span&gt;, &lt;span class=&#34;math inline&#34;&gt;\(\{D\}\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\{E\}\)&lt;/span&gt;.&lt;/p&gt;
-&lt;p&gt;We have the following: (&lt;span class=&#34;math inline&#34;&gt;\(\{X\}^+_{\mathcal{F}}\)&lt;/span&gt; indicates the set of all columns implied by &lt;span class=&#34;math inline&#34;&gt;\(X\)&lt;/span&gt;).&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\{A\}^+_{\mathcal{F}} = \{A\}\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\{B\}^+_{\mathcal{F}} = \{B\}\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\{C\}^+_{\mathcal{F}} = \{A, B, C, D, E\}\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\{D\}^+_{\mathcal{F}} = \{D, E\}\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(\{E\}^+_{\mathcal{F}} = \{E\}\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Therefore, &lt;span class=&#34;math inline&#34;&gt;\(\{C\}\)&lt;/span&gt; is a candidate key because it implies all the other columns.&lt;/p&gt;
-&lt;p&gt;From the functional dependency (1), we obtain that &lt;span class=&#34;math inline&#34;&gt;\(AB\)&lt;/span&gt; implies &lt;span class=&#34;math inline&#34;&gt;\(C\)&lt;/span&gt;; therefore,
-by transitivity they imply all the other columns.&lt;/p&gt;
-&lt;p&gt;In conclusion, we have two candidate keys: &lt;span class=&#34;math inline&#34;&gt;\(\{C\}\)&lt;/span&gt; and &lt;span class=&#34;math inline&#34;&gt;\(\{A, B\}\)&lt;/span&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3  &lt;/strong&gt;&lt;/span&gt;
-We assume that &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is in 1NF.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Is table &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; in 2NF? Justify your answer.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Is table &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; in 3NF? Justify your answer.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;Is table &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; in BCNF? Justify your answer.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is in 2NF. In fact, all non-prime columns depend
-entirely on both candidate keys.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is not in 3NF. In fact, the functional dependency &lt;span class=&#34;math inline&#34;&gt;\(D \rightarrow E\)&lt;/span&gt; is
-between two non-prime columns.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;As a result, &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is not in BCNF either.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4  &lt;/strong&gt;&lt;/span&gt;
-If the table &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; from the previous exercise is not in BCNF,
-how would you change the schema so that BCNF is satisfied?
-For each table, specify the primary key and the foreign keys
-linking the tables to each other.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The table is not in 3NF.
-The offending functional dependency is &lt;span class=&#34;math inline&#34;&gt;\(D \rightarrow E\)&lt;/span&gt;.&lt;/p&gt;
-&lt;p&gt;We need to create a new table &lt;span class=&#34;math inline&#34;&gt;\(R_1\)&lt;/span&gt;, where the primary key is
-the determinant in the offending functional dependency (&lt;span class=&#34;math inline&#34;&gt;\(D\)&lt;/span&gt;).
-We then move all columns that are dependent on &lt;span class=&#34;math inline&#34;&gt;\(D\)&lt;/span&gt; (only &lt;span class=&#34;math inline&#34;&gt;\(E\)&lt;/span&gt; in our case) from &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; to &lt;span class=&#34;math inline&#34;&gt;\(R_1\)&lt;/span&gt;.
-Note that &lt;span class=&#34;math inline&#34;&gt;\(D\)&lt;/span&gt; is kept in &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; so that we can use it to link
-&lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; with &lt;span class=&#34;math inline&#34;&gt;\(R_1\)&lt;/span&gt;.&lt;/p&gt;
-&lt;p&gt;In summary:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[R = \{A, B, C, D\}\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[R_1 = \{D, E\}\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;The primary key of &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is &lt;span class=&#34;math inline&#34;&gt;\(\{C\}\)&lt;/span&gt; (or, we can also choose &lt;span class=&#34;math inline&#34;&gt;\(\{A, B\}\)&lt;/span&gt; if we want).
-The primary key of &lt;span class=&#34;math inline&#34;&gt;\(R_1\)&lt;/span&gt; is &lt;span class=&#34;math inline&#34;&gt;\(\{D\}\)&lt;/span&gt;.&lt;/p&gt;
-&lt;p&gt;The column &lt;span class=&#34;math inline&#34;&gt;\(D\)&lt;/span&gt; in &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is a foreign key referencing the column &lt;span class=&#34;math inline&#34;&gt;\(D\)&lt;/span&gt; in &lt;span class=&#34;math inline&#34;&gt;\(R_1\)&lt;/span&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;/div&gt;
-&lt;div id=&#34;question-3&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Question 3&lt;/h1&gt;
-&lt;p&gt;Let &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; be a relational table with four columns
-&lt;span class=&#34;math inline&#34;&gt;\((A, B, C, D)\)&lt;/span&gt;. &lt;span class=&#34;math inline&#34;&gt;\(\{A, B\}\)&lt;/span&gt; is the only candidate key.&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5  &lt;/strong&gt;&lt;/span&gt;
-Identify a minimal set of functional dependencies.
-Justify your answer.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;A candidate key implies all the other columns of the table.
-Therefore we have :&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AB \rightarrow C\]&lt;/span&gt;
-&lt;span class=&#34;math display&#34;&gt;\[AB \rightarrow D\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;Both functional dependencies are in canonical form (the right side only consist of one column).
-Trivially, both functional dependencies are left-irreducible (we cannot remove any of the columns
-in the determinant without losing information).
-So, this is a minimal set of functional dependencies.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 6  &lt;/strong&gt;&lt;/span&gt;
-Add &lt;span class=&#34;math inline&#34;&gt;\(B \rightarrow D\)&lt;/span&gt; to the set of functional dependencies that you identified
-in the previous exercise.
-Modify the minimal set of functional dependencies accordingly.
-Justify your answer.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;We consider the following functional dependencies:&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(AB \rightarrow C\)&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(AB \rightarrow D\)&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(B \rightarrow D\)&lt;/span&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;The FD (3) clearly makes FD (2) redundant.
-By using the augmentation axiom on (3) we obtain:&lt;/p&gt;
-&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(AB \rightarrow AD\)&lt;/span&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;By applying the decomposition axiom on (4) we obtain:&lt;/p&gt;
-&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(AB \rightarrow A\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(AB \rightarrow D\)&lt;/span&gt;&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;Which shows that (2) is redundant.&lt;/p&gt;
-&lt;p&gt;In summary, we have the following functional dependencies:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[AB\rightarrow C \]&lt;/span&gt;
-&lt;span class=&#34;math display&#34;&gt;\[B\rightarrow D \]&lt;/span&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 7  &lt;/strong&gt;&lt;/span&gt;
-We assume that &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is in 1NF.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Is table &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; in 2NF? Justify your answer.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Is table &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; in 3NF? Justify your answer.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;Is table &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; in BCNF? Justify your answer.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is not in 2NF. In fact, the non-prime column &lt;span class=&#34;math inline&#34;&gt;\(C\)&lt;/span&gt; is functionally dependent on
-only one part of the candidate key.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is not in 3NF, let alone BCNF, because it doesn’t fulfill the first condition, that is
-being in 2NF.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 8  &lt;/strong&gt;&lt;/span&gt;
-Normalize &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; to the BCNF form.
-Justify your choices.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The functional dependency that gives a partial dependency is:
-&lt;span class=&#34;math inline&#34;&gt;\(B \rightarrow D\)&lt;/span&gt;.
-We create a new table &lt;span class=&#34;math inline&#34;&gt;\(R_1\)&lt;/span&gt;, where the determinant (&lt;span class=&#34;math inline&#34;&gt;\(B\)&lt;/span&gt;) of the
-offending functional dependency is the primary key.
-We move the columns that depend on &lt;span class=&#34;math inline&#34;&gt;\(B\)&lt;/span&gt; (here, only &lt;span class=&#34;math inline&#34;&gt;\(D\)&lt;/span&gt;) from table
-&lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; to table &lt;span class=&#34;math inline&#34;&gt;\(R_1\)&lt;/span&gt;.&lt;/p&gt;
-&lt;p&gt;In summary:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[R = (A, B, C)\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[R_1 = (B, D)\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;We can see that &lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is in 3NF because:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;The only non-prime column is &lt;span class=&#34;math inline&#34;&gt;\(C\)&lt;/span&gt;, therefore there cannot be any dependency between non-prime columns.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;span class=&#34;math inline&#34;&gt;\(R\)&lt;/span&gt; is in BCNF because:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;The only functional dependency &lt;span class=&#34;math inline&#34;&gt;\(AB \rightarrow C\)&lt;/span&gt; has a key as its determinant.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Similarly, for &lt;span class=&#34;math inline&#34;&gt;\(R_1\)&lt;/span&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;/div&gt;
-&lt;div id=&#34;question-4&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Question 4&lt;/h1&gt;
-&lt;p&gt;We consider the following table:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;Patient (ssn, first_name, last_name, phone_number, insurance_number, 
-         insurance_expiration_date)&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;where the following set &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{F}\)&lt;/span&gt; of functional dependencies holds:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;ssn -&amp;gt; first_name, last_name, phone_number, insurance_number, 
-       insurance_expiration_date 
-
-insurance_number -&amp;gt; insurance_expiration_date&lt;/code&gt;&lt;/pre&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 9  &lt;/strong&gt;&lt;/span&gt;Derive a minimal set &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{G}\)&lt;/span&gt; of functional dependencies that is equivalent to &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{F}\)&lt;/span&gt;.
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;First, we need to rewrite the FDs in canonical form.&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(ssn \rightarrow first\_name\)&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(ssn \rightarrow last\_name\)&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(ssn \rightarrow phone\_number\)&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(ssn \rightarrow insurance\_number\)&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(ssn \rightarrow insurance\_expiration\_date\)&lt;/span&gt;&lt;/li&gt;
-&lt;li&gt;&lt;span class=&#34;math inline&#34;&gt;\(insurance\_number \rightarrow insurance\_expiration\_date\)&lt;/span&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;p&gt;The determinant of each FD is composed of only one column, therefore
-it is already left-irreducible.
-It is easy to see that all FDs with &lt;TT&gt;ssn&lt;/TT&gt; as a determinant must be
-kept (otherwise we lose some information).&lt;/p&gt;
-&lt;p&gt;By transitivity from 4. and 6. we obtain:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[ssn \rightarrow insurance\_expiration\_date\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;Therefore, &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{G}\)&lt;/span&gt; is obtained from &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{F}\)&lt;/span&gt; by removing 5.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 10  &lt;/strong&gt;&lt;/span&gt;Given &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{G}\)&lt;/span&gt;, identify the candidate keys in the table &lt;TT&gt;Patient&lt;/TT&gt;.
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;From the functional dependencies in &lt;span class=&#34;math inline&#34;&gt;\(\mathcal{F}\)&lt;/span&gt;, it’s easy to see that
-that the only column that implies all the others
-is &lt;TT&gt;ssn&lt;/TT&gt;. Therefore, {&lt;TT&gt;ssn&lt;/TT&gt;} is the only candidate key in
-this table.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;span id=&#34;exr:unnamed-chunk-11&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 11  &lt;/strong&gt;&lt;/span&gt;Specify the normal form of the table &lt;TT&gt;Patient&lt;/TT&gt;. Justify your answer.
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;It is immediate to verify that the table is 1NF.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The table is 2NF because there is only one candidate key, which is composed of
-only one column. Therefore, there cannot be any partial dependency.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The table is not in 3NF. Indeed, there is a functional dependency
-between two non-prime columns:&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[insurance\_number \rightarrow insurance\_expiration\_date\]&lt;/span&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;span id=&#34;exr:unnamed-chunk-12&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 12  &lt;/strong&gt;&lt;/span&gt;How would you normalize
-table &lt;TT&gt;Patient&lt;/TT&gt; to BCNF? Justify your answer.
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;details&gt;
-&lt;p&gt;&lt;summary&gt;Solution&lt;/summary&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The offending functional dependency is:&lt;/p&gt;
-&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[insurance\_number \rightarrow insurance\_expiration\_date\]&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;We need to create another table (let’s call it &lt;TT&gt;Insurance&lt;/TT&gt;) that contains
-the determinant of the offending functional dependency (insurance_number)
-as its primary key.
-We need to move the colum (insurance_expiration_date) that depends on insurance_number
-from table &lt;TT&gt;Patient&lt;/TT&gt; to table &lt;TT&gt;Insurance&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;In summary:&lt;/p&gt;
-&lt;pre&gt;
-&lt;TT&gt;Patient&lt;/TT&gt;   (&lt;u&gt;ssn&lt;/u&gt;, first_name, last_name, phone_number, insurance_number)
-&lt;TT&gt;Insurance&lt;/TT&gt; (&lt;u&gt;insurance_number&lt;/u&gt;, insurance_expiration_date)
-&lt;/pre&gt;
-&lt;p&gt;Note that the column &lt;em&gt;insurance_number&lt;/em&gt; in table &lt;TT&gt;Patient&lt;/TT&gt; is foreign key to
-the column &lt;em&gt;insurance_number&lt;/em&gt; in table &lt;TT&gt;Insurance&lt;/TT&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;/div&gt;
-</description>
-    </item>
-    
-    <item>
       <title>Relational data modeling</title>
       <link>/courses/gadexed_en/tutorials/01-rel-data-modeling/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -4744,36 +4360,87 @@ the column &lt;em&gt;insurance_number&lt;/em&gt; in table &lt;TT&gt;Insurance&lt
 
 &lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
 &lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
-&lt;p&gt;In this tutorial you’ll learn:&lt;/p&gt;
+&lt;p&gt;The goal of this tutorial is to practice the design of a relational database.&lt;/p&gt;
+&lt;p&gt;The following topics are covered:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;How to &lt;strong&gt;create a conceptual schema&lt;/strong&gt; of a database.&lt;/li&gt;
-&lt;li&gt;How to &lt;strong&gt;draw an entity-relationship&lt;/strong&gt; (ER) diagram.&lt;/li&gt;
-&lt;li&gt;How to &lt;strong&gt;translate&lt;/strong&gt; a &lt;strong&gt;conceptual model&lt;/strong&gt; into a &lt;strong&gt;logical model&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Conceptual schema&lt;/strong&gt; of a relational database.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Logical schema&lt;/strong&gt; of a relational database.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Primary keys&lt;/strong&gt; and &lt;strong&gt;foreign keys&lt;/strong&gt;.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;div id=&#34;database-of-a-social-network-platform&#34; class=&#34;section level1&#34; number=&#34;1&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Database of a social network platform&lt;/h1&gt;
-&lt;p&gt;A social network platform wants to design a relational database
-to store information on its users.
-For each user, the platform keeps its nickname,
-that uniquely identifies the user in the platform, first and family name,
-geographic location (city and country) and email address;
-the user can register as many email addresses as s/he wishes.
-Any user can share content on the platform; each post is characterized by its content,
-date, time and, when available, the geolocation (latitude, longitude).
-Optionally, users can tag one or more friends in their posts.&lt;/p&gt;
-&lt;p&gt;Two users are linked by a friendship relationship
-if both agree on befriending each other;
-a user can also follow another user without necessarily befriending her.
-For any type of relationship (friendship or follower),
-the platform registers the date when the relationship is established.&lt;/p&gt;
-&lt;div id=&#34;exercises&#34; class=&#34;section level2&#34; number=&#34;1.1&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.1&lt;/span&gt; Exercises&lt;/h2&gt;
+&lt;div id=&#34;application-scenario&#34; class=&#34;section level1&#34; number=&#34;1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Application scenario&lt;/h1&gt;
+&lt;p&gt;We intend to manage the data of a travel reservation system
+with clients all over the world.
+Upon registration, customers are automatically given a numeric identifier
+and they are asked to indicate their first and family names, their gender,
+date of birth, a phone number, an email address and their country of residence.&lt;/p&gt;
+&lt;p&gt;Any customer can book a trip that includes
+the reservation of &lt;strong&gt;one or more flights&lt;/strong&gt; and, possibly, &lt;strong&gt;one or more hotels&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Example&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Alice wants to fly from Paris,
+France to New York City (NYC), USA
+and she intends to stay in NYC for 10 days.
+Her trip includes two flights: an outbound flight
+from Paris to NYC and an inbound flight from NYC to Paris; and an hotel in NYC.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;A flight is operated by an airline company,
+of which the system keeps its name (e.g., British Airways),
+the country where the airline is incorporated and, when available,
+its IATA code (e.g., BA, a two-letter code identifying the airline),
+its ICAO code (e.g., BAW, a three-letter code identifying the airline)
+and alternate name or alias (e.g., British).&lt;/p&gt;
+&lt;p&gt;A flight connects two airports,
+each having a name (e.g., London Heathrow Airport), and,
+possibly, a IATA (e.g., LHR) and ICAO code (e.g., EGLL);
+an airport serves a specific location (e.g., London, UK) and its precise position
+is given by its geographic coordinates (latitude and longitude).&lt;/p&gt;
+&lt;p&gt;A flight connecting two airports at specific departure and arrival times
+is identified by a flight number.
+Two flights operated by two different airline companies cannot have the same flight number,
+but the same flight number can denote two flights operated
+by the same airline company on different days.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Example&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Emirates flight EK074 leaves Paris,
+France at 10 AM and arrives at Dubai, UAE at 7:40 PM (regardless of the departure day).&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;For each flight booked by a customer,
+the system keeps the seat number,
+the travel class (e.g., economy or business),
+the price and the date of the flight.
+Usually, airlines include details on the type of aircraft
+they plan to use on their flight schedules;
+these details include the name of the aircraft (e.g., Boeing 787-8) and,
+when available, the IATA code (e.g., 788, a unique three-letter identifier for the aircraft)
+and the ICAO code (e.g., B788, a unique four-letter identifier for the aircraft).&lt;/p&gt;
+&lt;p&gt;The system maintains a list of hotels,
+with their names and addresses.
+Customers can write a review for an hotel;
+in which case the system stores the text of the review,
+the date and its author.
+When a customer books an hotel, the system keeps the price paid,
+the check-in and check-out dates and whether the breakfast is included.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;conceptual-schema&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Conceptual schema&lt;/h1&gt;
+&lt;p&gt;The &lt;strong&gt;conceptual schema&lt;/strong&gt; of the database is an abstract representation of the entities of the application and their relationships.
+The conceptual schema does not include any implementation details,
+such as the definition of primary keys or foreign keys, nor does it include any information about the attribute types.
+The conceptual schema is usually represented through an
+&lt;strong&gt;Entity-Relationship (ER) diagram&lt;/strong&gt;.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.1  &lt;/strong&gt;&lt;/span&gt;
-Give the &lt;strong&gt;conceptual schema&lt;/strong&gt; of the database with an ER diagram.&lt;/p&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;
+Propose an Entity-Relationship (ER) diagram describing the conceptual
+model of a relational database for the given application context.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Specify all the attributes for each entity and relation.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;For each entity, underline the attributes composing the primary key.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;For each relation, clearly indicate the minimum and maximum cardinality.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;details&gt;
@@ -4781,15 +4448,23 @@ Give the &lt;strong&gt;conceptual schema&lt;/strong&gt; of the database with an 
 Solution
 &lt;/summary&gt;
 &lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-1/social-network-solution.png&#34; alt=&#34;Social network solution&#34;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/gadexed/tutorial-1/travel_db_conceptual.png&#34; alt=&#34;Conceptual model of the travel agency database&#34;&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;logical-schema&#34; class=&#34;section level1&#34; number=&#34;3&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Logical schema&lt;/h1&gt;
+&lt;p&gt;The &lt;strong&gt;logical schema&lt;/strong&gt; of a relational database is the collection of tables
+that implement the conceptual schema.
+The logical schema includes the definition of primary keys and foreign keys,
+but it does not include any information about the column types.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Entity-Relationship (ER) diagram&lt;/strong&gt;.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.2  &lt;/strong&gt;&lt;/span&gt;
-Translate the conceptual schema into a logical schema.
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;
+Give the &lt;strong&gt;logical schema&lt;/strong&gt; of the database.
 For each table, underline the primary key and specify the foreign keys.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -4798,219 +4473,146 @@ For each table, underline the primary key and specify the foreign keys.&lt;/p&gt
 Solution
 &lt;/summary&gt;
 &lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The &lt;strong&gt;collection of tables&lt;/strong&gt; is the following:&lt;/p&gt;
-&lt;pre&gt;
-&lt;TT&gt;UserAccount&lt;/TT&gt;  (&lt;u&gt;nickname&lt;/u&gt;, first_name, last_name, city, country)
-
-&lt;TT&gt;Post&lt;/TT&gt;         (&lt;u&gt;post_id&lt;/u&gt;, content, date, time, lat, long, nickname)
-
-&lt;TT&gt;EmailAddress&lt;/TT&gt; (&lt;u&gt;email_address&lt;/u&gt;, nickname)
-
-&lt;TT&gt;Relationship&lt;/TT&gt; (&lt;u&gt;nickname_src&lt;/u&gt;, &lt;u&gt;nickname_dst&lt;/u&gt;, type, date)
-
-&lt;TT&gt;Tag&lt;/TT&gt;          (&lt;u&gt;post_id&lt;/u&gt;, &lt;u&gt;nickname&lt;/u&gt;)
-
-&lt;/pre&gt;
-&lt;p&gt;The &lt;strong&gt;foreign keys&lt;/strong&gt; are the following:&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Post(nickname)&lt;/TT&gt; → &lt;TT&gt;UserAccount(nickname)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;EmailAddress(nickname)&lt;/TT&gt; → &lt;TT&gt;EmailAddress(nickname)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Relationship(nickname_src)&lt;/TT&gt; → &lt;TT&gt;UserAccount(nickname)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Relationship(nickname_dst)&lt;/TT&gt; → &lt;TT&gt;UserAccount(nickname)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Tag(post_id)&lt;/TT&gt; → &lt;TT&gt;Post(post_id)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Tag(nickname)&lt;/TT&gt; → &lt;TT&gt;UserAccount(nickname)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;customer (&lt;u&gt;cust_code&lt;/u&gt;, first_name, last_name, gender, birth_date, phone_number, email_address, cust_country)&lt;/p&gt;
+&lt;p&gt;trip (&lt;u&gt;trip_code&lt;/u&gt;, cust_code)&lt;/p&gt;
+&lt;p&gt;flight (&lt;u&gt;flight_id&lt;/u&gt;, flight_number, flight_date, departure_time, arrival_time, departure_airport, arrival_airport, airline_name, aircraft_name)&lt;/p&gt;
+&lt;p&gt;hotel (&lt;u&gt;hotel_id&lt;/u&gt;, hotel_name, hotel_address)&lt;/p&gt;
+&lt;p&gt;hotel_reservation (&lt;u&gt;trip_code&lt;/u&gt;, &lt;u&gt;hotel_id&lt;/u&gt;, price, checkin_date, checkout_date, breakfast)&lt;/p&gt;
+&lt;p&gt;flight_booking (&lt;u&gt;trip_code&lt;/u&gt;, &lt;u&gt;flight_id&lt;/u&gt;, seat_number , travel_class, booking_date, price)&lt;/p&gt;
+&lt;p&gt;review (&lt;u&gt;hotel_id&lt;/u&gt;, &lt;u&gt;cust_code&lt;/u&gt;, content, date)&lt;/p&gt;
+&lt;p&gt;airline (&lt;u&gt;airline_name&lt;/u&gt;, airline_country, airline_iata, airline_icao, airline_alias)&lt;/p&gt;
+&lt;p&gt;aircraft (&lt;u&gt;aircraft_name&lt;/u&gt;, aircraft_iata, aircraft_icao)&lt;/p&gt;
+&lt;p&gt;airport (&lt;u&gt;airport_id&lt;/u&gt;, airport_name, airport_iata, airport_icao, city, country, latitude, longitude)&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Foreign keys:&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;trip(cust_code) → customer(cust_code)&lt;/p&gt;
+&lt;p&gt;flight(departure_airport) → airport(airport_id)&lt;/p&gt;
+&lt;p&gt;flight(arrival_airport) → airport(airport_id)&lt;/p&gt;
+&lt;p&gt;flight(airline_name) → airline(airline_name)&lt;/p&gt;
+&lt;p&gt;flight(aircraft_name) → aircraft(aircraft_name)&lt;/p&gt;
+&lt;p&gt;hotel_reservation(hotel_id) → hotel(hotel_id)&lt;/p&gt;
+&lt;p&gt;flight_booking(trip_code) → trip(trip_code)&lt;/p&gt;
+&lt;p&gt;flight_booking(flight_id) → flight(flight_id)&lt;/p&gt;
+&lt;p&gt;review(cust_code) → customer(cust_code)&lt;/p&gt;
+&lt;p&gt;review(hotel_id) → hotel(hotel_id)&lt;/p&gt;
+&lt;p&gt;In table flight we introduced a surrogate primary key flight_id
+to uniquely identify each flight instance.
+However, the table is not in third normal form (3NF), because the departure_airport and arrival_airport
+deped on flight_number.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/details&gt;
 &lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;database-of-a-banking-system&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Database of a banking system&lt;/h1&gt;
-&lt;p&gt;The following figure shows the ER diagram with the
-conceptual schema of a banking system database.&lt;/p&gt;
-&lt;div class=&#34;figure&#34; style=&#34;text-align: center&#34;&gt;&lt;span id=&#34;fig:banking-system-db&#34;&gt;&lt;/span&gt;
-&lt;img src=&#34;/courses/databases/tutorial-1/banking-system-er.png&#34; alt=&#34;The conceptual schema of the bank database&#34; width=&#34;100%&#34; /&gt;
-&lt;p class=&#34;caption&#34;&gt;
-Figure 2.1: The conceptual schema of the bank database
-&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;Each bank is identified by a unique code and name,
-and has one or several branches.
-A branch is responsible for opening accounts and
-granting loans to customers.
-Each account is identified by
-a number (&lt;em&gt;acct_nbr&lt;/em&gt;)
-and is either a checking or savings account
-(property &lt;em&gt;acct_type&lt;/em&gt;).
-Each customer is identified by its social
-security number (&lt;em&gt;ssn&lt;/em&gt;);
-a customer can be granted several loans and open as many accounts as s/he wishes.&lt;/p&gt;
-&lt;div id=&#34;exercises-1&#34; class=&#34;section level2&#34; number=&#34;2.1&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.1&lt;/span&gt; Exercises&lt;/h2&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Modélisation des données relationnelles</title>
+      <link>/courses/gadexed_fr/tutorials/01-rel-data-modeling/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/gadexed_fr/tutorials/01-rel-data-modeling/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;Which primary key would you choose for the entity Bank? Justify your answer.
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;Since no
-two banks have the same &lt;em&gt;code_bank&lt;/em&gt; or &lt;em&gt;name&lt;/em&gt;,
-either property can be chosen as the primary key
-of the entity &lt;TT&gt;Bank&lt;/TT&gt;.
-Both can be considered as valid &lt;strong&gt;candidate keys&lt;/strong&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.2  &lt;/strong&gt;&lt;/span&gt;Would you consider {&lt;em&gt;code_bank&lt;/em&gt;, &lt;em&gt;name&lt;/em&gt;}
-as a valid candidate key for the entity &lt;TT&gt;Bank&lt;/TT&gt;? Justify your answer.
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The answer is &lt;strong&gt;no&lt;/strong&gt;.
-While there aren’t any banks that have
-the same value for {&lt;em&gt;code_bank&lt;/em&gt;, &lt;em&gt;name&lt;/em&gt;},
-two subsets ({&lt;em&gt;code_bank&lt;/em&gt;} and {&lt;em&gt;name&lt;/em&gt;}) are candidate keys.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.3  &lt;/strong&gt;&lt;/span&gt;Complete the
-diagram in the figure
-by adding the cardinalities to the relations.
-Justify your choices when any ambiguity arises.
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-1/banking-system-er-complete.png&#34; alt=&#34;Banking system solution&#34;&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.4  &lt;/strong&gt;&lt;/span&gt;Translate the conceptual schema into a logical schema.
-For each table, underline the primary keys and specify the foreign keys.
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The &lt;strong&gt;collection of tables&lt;/strong&gt; is the following:&lt;/p&gt;
-&lt;pre&gt;
-&lt;TT&gt;Bank&lt;/TT&gt;     (&lt;u&gt;code_bank&lt;/u&gt;, name, address)
-
-&lt;TT&gt;Branch&lt;/TT&gt;   (&lt;u&gt;branch_id&lt;/u&gt;, address, code_bank)
-
-&lt;TT&gt;Account&lt;/TT&gt;  (&lt;u&gt;acct_nbr&lt;/u&gt;, acct_type, balance, branch_id, ssn)
-
-&lt;TT&gt;Loan&lt;/TT&gt;     (&lt;u&gt;loan_nbr&lt;/u&gt;, loan_type, amount, branch_id, ssn)
-
-&lt;TT&gt;Customer&lt;/TT&gt; (&lt;u&gt;ssn&lt;/u&gt;, first_name, last_name, telephone, address)
-
-&lt;/pre&gt;
-&lt;p&gt;The &lt;strong&gt;foreign keys&lt;/strong&gt; are the following:&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Branch(code_bank)&lt;/TT&gt; → &lt;TT&gt;Bank(code_bank)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Account(branch_id)&lt;/TT&gt; → &lt;TT&gt;Branch(branch_id)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Account(ssn)&lt;/TT&gt; → &lt;TT&gt;Customer(ssn)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Loan(branch_id)&lt;/TT&gt; → &lt;TT&gt;Branch(branch_id)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Loan(ssn)&lt;/TT&gt; → &lt;TT&gt;Customer(ssn)&lt;/TT&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;car-dealership-database&#34; class=&#34;section level1&#34; number=&#34;3&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Car dealership database&lt;/h1&gt;
-&lt;p&gt;We want to design the database of a car dealership.
-The dealership sells both new and used cars,
-and it operates a service facility.
-The database should keep data about the cars
-(serial number, make, model, color, whether it is new or used),
-the salespeople (first and family name)
-and the customers (first and family name, phone number, address).
-Also, the following business rules hold:&lt;/p&gt;
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;p&gt;L’objectif de ce tutoriel est de s’exercer à la conception d’une base de données relationnelle.&lt;/p&gt;
+&lt;p&gt;Les sujets suivants sont abordés :&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;A salesperson may sell many cars, but each car is sold by only one salesperson.&lt;/li&gt;
-&lt;li&gt;A customer may buy many cars, but each car is bought by only one customer.&lt;/li&gt;
-&lt;li&gt;A salesperson writes a single invoice for each car s/he sells.
-The invoice is identified by a number and indicates the sale date and the price.&lt;/li&gt;
-&lt;li&gt;A customer gets an invoice for each car s/he buys.&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Schéma conceptuel&lt;/strong&gt; d’une base de données relationnelle.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Schéma logique&lt;/strong&gt; d’une base de données relationnelle.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Clés primaires&lt;/strong&gt; et &lt;strong&gt;clés étrangères&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;When a customer takes one or more cars in for repair,
-one service ticket is written for each car.
-The ticket is identified by a number and
-indicates the date on which the car is received from the customer,
-as well as the date on which the car should be returned to the customer.
-A car brought in for service can be worked on by many mechanics,
-and each mechanic may work on many cars.&lt;/p&gt;
-&lt;div id=&#34;exercises-2&#34; class=&#34;section level2&#34; number=&#34;3.1&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.1&lt;/span&gt; Exercises&lt;/h2&gt;
+&lt;div id=&#34;scénario-applicatif&#34; class=&#34;section level1&#34; number=&#34;1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Scénario applicatif&lt;/h1&gt;
+&lt;p&gt;Nous souhaitons gérer les données d’un système de réservation de voyages
+avec des clients partout dans le monde.
+Lors de leur inscription, les clients se voient automatiquement attribuer un identifiant numérique
+et ils doivent indiquer leur prénom et nom de famille, leur genre,
+date de naissance, un numéro de téléphone, une adresse e-mail et leur pays de résidence.&lt;/p&gt;
+&lt;p&gt;Tout client peut réserver un voyage qui inclut
+la réservation de &lt;strong&gt;un ou plusieurs vols&lt;/strong&gt; et, éventuellement, &lt;strong&gt;un ou plusieurs hôtels&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exemple&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Alice souhaite voyager de Paris,
+France à New York City (NYC), USA
+et elle prévoit de rester à NYC pendant 10 jours.
+Son voyage inclut deux vols : un vol aller
+de Paris à NYC et un vol retour de NYC à Paris ; ainsi qu’un hôtel à NYC&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Un vol est opéré par une compagnie aérienne,
+dont le système conserve le nom (par exemple, British Airways),
+le pays où la compagnie est incorporée et, lorsque disponible,
+son code IATA (par exemple, BA, un code à deux lettres identifiant la compagnie),
+son code ICAO (par exemple, BAW, un code à trois lettres identifiant la compagnie)
+et un nom alternatif ou alias (par exemple, British).&lt;/p&gt;
+&lt;p&gt;Un vol relie deux aéroports,
+chacun ayant un nom (par exemple, London Heathrow Airport), et,
+éventuellement, un code IATA (par exemple, LHR) et un code ICAO (par exemple, EGLL) ;
+un aéroport dessert un lieu spécifique (par exemple, London, UK) et sa position précise
+est donnée par ses coordonnées géographiques (latitude et longitude).&lt;/p&gt;
+&lt;p&gt;Un vol reliant deux aéroports à des heures de départ et d’arrivée spécifiques
+est identifié par un numéro de vol. 
+Deux vols opérés par deux compagnies aériennes différentes ne peuvent pas avoir le même numéro de vol,
+mais le même numéro de vol peut désigner deux vols opérés
+par la même compagnie aérienne à des jours différents.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exemple&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Le vol Emirates EK074 part de Paris,
+France à 10h00 et arrive à Dubaï, Émirats arabes unis à 19h40 (indépendamment du jour de départ).&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Pour chaque vol réservé par un client,
+le système conserve le numéro de siège,
+la classe de voyage (par exemple, économique ou affaires),
+le prix et la date du vol. 
+Habituellement, les compagnies aériennes incluent des détails sur le type d’avion
+qu’elles prévoient d’utiliser dans leurs horaires de vol ;
+ces détails incluent le nom de l’avion (par exemple, Boeing 787-8) et,
+lorsque disponible, le code IATA (par exemple, 788, un identifiant unique à trois lettres pour l’avion)
+et le code ICAO (par exemple, B788, un identifiant unique à quatre lettres pour l’avion).&lt;/p&gt;
+&lt;p&gt;Le système conserve une liste d’hôtels,
+avec leurs noms et adresses.
+Les clients peuvent écrire un avis pour un hôtel ;
+dans ce cas, le système stocke le texte de l’avis,
+la date et son auteur.
+Lorsque un client réserve un hôtel, le système conserve le prix payé,
+les dates d’arrivée et de départ et si le petit-déjeuner est inclus.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;schéma-conceptuel&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Schéma conceptuel&lt;/h1&gt;
+&lt;p&gt;Le &lt;strong&gt;schéma conceptuel&lt;/strong&gt; de la base de données est une représentation abstraite des entités de l’application et de leurs associations.
+Le schéma conceptuel ne comprend aucun détail de mise en œuvre,
+comme la définition des clés primaires ou des clés étrangères, ni aucune information sur les types des attributs.
+Le schéma conceptuel est généralement représenté à travers un &lt;strong&gt;diagramme Entité-Association (ang., Entity-Relationship, ER)&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;
+Proposez un diagramme Entité-Association (ER) décrivant le modèle conceptuel
+d’une base de données relationnelle pour le contexte applicatif donné.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Identifiez les entités et les associations pertinentes.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Identifiez les attributs pour chaque entité et chaque association.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Pour chaque entité, soulignez les attributs composant la clé primaire.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Déterminez les cardinalités minimales et maximales pour chaque association.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;schéma-logique&#34; class=&#34;section level1&#34; number=&#34;3&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Schéma logique&lt;/h1&gt;
+&lt;p&gt;Le &lt;strong&gt;schéma logique&lt;/strong&gt; d’une base de données relationnelle est l’ensemble des tables
+qui implémentent le schéma conceptuel.
+Le schéma logique inclut la définition des clés primaires et des clés étrangères,
+mais il n’inclut aucune information sur les types des colonnes.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;span id=&#34;exr:command-in-guest&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;Give the &lt;strong&gt;conceptual schema&lt;/strong&gt; of the database with an ER diagram.
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;
+Donnez le &lt;strong&gt;schéma logique&lt;/strong&gt; de la base de données.
+Pour chaque table, soulignez la clé primaire et spécifiez les clés étrangères.&lt;/p&gt;
 &lt;/div&gt;
-&lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-1/car-dealership.png&#34; alt=&#34;Car dealership solution&#34;&gt;&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.2  &lt;/strong&gt;&lt;/span&gt;Translate the conceptual schema into a logical schema.
-For each table, underline the primary keys and specify the foreign keys.
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The &lt;strong&gt;collection of tables&lt;/strong&gt; is the following:&lt;/p&gt;
-&lt;pre&gt;
-  Car          (&lt;u&gt;serial_number&lt;/u&gt;, make, model, color, is_new)
-  Customer     (&lt;u&gt;cust_id&lt;/u&gt;, cust_first_name, cust_last_name, cust_phone) 
-  Invoice      (&lt;u&gt;invoice_number&lt;/u&gt;, date, price, car_serial_number, sp_id, cust_id)
-  Salesperson  (&lt;u&gt;sp_id&lt;/u&gt;, sp_first_name, sp_last_name)
-  Mechanic     (&lt;u&gt;mec_id&lt;/u&gt;, mec_first_name, mec_last_name)
-  Ticket       (&lt;u&gt;ticket_number&lt;/u&gt;, date_open, date_return, car_serial_number)
-  Repair       (&lt;u&gt;ticket_number&lt;/u&gt;, &lt;u&gt;mec_id&lt;/u&gt;)&lt;/pre&gt;
-&lt;/pre&gt;
-&lt;p&gt;The &lt;strong&gt;foreign keys&lt;/strong&gt; are the following:&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Invoice(cust_id)&lt;/TT&gt; → &lt;TT&gt;Customer(cust_id)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Invoice(car_serial_number)&lt;/TT&gt; → &lt;TT&gt;Car(serial_number)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Invoice(sp_id)&lt;/TT&gt; → &lt;TT&gt;Salesperson(sp_id)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Ticket(car_serial_number)&lt;/TT&gt; → &lt;TT&gt;Car(serial_number)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Repair(ticket_number)&lt;/TT&gt; → &lt;TT&gt;Ticket(ticket_number)&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;Repair(mec_id)&lt;/TT&gt; → &lt;TT&gt;Mechanic(mec_id)&lt;/TT&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 </description>
@@ -5027,127 +4629,44 @@ Solution
 
 &lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
 &lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
-&lt;p&gt;In this tutorial you’ll learn:&lt;/p&gt;
+&lt;p&gt;The goal of this tutorial is to practice &lt;strong&gt;SQL queries&lt;/strong&gt; on a
+relational database.&lt;/p&gt;
+&lt;div id=&#34;environment-setup&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Environment setup&lt;/h1&gt;
 &lt;ul&gt;
-&lt;li&gt;The key integrity constraints in a relational database.&lt;/li&gt;
-&lt;li&gt;Basic SQL queries.&lt;/li&gt;
-&lt;li&gt;Advanced SQL queries.&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Start the virtual machine with Remote Desktop Connection.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Open &lt;em&gt;pgAdmin4&lt;/em&gt; (icon on the desktop).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;On the left-side menu, right-click on &lt;em&gt;Servers&lt;/em&gt; and select the &lt;em&gt;PostgreSQL 18&lt;/em&gt; to connect.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;When prompted, enter the password &lt;code&gt;postgres&lt;/code&gt; to connect to the server.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Select the database &lt;code&gt;travel&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Open a new query tool (right-click on the database &lt;code&gt;travel&lt;/code&gt;, select &lt;em&gt;Query tool&lt;/em&gt;).&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;div id=&#34;installing-postgresql&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Installing PostgreSQL&lt;/h1&gt;
-&lt;p&gt;In this tutorial you’ll be using &lt;strong&gt;PostgreSQL&lt;/strong&gt; as a
-relational database management system (RDBMS).&lt;/p&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Instructions for Windows users
-&lt;/summary&gt;
-&lt;p&gt;You can download the latest version of PostgreSQL (14.3)
-&lt;a href=&#34;https://www.enterprisedb.com/downloads/postgres-postgresql-downloads&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;from this page&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;The installer contains:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;The PostgreSQL server.&lt;/li&gt;
-&lt;li&gt;pgAdmin, a graphical administration tool.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;You’ll find &lt;strong&gt;detailed installation instructions&lt;/strong&gt; &lt;a href=&#34;https://www.enterprisedb.com/docs/supported-open-source/postgresql/installer/02_installing_postgresql_with_the_graphical_installation_wizard/01_invoking_the_graphical_installer/&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;on this page&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;/details&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Instructions for macOS users
-&lt;/summary&gt;
-&lt;p&gt;The best way to get PostgreSQL is to download and install &lt;strong&gt;Postgres.app&lt;/strong&gt;.
-You’ll find more details &lt;a href=&#34;https://postgresapp.com/&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;on this page&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;In addition, you need to &lt;a href=&#34;https://www.pgadmin.org/download/&#34; target=&#34;blank&#34;&gt;&lt;strong&gt;install pgAdmin&lt;/strong&gt;&lt;/a&gt;,
-ad administration tool that lets you interact with your database through a
-graphical interface.&lt;/p&gt;
-&lt;/details&gt;
 &lt;/div&gt;
-&lt;div id=&#34;starting-postgresql-and-pgadmin&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Starting PostgreSQL and pgAdmin&lt;/h1&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Instructions for Windows users
-&lt;/summary&gt;
-&lt;p&gt;Once the installation is completed, a PostgreSQL server should be
-automatically started.&lt;/p&gt;
-&lt;p&gt;You’ll open a connection to the server through the following steps:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Execute pgAdmin.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;On the left-side menu, right-click on &lt;em&gt;Servers&lt;/em&gt; and select &lt;em&gt;Create server&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;In the &lt;em&gt;General&lt;/em&gt; tab, give the server a name of your choice.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;In the &lt;em&gt;Connection&lt;/em&gt; tab, write &lt;em&gt;localhost&lt;/em&gt; as &lt;em&gt;host&lt;/em&gt;.
-Don’t change the values of the other options.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;details&gt;
-&lt;summary&gt;
-What if I get the &lt;em&gt;Unable to connect to server&lt;/em&gt; error?
-&lt;/summary&gt;
-&lt;p&gt;You might want to have a look at the list of the services running on your computer to verify
-whether the PostgreSQL server is actually running.&lt;/p&gt;
-&lt;p&gt;&lt;a href=&#34;https://www.dell.com/support/kbdoc/it-it/000126393/how-to-use-windows-services-to-start-or-stop-services&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;This page&lt;/strong&gt;&lt;/a&gt;
-explains you how to open the panel with the list of services.
-You should locate PostgreSQL in this panel. If the service is not running, you’ll
-need to manually start it.&lt;/p&gt;
-&lt;/details&gt;
-&lt;/details&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Instructions for MacOS users
-&lt;/summary&gt;
-&lt;p&gt;You’ll open a connection to the server through the following steps:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Execute pgAdmin.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;On the left-side menu, right-click on &lt;em&gt;Servers&lt;/em&gt; and select &lt;em&gt;Create server&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;In the &lt;em&gt;General&lt;/em&gt; tab, give the server a name of your choice.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;In the &lt;em&gt;Connection&lt;/em&gt; tab, write &lt;em&gt;localhost&lt;/em&gt; as &lt;em&gt;host&lt;/em&gt;.
-Don’t change the values of the other options.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/details&gt;
-&lt;/div&gt;
-&lt;div id=&#34;obtain-the-data&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Obtain the data&lt;/h1&gt;
-&lt;p&gt;We consider the database of a DVD rental store chain containing data on films, actors,
-customers and the transactions of the store.&lt;/p&gt;
-&lt;p&gt;This database goes by the name &lt;strong&gt;Sakila&lt;/strong&gt;&lt;br /&gt;
-and was developed by Mike Hillyer, a former member of the MySQL team.&lt;/p&gt;
+&lt;div id=&#34;database-schema&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Database schema&lt;/h1&gt;
+&lt;p&gt;The figure 1 shows the physical schema of the &lt;code&gt;travel&lt;/code&gt; database.
+You can also obtain it within pgAdmin4 by right-clicking on the database &lt;code&gt;travel&lt;/code&gt;,
+and selecting &lt;em&gt;ERD for database&lt;/em&gt;.&lt;/p&gt;
 &lt;div class=&#34;figure&#34; style=&#34;text-align: center&#34;&gt;&lt;span id=&#34;fig:cnm&#34;&gt;&lt;/span&gt;
-&lt;img src=&#34;/courses/databases/tutorial-4/sakila-3nf.png&#34; alt=&#34;The conceptual schema of the Sakila database&#34; width=&#34;100%&#34; /&gt;
+&lt;img src=&#34;/courses/databases/gadexed/tutorial-2/travel_physical_schema.png&#34; alt=&#34;The physical schema  of the travel database&#34; width=&#34;100%&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;
-Figure 1: The conceptual schema of the Sakila database
+Figure 1: The physical schema of the travel database
 &lt;/p&gt;
 &lt;/div&gt;
-&lt;p&gt;The tables of the database are &lt;a href=&#34;https://dev.mysql.com/doc/sakila/en/sakila-structure-tables.html&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;documented on this page&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;Sakila has been ported from MySQL to PostgreSQL under the name &lt;strong&gt;pagila&lt;/strong&gt;.&lt;/p&gt;
-&lt;p&gt;In order to import the data into PostgreSQL, follow the steps below:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;From the pgAdmin interface, create a new database (right-click on &lt;em&gt;Databases&lt;/em&gt;, select &lt;em&gt;Create database&lt;/em&gt;).
-You can call the new database &lt;strong&gt;pagila&lt;/strong&gt; (or any name you want).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Download the &lt;a href=&#34;/courses/databases/gadexed/tutorial-2/travel_db.sql&#34;&gt;&lt;strong&gt;dump file pagila-insert-data.sql&lt;/strong&gt;&lt;/a&gt;
-This file contains all the SQL statements necessary to create the tables of the database
-and populate them with some data.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Right-click on the new database, select &lt;em&gt;Query tool&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Click on the second (from the left) small icon on the top menu of the query tool to open a new file.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Through the interface, locate &lt;em&gt;pagila-schema.sql&lt;/em&gt; and open it.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Hit on the F5 button or click on the &lt;em&gt;play&lt;/em&gt; icon on the top menu of the query tool to execute the script.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The previous steps should have created the schema of the database&lt;br /&gt;
-and inserted the data.&lt;/p&gt;
-&lt;p&gt;You can see the list of tables
-by selecting (on the left menu) &lt;em&gt;Schemas&lt;/em&gt;, &lt;em&gt;public&lt;/em&gt;, &lt;em&gt;Tables&lt;/em&gt; (15 tables should appear).&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;Open a new query tool&lt;/strong&gt; to do the exercises.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;integrity-constraints&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Integrity constraints&lt;/h1&gt;
+&lt;div id=&#34;foreign-key-contraints&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Foreign key contraints&lt;/h1&gt;
+&lt;p&gt;Look at the physical schema of the &lt;code&gt;travel&lt;/code&gt; database.
+Tables are linked through foreign key constraints.&lt;/p&gt;
+&lt;p&gt;For instance, the table &lt;code&gt;flight_booking&lt;/code&gt; has a column &lt;code&gt;trip_id&lt;/code&gt; that references
+the column &lt;code&gt;trip_id&lt;/code&gt; in the table &lt;code&gt;trip&lt;/code&gt;.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
 &lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1  &lt;/strong&gt;&lt;/span&gt;
-Execute the following statement:&lt;/p&gt;
-&lt;pre&gt;
-insert into film_actor values(1, 25)
-&lt;/pre&gt;
-&lt;p&gt;What is this statement supposed to do?
-What is the reaction of the DBMS?&lt;/p&gt;
+Try to delete a row from the table &lt;code&gt;trip&lt;/code&gt; that is referenced by a row in the table &lt;code&gt;flight_booking&lt;/code&gt;.
+What happens?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;details&gt;
@@ -5155,23 +4674,40 @@ What is the reaction of the DBMS?&lt;/p&gt;
 Solution
 &lt;/summary&gt;
 &lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;This statement should insert a new row in table &lt;TT&gt;film_actor&lt;/TT&gt;,
-where the value of &lt;TT&gt;actor_id&lt;/TT&gt; is 1 and the value of
-&lt;TT&gt;film_id&lt;/TT&gt; is 25.&lt;/p&gt;
-&lt;p&gt;The DBMS returns an error because there is already a row
-with these values and the two columns
-&lt;TT&gt;film_actor&lt;/TT&gt;, &lt;TT&gt;film_id&lt;/TT&gt; form the primary key.&lt;/p&gt;
+&lt;p&gt;First, we need to identify a row in the table &lt;code&gt;trip&lt;/code&gt; that is referenced by a row in the table &lt;code&gt;flight_booking&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT * 
+FROM flight_booking JOIN trip USING (trip_id)
+LIMIT 1;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The trip_id 0 is obtained from the output of the previous query.&lt;/p&gt;
+&lt;p&gt;Trying to delete the row from the table &lt;code&gt;trip&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;DELETE FROM trip
+WHERE trip_id = 0;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Causes the following error:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ERROR:  update or delete on table trip violates foreign key constraint flight_booking_trip_id_fkey on table flight_booking
+Key (trip_id)=(0) is still referenced from table flight_booking. &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;By default, the foreign key constraints prevent the deletion of a row that is referenced by another row in a different table.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/details&gt;
+&lt;p&gt;Let’s loook at how the foreign key constraint is defined in table &lt;code&gt;flight_booking&lt;/code&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Right-click on the table &lt;code&gt;flight_booking&lt;/code&gt; in the left-side menu.&lt;/li&gt;
+&lt;li&gt;Select &lt;em&gt;Properties&lt;/em&gt;.&lt;/li&gt;
+&lt;li&gt;Select the &lt;em&gt;Constraints&lt;/em&gt; tab.&lt;/li&gt;
+&lt;li&gt;Select the &lt;em&gt;Foreign Key&lt;/em&gt; tab.&lt;/li&gt;
+&lt;li&gt;Select the foreign key constraint named &lt;code&gt;flight_booking_trip_id_fkey&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Click on the pencil icon to edit the constraint.&lt;/li&gt;
+&lt;li&gt;Select the &lt;em&gt;Actions&lt;/em&gt; tab.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Here you can see that the action on delete is set to &lt;em&gt;No Action&lt;/em&gt;.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
 &lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2  &lt;/strong&gt;&lt;/span&gt;
-Write the statement to delete the film with
-&lt;em&gt;film_id&lt;/em&gt;=1 from
-the table &lt;TT&gt;Film&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;Execute the command. What happens?&lt;/p&gt;
+How is the update action defined for the foreign key constraint
+&lt;code&gt;flight_booking_trip_id_fkey&lt;/code&gt; in the table &lt;code&gt;flight_booking&lt;/code&gt;?&lt;/p&gt;
+&lt;p&gt;Try to update a row in the table &lt;code&gt;trip&lt;/code&gt; that is referenced by a row in the table &lt;code&gt;flight_booking&lt;/code&gt;.
+What happens?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;details&gt;
@@ -5179,143 +4715,35 @@ the table &lt;TT&gt;Film&lt;/TT&gt;.&lt;/p&gt;
 Solution
 &lt;/summary&gt;
 &lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;PRE&gt;
-delete from film where film_id=1
-&lt;/PRE&gt;
-&lt;p&gt;The statement is rejected because there are rows in other tables
-that reference the row that we intend to delete.
-This is the effect of the foreign key constraint.&lt;/p&gt;
-&lt;/div&gt;
+&lt;p&gt;The update action is set to &lt;em&gt;Cascade&lt;/em&gt;.
+That means that if we update the value of the primary key in the table &lt;code&gt;trip&lt;/code&gt;,
+the corresponding foreign key values in the table &lt;code&gt;flight_booking&lt;/code&gt; will be automatically updated.&lt;/p&gt;
+&lt;p&gt;Let’s update the trip_id 0 to 5432 in the table &lt;code&gt;trip&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;UPDATE trip
+SET trip_id = 5432
+WHERE trip_id = 0;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Now the corresponding foreign key values in the table &lt;code&gt;flight_booking&lt;/code&gt; have been automatically updated.&lt;/p&gt;
 &lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;exploratory-sql-queries&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Exploratory SQL queries&lt;/h1&gt;
+&lt;p&gt;When working with a new database, it is important to explore the data
+to get familiar with its structure and content.
+We can use SQL queries to perform this exploration.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3  &lt;/strong&gt;&lt;/span&gt;
-Look at the definition of the foreign key constraints
-in table &lt;TT&gt;film_actor&lt;/TT&gt; (right-click on the table,
-select &lt;em&gt;Constraints&lt;/em&gt;, &lt;em&gt;foreign key&lt;/em&gt;).&lt;/p&gt;
-&lt;p&gt;Is the definition of the foreign key constraint
-to table &lt;TT&gt;film&lt;/TT&gt; coherent with the behavior observed
-in the previous exercise?&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;NB&lt;/strong&gt; In order to see the options of a foreign key, click on the
-edit button on the left of the constraint. Then look at the
-tab &lt;em&gt;Action&lt;/em&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The foreign key linking table &lt;TT&gt;film_actor&lt;/TT&gt; to table
-&lt;TT&gt;film&lt;/TT&gt; is defined with the option RESTRICT on delete.
-This is coherent with the behavior that we observed
-in the previous exercise. Referenced rows cannot be deleted if
-there are still referencing rows.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4  &lt;/strong&gt;&lt;/span&gt;
-Execute the following query:&lt;/p&gt;
-&lt;pre&gt;
-SELECT f.film_id as film_id_in_table_film, 
-       fa.film_id AS film_id_in_table_film_actor, 
-       fa.actor_id as actor_id, f.title as title
-FROM film f JOIN film_actor fa ON f.film_id = fa.film_id
-WHERE  f.title=&#39;ACE GOLDFINGER&#39;
-&lt;/pre&gt;
-&lt;p&gt;What does the query? Note down the identifier of the film in both tables
-&lt;TT&gt;film&lt;/TT&gt; and &lt;TT&gt;film_actor&lt;/TT&gt;.
-(columns &lt;TT&gt;film_id_in_table_film&lt;/TT&gt; and &lt;TT&gt;film_id_in_table_film_actor&lt;/TT&gt;).&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The query returns the list of all actors in the film titled Ace Goldfinger.
-We note that the identifier of the film in both tables is identical (2), as it should
-because the query joins the two tables on the equality of these two values.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5  &lt;/strong&gt;&lt;/span&gt;
-Write and execute a statement to set the value 10000 to the identifier of the
-film ACE GOLDFINGER in table &lt;TT&gt;Film&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;After the modification, execute the query of the previous exercise.
-What changed? Explain in details what happened.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The statement to modify the &lt;TT&gt;film_id&lt;/TT&gt; of the given film is as follows:&lt;/p&gt;
-&lt;p&gt;&lt;TT&gt;
-UPDATE film
-SET film_id=10000
-WHERE title=‘ACE GOLDFINGER’
-&lt;/TT&gt;&lt;/p&gt;
-&lt;p&gt;After executing the same query as the previous exercise, we see that
-the identifier of the film has changed in the table &lt;TT&gt;film_actor&lt;/TT&gt; too.
-This is expected, because the foreign key constraint between the
-colum &lt;TT&gt;film_id&lt;/TT&gt; in table &lt;TT&gt;film_actor&lt;/TT&gt; and the column
-&lt;TT&gt;film_id&lt;/TT&gt; in table &lt;TT&gt;film&lt;/TT&gt; has the option ON UPDATE CASCADE.
-This means that if we modify the identifier of the film in table
-&lt;TT&gt;film&lt;/TT&gt;, the modification is propagated to all the referencing columns.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 6  &lt;/strong&gt;&lt;/span&gt;
-Execute the following statement:&lt;/p&gt;
-&lt;pre&gt;
-UPDATE film_actor
-SET film_id=2
-WHERE film_id=10000
-&lt;/pre&gt;
-&lt;p&gt;What does? What happens? Explain.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;p&gt;The statement intends to set the identifier of the film
-titled Ace Goldfinger (in the previous exercise we gave it the identifier 10000)
-back to its original value.
-However, we execute the statement on the table &lt;TT&gt;film_actor&lt;/TT&gt;.
-The action is not allowed, as the identifier 2 does not correspond to
-any film in table &lt;TT&gt;film&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;The foreign key enforces the referential integrity constraint.
-A row cannot refer to a non-existing entity in the referenced table.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;/div&gt;
-&lt;div id=&#34;basic-queries&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Basic queries&lt;/h1&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 7  &lt;/strong&gt;&lt;/span&gt;
-Write the following SQL queries:&lt;/p&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;Return all the information on all customers.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Return the first and last name of all customers.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Return the first and last name of all customers of the store with identifier 1.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;How many customers are men and how many are women?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What is the number of customers in each country?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What is the average age of customers in each country?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What is the total number of hotel reservations made for each hotel? Sort the results in descending order.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;What is the total amount spent on hotel reservations by each customer?
+Sort the results in descending order and show only the top 10 customers.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;How many airports are there in each country? List only the countries with more than 10 airports.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -5325,238 +4753,65 @@ Solution
 &lt;/summary&gt;
 &lt;div class=&#34;infobox exosolution&#34;&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;pre&gt;
-select * 
-from customer
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select first_name, last_name 
-from customer
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select first_name, last_name 
-from customer
-where store_id=1
-&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;How many customers are men and how many are women?&lt;/li&gt;
 &lt;/ol&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;/div&gt;
-&lt;div id=&#34;sorting-and-paginating&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Sorting and paginating&lt;/h1&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 8  &lt;/strong&gt;&lt;/span&gt;
-Write the following SQL queries:&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;Return the last and first name of all customers. Sort by last name in ascending order.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Same as in 1., but only return the first 100 customers.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Return the last and first name of all customers of the store with identifier 1.
-Sort by last name in ascending order and by first name in descending order.&lt;/p&gt;&lt;/li&gt;
+&lt;pre&gt;&lt;code&gt;SELECT gender, COUNT(*) AS num_customers
+FROM customer
+GROUP BY gender&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;What is the number of customers in each country?&lt;/li&gt;
 &lt;/ol&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;pre&gt;
-select last_name, first_name 
-from customer
-order by last_name asc
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select last_name, first_name 
-from customer
-order by last_name asc
-limit 100
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select first_name, last_name 
-from customer
-where store_id=1
-&lt;/pre&gt;&lt;/li&gt;
+&lt;pre&gt;&lt;code&gt;SELECT country, COUNT(*) AS num_customers
+FROM customer
+GROUP BY country&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;What is the average age of customers in each country?&lt;/li&gt;
 &lt;/ol&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;/div&gt;
-&lt;div id=&#34;aggregating-queries&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Aggregating queries&lt;/h1&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 9  &lt;/strong&gt;&lt;/span&gt;
-Write the following SQL queries:&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;Count the number of films in the database (expected result: 1000).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;How many distinct actor last names are there?&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Compute the total amount of payments across all rentals (expected result: 67416.51).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Compute the average, minimum and maximum duration of rental across all films
-(expected result: 4.9850000000000000, 3, 7).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Return the number of actors for each film.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Return the number of copies of each film in each store (table &lt;TT&gt;inventory&lt;/TT&gt;).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Same as 6., but only returns the pairs (film, store) if the number of copies is
-greater than or equal to 3.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;pre&gt;
-select count(*) 
-from film
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select  count (distinct last_name) 
-from actor
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select sum(amount) 
-from payment
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select avg(rental_duration), min(rental_duration), max(rental_duration) 
-from film
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select film_id, count(*) as nb_actors
-from film_actor
-group by film_id
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select film_id, store_id, count(*) as nb_films
-from inventory
-group by film_id, store_id
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select film_id, store_id, count(*) as nb_films
-from inventory
-group by film_id, store_id
-having count(*) &gt;=3
-&lt;/pre&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;/div&gt;
-&lt;div id=&#34;join-queries&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Join queries&lt;/h1&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 10  &lt;/strong&gt;&lt;/span&gt;
-Write the following SQL queries:&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;Return the first and last name of the manager of the store with identifier 1 (expected result: Mike Hillyer).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Return the first and last name of the actors in the film ACE GOLDFINGER.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Return first and last name of each actor and the number of films in which they played a role.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Same as in 3., but order by number of films in descending order.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Same as in 4., but only return actors who played a role in at least 10 films.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Return the identifier, the first and family name of the customers who have rented between 10 and 20
-movies in the category &lt;em&gt;Family&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Solution
-&lt;/summary&gt;
-&lt;div class=&#34;infobox exosolution&#34;&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;pre&gt;
-select first_name, last_name
-from staff join store using(store_id)
-where store_id=1
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select first_name, last_name
-from film join film_actor using(film_id) join actor using(actor_id)
-where title=&#39;ACE GOLDFINGER&#39;
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select first_name, last_name, count(*) as nb_films
-from actor join film_actor using(actor_id)
-group by actor_id
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select first_name, last_name, count(*) as nb_films
-from actor join film_actor using(actor_id)
-group by actor_id
-order by nb_films desc
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select first_name, last_name, count(*) as nb_films
-from actor join film_actor using(actor_id)
-group by actor_id
-having count(*) &gt;= 10
-order by nb_films desc
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select cust.customer_id, first_name, last_name, count(*) as nb_films
-from customer cust join rental using(customer_id) 
-  join inventory using(inventory_id)
-    join film_category using(film_id)
-    join category cat using(category_id)
-where cat.name=&#39;Family&#39;
-group by customer_id
-having count(*) between 5 and 10
-&lt;/pre&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;/details&gt;
-&lt;/div&gt;
-&lt;div id=&#34;miscellaneous-queries&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Miscellaneous queries&lt;/h1&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-11&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 11  &lt;/strong&gt;&lt;/span&gt;
-Write the following SQL queries:&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;Which last names are &lt;strong&gt;not&lt;/strong&gt; repeated in table &lt;em&gt;actor&lt;/em&gt;?&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Is a copy of the movie ACADEMY DINOSAUR available for rent from store 1?&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Return the title and the release year of all films in one of the following categories:
-&lt;em&gt;Family&lt;/em&gt;, &lt;em&gt;Animation&lt;/em&gt;, &lt;em&gt;Documentary&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Tip
-&lt;/summary&gt;
-You can use the &lt;a href=&#34;https://www.w3schools.com/sql/sql_in.asp&#34; target=&#34;_blank&#34;&gt;operator IN&lt;/a&gt;
-&lt;/details&gt;
+&lt;pre&gt;&lt;code&gt;SELECT country, AVG(EXTRACT(YEAR FROM AGE(CURRENT_DATE, birth_date))) AS avg_age
+FROM customer
+GROUP BY country&lt;/code&gt;&lt;/pre&gt;
 &lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;Find all customers (id, last name, first name) whose last name starts with the letter L.
-&lt;details&gt;
-&lt;summary&gt;
-Tip
-&lt;/summary&gt;
-You can use the &lt;a href=&#34;https://www.w3schools.com/sql/sql_like.asp&#34; target=&#34;_blank&#34;&gt;operator LIKE&lt;/a&gt;
-&lt;/details&gt;&lt;/li&gt;
-&lt;li&gt;Return the total paid by each customer. For each customer, display a single
-column containing first and last name and another column with the total amount paid.
-Order the result alphabetically by last name&lt;/li&gt;
+&lt;li&gt;What is the total number of hotel reservations made for each hotel? Sort the results in descending order.&lt;/li&gt;
 &lt;/ol&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Tip
-&lt;/summary&gt;
-You can use the &lt;a href=&#34;https://www.w3schools.com/sql/func_sqlserver_concat.asp&#34; target=&#34;_blank&#34;&gt;operator CONCAT&lt;/a&gt;
-&lt;/details&gt;
+&lt;pre&gt;&lt;code&gt;SELECT hotel_id, COUNT(*) AS num_reservations
+FROM hotel_booking
+GROUP BY hotel_id
+ORDER BY num_reservations DESC&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;What is the total amount spent on hotel reservations by each customer?
+Sort the results in descending order and show only the top 10 customers.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;SELECT customer_id, SUM(price) AS total_spent
+FROM hotel_booking JOIN trip USING (trip_id)
+GROUP BY customer_id
+ORDER BY total_spent DESC
+LIMIT 10&lt;/code&gt;&lt;/pre&gt;
 &lt;ol start=&#34;6&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;Return the total revenue from the rentals across the stores in each country.
-Order by descending revenue.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The first and last name of the actor that played in the most films.
-If two or more actors are tied, the query must return the names of all of them.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;How many airports are there in each country? List only the countries with more than 10 airports.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;SELECT country, COUNT(*) AS num_airports
+FROM airport
+GROUP BY country
+HAVING COUNT(*) &amp;gt; 10&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;business-queries&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Business queries&lt;/h1&gt;
+&lt;p&gt;Suppose you are working for the travel agency that owns the database.
+You have been asked to provide some insights based on the data stored in the database.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercise&lt;/strong&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Identify the top 5 most popular destinations based on the number of flights booked.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Find the average duration of hotel stays for each hotel.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Determine the customers who have made the highest number of trip bookings.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Analyze the monthly trends in flight bookings and hotel reservations.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;List the details of the trip number 1. In particular, list the first and last names of the customer, and, for each flight, the departure and arrival airports,
+the departure date, and the departure and arrival city of the airports.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -5566,59 +4821,158 @@ Solution
 &lt;/summary&gt;
 &lt;div class=&#34;infobox exosolution&#34;&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;pre&gt;
-select last_name
-from actor
-group by last_name
-having count(*) = 1
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select distinct i.inventory_id
-from film f join inventory i using(film_id)
-join rental r using(inventory_id)
-where f.title=&#39;ACADEMY DINOSAUR&#39; 
-    and i.store_id=1 
-    and r.return_date is not null  
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select  distinct f.title, f.release_year
-from film f join film_category using(film_id)
-join category cat using(category_id)
-where cat.name in (&#39;Family&#39;, &#39;Animation&#39;, &#39;Documentary&#39;)
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select customer_id, first_name, last_name
-from customer
-where last_name LIKE &#39;L%&#39;
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select concat(first_name, &#39; &#39;, last_name), sum(amount)
-from customer join payment using (customer_id)
-group by customer_id
-order by last_name asc
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;&lt;pre&gt;
-select country, sum(amount) as revenue
-from payment join rental using (rental_id)
-  join inventory using (inventory_id)
-  join store using (store_id)
-  join address using (address_id)
-  join city using (city_id)
-  join country using (country_id)
-group by country_id
-order by revenue desc
-&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;select actor_id, first_name, last_name, count(&lt;em&gt;)
-from film_actor join actor using(actor_id)
-group by actor_id
-having count(&lt;/em&gt;) =
-(select max(nb_films)
-from (select count(*) as nb_films
-from film_actor
-group by actor_id) t)&lt;/li&gt;
+&lt;li&gt;Identify the top 5 most popular destinations based on the number of flights booked.&lt;/li&gt;
 &lt;/ol&gt;
-&lt;/div&gt;
+&lt;pre&gt;&lt;code&gt;SELECT airport_dst, city, country,  COUNT(*) AS num_bookings
+FROM flight_booking JOIN flight USING (flight_id)
+        JOIN airport ON airport_id=airport_dst
+GROUP BY airport_dst, city, country
+ORDER BY num_bookings DESC
+LIMIT 5&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Find the average duration of hotel stays for each hotel.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;SELECT hotel_id, AVG(CHECKOUT_DATE - CHECKIN_DATE) AS avg_stay_duration
+FROM hotel_booking
+GROUP BY hotel_id&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Determine the 10 customers who have made the highest number of (hotel and flight) bookings.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;SELECT customer_id, first_name, last_name, COUNT(*) AS num_bookings
+FROM (
+    SELECT customer_id, first_name, last_name
+    FROM flight_booking JOIN trip USING (trip_id) JOIN customer USING(customer_id)
+    UNION ALL
+    SELECT customer_id, first_name, last_name
+    FROM hotel_booking JOIN trip USING (trip_id) JOIN customer USING(customer_id)
+) AS all_bookings
+GROUP BY customer_id , first_name, last_name
+ORDER BY num_bookings DESC
+LIMIT 10&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Analyze the monthly trends in flight bookings and hotel reservations.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;-- Flight bookings by month
+SELECT EXTRACT(MONTH FROM departure_date) AS month, COUNT(*) AS num_flights
+FROM flight_booking JOIN flight USING (flight_id)
+GROUP BY month
+ORDER BY month;
+
+-- Hotel reservations by month
+SELECT EXTRACT(MONTH FROM check_in_date) AS month, COUNT(*) AS num_reservations
+FROM hotel_booking
+GROUP BY month
+ORDER BY month;&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;List the details of the trip number 1. In particular, list the first and last names of the customer, and, for each flight, the departure and arrival airports,
+the departure date, and the departure and arrival city of the airports.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;SELECT c.first_name,
+        c.last_name, 
+        s.airport_name as departure_airport, 
+        concat(s.city, &amp;#39;, &amp;#39;, s.country) as departure_loc, 
+        departure_date,
+        d.airport_name as arrival_airport,
+        concat(d.city, &amp;#39;, &amp;#39;, d.country) as arrival_loc
+FROM customer c
+    JOIN trip t USING (customer_id)
+    JOIN flight_booking USING (trip_id)
+    JOIN flight f USING(flight_id)
+    JOIN airport s ON s.airport_id = f.airport_src 
+    JOIN airport d ON d.airport_id = f.airport_dst
+WHERE t.trip_id=1&lt;/code&gt;&lt;/pre&gt;
 &lt;/details&gt;
+&lt;/div&gt;
+&lt;!--
+# Installing PostgreSQL
+
+In this tutorial you&#39;ll be using **PostgreSQL** as a 
+relational database management system (RDBMS).
+
+&lt;details&gt;
+&lt;summary&gt;Instructions for Windows users&lt;/summary&gt;
+
+You can download the latest version of PostgreSQL (14.3) 
+[**from this page**](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads){target=&#34;_blank&#34;}.
+
+The installer contains:
+
+* The PostgreSQL server.
+* pgAdmin, a graphical administration tool. 
+
+You&#39;ll find **detailed installation instructions** [**on this page**](https://www.enterprisedb.com/docs/supported-open-source/postgresql/installer/02_installing_postgresql_with_the_graphical_installation_wizard/01_invoking_the_graphical_installer/){target=&#34;_blank&#34;}.
+
+&lt;/details&gt;
+
+&lt;details&gt;
+&lt;summary&gt;Instructions for macOS users&lt;/summary&gt;
+
+The best way to get PostgreSQL is to download and install **Postgres.app**. 
+You&#39;ll find more details [**on this page**](https://postgresapp.com/){target=&#34;_blank&#34;}.
+
+In addition, you need to [**install pgAdmin**](https://www.pgadmin.org/download/){target=&#34;blank&#34;},
+ad administration tool that lets you interact with your database through a 
+graphical interface.
+
+&lt;/details&gt;
+
+
+# Starting PostgreSQL and pgAdmin
+
+&lt;details&gt;
+&lt;summary&gt;Instructions for Windows users&lt;/summary&gt;
+
+
+
+
+Once the installation is completed, a PostgreSQL server should be 
+automatically started. 
+
+You&#39;ll open a connection to the server through the following steps:
+
+* Execute pgAdmin.
+
+* On the left-side menu, right-click on *Servers* and select *Create server*.
+
+* In the *General* tab, give the server a name of your choice.
+
+* In the *Connection* tab, write *localhost* as *host*. 
+Don&#39;t change the values of the other options.
+
+&lt;details&gt;
+&lt;summary&gt;What if I get the *Unable to connect to server* error?&lt;/summary&gt;
+
+You might want to have a look at the list of the services running on your computer to verify
+whether the PostgreSQL server is actually running. 
+
+[**This page**](https://www.dell.com/support/kbdoc/it-it/000126393/how-to-use-windows-services-to-start-or-stop-services){target=&#34;_blank&#34;} 
+explains you how to open the panel with the list of services.
+You should locate PostgreSQL in this panel. If the service is not running, you&#39;ll 
+need to manually start it.
+
+&lt;/details&gt;
+
+
+
+&lt;/details&gt;
+
+&lt;details&gt;
+&lt;summary&gt;Instructions for MacOS users&lt;/summary&gt;
+
+You&#39;ll open a connection to the server through the following steps:
+
+* Execute pgAdmin.
+
+* On the left-side menu, right-click on *Servers* and select *Create server*.
+
+* In the *General* tab, give the server a name of your choice.
+
+* In the *Connection* tab, write *localhost* as *host*. 
+Don&#39;t change the values of the other options.
+
+&lt;/details&gt;
+
+--&gt;
 &lt;/div&gt;
 </description>
     </item>
@@ -6226,6 +5580,216 @@ group by actor_id) t)&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/details&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>SQL</title>
+      <link>/courses/gadexed_fr/tutorials/02-sql/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/gadexed_fr/tutorials/02-sql/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;p&gt;L’objectif de ce tutoriel est de pratiquer les &lt;strong&gt;requêtes SQL&lt;/strong&gt; sur une
+base de données relationnelle.&lt;/p&gt;
+&lt;div id=&#34;préparation-de-lenvironnement&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Préparation de l’environnement&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Démnarrez la machine virtuelle fournie pour le cours avec Remote Desktop Connection.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Ouvrez &lt;em&gt;pgAdmin4&lt;/em&gt; (icône sur le bureau).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Dans le menu de gauche, faites un clic droit sur &lt;em&gt;Servers&lt;/em&gt; et sélectionnez &lt;em&gt;PostgreSQL 18&lt;/em&gt; pour vous connecter.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Lorsque vous y êtes invité, entrez le mot de passe &lt;code&gt;postgres&lt;/code&gt; pour vous connecter au serveur.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Sélectionnez la base de données &lt;code&gt;travel&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Ouvrez un nouvel outil de requête (clic droit sur la base de données &lt;code&gt;travel&lt;/code&gt;, sélectionnez &lt;em&gt;Query tool&lt;/em&gt;).&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;schéma-de-la-base-de-données&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Schéma de la base de données&lt;/h1&gt;
+&lt;p&gt;La figure 1 montre le schéma physique de la base de données &lt;code&gt;travel&lt;/code&gt;.
+Vous pouvez également l’obtenir dans pgAdmin4 en faisant un clic droit sur la base de données &lt;code&gt;travel&lt;/code&gt;,
+et en sélectionnant &lt;em&gt;ERD for database&lt;/em&gt;.&lt;/p&gt;
+&lt;div class=&#34;figure&#34; style=&#34;text-align: center&#34;&gt;&lt;span id=&#34;fig:cnm&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/courses/databases/gadexed/tutorial-2/travel_physical_schema.png&#34; alt=&#34;Le schéma physique de la base de données travel&#34; width=&#34;100%&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 1: Le schéma physique de la base de données travel
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;contraintes-de-clé-étrangère&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Contraintes de clé étrangère&lt;/h1&gt;
+&lt;p&gt;Regardez le schéma physique de la base de données &lt;code&gt;travel&lt;/code&gt;.
+Les tables sont liées par des contraintes de clé étrangère.&lt;/p&gt;
+&lt;p&gt;Par exemple, la table &lt;code&gt;flight_booking&lt;/code&gt; a une colonne &lt;code&gt;trip_id&lt;/code&gt; qui référence
+la colonne &lt;code&gt;trip_id&lt;/code&gt; dans la table &lt;code&gt;trip&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1  &lt;/strong&gt;&lt;/span&gt;
+Essayez de supprimer une ligne de la table &lt;code&gt;trip&lt;/code&gt; qui est référencée par une ligne dans la table &lt;code&gt;flight_booking&lt;/code&gt;.
+Que se passe-t-il?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Regardons comment la contrainte de clé étrangère est définie dans la table &lt;code&gt;flight_booking&lt;/code&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Dans pgAdmin4, dans le menu de gauche, développez la base de données &lt;code&gt;travel&lt;/code&gt; &amp;gt; Schéma public &amp;gt; Tables.&lt;/li&gt;
+&lt;li&gt;Faites un clic droit sur la table &lt;code&gt;flight_booking&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Sélectionnez &lt;em&gt;Properties&lt;/em&gt;.&lt;/li&gt;
+&lt;li&gt;Sélectionnez l’onglet &lt;em&gt;Constraints&lt;/em&gt;.&lt;/li&gt;
+&lt;li&gt;Sélectionnez l’onglet &lt;em&gt;Foreign Key&lt;/em&gt;.&lt;/li&gt;
+&lt;li&gt;Sélectionnez la contrainte de clé étrangère nommée &lt;code&gt;flight_booking_trip_id_fkey&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Cliquez sur l’icône en forme de crayon pour modifier la contrainte.&lt;/li&gt;
+&lt;li&gt;Sélectionnez l’onglet &lt;em&gt;Actions&lt;/em&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Ici vous pouvez voir que l’action de suppression est définie sur &lt;em&gt;No Action&lt;/em&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2  &lt;/strong&gt;&lt;/span&gt;
+Comment l’action de mise à jour est-elle définie pour la contrainte de clé étrangère
+&lt;code&gt;flight_booking_trip_id_fkey&lt;/code&gt; dans la table &lt;code&gt;flight_booking&lt;/code&gt;?&lt;/p&gt;
+&lt;p&gt;Essayez maintenant de modifier le &lt;code&gt;trip_id&lt;/code&gt; d’une ligne de la table &lt;code&gt;trip&lt;/code&gt; qui est référencée par une ligne de la table &lt;code&gt;flight_booking&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Que se passe-t-il?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;requêtes-sql-exploratoires&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Requêtes SQL exploratoires&lt;/h1&gt;
+&lt;p&gt;Lorsque vous travaillez avec une nouvelle base de données, il est important d’explorer les données
+pour se familiariser avec sa structure et son contenu.
+Nous pouvons utiliser des requêtes SQL pour effectuer cette exploration.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3  &lt;/strong&gt;&lt;/span&gt;
+1. Combien de clients sont des hommes et combien sont des femmes ?&lt;/p&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Quel est le nombre de clients dans chaque pays ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Quel est l’âge moyen des clients dans chaque pays ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Quel est le nombre total de réservations d’hôtel effectuées pour chaque hôtel ? Triez les résultats par ordre décroissant.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Quel est le montant total dépensé pour les réservations d’hôtel par chaque client ?
+Triez les résultats par ordre décroissant et affichez uniquement les 10 meilleurs clients.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Combien d’aéroports y a-t-il dans chaque pays ? Listez uniquement les pays ayant plus de 10 aéroports.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;requêtes-métier&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Requêtes métier&lt;/h1&gt;
+&lt;p&gt;Maintenant, imaginons que vous travaillez pour l’agence de voyage qui gère la base de données.
+On vous a demandé de fournir quelques informations basées sur les données stockées dans la base de données.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercise&lt;/strong&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Identifiez les 5 destinations les plus populaires en fonction du nombre de vols réservés.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Trouvez la durée moyenne des séjours pour chaque hôtel.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Déterminez les 10 clients qui ont effectué le plus grand nombre de réservations (hôtel et vol).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Analysez les tendances mensuelles des réservations de vols et des réservations d’hôtels.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Affichez les détails du voyage numéro 1. En particulier, listez les prénoms et noms du client, et, pour chaque vol, les aéroports de départ et d’arrivée,
+la date de départ, et les villes de départ et d’arrivée des aéroports.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;!--
+# Installing PostgreSQL
+
+In this tutorial you&#39;ll be using **PostgreSQL** as a 
+relational database management system (RDBMS).
+
+&lt;details&gt;
+&lt;summary&gt;Instructions for Windows users&lt;/summary&gt;
+
+You can download the latest version of PostgreSQL (14.3) 
+[**from this page**](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads){target=&#34;_blank&#34;}.
+
+The installer contains:
+
+* The PostgreSQL server.
+* pgAdmin, a graphical administration tool. 
+
+You&#39;ll find **detailed installation instructions** [**on this page**](https://www.enterprisedb.com/docs/supported-open-source/postgresql/installer/02_installing_postgresql_with_the_graphical_installation_wizard/01_invoking_the_graphical_installer/){target=&#34;_blank&#34;}.
+
+&lt;/details&gt;
+
+&lt;details&gt;
+&lt;summary&gt;Instructions for macOS users&lt;/summary&gt;
+
+The best way to get PostgreSQL is to download and install **Postgres.app**. 
+You&#39;ll find more details [**on this page**](https://postgresapp.com/){target=&#34;_blank&#34;}.
+
+In addition, you need to [**install pgAdmin**](https://www.pgadmin.org/download/){target=&#34;blank&#34;},
+ad administration tool that lets you interact with your database through a 
+graphical interface.
+
+&lt;/details&gt;
+
+
+# Starting PostgreSQL and pgAdmin
+
+&lt;details&gt;
+&lt;summary&gt;Instructions for Windows users&lt;/summary&gt;
+
+
+
+
+Once the installation is completed, a PostgreSQL server should be 
+automatically started. 
+
+You&#39;ll open a connection to the server through the following steps:
+
+* Execute pgAdmin.
+
+* On the left-side menu, right-click on *Servers* and select *Create server*.
+
+* In the *General* tab, give the server a name of your choice.
+
+* In the *Connection* tab, write *localhost* as *host*. 
+Don&#39;t change the values of the other options.
+
+&lt;details&gt;
+&lt;summary&gt;What if I get the *Unable to connect to server* error?&lt;/summary&gt;
+
+You might want to have a look at the list of the services running on your computer to verify
+whether the PostgreSQL server is actually running. 
+
+[**This page**](https://www.dell.com/support/kbdoc/it-it/000126393/how-to-use-windows-services-to-start-or-stop-services){target=&#34;_blank&#34;} 
+explains you how to open the panel with the list of services.
+You should locate PostgreSQL in this panel. If the service is not running, you&#39;ll 
+need to manually start it.
+
+&lt;/details&gt;
+
+
+
+&lt;/details&gt;
+
+&lt;details&gt;
+&lt;summary&gt;Instructions for MacOS users&lt;/summary&gt;
+
+You&#39;ll open a connection to the server through the following steps:
+
+* Execute pgAdmin.
+
+* On the left-side menu, right-click on *Servers* and select *Create server*.
+
+* In the *General* tab, give the server a name of your choice.
+
+* In the *Connection* tab, write *localhost* as *host*. 
+Don&#39;t change the values of the other options.
+
+&lt;/details&gt;
+
+--&gt;
 &lt;/div&gt;
 </description>
     </item>

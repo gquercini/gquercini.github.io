@@ -549,14 +549,9 @@
         <a href="/courses/gadexed_en/tutorials/01-rel-data-modeling/">1. Relational data modeling</a>
       </li>
       
-      
-      <li class="tutorials">
-        <a href="/courses/gadexed_en/tutorials/normalization/">2. Normalization theory</a>
-      </li>
-      
       <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
       <li class="active tutorials">
-        <a href="/courses/gadexed_en/tutorials/02-sql/">3. SQL</a>
+        <a href="/courses/gadexed_en/tutorials/02-sql/">2. SQL</a>
       </li>
       
       
@@ -608,7 +603,7 @@
       <article class="article">
 
         <div class="docs-article-container">
-          <div class="heading">Gestion et analyse des données — Tutorial 3</div>
+          <div class="heading">Gestion et analyse des données — Tutorial 2</div>
           <h1>SQL</h1>
           <hr>
           <div class="logo">
@@ -622,127 +617,44 @@
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<p>In this tutorial you’ll learn:</p>
+<p>The goal of this tutorial is to practice <strong>SQL queries</strong> on a
+relational database.</p>
+<div id="environment-setup" class="section level1">
+<h1>Environment setup</h1>
 <ul>
-<li>The key integrity constraints in a relational database.</li>
-<li>Basic SQL queries.</li>
-<li>Advanced SQL queries.</li>
+<li><p>Start the virtual machine with Remote Desktop Connection.</p></li>
+<li><p>Open <em>pgAdmin4</em> (icon on the desktop).</p></li>
+<li><p>On the left-side menu, right-click on <em>Servers</em> and select the <em>PostgreSQL 18</em> to connect.</p></li>
+<li><p>When prompted, enter the password <code>postgres</code> to connect to the server.</p></li>
+<li><p>Select the database <code>travel</code>.</p></li>
+<li><p>Open a new query tool (right-click on the database <code>travel</code>, select <em>Query tool</em>).</p></li>
 </ul>
-<div id="installing-postgresql" class="section level1">
-<h1>Installing PostgreSQL</h1>
-<p>In this tutorial you’ll be using <strong>PostgreSQL</strong> as a
-relational database management system (RDBMS).</p>
-<details>
-<summary>
-Instructions for Windows users
-</summary>
-<p>You can download the latest version of PostgreSQL (14.3)
-<a href="https://www.enterprisedb.com/downloads/postgres-postgresql-downloads" target="_blank"><strong>from this page</strong></a>.</p>
-<p>The installer contains:</p>
-<ul>
-<li>The PostgreSQL server.</li>
-<li>pgAdmin, a graphical administration tool.</li>
-</ul>
-<p>You’ll find <strong>detailed installation instructions</strong> <a href="https://www.enterprisedb.com/docs/supported-open-source/postgresql/installer/02_installing_postgresql_with_the_graphical_installation_wizard/01_invoking_the_graphical_installer/" target="_blank"><strong>on this page</strong></a>.</p>
-</details>
-<details>
-<summary>
-Instructions for macOS users
-</summary>
-<p>The best way to get PostgreSQL is to download and install <strong>Postgres.app</strong>.
-You’ll find more details <a href="https://postgresapp.com/" target="_blank"><strong>on this page</strong></a>.</p>
-<p>In addition, you need to <a href="https://www.pgadmin.org/download/" target="blank"><strong>install pgAdmin</strong></a>,
-ad administration tool that lets you interact with your database through a
-graphical interface.</p>
-</details>
 </div>
-<div id="starting-postgresql-and-pgadmin" class="section level1">
-<h1>Starting PostgreSQL and pgAdmin</h1>
-<details>
-<summary>
-Instructions for Windows users
-</summary>
-<p>Once the installation is completed, a PostgreSQL server should be
-automatically started.</p>
-<p>You’ll open a connection to the server through the following steps:</p>
-<ul>
-<li><p>Execute pgAdmin.</p></li>
-<li><p>On the left-side menu, right-click on <em>Servers</em> and select <em>Create server</em>.</p></li>
-<li><p>In the <em>General</em> tab, give the server a name of your choice.</p></li>
-<li><p>In the <em>Connection</em> tab, write <em>localhost</em> as <em>host</em>.
-Don’t change the values of the other options.</p></li>
-</ul>
-<details>
-<summary>
-What if I get the <em>Unable to connect to server</em> error?
-</summary>
-<p>You might want to have a look at the list of the services running on your computer to verify
-whether the PostgreSQL server is actually running.</p>
-<p><a href="https://www.dell.com/support/kbdoc/it-it/000126393/how-to-use-windows-services-to-start-or-stop-services" target="_blank"><strong>This page</strong></a>
-explains you how to open the panel with the list of services.
-You should locate PostgreSQL in this panel. If the service is not running, you’ll
-need to manually start it.</p>
-</details>
-</details>
-<details>
-<summary>
-Instructions for MacOS users
-</summary>
-<p>You’ll open a connection to the server through the following steps:</p>
-<ul>
-<li><p>Execute pgAdmin.</p></li>
-<li><p>On the left-side menu, right-click on <em>Servers</em> and select <em>Create server</em>.</p></li>
-<li><p>In the <em>General</em> tab, give the server a name of your choice.</p></li>
-<li><p>In the <em>Connection</em> tab, write <em>localhost</em> as <em>host</em>.
-Don’t change the values of the other options.</p></li>
-</ul>
-</details>
-</div>
-<div id="obtain-the-data" class="section level1">
-<h1>Obtain the data</h1>
-<p>We consider the database of a DVD rental store chain containing data on films, actors,
-customers and the transactions of the store.</p>
-<p>This database goes by the name <strong>Sakila</strong><br />
-and was developed by Mike Hillyer, a former member of the MySQL team.</p>
+<div id="database-schema" class="section level1">
+<h1>Database schema</h1>
+<p>The figure 1 shows the physical schema of the <code>travel</code> database.
+You can also obtain it within pgAdmin4 by right-clicking on the database <code>travel</code>,
+and selecting <em>ERD for database</em>.</p>
 <div class="figure" style="text-align: center"><span id="fig:cnm"></span>
-<img src="/courses/databases/tutorial-4/sakila-3nf.png" alt="The conceptual schema of the Sakila database" width="100%" />
+<img src="/courses/databases/gadexed/tutorial-2/travel_physical_schema.png" alt="The physical schema  of the travel database" width="100%" />
 <p class="caption">
-Figure 1: The conceptual schema of the Sakila database
+Figure 1: The physical schema of the travel database
 </p>
 </div>
-<p>The tables of the database are <a href="https://dev.mysql.com/doc/sakila/en/sakila-structure-tables.html" target="_blank"><strong>documented on this page</strong></a></p>
-<p>Sakila has been ported from MySQL to PostgreSQL under the name <strong>pagila</strong>.</p>
-<p>In order to import the data into PostgreSQL, follow the steps below:</p>
-<ul>
-<li><p>From the pgAdmin interface, create a new database (right-click on <em>Databases</em>, select <em>Create database</em>).
-You can call the new database <strong>pagila</strong> (or any name you want).</p></li>
-<li><p>Download the <a href="/courses/databases/gadexed/tutorial-2/travel_db.sql"><strong>dump file pagila-insert-data.sql</strong></a>
-This file contains all the SQL statements necessary to create the tables of the database
-and populate them with some data.</p></li>
-<li><p>Right-click on the new database, select <em>Query tool</em>.</p></li>
-<li><p>Click on the second (from the left) small icon on the top menu of the query tool to open a new file.</p></li>
-<li><p>Through the interface, locate <em>pagila-schema.sql</em> and open it.</p></li>
-<li><p>Hit on the F5 button or click on the <em>play</em> icon on the top menu of the query tool to execute the script.</p></li>
-</ul>
-<p>The previous steps should have created the schema of the database<br />
-and inserted the data.</p>
-<p>You can see the list of tables
-by selecting (on the left menu) <em>Schemas</em>, <em>public</em>, <em>Tables</em> (15 tables should appear).</p>
-<p><strong>Open a new query tool</strong> to do the exercises.</p>
 </div>
-<div id="integrity-constraints" class="section level1">
-<h1>Integrity constraints</h1>
+<div id="foreign-key-contraints" class="section level1">
+<h1>Foreign key contraints</h1>
+<p>Look at the physical schema of the <code>travel</code> database.
+Tables are linked through foreign key constraints.</p>
+<p>For instance, the table <code>flight_booking</code> has a column <code>trip_id</code> that references
+the column <code>trip_id</code> in the table <code>trip</code>.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1  </strong></span>
-Execute the following statement:</p>
-<pre>
-insert into film_actor values(1, 25)
-</pre>
-<p>What is this statement supposed to do?
-What is the reaction of the DBMS?</p>
+Try to delete a row from the table <code>trip</code> that is referenced by a row in the table <code>flight_booking</code>.
+What happens?</p>
 </div>
 </div>
 <details>
@@ -750,23 +662,40 @@ What is the reaction of the DBMS?</p>
 Solution
 </summary>
 <div class="infobox exosolution">
-<p>This statement should insert a new row in table <TT>film_actor</TT>,
-where the value of <TT>actor_id</TT> is 1 and the value of
-<TT>film_id</TT> is 25.</p>
-<p>The DBMS returns an error because there is already a row
-with these values and the two columns
-<TT>film_actor</TT>, <TT>film_id</TT> form the primary key.</p>
+<p>First, we need to identify a row in the table <code>trip</code> that is referenced by a row in the table <code>flight_booking</code>.</p>
+<pre><code>SELECT * 
+FROM flight_booking JOIN trip USING (trip_id)
+LIMIT 1;</code></pre>
+<p>The trip_id 0 is obtained from the output of the previous query.</p>
+<p>Trying to delete the row from the table <code>trip</code>:</p>
+<pre><code>DELETE FROM trip
+WHERE trip_id = 0;</code></pre>
+<p>Causes the following error:</p>
+<pre><code>ERROR:  update or delete on table trip violates foreign key constraint flight_booking_trip_id_fkey on table flight_booking
+Key (trip_id)=(0) is still referenced from table flight_booking. </code></pre>
+<p>By default, the foreign key constraints prevent the deletion of a row that is referenced by another row in a different table.</p>
 </div>
 </details>
+<p>Let’s loook at how the foreign key constraint is defined in table <code>flight_booking</code>.</p>
+<ul>
+<li>Right-click on the table <code>flight_booking</code> in the left-side menu.</li>
+<li>Select <em>Properties</em>.</li>
+<li>Select the <em>Constraints</em> tab.</li>
+<li>Select the <em>Foreign Key</em> tab.</li>
+<li>Select the foreign key constraint named <code>flight_booking_trip_id_fkey</code>.</li>
+<li>Click on the pencil icon to edit the constraint.</li>
+<li>Select the <em>Actions</em> tab.</li>
+</ul>
+<p>Here you can see that the action on delete is set to <em>No Action</em>.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 2  </strong></span>
-Write the statement to delete the film with
-<em>film_id</em>=1 from
-the table <TT>Film</TT>.</p>
-<p>Execute the command. What happens?</p>
+How is the update action defined for the foreign key constraint
+<code>flight_booking_trip_id_fkey</code> in the table <code>flight_booking</code>?</p>
+<p>Try to update a row in the table <code>trip</code> that is referenced by a row in the table <code>flight_booking</code>.
+What happens?</p>
 </div>
 </div>
 <details>
@@ -774,143 +703,35 @@ the table <TT>Film</TT>.</p>
 Solution
 </summary>
 <div class="infobox exosolution">
-<PRE>
-delete from film where film_id=1
-</PRE>
-<p>The statement is rejected because there are rows in other tables
-that reference the row that we intend to delete.
-This is the effect of the foreign key constraint.</p>
-</div>
+<p>The update action is set to <em>Cascade</em>.
+That means that if we update the value of the primary key in the table <code>trip</code>,
+the corresponding foreign key values in the table <code>flight_booking</code> will be automatically updated.</p>
+<p>Let’s update the trip_id 0 to 5432 in the table <code>trip</code>:</p>
+<pre><code>UPDATE trip
+SET trip_id = 5432
+WHERE trip_id = 0;</code></pre>
+<p>Now the corresponding foreign key values in the table <code>flight_booking</code> have been automatically updated.</p>
 </details>
+</div>
+</div>
+<div id="exploratory-sql-queries" class="section level1">
+<h1>Exploratory SQL queries</h1>
+<p>When working with a new database, it is important to explore the data
+to get familiar with its structure and content.
+We can use SQL queries to perform this exploration.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3  </strong></span>
-Look at the definition of the foreign key constraints
-in table <TT>film_actor</TT> (right-click on the table,
-select <em>Constraints</em>, <em>foreign key</em>).</p>
-<p>Is the definition of the foreign key constraint
-to table <TT>film</TT> coherent with the behavior observed
-in the previous exercise?</p>
-<p><strong>NB</strong> In order to see the options of a foreign key, click on the
-edit button on the left of the constraint. Then look at the
-tab <em>Action</em>.</p>
-</div>
-</div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<p>The foreign key linking table <TT>film_actor</TT> to table
-<TT>film</TT> is defined with the option RESTRICT on delete.
-This is coherent with the behavior that we observed
-in the previous exercise. Referenced rows cannot be deleted if
-there are still referencing rows.</p>
-</div>
-</details>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 4  </strong></span>
-Execute the following query:</p>
-<pre>
-SELECT f.film_id as film_id_in_table_film, 
-       fa.film_id AS film_id_in_table_film_actor, 
-       fa.actor_id as actor_id, f.title as title
-FROM film f JOIN film_actor fa ON f.film_id = fa.film_id
-WHERE  f.title='ACE GOLDFINGER'
-</pre>
-<p>What does the query? Note down the identifier of the film in both tables
-<TT>film</TT> and <TT>film_actor</TT>.
-(columns <TT>film_id_in_table_film</TT> and <TT>film_id_in_table_film_actor</TT>).</p>
-</div>
-</div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<p>The query returns the list of all actors in the film titled Ace Goldfinger.
-We note that the identifier of the film in both tables is identical (2), as it should
-because the query joins the two tables on the equality of these two values.</p>
-</div>
-</details>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 5  </strong></span>
-Write and execute a statement to set the value 10000 to the identifier of the
-film ACE GOLDFINGER in table <TT>Film</TT>.</p>
-<p>After the modification, execute the query of the previous exercise.
-What changed? Explain in details what happened.</p>
-</div>
-</div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<p>The statement to modify the <TT>film_id</TT> of the given film is as follows:</p>
-<p><TT>
-UPDATE film
-SET film_id=10000
-WHERE title=‘ACE GOLDFINGER’
-</TT></p>
-<p>After executing the same query as the previous exercise, we see that
-the identifier of the film has changed in the table <TT>film_actor</TT> too.
-This is expected, because the foreign key constraint between the
-colum <TT>film_id</TT> in table <TT>film_actor</TT> and the column
-<TT>film_id</TT> in table <TT>film</TT> has the option ON UPDATE CASCADE.
-This means that if we modify the identifier of the film in table
-<TT>film</TT>, the modification is propagated to all the referencing columns.</p>
-</div>
-</details>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 6  </strong></span>
-Execute the following statement:</p>
-<pre>
-UPDATE film_actor
-SET film_id=2
-WHERE film_id=10000
-</pre>
-<p>What does? What happens? Explain.</p>
-</div>
-</div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<p>The statement intends to set the identifier of the film
-titled Ace Goldfinger (in the previous exercise we gave it the identifier 10000)
-back to its original value.
-However, we execute the statement on the table <TT>film_actor</TT>.
-The action is not allowed, as the identifier 2 does not correspond to
-any film in table <TT>film</TT>.</p>
-<p>The foreign key enforces the referential integrity constraint.
-A row cannot refer to a non-existing entity in the referenced table.</p>
-</div>
-</details>
-</div>
-<div id="basic-queries" class="section level1">
-<h1>Basic queries</h1>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 7  </strong></span>
-Write the following SQL queries:</p>
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3  </strong></span></p>
 <ol style="list-style-type: decimal">
-<li><p>Return all the information on all customers.</p></li>
-<li><p>Return the first and last name of all customers.</p></li>
-<li><p>Return the first and last name of all customers of the store with identifier 1.</p></li>
+<li><p>How many customers are men and how many are women?</p></li>
+<li><p>What is the number of customers in each country?</p></li>
+<li><p>What is the average age of customers in each country?</p></li>
+<li><p>What is the total number of hotel reservations made for each hotel? Sort the results in descending order.</p></li>
+<li><p>What is the total amount spent on hotel reservations by each customer?
+Sort the results in descending order and show only the top 10 customers.</p></li>
+<li><p>How many airports are there in each country? List only the countries with more than 10 airports.</p></li>
 </ol>
 </div>
 </div>
@@ -920,238 +741,65 @@ Solution
 </summary>
 <div class="infobox exosolution">
 <ol style="list-style-type: decimal">
-<li><pre>
-select * 
-from customer
-</pre></li>
-<li><pre>
-select first_name, last_name 
-from customer
-</pre></li>
-<li><pre>
-select first_name, last_name 
-from customer
-where store_id=1
-</pre></li>
+<li>How many customers are men and how many are women?</li>
 </ol>
-</div>
-</details>
-</div>
-<div id="sorting-and-paginating" class="section level1">
-<h1>Sorting and paginating</h1>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 8  </strong></span>
-Write the following SQL queries:</p>
-<ol style="list-style-type: decimal">
-<li><p>Return the last and first name of all customers. Sort by last name in ascending order.</p></li>
-<li><p>Same as in 1., but only return the first 100 customers.</p></li>
-<li><p>Return the last and first name of all customers of the store with identifier 1.
-Sort by last name in ascending order and by first name in descending order.</p></li>
+<pre><code>SELECT gender, COUNT(*) AS num_customers
+FROM customer
+GROUP BY gender</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>What is the number of customers in each country?</li>
 </ol>
-</div>
-</div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<ol style="list-style-type: decimal">
-<li><pre>
-select last_name, first_name 
-from customer
-order by last_name asc
-</pre></li>
-<li><pre>
-select last_name, first_name 
-from customer
-order by last_name asc
-limit 100
-</pre></li>
-<li><pre>
-select first_name, last_name 
-from customer
-where store_id=1
-</pre></li>
+<pre><code>SELECT country, COUNT(*) AS num_customers
+FROM customer
+GROUP BY country</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>What is the average age of customers in each country?</li>
 </ol>
-</div>
-</details>
-</div>
-<div id="aggregating-queries" class="section level1">
-<h1>Aggregating queries</h1>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-9" class="exercise"><strong>Exercise 9  </strong></span>
-Write the following SQL queries:</p>
-<ol style="list-style-type: decimal">
-<li><p>Count the number of films in the database (expected result: 1000).</p></li>
-<li><p>How many distinct actor last names are there?</p></li>
-<li><p>Compute the total amount of payments across all rentals (expected result: 67416.51).</p></li>
-<li><p>Compute the average, minimum and maximum duration of rental across all films
-(expected result: 4.9850000000000000, 3, 7).</p></li>
-<li><p>Return the number of actors for each film.</p></li>
-<li><p>Return the number of copies of each film in each store (table <TT>inventory</TT>).</p></li>
-<li><p>Same as 6., but only returns the pairs (film, store) if the number of copies is
-greater than or equal to 3.</p></li>
-</ol>
-</div>
-</div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<ol style="list-style-type: decimal">
-<li><pre>
-select count(*) 
-from film
-</pre></li>
-<li><pre>
-select  count (distinct last_name) 
-from actor
-</pre></li>
-<li><pre>
-select sum(amount) 
-from payment
-</pre></li>
-<li><pre>
-select avg(rental_duration), min(rental_duration), max(rental_duration) 
-from film
-</pre></li>
-<li><pre>
-select film_id, count(*) as nb_actors
-from film_actor
-group by film_id
-</pre></li>
-<li><pre>
-select film_id, store_id, count(*) as nb_films
-from inventory
-group by film_id, store_id
-</pre></li>
-<li><pre>
-select film_id, store_id, count(*) as nb_films
-from inventory
-group by film_id, store_id
-having count(*) >=3
-</pre></li>
-</ol>
-</div>
-</details>
-</div>
-<div id="join-queries" class="section level1">
-<h1>Join queries</h1>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-10" class="exercise"><strong>Exercise 10  </strong></span>
-Write the following SQL queries:</p>
-<ol style="list-style-type: decimal">
-<li><p>Return the first and last name of the manager of the store with identifier 1 (expected result: Mike Hillyer).</p></li>
-<li><p>Return the first and last name of the actors in the film ACE GOLDFINGER.</p></li>
-<li><p>Return first and last name of each actor and the number of films in which they played a role.</p></li>
-<li><p>Same as in 3., but order by number of films in descending order.</p></li>
-<li><p>Same as in 4., but only return actors who played a role in at least 10 films.</p></li>
-<li><p>Return the identifier, the first and family name of the customers who have rented between 10 and 20
-movies in the category <em>Family</em>.</p></li>
-</ol>
-</div>
-</div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<ol style="list-style-type: decimal">
-<li><pre>
-select first_name, last_name
-from staff join store using(store_id)
-where store_id=1
-</pre></li>
-<li><pre>
-select first_name, last_name
-from film join film_actor using(film_id) join actor using(actor_id)
-where title='ACE GOLDFINGER'
-</pre></li>
-<li><pre>
-select first_name, last_name, count(*) as nb_films
-from actor join film_actor using(actor_id)
-group by actor_id
-</pre></li>
-<li><pre>
-select first_name, last_name, count(*) as nb_films
-from actor join film_actor using(actor_id)
-group by actor_id
-order by nb_films desc
-</pre></li>
-<li><pre>
-select first_name, last_name, count(*) as nb_films
-from actor join film_actor using(actor_id)
-group by actor_id
-having count(*) >= 10
-order by nb_films desc
-</pre></li>
-<li><pre>
-select cust.customer_id, first_name, last_name, count(*) as nb_films
-from customer cust join rental using(customer_id) 
-  join inventory using(inventory_id)
-    join film_category using(film_id)
-    join category cat using(category_id)
-where cat.name='Family'
-group by customer_id
-having count(*) between 5 and 10
-</pre></li>
-</ol>
-</div>
-</details>
-</div>
-<div id="miscellaneous-queries" class="section level1">
-<h1>Miscellaneous queries</h1>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-11" class="exercise"><strong>Exercise 11  </strong></span>
-Write the following SQL queries:</p>
-<ol style="list-style-type: decimal">
-<li><p>Which last names are <strong>not</strong> repeated in table <em>actor</em>?</p></li>
-<li><p>Is a copy of the movie ACADEMY DINOSAUR available for rent from store 1?</p></li>
-<li><p>Return the title and the release year of all films in one of the following categories:
-<em>Family</em>, <em>Animation</em>, <em>Documentary</em>.</p></li>
-</ol>
-<details>
-<summary>
-Tip
-</summary>
-You can use the <a href="https://www.w3schools.com/sql/sql_in.asp" target="_blank">operator IN</a>
-</details>
+<pre><code>SELECT country, AVG(EXTRACT(YEAR FROM AGE(CURRENT_DATE, birth_date))) AS avg_age
+FROM customer
+GROUP BY country</code></pre>
 <ol start="4" style="list-style-type: decimal">
-<li>Find all customers (id, last name, first name) whose last name starts with the letter L.
-<details>
-<summary>
-Tip
-</summary>
-You can use the <a href="https://www.w3schools.com/sql/sql_like.asp" target="_blank">operator LIKE</a>
-</details></li>
-<li>Return the total paid by each customer. For each customer, display a single
-column containing first and last name and another column with the total amount paid.
-Order the result alphabetically by last name</li>
+<li>What is the total number of hotel reservations made for each hotel? Sort the results in descending order.</li>
 </ol>
-<details>
-<summary>
-Tip
-</summary>
-You can use the <a href="https://www.w3schools.com/sql/func_sqlserver_concat.asp" target="_blank">operator CONCAT</a>
-</details>
+<pre><code>SELECT hotel_id, COUNT(*) AS num_reservations
+FROM hotel_booking
+GROUP BY hotel_id
+ORDER BY num_reservations DESC</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li>What is the total amount spent on hotel reservations by each customer?
+Sort the results in descending order and show only the top 10 customers.</li>
+</ol>
+<pre><code>SELECT customer_id, SUM(price) AS total_spent
+FROM hotel_booking JOIN trip USING (trip_id)
+GROUP BY customer_id
+ORDER BY total_spent DESC
+LIMIT 10</code></pre>
 <ol start="6" style="list-style-type: decimal">
-<li><p>Return the total revenue from the rentals across the stores in each country.
-Order by descending revenue.</p></li>
-<li><p>The first and last name of the actor that played in the most films.
-If two or more actors are tied, the query must return the names of all of them.</p></li>
+<li>How many airports are there in each country? List only the countries with more than 10 airports.</li>
+</ol>
+<pre><code>SELECT country, COUNT(*) AS num_airports
+FROM airport
+GROUP BY country
+HAVING COUNT(*) &gt; 10</code></pre>
+</details>
+</div>
+</div>
+<div id="business-queries" class="section level1">
+<h1>Business queries</h1>
+<p>Suppose you are working for the travel agency that owns the database.
+You have been asked to provide some insights based on the data stored in the database.</p>
+<div class="infobox exercisebox">
+<strong>Exercise</strong>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 4  </strong></span></p>
+<ol style="list-style-type: decimal">
+<li><p>Identify the top 5 most popular destinations based on the number of flights booked.</p></li>
+<li><p>Find the average duration of hotel stays for each hotel.</p></li>
+<li><p>Determine the customers who have made the highest number of trip bookings.</p></li>
+<li><p>Analyze the monthly trends in flight bookings and hotel reservations.</p></li>
+<li><p>List the details of the trip number 1. In particular, list the first and last names of the customer, and, for each flight, the departure and arrival airports,
+the departure date, and the departure and arrival city of the airports.</p></li>
 </ol>
 </div>
 </div>
@@ -1161,59 +809,158 @@ Solution
 </summary>
 <div class="infobox exosolution">
 <ol style="list-style-type: decimal">
-<li><pre>
-select last_name
-from actor
-group by last_name
-having count(*) = 1
-</pre></li>
-<li><pre>
-select distinct i.inventory_id
-from film f join inventory i using(film_id)
-join rental r using(inventory_id)
-where f.title='ACADEMY DINOSAUR' 
-    and i.store_id=1 
-    and r.return_date is not null  
-</pre></li>
-<li><pre>
-select  distinct f.title, f.release_year
-from film f join film_category using(film_id)
-join category cat using(category_id)
-where cat.name in ('Family', 'Animation', 'Documentary')
-</pre></li>
-<li><pre>
-select customer_id, first_name, last_name
-from customer
-where last_name LIKE 'L%'
-</pre></li>
-<li><pre>
-select concat(first_name, ' ', last_name), sum(amount)
-from customer join payment using (customer_id)
-group by customer_id
-order by last_name asc
-</pre></li>
-<li><pre>
-select country, sum(amount) as revenue
-from payment join rental using (rental_id)
-  join inventory using (inventory_id)
-  join store using (store_id)
-  join address using (address_id)
-  join city using (city_id)
-  join country using (country_id)
-group by country_id
-order by revenue desc
-</pre></li>
-<li>select actor_id, first_name, last_name, count(<em>)
-from film_actor join actor using(actor_id)
-group by actor_id
-having count(</em>) =
-(select max(nb_films)
-from (select count(*) as nb_films
-from film_actor
-group by actor_id) t)</li>
+<li>Identify the top 5 most popular destinations based on the number of flights booked.</li>
 </ol>
-</div>
+<pre><code>SELECT airport_dst, city, country,  COUNT(*) AS num_bookings
+FROM flight_booking JOIN flight USING (flight_id)
+        JOIN airport ON airport_id=airport_dst
+GROUP BY airport_dst, city, country
+ORDER BY num_bookings DESC
+LIMIT 5</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Find the average duration of hotel stays for each hotel.</li>
+</ol>
+<pre><code>SELECT hotel_id, AVG(CHECKOUT_DATE - CHECKIN_DATE) AS avg_stay_duration
+FROM hotel_booking
+GROUP BY hotel_id</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>Determine the 10 customers who have made the highest number of (hotel and flight) bookings.</li>
+</ol>
+<pre><code>SELECT customer_id, first_name, last_name, COUNT(*) AS num_bookings
+FROM (
+    SELECT customer_id, first_name, last_name
+    FROM flight_booking JOIN trip USING (trip_id) JOIN customer USING(customer_id)
+    UNION ALL
+    SELECT customer_id, first_name, last_name
+    FROM hotel_booking JOIN trip USING (trip_id) JOIN customer USING(customer_id)
+) AS all_bookings
+GROUP BY customer_id , first_name, last_name
+ORDER BY num_bookings DESC
+LIMIT 10</code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li>Analyze the monthly trends in flight bookings and hotel reservations.</li>
+</ol>
+<pre><code>-- Flight bookings by month
+SELECT EXTRACT(MONTH FROM departure_date) AS month, COUNT(*) AS num_flights
+FROM flight_booking JOIN flight USING (flight_id)
+GROUP BY month
+ORDER BY month;
+
+-- Hotel reservations by month
+SELECT EXTRACT(MONTH FROM check_in_date) AS month, COUNT(*) AS num_reservations
+FROM hotel_booking
+GROUP BY month
+ORDER BY month;</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li>List the details of the trip number 1. In particular, list the first and last names of the customer, and, for each flight, the departure and arrival airports,
+the departure date, and the departure and arrival city of the airports.</li>
+</ol>
+<pre><code>SELECT c.first_name,
+        c.last_name, 
+        s.airport_name as departure_airport, 
+        concat(s.city, &#39;, &#39;, s.country) as departure_loc, 
+        departure_date,
+        d.airport_name as arrival_airport,
+        concat(d.city, &#39;, &#39;, d.country) as arrival_loc
+FROM customer c
+    JOIN trip t USING (customer_id)
+    JOIN flight_booking USING (trip_id)
+    JOIN flight f USING(flight_id)
+    JOIN airport s ON s.airport_id = f.airport_src 
+    JOIN airport d ON d.airport_id = f.airport_dst
+WHERE t.trip_id=1</code></pre>
 </details>
+</div>
+<!--
+# Installing PostgreSQL
+
+In this tutorial you'll be using **PostgreSQL** as a 
+relational database management system (RDBMS).
+
+<details>
+<summary>Instructions for Windows users</summary>
+
+You can download the latest version of PostgreSQL (14.3) 
+[**from this page**](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads){target="_blank"}.
+
+The installer contains:
+
+* The PostgreSQL server.
+* pgAdmin, a graphical administration tool. 
+
+You'll find **detailed installation instructions** [**on this page**](https://www.enterprisedb.com/docs/supported-open-source/postgresql/installer/02_installing_postgresql_with_the_graphical_installation_wizard/01_invoking_the_graphical_installer/){target="_blank"}.
+
+</details>
+
+<details>
+<summary>Instructions for macOS users</summary>
+
+The best way to get PostgreSQL is to download and install **Postgres.app**. 
+You'll find more details [**on this page**](https://postgresapp.com/){target="_blank"}.
+
+In addition, you need to [**install pgAdmin**](https://www.pgadmin.org/download/){target="blank"},
+ad administration tool that lets you interact with your database through a 
+graphical interface.
+
+</details>
+
+
+# Starting PostgreSQL and pgAdmin
+
+<details>
+<summary>Instructions for Windows users</summary>
+
+
+
+
+Once the installation is completed, a PostgreSQL server should be 
+automatically started. 
+
+You'll open a connection to the server through the following steps:
+
+* Execute pgAdmin.
+
+* On the left-side menu, right-click on *Servers* and select *Create server*.
+
+* In the *General* tab, give the server a name of your choice.
+
+* In the *Connection* tab, write *localhost* as *host*. 
+Don't change the values of the other options.
+
+<details>
+<summary>What if I get the *Unable to connect to server* error?</summary>
+
+You might want to have a look at the list of the services running on your computer to verify
+whether the PostgreSQL server is actually running. 
+
+[**This page**](https://www.dell.com/support/kbdoc/it-it/000126393/how-to-use-windows-services-to-start-or-stop-services){target="_blank"} 
+explains you how to open the panel with the list of services.
+You should locate PostgreSQL in this panel. If the service is not running, you'll 
+need to manually start it.
+
+</details>
+
+
+
+</details>
+
+<details>
+<summary>Instructions for MacOS users</summary>
+
+You'll open a connection to the server through the following steps:
+
+* Execute pgAdmin.
+
+* On the left-side menu, right-click on *Servers* and select *Create server*.
+
+* In the *General* tab, give the server a name of your choice.
+
+* In the *Connection* tab, write *localhost* as *host*. 
+Don't change the values of the other options.
+
+</details>
+
+-->
 </div>
 
           </div>

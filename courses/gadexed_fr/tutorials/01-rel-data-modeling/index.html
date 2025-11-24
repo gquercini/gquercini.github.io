@@ -28,10 +28,10 @@
   
     
   
-  <meta name="description" content="Data modeling in Cassandra">
+  <meta name="description" content="Relational data modeling exercises">
 
   
-  <link rel="alternate" hreflang="en-us" href="/courses/gadexed_en/tutorials/cassandra-data-modeling/">
+  <link rel="alternate" hreflang="en-us" href="/courses/gadexed_fr/tutorials/01-rel-data-modeling/">
 
   
 
@@ -219,7 +219,7 @@
   <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_3.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_3.png">
 
-  <link rel="canonical" href="/courses/gadexed_en/tutorials/cassandra-data-modeling/">
+  <link rel="canonical" href="/courses/gadexed_fr/tutorials/01-rel-data-modeling/">
 
   
   
@@ -233,9 +233,9 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Gianluca Quercini">
-  <meta property="og:url" content="/courses/gadexed_en/tutorials/cassandra-data-modeling/">
-  <meta property="og:title" content="Data modeling in Cassandra | Gianluca Quercini">
-  <meta property="og:description" content="Data modeling in Cassandra"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:url" content="/courses/gadexed_fr/tutorials/01-rel-data-modeling/">
+  <meta property="og:title" content="Modélisation des données relationnelles | Gianluca Quercini">
+  <meta property="og:description" content="Relational data modeling exercises"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
   
     
@@ -258,7 +258,7 @@
 
 
 
-  <title>Data modeling in Cassandra | Gianluca Quercini</title>
+  <title>Modélisation des données relationnelles | Gianluca Quercini</title>
 
 </head>
 
@@ -539,49 +539,19 @@
   
   <div class="docs-toc-item">
 
-    <a onclick=open_menu_on_click(this) id="tutorials" class="docs-toc-link" href="/courses/gadexed_en/tutorials/01-rel-data-modeling/">Tutorials</a>
+    <a onclick=open_menu_on_click(this) id="tutoriels" class="docs-toc-link" href="/courses/gadexed_fr/tutorials/01-rel-data-modeling/">Tutoriels</a>
     
-    <div id="tutorials-ddowncontent" class="tutorials-ddowncontent ddowncontent">
+    <div id="tutoriels-ddowncontent" class="tutoriels-ddowncontent ddowncontent">
     <ul class="nav docs-sidenav">
       
-      
-      <li class="tutorials">
-        <a href="/courses/gadexed_en/tutorials/01-rel-data-modeling/">1. Relational data modeling</a>
+      <script>open_menu_on_load("tutoriels".concat("-ddowncontent"))</script>
+      <li class="active tutoriels">
+        <a href="/courses/gadexed_fr/tutorials/01-rel-data-modeling/">1. Modélisation des données relationnelles</a>
       </li>
       
       
-      <li class="tutorials">
-        <a href="/courses/gadexed_en/tutorials/02-sql/">2. SQL</a>
-      </li>
-      
-      
-      <li class="tutorials">
-        <a href="/courses/gadexed_en/tutorials/data-warehouse/">4. Data warehousing</a>
-      </li>
-      
-      
-      <li class="tutorials">
-        <a href="/courses/gadexed_en/tutorials/mongodb-data-modeling/">5. Data modeling in MongoDB</a>
-      </li>
-      
-      
-      <li class="tutorials">
-        <a href="/courses/gadexed_en/tutorials/mongodb-queries/">6. Queries in MongoDB</a>
-      </li>
-      
-      
-      <li class="tutorials">
-        <a href="/courses/gadexed_en/tutorials/neo4j/">7. Neo4j</a>
-      </li>
-      
-      <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
-      <li class="active tutorials">
-        <a href="/courses/gadexed_en/tutorials/cassandra-data-modeling/">8. Data modeling in Cassandra</a>
-      </li>
-      
-      
-      <li class="tutorials">
-        <a href="/courses/gadexed_en/tutorials/cassandra-queries/">9. Queries in Cassandra</a>
+      <li class="tutoriels">
+        <a href="/courses/gadexed_fr/tutorials/02-sql/">2. SQL</a>
       </li>
       
     </ul>
@@ -603,8 +573,8 @@
       <article class="article">
 
         <div class="docs-article-container">
-          <div class="heading">Gestion et analyse des données — Tutorial 8</div>
-          <h1>Data modeling in Cassandra</h1>
+          <div class="heading">Gestion et analyse des données — Tutoriel 1</div>
+          <h1>Modélisation des données relationnelles</h1>
           <hr>
           <div class="logo">
             
@@ -612,47 +582,111 @@
 
           <div class="article-style">
             
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
 
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<p>The Sakila management wants us to migrate their database to Cassandra,
-they need to compare how Cassandra would compare against MongoDB.
-To this extent, your first task is to think of a data model for the new database.</p>
-<p>When designing your data model, you’ll two follow two basic rules:</p>
+<p>L’objectif de ce tutoriel est de s’exercer à la conception d’une base de données relationnelle.</p>
+<p>Les sujets suivants sont abordés :</p>
 <ul>
-<li><p>Your data model should distribute the data evenly across the nodes of the cluster.</p></li>
-<li><p>For each frequent query, the number of partition to read should be as minimum as possible.</p></li>
+<li><p><strong>Schéma conceptuel</strong> d’une base de données relationnelle.</p></li>
+<li><p><strong>Schéma logique</strong> d’une base de données relationnelle.</p></li>
+<li><p><strong>Clés primaires</strong> et <strong>clés étrangères</strong>.</p></li>
 </ul>
+<div id="scénario-applicatif" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Scénario applicatif</h1>
+<p>Nous souhaitons gérer les données d’un système de réservation de voyages
+avec des clients partout dans le monde.
+Lors de leur inscription, les clients se voient automatiquement attribuer un identifiant numérique
+et ils doivent indiquer leur prénom et nom de famille, leur genre,
+date de naissance, un numéro de téléphone, une adresse e-mail et leur pays de résidence.</p>
+<p>Tout client peut réserver un voyage qui inclut
+la réservation de <strong>un ou plusieurs vols</strong> et, éventuellement, <strong>un ou plusieurs hôtels</strong></p>
+<div class="infobox warning">
+<p><strong>Exemple</strong></p>
+<p>Alice souhaite voyager de Paris,
+France à New York City (NYC), USA
+et elle prévoit de rester à NYC pendant 10 jours.
+Son voyage inclut deux vols : un vol aller
+de Paris à NYC et un vol retour de NYC à Paris ; ainsi qu’un hôtel à NYC</p>
+</div>
+<p>Un vol est opéré par une compagnie aérienne,
+dont le système conserve le nom (par exemple, British Airways),
+le pays où la compagnie est incorporée et, lorsque disponible,
+son code IATA (par exemple, BA, un code à deux lettres identifiant la compagnie),
+son code ICAO (par exemple, BAW, un code à trois lettres identifiant la compagnie)
+et un nom alternatif ou alias (par exemple, British).</p>
+<p>Un vol relie deux aéroports,
+chacun ayant un nom (par exemple, London Heathrow Airport), et,
+éventuellement, un code IATA (par exemple, LHR) et un code ICAO (par exemple, EGLL) ;
+un aéroport dessert un lieu spécifique (par exemple, London, UK) et sa position précise
+est donnée par ses coordonnées géographiques (latitude et longitude).</p>
+<p>Un vol reliant deux aéroports à des heures de départ et d’arrivée spécifiques
+est identifié par un numéro de vol. 
+Deux vols opérés par deux compagnies aériennes différentes ne peuvent pas avoir le même numéro de vol,
+mais le même numéro de vol peut désigner deux vols opérés
+par la même compagnie aérienne à des jours différents.</p>
+<div class="infobox warning">
+<p><strong>Exemple</strong></p>
+<p>Le vol Emirates EK074 part de Paris,
+France à 10h00 et arrive à Dubaï, Émirats arabes unis à 19h40 (indépendamment du jour de départ).</p>
+</div>
+<p>Pour chaque vol réservé par un client,
+le système conserve le numéro de siège,
+la classe de voyage (par exemple, économique ou affaires),
+le prix et la date du vol. 
+Habituellement, les compagnies aériennes incluent des détails sur le type d’avion
+qu’elles prévoient d’utiliser dans leurs horaires de vol ;
+ces détails incluent le nom de l’avion (par exemple, Boeing 787-8) et,
+lorsque disponible, le code IATA (par exemple, 788, un identifiant unique à trois lettres pour l’avion)
+et le code ICAO (par exemple, B788, un identifiant unique à quatre lettres pour l’avion).</p>
+<p>Le système conserve une liste d’hôtels,
+avec leurs noms et adresses.
+Les clients peuvent écrire un avis pour un hôtel ;
+dans ce cas, le système stocke le texte de l’avis,
+la date et son auteur.
+Lorsque un client réserve un hôtel, le système conserve le prix payé,
+les dates d’arrivée et de départ et si le petit-déjeuner est inclus.</p>
+</div>
+<div id="schéma-conceptuel" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Schéma conceptuel</h1>
+<p>Le <strong>schéma conceptuel</strong> de la base de données est une représentation abstraite des entités de l’application et de leurs associations.
+Le schéma conceptuel ne comprend aucun détail de mise en œuvre,
+comme la définition des clés primaires ou des clés étrangères, ni aucune information sur les types des attributs.
+Le schéma conceptuel est généralement représenté à travers un <strong>diagramme Entité-Association (ang., Entity-Relationship, ER)</strong>.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 2.1  </strong></span>
+Proposez un diagramme Entité-Association (ER) décrivant le modèle conceptuel
+d’une base de données relationnelle pour le contexte applicatif donné.</p>
+<ul>
+<li><p>Identifiez les entités et les associations pertinentes.</p></li>
+<li><p>Identifiez les attributs pour chaque entité et chaque association.</p></li>
+<li><p>Pour chaque entité, soulignez les attributs composant la clé primaire.</p></li>
+<li><p>Déterminez les cardinalités minimales et maximales pour chaque association.</p></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="schéma-logique" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Schéma logique</h1>
+<p>Le <strong>schéma logique</strong> d’une base de données relationnelle est l’ensemble des tables
+qui implémentent le schéma conceptuel.
+Le schéma logique inclut la définition des clés primaires et des clés étrangères,
+mais il n’inclut aucune information sur les types des colonnes.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1  </strong></span>
-Analyze the Sakila business domain and propose a series of queries
-that the Sakila administration might want to run against the database.</p>
+<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 3.1  </strong></span>
+Donnez le <strong>schéma logique</strong> de la base de données.
+Pour chaque table, soulignez la clé primaire et spécifiez les clés étrangères.</p>
 </div>
 </div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 2  </strong></span>
-Given the queries that you proposed in the first exercise, draw
-a workflow of the application that the Sakila management
-will use to query the data.</p>
 </div>
-</div>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3  </strong></span>
-Based on the application workflow, draw the Chebotko diagram (the logical model)
-of the Sakila database.</p>
-</div>
-</div>
-<!--  -->
 
           </div>
 
