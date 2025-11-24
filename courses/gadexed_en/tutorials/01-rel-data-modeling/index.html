@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Gianluca Quercini">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Relational data modeling exercises">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/courses/gadexed_en/tutorials/01-rel-data-modeling/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="rgb(0, 136, 204)">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_3.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_3.png">
+
+  <link rel="canonical" href="/courses/gadexed_en/tutorials/01-rel-data-modeling/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="Gianluca Quercini">
+  <meta property="og:url" content="/courses/gadexed_en/tutorials/01-rel-data-modeling/">
+  <meta property="og:title" content="Relational data modeling | Gianluca Quercini">
+  <meta property="og:description" content="Relational data modeling exercises"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
+  
+    
+    
+  
+
+  
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Relational data modeling | Gianluca Quercini</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#experience"><span>Experience</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#publications"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  
+
+  
+
+<div class="container-fluid docs">
+  <div class="row flex-xl-nowrap">
+    <div class="col-12 col-md-3 col-xl-2 docs-sidebar">
+      
+
+
+<script src="/js/toggle-menu.js"></script>
+
+
+
+
+
+
+
+  
+    
+  
+
+
+
+
+<form class="docs-search d-flex align-items-center">
+  <button class="btn docs-toggle d-md-none p-0 mr-3" type="button" data-toggle="collapse" data-target="#docs-nav" aria-controls="docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    <span><i class="fas fa-bars"></i></span>
+  </button>
+
+  
+</form>
+
+<nav class="collapse docs-links" id="docs-nav">
+  
+
+  
+  
+  
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="tutorials" class="docs-toc-link" href="/courses/gadexed_en/tutorials/01-rel-data-modeling/">Tutorials</a>
+    
+    <div id="tutorials-ddowncontent" class="tutorials-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      <script>open_menu_on_load("tutorials".concat("-ddowncontent"))</script>
+      <li class="active tutorials">
+        <a href="/courses/gadexed_en/tutorials/01-rel-data-modeling/">1. Relational data modeling</a>
+      </li>
+      
+      
+      <li class="tutorials">
+        <a href="/courses/gadexed_en/tutorials/normalization/">2. Normalization theory</a>
+      </li>
+      
+      
+      <li class="tutorials">
+        <a href="/courses/gadexed_en/tutorials/02-sql/">3. SQL</a>
+      </li>
+      
+      
+      <li class="tutorials">
+        <a href="/courses/gadexed_en/tutorials/data-warehouse/">4. Data warehousing</a>
+      </li>
+      
+      
+      <li class="tutorials">
+        <a href="/courses/gadexed_en/tutorials/mongodb-data-modeling/">5. Data modeling in MongoDB</a>
+      </li>
+      
+      
+      <li class="tutorials">
+        <a href="/courses/gadexed_en/tutorials/mongodb-queries/">6. Queries in MongoDB</a>
+      </li>
+      
+      
+      <li class="tutorials">
+        <a href="/courses/gadexed_en/tutorials/neo4j/">7. Neo4j</a>
+      </li>
+      
+      
+      <li class="tutorials">
+        <a href="/courses/gadexed_en/tutorials/cassandra-data-modeling/">8. Data modeling in Cassandra</a>
+      </li>
+      
+      
+      <li class="tutorials">
+        <a href="/courses/gadexed_en/tutorials/cassandra-queries/">9. Queries in Cassandra</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  
+</nav>
+
+    </div>
+
+    
+
+    <main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 docs-content" role="main">
+
+      <article class="article">
+
+        <div class="docs-article-container">
+          <div class="heading">Gestion et analyse des données — Tutorial 1</div>
+          <h1>Relational data modeling</h1>
+          <hr>
+          <div class="logo">
+            
+            </div>
+
+          <div class="article-style">
+            
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p><link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/cloud-computing.css"></p>
+<p>In this tutorial you’ll learn:</p>
+<ul>
+<li>How to <strong>create a conceptual schema</strong> of a database.</li>
+<li>How to <strong>draw an entity-relationship</strong> (ER) diagram.</li>
+<li>How to <strong>translate</strong> a <strong>conceptual model</strong> into a <strong>logical model</strong>.</li>
+</ul>
+<div id="database-of-a-social-network-platform" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Database of a social network platform</h1>
+<p>A social network platform wants to design a relational database
+to store information on its users.
+For each user, the platform keeps its nickname,
+that uniquely identifies the user in the platform, first and family name,
+geographic location (city and country) and email address;
+the user can register as many email addresses as s/he wishes.
+Any user can share content on the platform; each post is characterized by its content,
+date, time and, when available, the geolocation (latitude, longitude).
+Optionally, users can tag one or more friends in their posts.</p>
+<p>Two users are linked by a friendship relationship
+if both agree on befriending each other;
+a user can also follow another user without necessarily befriending her.
+For any type of relationship (friendship or follower),
+the platform registers the date when the relationship is established.</p>
+<div id="exercises" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> Exercises</h2>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1.1  </strong></span>
+Give the <strong>conceptual schema</strong> of the database with an ER diagram.</p>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p><img src="/courses/databases/tutorial-1/social-network-solution.png" alt="Social network solution"></p>
+</div>
+</details>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 1.2  </strong></span>
+Translate the conceptual schema into a logical schema.
+For each table, underline the primary key and specify the foreign keys.</p>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>The <strong>collection of tables</strong> is the following:</p>
+<pre>
+<TT>UserAccount</TT>  (<u>nickname</u>, first_name, last_name, city, country)
+
+<TT>Post</TT>         (<u>post_id</u>, content, date, time, lat, long, nickname)
+
+<TT>EmailAddress</TT> (<u>email_address</u>, nickname)
+
+<TT>Relationship</TT> (<u>nickname_src</u>, <u>nickname_dst</u>, type, date)
+
+<TT>Tag</TT>          (<u>post_id</u>, <u>nickname</u>)
+
+</pre>
+<p>The <strong>foreign keys</strong> are the following:</p>
+<p><TT>Post(nickname)</TT> → <TT>UserAccount(nickname)</TT>.</p>
+<p><TT>EmailAddress(nickname)</TT> → <TT>EmailAddress(nickname)</TT>.</p>
+<p><TT>Relationship(nickname_src)</TT> → <TT>UserAccount(nickname)</TT>.</p>
+<p><TT>Relationship(nickname_dst)</TT> → <TT>UserAccount(nickname)</TT>.</p>
+<p><TT>Tag(post_id)</TT> → <TT>Post(post_id)</TT>.</p>
+<p><TT>Tag(nickname)</TT> → <TT>UserAccount(nickname)</TT>.</p>
+</div>
+</details>
+</div>
+</div>
+<div id="database-of-a-banking-system" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Database of a banking system</h1>
+<p>The following figure shows the ER diagram with the
+conceptual schema of a banking system database.</p>
+<div class="figure" style="text-align: center"><span id="fig:banking-system-db"></span>
+<img src="/courses/databases/tutorial-1/banking-system-er.png" alt="The conceptual schema of the bank database" width="100%" />
+<p class="caption">
+Figure 2.1: The conceptual schema of the bank database
+</p>
+</div>
+<p>Each bank is identified by a unique code and name,
+and has one or several branches.
+A branch is responsible for opening accounts and
+granting loans to customers.
+Each account is identified by
+a number (<em>acct_nbr</em>)
+and is either a checking or savings account
+(property <em>acct_type</em>).
+Each customer is identified by its social
+security number (<em>ssn</em>);
+a customer can be granted several loans and open as many accounts as s/he wishes.</p>
+<div id="exercises-1" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Exercises</h2>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 2.1  </strong></span>Which primary key would you choose for the entity Bank? Justify your answer.
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Since no
+two banks have the same <em>code_bank</em> or <em>name</em>,
+either property can be chosen as the primary key
+of the entity <TT>Bank</TT>.
+Both can be considered as valid <strong>candidate keys</strong>.</p>
+</div>
+</details>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 2.2  </strong></span>Would you consider {<em>code_bank</em>, <em>name</em>}
+as a valid candidate key for the entity <TT>Bank</TT>? Justify your answer.
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>The answer is <strong>no</strong>.
+While there aren’t any banks that have
+the same value for {<em>code_bank</em>, <em>name</em>},
+two subsets ({<em>code_bank</em>} and {<em>name</em>}) are candidate keys.</p>
+</div>
+</details>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 2.3  </strong></span>Complete the
+diagram in the figure
+by adding the cardinalities to the relations.
+Justify your choices when any ambiguity arises.
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p><img src="/courses/databases/tutorial-1/banking-system-er-complete.png" alt="Banking system solution"></p>
+</div>
+</details>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 2.4  </strong></span>Translate the conceptual schema into a logical schema.
+For each table, underline the primary keys and specify the foreign keys.
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>The <strong>collection of tables</strong> is the following:</p>
+<pre>
+<TT>Bank</TT>     (<u>code_bank</u>, name, address)
+
+<TT>Branch</TT>   (<u>branch_id</u>, address, code_bank)
+
+<TT>Account</TT>  (<u>acct_nbr</u>, acct_type, balance, branch_id, ssn)
+
+<TT>Loan</TT>     (<u>loan_nbr</u>, loan_type, amount, branch_id, ssn)
+
+<TT>Customer</TT> (<u>ssn</u>, first_name, last_name, telephone, address)
+
+</pre>
+<p>The <strong>foreign keys</strong> are the following:</p>
+<p><TT>Branch(code_bank)</TT> → <TT>Bank(code_bank)</TT>.</p>
+<p><TT>Account(branch_id)</TT> → <TT>Branch(branch_id)</TT>.</p>
+<p><TT>Account(ssn)</TT> → <TT>Customer(ssn)</TT>.</p>
+<p><TT>Loan(branch_id)</TT> → <TT>Branch(branch_id)</TT>.</p>
+<p><TT>Loan(ssn)</TT> → <TT>Customer(ssn)</TT>.</p>
+</div>
+</details>
+</div>
+</div>
+<div id="car-dealership-database" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Car dealership database</h1>
+<p>We want to design the database of a car dealership.
+The dealership sells both new and used cars,
+and it operates a service facility.
+The database should keep data about the cars
+(serial number, make, model, color, whether it is new or used),
+the salespeople (first and family name)
+and the customers (first and family name, phone number, address).
+Also, the following business rules hold:</p>
+<ul>
+<li>A salesperson may sell many cars, but each car is sold by only one salesperson.</li>
+<li>A customer may buy many cars, but each car is bought by only one customer.</li>
+<li>A salesperson writes a single invoice for each car s/he sells.
+The invoice is identified by a number and indicates the sale date and the price.</li>
+<li>A customer gets an invoice for each car s/he buys.</li>
+</ul>
+<p>When a customer takes one or more cars in for repair,
+one service ticket is written for each car.
+The ticket is identified by a number and
+indicates the date on which the car is received from the customer,
+as well as the date on which the car should be returned to the customer.
+A car brought in for service can be worked on by many mechanics,
+and each mechanic may work on many cars.</p>
+<div id="exercises-2" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Exercises</h2>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<span id="exr:command-in-guest" class="exercise"><strong>Exercise 3.1  </strong></span>Give the <strong>conceptual schema</strong> of the database with an ER diagram.
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p><img src="/courses/databases/tutorial-1/car-dealership.png" alt="Car dealership solution"></p>
+</div>
+</details>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 3.2  </strong></span>Translate the conceptual schema into a logical schema.
+For each table, underline the primary keys and specify the foreign keys.
+</div>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>The <strong>collection of tables</strong> is the following:</p>
+<pre>
+  Car          (<u>serial_number</u>, make, model, color, is_new)
+  Customer     (<u>cust_id</u>, cust_first_name, cust_last_name, cust_phone) 
+  Invoice      (<u>invoice_number</u>, date, price, car_serial_number, sp_id, cust_id)
+  Salesperson  (<u>sp_id</u>, sp_first_name, sp_last_name)
+  Mechanic     (<u>mec_id</u>, mec_first_name, mec_last_name)
+  Ticket       (<u>ticket_number</u>, date_open, date_return, car_serial_number)
+  Repair       (<u>ticket_number</u>, <u>mec_id</u>)</pre>
+</pre>
+<p>The <strong>foreign keys</strong> are the following:</p>
+<p><TT>Invoice(cust_id)</TT> → <TT>Customer(cust_id)</TT>.</p>
+<p><TT>Invoice(car_serial_number)</TT> → <TT>Car(serial_number)</TT>.</p>
+<p><TT>Invoice(sp_id)</TT> → <TT>Salesperson(sp_id)</TT>.</p>
+<p><TT>Ticket(car_serial_number)</TT> → <TT>Car(serial_number)</TT>.</p>
+<p><TT>Repair(ticket_number)</TT> → <TT>Ticket(ticket_number)</TT>.</p>
+<p><TT>Repair(mec_id)</TT> → <TT>Mechanic(mec_id)</TT>.</p>
+</div>
+</details>
+</div>
+</div>
+
+          </div>
+
+          
+
+
+
+          
+        </div>
+
+        
+      </article>
+
+      
+
+    </main>
+  </div>
+</div>
+
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.1/anchor.min.js" integrity="sha256-pB/deHc9CGfFpJRjC43imB29Rse8tak+5eXqntO94ck=" crossorigin="anonymous"></script>
+    <script>
+      anchors.add();
+    </script>
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.3da86581634ab22d5bb3fc4505df30a5.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
