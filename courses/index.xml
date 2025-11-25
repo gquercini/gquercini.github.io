@@ -3528,6 +3528,120 @@ a full data model for the Sakila database.&lt;/p&gt;
     </item>
     
     <item>
+      <title>Requêtes MongoDB</title>
+      <link>/courses/gadexed_fr/tutorials/05-mongodb-queries/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/gadexed_fr/tutorials/05-mongodb-queries/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;p&gt;L’objectif de ce tutoriel est d’apprendre à écrire des requêtes en MongoDB.&lt;/p&gt;
+&lt;!-- # Get the data
+
+Download the [**this archive file**](/courses/databases/tutorial-6/sakila-mongodb.zip) and extract it.
+You&#39;ll find a file for each collection to import into the database.
+
+Open MongoDB Compass, create a new database named &lt;TT&gt;sakila&lt;/TT&gt; and 
+create the different collections while importing the data. --&gt;
+&lt;div id=&#34;préparation-de-lenvironnement&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Préparation de l’environnement&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Cliquez sur l’icône &lt;em&gt;MongoDB Compass&lt;/em&gt; (sur le bureau) pour ouvrir l’application.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Dans le menu de gauche, sélectionnez la connexion à &lt;em&gt;Local MongoDB&lt;/em&gt; et cliquez sur &lt;em&gt;Connect&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Sélectionnez la base de données &lt;em&gt;sakila&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Dans la fenêtre à droite, cliquez &lt;em&gt;Open MongoDB shell&lt;/em&gt; pour ouvrir le shell MongoDB.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;base-de-données&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Base de données&lt;/h1&gt;
+&lt;p&gt;La base de données &lt;em&gt;sakila&lt;/em&gt; contient des données fictives sur des magasins de location de DVD.
+La base de données contient les collections suivantes :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;customer&lt;/strong&gt; : informations sur les clients.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;film&lt;/strong&gt; : informations sur les films.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;rental&lt;/strong&gt; : informations sur les locations.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;staff&lt;/strong&gt; : informations sur les membres du personnel.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;store&lt;/strong&gt; : informations sur les magasins.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;requêtes-de-base&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Requêtes de base&lt;/h1&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1  &lt;/strong&gt;&lt;/span&gt;
+Ecrivez les requêtes suivantes en MongoDB :&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Renvoyez toutes les informations sur tous les clients.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Renvoyez les emails de tous les clients.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Renvoyez les emails des clients des magasins canadiens.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Renvoyez l’identifiant de toutes les locations effectuées par des clients iraniens, où le montant payé est strictement supérieur à 10 dollars.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Renvoyez les prénoms et noms des acteurs qui ont joué dans le film 213.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;opérations-sur-les-tableaux&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Opérations sur les tableaux&lt;/h1&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2  &lt;/strong&gt;&lt;/span&gt;
+Ecrivez les requêtes suivantes en MongoDB :&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Renvoyez l’identifiant des films qui ont comme caractéristiques spéciales (special features) “Behind the Scenes”.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Renvoyez l’identifiant des films qui ont comme caractéristiques spéciales (special features) toutes les suivantes : “Commentaries” et “Deleted Scenes”.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Renvoyez l’identifiant de tous les films où BURT POSEY a joué un rôle.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Renvoyez l’identifiant du film qui a exactement 15 acteurs.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;pipeline-dagrégation&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Pipeline d’agrégation&lt;/h1&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3  &lt;/strong&gt;&lt;/span&gt;
+Écrivez les requêtes suivantes en MongoDB en utilisant des pipelines d’agrégation :&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Renvoyez le titre des films loués par TOMMY COLLAZO (pouvez-vous aussi exprimer cette requête avec la fonction find() ?)&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Comptez le montant total des paiements de toutes les locations.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Renvoyez le nombre d’acteurs de chaque film.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Triez les films par nombre d’acteurs (ordre décroissant).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Renvoyez le nombre moyen d’acteurs par film.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Renvoyez l’identifiant du client qui a effectué le plus de locations.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Renvoyez le prénom et le nom du client qui a effectué le plus de locations.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Renvoyez le pays où les clients ont loué le plus de films dans la catégorie “Music”.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;opérations-de-jointure&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Opérations de jointure&lt;/h1&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4  &lt;/strong&gt;&lt;/span&gt;
+Ecrivez les requêtes suivantes en MongoDB en utilisant le pipeline d’agrégation :&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Renvoyez la langue du film ayant pour titre “ACE GOLDFINGER”.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Renvoyez toutes les informations sur le membre du personnel qui a géré la location numéro 2.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Queries in MongoDB</title>
       <link>/courses/gadexed_en/tutorials/mongodb-queries/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -4345,6 +4459,446 @@ ORDER BY r.rate DESC;
 &lt;/pre&gt;
 &lt;/div&gt;
 &lt;/details&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Requêtes Neo4j : le langage Cypher</title>
+      <link>/courses/gadexed_fr/tutorials/07-neo4j/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/gadexed_fr/tutorials/07-neo4j/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;!-- # Setting up the work environment.
+
+* Download [Neo4j Desktop](https://neo4j.com/download/){target=&#34;_blank&#34;} 
+and install it on your computer.
+
+* Create a new instance. Start the new instance. 
+
+* Create a new database MovieLens. (the password can be set to &#34;neo4jneo4j&#34;).
+
+* Open the Neo4j Browser in the browser : localhost:7474.
+
+
+## Import the data.
+
+
+1. Import the **nodes** corresponding to the 
+**movies** (label **Movie**) by 
+using the following command (it took 31 seconds on my computer):
+
+&lt;pre&gt;
+LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/movies.csv&#39; as row
+MERGE (m:Movie {movie_id: toInteger(row.movie_id), title_en:row.movie_title_en, title_fr:row.movie_title_fr, year: toInteger(row.movie_year)})
+RETURN count(m)
+&lt;/pre&gt;
+
+1. Create an **index** on the property *movie_id* of 
+the nodes with label **Movie** with the following command:
+
+&lt;pre&gt;
+create index movie_idx for (m:Movie) on (m.movie_id)
+&lt;/pre&gt;
+
+3. Import the **nodes** corresponding to the 
+**actors** (label **Actor**) by 
+using the following command (it took 62 seconds on my computer):
+
+&lt;pre&gt;
+LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/actors.csv&#39; as row
+MERGE (a:Actor {actor_id: toInteger(row.actor_id), name:row.actor_name})
+RETURN count(a)
+&lt;/pre&gt;
+
+1. Create an **index** on the property *actor_id* of 
+the nodes with label **Actor** with the following command:
+
+&lt;pre&gt;
+create index actor_idx for (a:Actor) on (a.actor_id)
+&lt;/pre&gt;
+
+5. Import the **nodes** corresponding to the 
+**directors** (label **Director**) by 
+using the following command (it took 4 seconds on my computer):
+
+&lt;pre&gt;
+LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/directors.csv&#39; as row
+MERGE (d:Director {director_id: toInteger(row.director_id), name:row.director_name})
+RETURN count(d)
+&lt;/pre&gt;
+
+1. Create an **index** on the property *director_id* of 
+the nodes with label **Director** with the following command:
+
+&lt;pre&gt;
+create index director_idx for (d:Director) on (d.director_id)
+&lt;/pre&gt;
+
+
+7. Import the **nodes** corresponding to the 
+**genres** (label **Genre**) by 
+using the following command (it took 197 ms on my computer):
+
+&lt;pre&gt;
+LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/genres.csv&#39; as row
+MERGE (g:Genre {genre_id: toInteger(row.genre_id), name:row.genre_name})
+RETURN count(g)
+&lt;/pre&gt;
+
+1. Create an **index** on the property *genre_id* of 
+the nodes with label **Genre** with the following command:
+
+&lt;pre&gt;
+create index genre_idx for (g:Genre) on (g.genre_id)
+&lt;/pre&gt;
+
+
+9. Import the **nodes** corresponding to the 
+**users** (label **User**) by 
+using the following command (it took 347 seconds on my computer):
+
+&lt;pre&gt;
+LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/users.csv&#39; as row
+MERGE (u:User {user_id: toInteger(row.user_id), name:row.user_nickname})
+RETURN count(u)
+&lt;/pre&gt;
+
+1.  Create an **index** on the property *user_id* of 
+the nodes with label **User** with the following command:
+
+&lt;pre&gt;
+create index user_idx for (u:User) on (u.user_id)
+&lt;/pre&gt;
+
+11. Import the links of type **ACTED_IN** 
+between actors and movies with the following 
+command (it took 2.5 seconds on my computer):
+
+&lt;pre&gt;
+LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/movies_actors.csv&#39; as row
+MATCH (m:Movie {movie_id: toInteger(row.movie_id)})
+MATCH (a:Actor {actor_id: toInteger(row.actor_id)})
+MERGE (a)-[r:ACTED_IN]-&gt;(m)
+RETURN count(r)
+&lt;/pre&gt;
+
+1.  Import the links of type **DIRECTED** 
+between directors and movies with the following 
+command (it took 688 ms on my computer):
+
+&lt;pre&gt;
+LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/movies_directors.csv&#39; as row
+MATCH (m:Movie {movie_id: toInteger(row.movie_id)})
+MATCH (d:Director {director_id: toInteger(row.director_id)})
+MERGE (d)-[r:DIRECTED]-&gt;(m)
+RETURN count(r)
+&lt;/pre&gt;
+
+1.  Import the links of type **HAS_GENRE** 
+between movies and genres with the following 
+command (it took 1 second on my computer):
+
+&lt;pre&gt;
+LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/movies_genres.csv&#39; as row
+MATCH (m:Movie {movie_id: toInteger(row.movie_id)})
+MATCH (g:Genre {genre_id: toInteger(row.genre_id)})
+MERGE (m)-[r:HAS_GENRE]-&gt;(g)
+RETURN count(r)
+&lt;/pre&gt;
+
+1.  Import the links of type **RATED** 
+between users and movies with the following 
+command (it took 5.9 seconds on my computer):
+
+&lt;pre&gt;
+LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/user_rates.csv&#39; as row
+MATCH (m:Movie {movie_id: toInteger(row.movie_id)})
+MATCH (u:User {user_id: toInteger(row.user_id)})
+MERGE (u)-[r:RATED {rate:toFloat(row.rate)}]-&gt;(m)
+RETURN count(r)
+&lt;/pre&gt; --&gt;
+&lt;div id=&#34;préparation-de-lenvironnement-de-travail&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Préparation de l’environnement de travail&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Cliquez sur l’icône Neo4j Desktop (sur le bureau) pour ouvrir l’application.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Assurez-vous que l’instance &lt;em&gt;Local Neo4j server&lt;/em&gt; est en cours d’exécution. Si ce n’est pas le cas, cliquez sur le bouton &lt;em&gt;Start instance&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Cliquez sur le bouton &lt;em&gt;Connect&lt;/em&gt; et sélectionnez &lt;em&gt;Query&lt;/em&gt;, pour ouvrir le &lt;em&gt;Neo4j Browser&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Sur la barre supérieure, sélectionnez la base de données &lt;em&gt;movielens&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;la-base-de-données&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;La base de données&lt;/h1&gt;
+&lt;p&gt;La base de données est constituée de
+données obtenues à partir de MovieLens,
+un système de recommandation
+dont les utilisateurs attribuent aux films une note
+comprise entre 1 et 5,
+selon qu’ils les apprécient peu ou beaucoup.&lt;/p&gt;
+&lt;p&gt;MovieLens utilise ces notes pour recommander
+des films susceptibles de plaire à ses utilisateurs.
+Le jeu de données est modélisé comme un &lt;strong&gt;graphe orienté&lt;/strong&gt; et
+comprend 100 004 notes sur 9 125 films
+attribuées par 671 utilisateurs, entre le 9 janvier 1995 et le 16 octobre 2016.
+Le jeu de données contient également les noms
+des réalisateurs et des acteurs de chaque film.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;requêtes-exploratoires&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Requêtes exploratoires&lt;/h1&gt;
+&lt;p&gt;Dans le navigateur Neo4j, vous pouvez déjà voir un aperçu du modèle de données, à savoir, les types de nœuds et de relations qui composent la base de données.
+Dans le champs de texte en haut au centre, vous pouvez écrire des requêtes en langage Cypher pour interroger la base de données.
+Nous allons maintenant écrire quelques requêtes simples pour explorer la base de données.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercice&lt;/strong&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1  &lt;/strong&gt;&lt;/span&gt;
+Écrivez et exécutez la requête suivante :&lt;/p&gt;
+&lt;pre&gt;
+MATCH (m:Movie {title_en:&#34;Toy Story&#34;}) 
+RETURN m;
+&lt;/pre&gt;
+&lt;p&gt;Que obtenez-vous ? Quelles sont les propriétés associées
+à un nœud avec le label &lt;em&gt;Movie&lt;/em&gt; ?
+Cliquez une fois sur le nœud pour afficher ses propriétés.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercice&lt;/strong&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Faites un double clic sur le nœud affiché comme résultat de la requête précédente.
+Analysez les nœuds voisins (leurs labels et propriétés)
+et les liens incidents (type et propriétés).&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;requêtes-de-base&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Requêtes de base&lt;/h1&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercice&lt;/strong&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3  &lt;/strong&gt;&lt;/span&gt;
+Ecrivez et exécutez les requêtes suivantes en Cypher :&lt;/p&gt;
+&lt;p&gt;Q1. Renvoyez les genres des films de la base de données.&lt;/p&gt;
+&lt;p&gt;Q2. Renvoyez le nombre de films de la base de données.&lt;/p&gt;
+&lt;p&gt;Q3. Renvoyez les titres des films sortis en 2015.&lt;/p&gt;
+&lt;p&gt;Q4. Renvoyez le titre des films et le nombre de réalisateurs par film. Triez par ordre décroissant.&lt;/p&gt;
+&lt;p&gt;Q5. Renvoyez les noms des réalisateurs et le titre des films qu’ils ont réalisés et dans lesquels ils ont également joué.&lt;/p&gt;
+&lt;p&gt;Q6. Renvoyez les genres des films dans lesquels Tom Hanks a joué.&lt;/p&gt;
+&lt;p&gt;Q7. Renvoyez le titre et la note de tous les films que l’utilisateur 3 a notés.
+Triez par note décroissante.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;chaînes-de-requêtes-avec-with&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Chaînes de requêtes avec WITH&lt;/h2&gt;
+&lt;p&gt;Cypher permet la spécification de
+requêtes complexes composées de
+plusieurs requêtes qui sont concaténées
+avec la clause &lt;strong&gt;WITH&lt;/strong&gt;.
+Nous allons maintenant voir un exemple pour
+obtenir les titres des films
+qui ont été notés par au moins 100 utilisateurs.&lt;/p&gt;
+&lt;p&gt;Une première tentative pourrait être la suivante :&lt;/p&gt;
+&lt;pre&gt;
+MATCH (n:Movie)&lt;-[:RATED]-(u:User) WHERE count(u) &gt;= 100
+RETURN n.title_en
+LIMIT 5;
+&lt;/pre&gt;
+&lt;p&gt;Cependant, cette requête génère une erreur :&lt;/p&gt;
+&lt;pre&gt;
+Invalid use of aggregating function count(...) in this context (line 1, column 42 (offset: 41))
+&#34;MATCH (n:Movie)&lt;-[:RATED]-(u:User) WHERE count(u) &gt;= 100&#34;
+&lt;/pre&gt;
+&lt;p&gt;De la même manière qu’en SQL, nous ne pouvons pas utiliser de fonctions d’agrégation dans la clause WHERE.&lt;/p&gt;
+&lt;p&gt;Une formulation correcte de la requête nécessite l’utilisation de la clause WITH
+pour enchaîner deux requêtes. La première comptera le nombre de notes
+pour chaque film :&lt;/p&gt;
+&lt;pre&gt;
+MATCH (n:Movie)&lt;-[:RATED]-(u:User) 
+RETURN n, count(u) as nb_rates
+&lt;/pre&gt;
+&lt;p&gt;La seconde prendra en entrée le résultat de la première et filtrera tous les films pour lesquels nb_rates &amp;lt; 100.
+Afin d’enchaîner les deux requêtes, nous remplacerons la clause RETURN de la première requête par une clause WITH, comme suit :&lt;/p&gt;
+&lt;pre&gt;
+MATCH (n:Movie)&lt;-[:RATED]-(u:User) 
+WITH n, count(u) as nb_rates
+WHERE nb_rates &gt;= 100
+RETURN n.title_en
+&lt;/pre&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercise&lt;/strong&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4  &lt;/strong&gt;&lt;/span&gt;
+Écrivez et exécutez la requête pour obtenir
+le titre des cinq films
+ayant obtenu la meilleure note moyenne parmi les films
+ayant été notés par au moins 100 utilisateurs.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;système-de-recommandation-de-films&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Système de recommandation de films&lt;/h1&gt;
+&lt;p&gt;Nous allons maintenant voir comment Neo4j
+peut être utilisé efficacement dans une application réelle
+en implémentant des requêtes qui forment la base d’un
+simple &lt;strong&gt;système de recommandation de films&lt;/strong&gt;.
+Ce système est basé sur la notion de &lt;strong&gt;filtrage collaboratif&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Cette approche consiste à recommander à un utilisateur &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt;
+des films qu’il n’a pas encore notés
+et que d’autres utilisateurs ayant des préférences similaires ont adorés.
+Dans notre contexte, on dit qu’un utilisateur adore
+un film s’il l’a noté au moins 3.&lt;/p&gt;
+&lt;p&gt;Le schéma ci-dessous illustre le principe du filtrage collaboratif.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/plp/tutorials/neo4j/collaborative-filtering.png&#34; width=&#34;100%&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
+&lt;p&gt;L’utilisateur &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; adore 6 films,
+dont 3 sont également adorés par l’utilisateur &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt; (les nœuds noirs) ;
+il est raisonnable de penser que &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt;
+pourrait également adorer les deux films que &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt; a adorés et que &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; n’a pas encore notés.&lt;/p&gt;
+&lt;p&gt;Le filtrage collaboratif repose sur le calcul
+d’un &lt;strong&gt;score de similarité&lt;/strong&gt; entre deux utilisateurs.
+Plusieurs scores de similarité sont possibles dans ce contexte ;
+ici, nous allons utiliser le &lt;strong&gt;coefficient de Jaccard&lt;/strong&gt;.
+Soient &lt;span class=&#34;math inline&#34;&gt;\(L(u)\)&lt;/span&gt; et &lt;span class=&#34;math inline&#34;&gt;\(L(v)\)&lt;/span&gt; les
+ensembles des films que &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; et &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt; adorent
+respectivement ;
+le score de similarité &lt;span class=&#34;math inline&#34;&gt;\(J(u,v)\)&lt;/span&gt; entre &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; et &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt; est donné par :&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;math display&#34;&gt;\[
+J(u, v) = \frac{|L(u) \cap L(v)|}{|L(u) \cup L(v)|}
+\]&lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Afin de recommander des films à un utilisateur cible &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt;,
+le système de recommandation calcule le
+score de similarité entre &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt; et tous
+les autres utilisateurs du système et
+propose à &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt; les films
+qu’il n’a pas encore notés et que les &lt;span class=&#34;math inline&#34;&gt;\(k\)&lt;/span&gt; utilisateurs les plus similaires ont adorés.&lt;/p&gt;
+&lt;p&gt;Nous allons maintenant écrire une requête Cypher
+pour recommander des films à l’utilisateur cible &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt;,
+dont l’identifiant est 3.&lt;/p&gt;
+&lt;p&gt;La première étape consiste à déterminer la valeur &lt;span class=&#34;math inline&#34;&gt;\(|L(v)|\)&lt;/span&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercice&lt;/strong&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5  &lt;/strong&gt;&lt;/span&gt;
+Écrivez et exécutez la requête pour obtenir
+le nombre de films que l’utilisateur 3 a adorés.
+Cette requête doit renvoyer l’utilisateur cible
+et le nombre de films qu’il adore.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Après, nous allons déterminer la valeur &lt;span class=&#34;math inline&#34;&gt;\(|L(u)|\)&lt;/span&gt;,
+pour tous les utilisateurs &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; sauf &lt;span class=&#34;math inline&#34;&gt;\(v\)&lt;/span&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercice&lt;/strong&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 6  &lt;/strong&gt;&lt;/span&gt;
+Écrivez et exécutez la requête
+pour obtenir le nombre de films que chaque utilisateur &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; adore,
+sauf l’utilisateur cible 3.
+Cette requête doit renvoyer chaque utilisateur &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; et le nombre
+de films qu’il adore.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;On met ensuite les deux requêtes ensemble avec la clause WITH.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercice&lt;/strong&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 7  &lt;/strong&gt;&lt;/span&gt;
+Composez les deux requêtes précédentes avec la clause WITH.
+Cette requête doit renvoyer
+l’utilisateur cible 3,
+le nombre de films qu’il adore,
+les autres utilisateurs &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; et le nombre de films
+qu’ils adorent.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Maintenant, nous devons
+déterminer la valeur &lt;span class=&#34;math inline&#34;&gt;\(|L(u)\cup L(v)|\)&lt;/span&gt;,
+pour chaque utilisateur &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt;, et calculer le score de similarité via le
+coefficient de Jaccard.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercice&lt;/strong&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 8  &lt;/strong&gt;&lt;/span&gt;
+Concatenez (en utilisant WITH)
+à la requête écrite dans l’exercice précédent
+une requête qui obtient
+le nombre de films
+que tout utilisateur &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; a adorés
+et que l’utilisateur cible 3 a également adorés,
+et calcule le score de similarité
+entre l’utilisateur cible 3 et &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt;.
+Cette requête doit renvoyer les cinq utilisateurs les plus similaires
+à l’utilisateur cible et les scores de similarité.&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Coup de pouce
+&lt;/summary&gt;
+Il faut multiplier le numérateur de l’équation
+par 1.0, sinon Cypher effectuera une division entière.
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;La dernière étape consiste à recommander
+des films à l’utilisateur cible.
+À partir de la requête précédente,
+prenez l’identifiant de l’utilisateur &lt;span class=&#34;math inline&#34;&gt;\(w\)&lt;/span&gt; avec
+la similarité la plus élevée avec l’utilisateur cible.
+Vous allez utiliser cet identifiant directement dans la nouvelle requête.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercice&lt;/strong&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 9  &lt;/strong&gt;&lt;/span&gt;
+Éxecutez la requête suivante pour obtenir
+la liste des films que l’utilisateur &lt;span class=&#34;math inline&#34;&gt;\(w\)&lt;/span&gt; a adorés
+et que l’utilisateur cible n’a pas encore notés.
+Triez cette liste par note décroissante.&lt;/p&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Coup de pouce
+&lt;/summary&gt;
+&lt;ul&gt;
+&lt;li&gt;D’abord, écrivez une requête
+pour obtenir la liste des films
+que l’utilisateur cible a notés.
+Dans la clause MATCH,
+utilisez la variable &lt;span class=&#34;math inline&#34;&gt;\(m\)&lt;/span&gt; pour indiquer un film
+que l’utilisateur cible a noté.
+Concluez la requête avec :&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;
+RETURN collect(m.title_en) AS movies
+&lt;/pre&gt;
+&lt;p&gt;La fonction &lt;em&gt;collect&lt;/em&gt; crée une liste appelée &lt;em&gt;movies&lt;/em&gt;.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Remplacez RETURN par WITH dans la requête précédente et ajoutez une
+deuxième requête pour sélectionner les titres des films
+&lt;span class=&#34;math inline&#34;&gt;\(m\)&lt;/span&gt; que l’utilisateur &lt;span class=&#34;math inline&#34;&gt;\(w\)&lt;/span&gt; a adorés et que l’utilisateur cible
+n’a pas notés.
+Afin d’exclure les films que l’utilisateur cible n’a pas notés,
+utilisez le prédicat suivant :&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;
+none(x in movies where x=m.title_en)
+&lt;/pre&gt;
+&lt;p&gt;dans la clause WHERE.&lt;/p&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
 &lt;/div&gt;
 </description>
     </item>

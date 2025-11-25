@@ -28,10 +28,10 @@
   
     
   
-  <meta name="description" content="Relational data modeling exercises">
+  <meta name="description" content="MongoDB query exercises">
 
   
-  <link rel="alternate" hreflang="en-us" href="/courses/gadexed_fr/tutorials/01-rel-data-modeling/">
+  <link rel="alternate" hreflang="en-us" href="/courses/gadexed_fr/tutorials/05-mongodb-queries/">
 
   
 
@@ -219,7 +219,7 @@
   <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_3.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_3.png">
 
-  <link rel="canonical" href="/courses/gadexed_fr/tutorials/01-rel-data-modeling/">
+  <link rel="canonical" href="/courses/gadexed_fr/tutorials/05-mongodb-queries/">
 
   
   
@@ -233,9 +233,9 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Gianluca Quercini">
-  <meta property="og:url" content="/courses/gadexed_fr/tutorials/01-rel-data-modeling/">
-  <meta property="og:title" content="Modélisation des données relationnelles | Gianluca Quercini">
-  <meta property="og:description" content="Relational data modeling exercises"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:url" content="/courses/gadexed_fr/tutorials/05-mongodb-queries/">
+  <meta property="og:title" content="Requêtes MongoDB | Gianluca Quercini">
+  <meta property="og:description" content="MongoDB query exercises"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
   
     
@@ -258,7 +258,7 @@
 
 
 
-  <title>Modélisation des données relationnelles | Gianluca Quercini</title>
+  <title>Requêtes MongoDB | Gianluca Quercini</title>
 
 </head>
 
@@ -544,8 +544,8 @@
     <div id="tutoriels-ddowncontent" class="tutoriels-ddowncontent ddowncontent">
     <ul class="nav docs-sidenav">
       
-      <script>open_menu_on_load("tutoriels".concat("-ddowncontent"))</script>
-      <li class="active tutoriels">
+      
+      <li class="tutoriels">
         <a href="/courses/gadexed_fr/tutorials/01-rel-data-modeling/">1. Modélisation des données relationnelles</a>
       </li>
       
@@ -554,8 +554,8 @@
         <a href="/courses/gadexed_fr/tutorials/02-sql/">2. SQL</a>
       </li>
       
-      
-      <li class="tutoriels">
+      <script>open_menu_on_load("tutoriels".concat("-ddowncontent"))</script>
+      <li class="active tutoriels">
         <a href="/courses/gadexed_fr/tutorials/05-mongodb-queries/">5. Requêtes MongoDB</a>
       </li>
       
@@ -583,8 +583,8 @@
       <article class="article">
 
         <div class="docs-article-container">
-          <div class="heading">Gestion et analyse des données — Tutoriel 1</div>
-          <h1>Modélisation des données relationnelles</h1>
+          <div class="heading">Gestion et analyse des données — Tutoriel 5</div>
+          <h1>Requêtes MongoDB</h1>
           <hr>
           <div class="logo">
             
@@ -597,103 +597,103 @@
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<p>L’objectif de ce tutoriel est de s’exercer à la conception d’une base de données relationnelle.</p>
-<p>Les sujets suivants sont abordés :</p>
+<p>L’objectif de ce tutoriel est d’apprendre à écrire des requêtes en MongoDB.</p>
+<!-- # Get the data
+
+Download the [**this archive file**](/courses/databases/tutorial-6/sakila-mongodb.zip) and extract it.
+You'll find a file for each collection to import into the database.
+
+Open MongoDB Compass, create a new database named <TT>sakila</TT> and 
+create the different collections while importing the data. -->
+<div id="préparation-de-lenvironnement" class="section level1">
+<h1>Préparation de l’environnement</h1>
 <ul>
-<li><p><strong>Schéma conceptuel</strong> d’une base de données relationnelle.</p></li>
-<li><p><strong>Schéma logique</strong> d’une base de données relationnelle.</p></li>
-<li><p><strong>Clés primaires</strong> et <strong>clés étrangères</strong>.</p></li>
+<li><p>Cliquez sur l’icône <em>MongoDB Compass</em> (sur le bureau) pour ouvrir l’application.</p></li>
+<li><p>Dans le menu de gauche, sélectionnez la connexion à <em>Local MongoDB</em> et cliquez sur <em>Connect</em>.</p></li>
+<li><p>Sélectionnez la base de données <em>sakila</em>.</p></li>
+<li><p>Dans la fenêtre à droite, cliquez <em>Open MongoDB shell</em> pour ouvrir le shell MongoDB.</p></li>
 </ul>
-<div id="scénario-applicatif" class="section level1" number="1">
-<h1><span class="header-section-number">1</span> Scénario applicatif</h1>
-<p>Nous souhaitons gérer les données d’un système de réservation de voyages
-avec des clients partout dans le monde.
-Lors de leur inscription, les clients se voient automatiquement attribuer un identifiant numérique
-et ils doivent indiquer leur prénom et nom de famille, leur genre,
-date de naissance, un numéro de téléphone, une adresse e-mail et leur pays de résidence.</p>
-<p>Tout client peut réserver un voyage qui inclut
-la réservation de <strong>un ou plusieurs vols</strong> et, éventuellement, <strong>un ou plusieurs hôtels</strong></p>
-<div class="infobox warning">
-<p><strong>Exemple</strong></p>
-<p>Alice souhaite voyager de Paris,
-France à New York City (NYC), USA
-et elle prévoit de rester à NYC pendant 10 jours.
-Son voyage inclut deux vols : un vol aller
-de Paris à NYC et un vol retour de NYC à Paris ; ainsi qu’un hôtel à NYC</p>
 </div>
-<p>Un vol est opéré par une compagnie aérienne,
-dont le système conserve le nom (par exemple, British Airways),
-le pays où la compagnie est incorporée et, lorsque disponible,
-son code IATA (par exemple, BA, un code à deux lettres identifiant la compagnie),
-son code ICAO (par exemple, BAW, un code à trois lettres identifiant la compagnie)
-et un nom alternatif ou alias (par exemple, British).</p>
-<p>Un vol relie deux aéroports,
-chacun ayant un nom (par exemple, London Heathrow Airport), et,
-éventuellement, un code IATA (par exemple, LHR) et un code ICAO (par exemple, EGLL) ;
-un aéroport dessert un lieu spécifique (par exemple, London, UK) et sa position précise
-est donnée par ses coordonnées géographiques (latitude et longitude).</p>
-<p>Un vol reliant deux aéroports à des heures de départ et d’arrivée spécifiques
-est identifié par un numéro de vol. 
-Deux vols opérés par deux compagnies aériennes différentes ne peuvent pas avoir le même numéro de vol,
-mais le même numéro de vol peut désigner deux vols opérés
-par la même compagnie aérienne à des jours différents.</p>
-<div class="infobox warning">
-<p><strong>Exemple</strong></p>
-<p>Le vol Emirates EK074 part de Paris,
-France à 10h00 et arrive à Dubaï, Émirats arabes unis à 19h40 (indépendamment du jour de départ).</p>
+<div id="base-de-données" class="section level1">
+<h1>Base de données</h1>
+<p>La base de données <em>sakila</em> contient des données fictives sur des magasins de location de DVD.
+La base de données contient les collections suivantes :</p>
+<ul>
+<li><strong>customer</strong> : informations sur les clients.</li>
+<li><strong>film</strong> : informations sur les films.</li>
+<li><strong>rental</strong> : informations sur les locations.</li>
+<li><strong>staff</strong> : informations sur les membres du personnel.</li>
+<li><strong>store</strong> : informations sur les magasins.</li>
+</ul>
 </div>
-<p>Pour chaque vol réservé par un client,
-le système conserve le numéro de siège,
-la classe de voyage (par exemple, économique ou affaires),
-le prix et la date du vol. 
-Habituellement, les compagnies aériennes incluent des détails sur le type d’avion
-qu’elles prévoient d’utiliser dans leurs horaires de vol ;
-ces détails incluent le nom de l’avion (par exemple, Boeing 787-8) et,
-lorsque disponible, le code IATA (par exemple, 788, un identifiant unique à trois lettres pour l’avion)
-et le code ICAO (par exemple, B788, un identifiant unique à quatre lettres pour l’avion).</p>
-<p>Le système conserve une liste d’hôtels,
-avec leurs noms et adresses.
-Les clients peuvent écrire un avis pour un hôtel ;
-dans ce cas, le système stocke le texte de l’avis,
-la date et son auteur.
-Lorsque un client réserve un hôtel, le système conserve le prix payé,
-les dates d’arrivée et de départ et si le petit-déjeuner est inclus.</p>
-</div>
-<div id="schéma-conceptuel" class="section level1" number="2">
-<h1><span class="header-section-number">2</span> Schéma conceptuel</h1>
-<p>Le <strong>schéma conceptuel</strong> de la base de données est une représentation abstraite des entités de l’application et de leurs associations.
-Le schéma conceptuel ne comprend aucun détail de mise en œuvre,
-comme la définition des clés primaires ou des clés étrangères, ni aucune information sur les types des attributs.
-Le schéma conceptuel est généralement représenté à travers un <strong>diagramme Entité-Association (ang., Entity-Relationship, ER)</strong>.</p>
+<div id="requêtes-de-base" class="section level1">
+<h1>Requêtes de base</h1>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 2.1  </strong></span>
-Proposez un diagramme Entité-Association (ER) décrivant le modèle conceptuel
-d’une base de données relationnelle pour le contexte applicatif donné.</p>
-<ul>
-<li><p>Identifiez les entités et les associations pertinentes.</p></li>
-<li><p>Identifiez les attributs pour chaque entité et chaque association.</p></li>
-<li><p>Pour chaque entité, soulignez les attributs composant la clé primaire.</p></li>
-<li><p>Déterminez les cardinalités minimales et maximales pour chaque association.</p></li>
-</ul>
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1  </strong></span>
+Ecrivez les requêtes suivantes en MongoDB :</p>
+<ol style="list-style-type: decimal">
+<li><p>Renvoyez toutes les informations sur tous les clients.</p></li>
+<li><p>Renvoyez les emails de tous les clients.</p></li>
+<li><p>Renvoyez les emails des clients des magasins canadiens.</p></li>
+<li><p>Renvoyez l’identifiant de toutes les locations effectuées par des clients iraniens, où le montant payé est strictement supérieur à 10 dollars.</p></li>
+<li><p>Renvoyez les prénoms et noms des acteurs qui ont joué dans le film 213.</p></li>
+</ol>
 </div>
 </div>
 </div>
-<div id="schéma-logique" class="section level1" number="3">
-<h1><span class="header-section-number">3</span> Schéma logique</h1>
-<p>Le <strong>schéma logique</strong> d’une base de données relationnelle est l’ensemble des tables
-qui implémentent le schéma conceptuel.
-Le schéma logique inclut la définition des clés primaires et des clés étrangères,
-mais il n’inclut aucune information sur les types des colonnes.</p>
+<div id="opérations-sur-les-tableaux" class="section level1">
+<h1>Opérations sur les tableaux</h1>
 <div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+<p><strong>Exercice</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 3.1  </strong></span>
-Donnez le <strong>schéma logique</strong> de la base de données.
-Pour chaque table, soulignez la clé primaire et spécifiez les clés étrangères.</p>
+<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 2  </strong></span>
+Ecrivez les requêtes suivantes en MongoDB :</p>
+<ol style="list-style-type: decimal">
+<li><p>Renvoyez l’identifiant des films qui ont comme caractéristiques spéciales (special features) “Behind the Scenes”.</p></li>
+<li><p>Renvoyez l’identifiant des films qui ont comme caractéristiques spéciales (special features) toutes les suivantes : “Commentaries” et “Deleted Scenes”.</p></li>
+<li><p>Renvoyez l’identifiant de tous les films où BURT POSEY a joué un rôle.</p></li>
+<li><p>Renvoyez l’identifiant du film qui a exactement 15 acteurs.</p></li>
+</ol>
+</div>
+</div>
+</div>
+<div id="pipeline-dagrégation" class="section level1">
+<h1>Pipeline d’agrégation</h1>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3  </strong></span>
+Écrivez les requêtes suivantes en MongoDB en utilisant des pipelines d’agrégation :</p>
+<ol style="list-style-type: decimal">
+<li><p>Renvoyez le titre des films loués par TOMMY COLLAZO (pouvez-vous aussi exprimer cette requête avec la fonction find() ?)</p></li>
+<li><p>Comptez le montant total des paiements de toutes les locations.</p></li>
+<li><p>Renvoyez le nombre d’acteurs de chaque film.</p></li>
+<li><p>Triez les films par nombre d’acteurs (ordre décroissant).</p></li>
+<li><p>Renvoyez le nombre moyen d’acteurs par film.</p></li>
+<li><p>Renvoyez l’identifiant du client qui a effectué le plus de locations.</p></li>
+<li><p>Renvoyez le prénom et le nom du client qui a effectué le plus de locations.</p></li>
+<li><p>Renvoyez le pays où les clients ont loué le plus de films dans la catégorie “Music”.</p></li>
+</ol>
+</div>
+</div>
+</div>
+<div id="opérations-de-jointure" class="section level1">
+<h1>Opérations de jointure</h1>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 4  </strong></span>
+Ecrivez les requêtes suivantes en MongoDB en utilisant le pipeline d’agrégation :</p>
+<ol style="list-style-type: decimal">
+<li><p>Renvoyez la langue du film ayant pour titre “ACE GOLDFINGER”.</p></li>
+<li><p>Renvoyez toutes les informations sur le membre du personnel qui a géré la location numéro 2.</p></li>
+</ol>
 </div>
 </div>
 </div>
