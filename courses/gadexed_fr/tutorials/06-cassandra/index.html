@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Gianluca Quercini">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Introduction à Cassandra">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/courses/gadexed_fr/tutorials/06-cassandra/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="rgb(0, 136, 204)">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_3.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_3.png">
+
+  <link rel="canonical" href="/courses/gadexed_fr/tutorials/06-cassandra/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="Gianluca Quercini">
+  <meta property="og:url" content="/courses/gadexed_fr/tutorials/06-cassandra/">
+  <meta property="og:title" content="Cassandra | Gianluca Quercini">
+  <meta property="og:description" content="Introduction à Cassandra"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
+  
+    
+    
+  
+
+  
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Cassandra | Gianluca Quercini</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#experience"><span>Experience</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#publications"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  
+
+  
+
+<div class="container-fluid docs">
+  <div class="row flex-xl-nowrap">
+    <div class="col-12 col-md-3 col-xl-2 docs-sidebar">
+      
+
+
+<script src="/js/toggle-menu.js"></script>
+
+
+
+
+
+
+
+  
+    
+  
+
+
+
+
+<form class="docs-search d-flex align-items-center">
+  <button class="btn docs-toggle d-md-none p-0 mr-3" type="button" data-toggle="collapse" data-target="#docs-nav" aria-controls="docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    <span><i class="fas fa-bars"></i></span>
+  </button>
+
+  
+</form>
+
+<nav class="collapse docs-links" id="docs-nav">
+  
+
+  
+  
+  
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="tutoriels" class="docs-toc-link" href="/courses/gadexed_fr/tutorials/01-rel-data-modeling/">Tutoriels</a>
+    
+    <div id="tutoriels-ddowncontent" class="tutoriels-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="tutoriels">
+        <a href="/courses/gadexed_fr/tutorials/01-rel-data-modeling/">1. Modélisation des données relationnelles</a>
+      </li>
+      
+      
+      <li class="tutoriels">
+        <a href="/courses/gadexed_fr/tutorials/02-sql/">2. SQL</a>
+      </li>
+      
+      
+      <li class="tutoriels">
+        <a href="/courses/gadexed_fr/tutorials/03-multidimension-modeling/">3. Modélisation multidimensionnelle</a>
+      </li>
+      
+      
+      <li class="tutoriels">
+        <a href="/courses/gadexed_fr/tutorials/05-mongodb-queries/">5. Requêtes MongoDB</a>
+      </li>
+      
+      <script>open_menu_on_load("tutoriels".concat("-ddowncontent"))</script>
+      <li class="active tutoriels">
+        <a href="/courses/gadexed_fr/tutorials/06-cassandra/">6. Cassandra</a>
+      </li>
+      
+      
+      <li class="tutoriels">
+        <a href="/courses/gadexed_fr/tutorials/07-neo4j/">7. Requêtes Neo4j</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  
+</nav>
+
+    </div>
+
+    
+
+    <main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 docs-content" role="main">
+
+      <article class="article">
+
+        <div class="docs-article-container">
+          <div class="heading">Gestion et analyse des données — Tutoriel 6</div>
+          <h1>Cassandra</h1>
+          <hr>
+          <div class="logo">
+            
+            </div>
+
+          <div class="article-style">
+            
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p><link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/cloud-computing.css"></p>
+<p>L’objectif de ce tutoriel est de vous familiariser avec Apache Cassandra et son langage de requête CQL (Cassandra Query Language).</p>
+<div id="configuration-de-lenvironnement" class="section level1">
+<h1>Configuration de l’environnement</h1>
+<ul>
+<li><p>Cliquez sur l’icône de Docker Desktop que vous trouvé sur le bureau.</p></li>
+<li><p>Ouvrez GitBas et saisissez la commande suivante pour démarrer un conteneur Docker avec Cassandra:</p>
+<pre class="bash"><code>docker compose -f docker-compose-cassandra.yml up -d</code></pre>
+<p>Cela va démarrer un conteneur Docker en arrière-plan avec le serveur Cassandra.</p>
+<ul>
+<li>Attendez quelques instants que le conteneur démarre complètement.</li>
+</ul></li>
+<li><p>Pour accéder au shell CQL de Cassandra à l’intérieur du conteneur, utilisez la commande suivante:</p></li>
+</ul>
+<pre class="bash"><code>  docker exec -it cassandra-container cqlsh</code></pre>
+<p>Lorsque vous avez démarré le shell, vous n’avez pas spécifié le noeud Cassandra auquel vous voulez vous connecter.
+Par défaut, il se connecte au noeud local que vous avez démarré dans le conteneur Docker.
+Le shell indique aussi que vous êtes connecté au cluster “Test Cluster” ; c’est le nom d’un cluster par défaut consistant en un seul noeud.</p>
+<p>Pour visualiser la liste des commandes disponibles dans le shell CQL, vous pouvez taper <code>HELP;</code> et appuyer sur Entrée.</p>
+<p>Voici une liste de commandes utiles pour interagir avec Cassandra.</p>
+</div>
+<div id="décrire-lenvironnement" class="section level1">
+<h1>Décrire l’environnement</h1>
+<ol style="list-style-type: decimal">
+<li>Pour afficher les informations sur le cluster auquel vous êtes connecté, utilisez la commande suivante:</li>
+</ol>
+<pre class="cql"><code>DESCRIBE CLUSTER;</code></pre>
+<p>Les informations affichées incluent :</p>
+<ul>
+<li>Le nom du cluster.</li>
+<li>L’algorithme de partitionnement utilisé.</li>
+<li>Le type de snitch utilisé. Le snitch est un composant qui détermine comment les noeuds sont trouvés et comment router les requêtes dans le cluster.</li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li>Pour afficher la liste des keyspaces (espaces de clés) disponibles dans le cluster, utilisez la commande suivante :</li>
+</ol>
+<pre class="cql"><code>DESCRIBE KEYSPACES;</code></pre>
+<p>Vous devriez trouver une liste de de keyspaces de sytème, que Cassandra gère internement et qui ne sont pas destinés à être modifiés par les utilisateurs.
+Cassandra utilise ces keyspaces pour stocker des informations sur le cluster, les métadonnées, les informations de sécurité, etc.</p>
+</div>
+<div id="création-dun-keyspace" class="section level1">
+<h1>Création d’un keyspace</h1>
+<p>Les commandes CQL peuvent parfois être un peu verbeuses, mais Cassandra offre une fonctionnalité de auto-complétion
+pour faciliter leur saisie.</p>
+<p>Saisissez la commande suivante suivie par un caractère de tabulation :</p>
+<pre class="cql"><code>
+CREATE KEYSPACE my_keyspace WITH
+</code></pre>
+<p>Vous devriez voir que la commande est complétée automatiquement de la manière suivante :</p>
+<pre><code>CREATE KEYSPACE my_keyspace WITH replication = {&#39;class&#39;: &#39;</code></pre>
+<p>Si vous appuyez à nouveau sur la touche de tabulation, vous verrez une liste des options disponibles pour la stratégie de réplication.</p>
+<p>Choisissez la stratégie <code>SimpleStrategy</code>.</p>
+<p>Ensuite, saisissez le caractère de tabulation et spécifiez un facteur de réplication de 1 (car nous avons un seul noeud dans notre cluster).</p>
+<p>Ajouter une accolade et un point-virgule pour terminer la commande et exécutez-la.</p>
+<p>Maintenant, saisissez la commande suivante pour vérifier que le keyspace a été créé avec succès:</p>
+<pre class="cql"><code>DESCRIBE KEYSPACE my_keyspace;</code></pre>
+<p>Vous devriez voir la définition du keyspace que vous venez de créer, y compris la stratégie de réplication et le facteur de réplication.
+Une troisième option s’affiche égalemenet, <code>durable_writes</code>, qui est activée par défaut.</p>
+<p>Maintenant, utilisez la commande suivante pour sélectionner le keyspace que vous venez de créer:</p>
+<pre class="cql"><code>USE my_keyspace;</code></pre>
+</div>
+<div id="création-dune-table" class="section level1">
+<h1>Création d’une table</h1>
+<p>Nous allons ensuite créer une table dans ce keyspace. Saisissez la commande suivante :</p>
+<pre class="cql"><code>CREATE TABLE user ( first_name text, last_name text, 
+    middle_initial text, title text, 
+    PRIMARY KEY (last_name, first_name)) ;</code></pre>
+<p>La commande précédente crée une table nommée <code>user</code> avec quatre colonnes : <code>first_name</code>, <code>last_name</code>, <code>middle_initial</code> et <code>title</code>.
+La clé primaire est composée de <code>last_name</code> et <code>first_name</code>, où <code>last_name</code> est la <strong>clé de partition</strong> et <code>first_name</code> est la <strong>clé de clustering</strong>.</p>
+<p>Pour vérifier que la table a été créée avec succès, utilisez la commande suivante:</p>
+<pre class="cql"><code>DESCRIBE TABLE user;</code></pre>
+</div>
+<div id="insérer-des-données" class="section level1">
+<h1>Insérer des données</h1>
+<p>Pour insérer des données dans une table, il faut utiliser la commande <code>INSERT INTO</code>.</p>
+<pre class="cql"><code>INSERT INTO user (first_name, last_name, middle_initial, title) VALUES (&#39;John&#39;, &#39;Doe&#39;, &#39;M.&#39;, &#39;Data Engineer&#39;);</code></pre>
+<p>Nous pouvons vérifier que les données ont été insérées avec succès en utilisant la commande <code>SELECT</code>:</p>
+<pre class="cql"><code>SELECT * FROM user ;</code></pre>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1  </strong></span>
+Essayez d’insérer un autre utilisateur dans la table <code>user</code> sans spécifier la valeur pour la colonne <code>middle_initial</code>.
+Est-ce que l’insertion réussit ? Pourquoi ?</p>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Oui, l’insertion réussit car il est possible de ne pas spécifier de valeur pour une colonne qui ne fait pas partie de la clé primaire.</p>
+<pre><code>INSERT INTO user (first_name, last_name, title) VALUES (&#39;Jane&#39;, &#39;Smith&#39;, &#39;Data Scientist&#39;);</code></pre>
+</div>
+</details>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 2  </strong></span>
+Essayez d’insérer un autre utilisateur dans la table <code>user</code> sans spécifier la valeur pour la colonne <code>first_name</code>.
+Est-ce que l’insertion réussit ? Pourquoi ?</p>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Non, l’insertion échoue car <code>first_name</code> fait partie de la clé primaire et doit toujours avoir une valeur.</p>
+<pre><code>INSERT INTO user (last_name, title) VALUES (&#39;Jane&#39;, &#39;Data Scientist&#39;);</code></pre>
+<p>Lorsqu’on insère des données dans une table Cassandra, il est obligatoire de fournir des valeurs pour toutes les colonnes
+qui font partie de la clé primaire.</p>
+</div>
+</details>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3  </strong></span>
+Essayez d’insérer un autre utilisateur ayant le même <code>last_name</code> que l’utilisateur existant, mais un <code>first_name</code> différent.
+Est-ce que l’insertion réussit ? Pourquoi ?</p>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Oui, l’insertion réussit car la combinaison de <code>last_name</code> et <code>first_name</code> est unique.</p>
+<pre><code>INSERT INTO user (last_name, first_name, middle_initial, title) VALUES (&#39;Doe&#39;, &#39;Peter&#39;, &#39;Cloud architect&#39;, &#39;Dr.&#39;);</code></pre>
+</div>
+</details>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 4  </strong></span>
+Essayez d’insérer un autre utilisateur ayant le même <code>last_name</code> et `first_name`` que un utilisateur existant.
+Est-ce que l’insertion réussit ? Pourquoi ?</p>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Oui, l’insertion réussit, mais elle écrase les données de l’utilisateur existant.</p>
+<pre><code>INSERT INTO user (last_name, first_name, middle_initial, title) VALUES (&#39;Doe&#39;, &#39;Joe&#39;, &#39;Mr.&#39;, &#39;Developer.&#39;);</code></pre>
+<p>Cette opération est appelée upsert (update + insert) dans Cassandra.</p>
+</div>
+</details>
+</div>
+<div id="mettre-à-jour-des-données" class="section level1">
+<h1>Mettre à jour des données</h1>
+<p>Pour mettre à jour des données dans une table, on utilise la commande <code>UPDATE</code>.</p>
+<pre class="cql"><code>UPDATE user SET title = &#39;Senior Data Engineer&#39; WHERE last_name = &#39;Doe&#39; and first_name = &#39;John&#39; ;</code></pre>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 5  </strong></span>
+Essayez de changer le titre de l’utilisateur avec le <code>last_name</code> ‘Doe’ sans spécifier le <code>first_name</code>.
+Est-ce que la mise à jour réussit ? Pourquoi ?</p>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Non, la mise à jour échoue car il est obligatoire de fournir des valeurs pour toutes les composantes de la clé primaire dans la clause WHERE.</p>
+<pre><code>UPDATE user SET title=&#39;unknown&#39; where last_name=&#39;Doe&#39;;</code></pre>
+<p>On a vu précédemment qu’une insertion se comporte comme une opération de mise à jour si on insère une ligne avec une clé primaire existante.
+Puisqu’il n’y a pas de différence entre une insertion et une mise à jour dans Cassandra,
+il est logique que les mêmes règles s’appliquent aux deux opérations.</p>
+</div>
+</details>
+</div>
+<div id="colonnes" class="section level1">
+<h1>Colonnes</h1>
+<p>Une colonne est l’unité de base de stockage des données dans Cassandra.
+Une colonne est identifiée par un nom et a une valeur associée.
+Les valeurs d’une colonne doivent être du même type de données pour toutes les lignes d’une table.
+Deux attributs importants d’une colonne sont les timestamps et les TTL (Time To Live).</p>
+<div id="timestamps" class="section level2">
+<h2>Timestamps</h2>
+<p>A chaque fois qu’une colonne est insérée ou mise à jour, Cassandra associe un timestamp (en microsecondes) à cette opération.
+Internement, Cassandra utilise ces timestamps pour résoudre les conflits lors de la réplication
+des données entre les noeuds du cluster (<em>last write wins</em>).
+Pour visualiser les timestamps des colonnes, vous pouvez utiliser la commande <code>SELECT</code> avec la fonction <code>writetime()</code>.</p>
+<pre class="cql"><code>SELECT first_name, last_name, middle_initial, writetime(middle_initial) FROM user;</code></pre>
+<p>Il n’y a pas de timestamp pour les colonnes qui n’ont pas de valeur (NULL).</p>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 6  </strong></span>
+Essayez de renvoyer le timestamp pour l’une des colonnes de la clé primaire.
+Qu’est-ce que vous observez ?</p>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre><code>SELECT first_name, last_name, writetime(first_name) FROM user;</code></pre>
+<p>L’opération n’est pas permise. En effet, les colonnes qui font partie de la clé primaire n’ont pas de timestamp associé, car elles sont immuables.
+Si vous essayez de modifier le prénom d’un utilisateur avec un UPDATE, vous devez en fait insérer une nouvelle ligne avec une nouvelle valeur pour le prénom.</p>
+</div>
+</details>
+</div>
+<div id="ttl-time-to-live" class="section level2">
+<h2>TTL (Time To Live)</h2>
+<p>Une des fonctionnalités intéressantes de Cassandra est la possibilité de définir un TTL (Time To Live) pour une colonne.
+Par défaut, les colonnes n’ont pas de TTL, ce qui signifie que les données sont conservées indéfiniment.
+La requête suivante renvoie le TTL de la colonne <code>middle_initial</code> pour chaque ligne de la table <code>user</code>:</p>
+<pre class="cql"><code>SELECT ttl(middle_initial) FROM user;</code></pre>
+<p>Essayons maintenant de définir un TTL de 60 secondes pour la colonne <code>title</code> de l’utilisateur ‘John Doe’:</p>
+<pre class="cql"><code>UPDATE user USING TTL 60 SET title = &#39;Temporary Title&#39; WHERE last_name = &#39;Doe&#39; and first_name = &#39;John&#39; ;</code></pre>
+<p>Après 60 secondes, la colonne <code>title</code> de l’utilisateur ‘John Doe’ sera automatiquement supprimée par Cassandra.
+Vérifiez-le.</p>
+<p>On peut aussi définir un TTL lors de l’insertion d’une nouvelle ligne:</p>
+<pre class="cql"><code>INSERT INTO user (first_name, last_name, middle_initial, title) VALUES (&#39;Alice&#39;, &#39;Johnson&#39;, &#39;A.&#39;, &#39;Intern&#39;) USING TTL 60 ;</code></pre>
+<p>La commande précédente insère une nouvelle ligne pour l’utilisateur ‘Alice Johnson’ avec un TTL de 60 secondes pour toutes les colonnes.
+Après 60 secondes, toute la ligne sera automatiquement supprimée par Cassandra.</p>
+</div>
+<div id="lire-et-écrire-des-données" class="section level2">
+<h2>Lire et écrire des données</h2>
+<p>Pour insérer des données dans la table <code>user</code>, utilisez la commande suivante:</p>
+<pre class="cql"><code>INSERT INTO user (first_name, last_name, title) VALUES (&#39;John&#39;, &#39;Doe&#39;, &#39;Data Engineer&#39;);</code></pre>
+<p>Vous pouvez lire les données que vous avez insérées en utilisant la commande suivante :</p>
+<pre class="cql"><code>SELECT * FROM user WHERE last_name = &#39;Doe&#39; and first_name = &#39;John&#39; ;</code></pre>
+<p>Dans la commande précédente, nous avons spécifié une valeur pour chaque composant de la clé primaire dans la clause WHERE.</p>
+<p>Que se passe-t-il si vous essayez d’exécuter la commande suivante ?</p>
+<pre class="cql"><code>SELECT * FROM user WHERE last_name = &#39;Doe&#39; ;</code></pre>
+<p>Tout se passe bien.</p>
+<p>Et avec la commande suivante ?</p>
+<pre class="cql"><code>SELECT * FROM user WHERE first_name = &#39;John&#39; ;</code></pre>
+<p>Nous avons une erreur.</p>
+<p>Nous pouvons supprimer des données en utilisant la commande DELETE.</p>
+<pre class="cql"><code>DELETE FROM user WHERE last_name = &#39;Doe&#39; and first_name = &#39;John&#39; ;</code></pre>
+<p>Pour vérifier que les données ont été supprimées, vous pouvez exécuter à nouveau la commande SELECT.</p>
+<p>Pour supprimer toutes les lignes d’une table, on peut utiliser la commande TRUNCATE.<br />
+Pour supprimer une table, on utilise la commande DROP TABLE.</p>
+</div>
+</div>
+<div id="utilisation-de-la-clé-primaire" class="section level1">
+<h1>Utilisation de la clé primaire</h1>
+<p>Exécutons à nouveau la commande INSERT pour insérer des données dans la table <code>user</code>:</p>
+<pre class="cql"><code>INSERT INTO user (first_name, last_name, title) VALUES (&#39;John&#39;, &#39;Doe&#39;, &#39;Data Engineer&#39;);</code></pre>
+<p>Lorsque nous avons créé la table <code>user</code>, nous avons défini la clé primaire comme étant composée de <code>last_name</code> et <code>first_name</code>.
+Cela est interprété par Cassandra comme une clé primaire composite, où <code>last_name</code> est la <strong>clé de partition</strong> et <code>first_name</code>
+est la <strong>clé de clustering</strong>.</p>
+<p>Si nous essayons d’insérer une autre ligne avec le même <code>last_name</code> mais un <code>first_name</code> différent, comme dans la commande suivante:</p>
+<pre class="cql"><code>INSERT INTO user (first_name, last_name, title) VALUES (&#39;Jane&#39;, &#39;Doe&#39;, &#39;Data Scientist&#39;);</code></pre>
+<p>Cassandra va accepter cette insertion car la combinaison de <code>last_name</code> et <code>first_name</code> est unique.</p>
+<p>Maintenant, si on cherche toutes les entrées avec <code>last_name</code> égal à ‘Doe’:</p>
+<pre class="cql"><code>SELECT * FROM user WHERE last_name = &#39;Doe&#39; ;</code></pre>
+<p>Nous obtenons un résultat. La requête précédente charge en mémoire le contenu de la partition correspondant à <code>last_name</code> égal à ‘Doe’.</p>
+<p>Si on essaie de récupérer les entrées avec <code>first_name</code> égal à ‘John’:</p>
+<pre class="cql"><code>SELECT * FROM user WHERE first_name = &#39;John&#39; ;</code></pre>
+<p>on obtient une erreur. En fait, une recherche basée uniquement sur la clé de clustering n’est pas permise dans Cassandra en raison des performances.
+Si nous avons vraiment besoin de faire ce type de requête, on peut spécifier la commande suivante :</p>
+<pre class="cql"><code>SELECT * FROM user WHERE first_name = &#39;John&#39; ALLOW FILTERING;</code></pre>
+</div>
+
+          </div>
+
+          
+
+
+
+          
+        </div>
+
+        
+      </article>
+
+      
+
+    </main>
+  </div>
+</div>
+
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.1/anchor.min.js" integrity="sha256-pB/deHc9CGfFpJRjC43imB29Rse8tak+5eXqntO94ck=" crossorigin="anonymous"></script>
+    <script>
+      anchors.add();
+    </script>
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.3da86581634ab22d5bb3fc4505df30a5.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

@@ -28,10 +28,10 @@
   
     
   
-  <meta name="description" content="Exercises on SQL">
+  <meta name="description" content="Modélisation des données pour le data warehouse">
 
   
-  <link rel="alternate" hreflang="en-us" href="/courses/gadexed_fr/tutorials/02-sql/">
+  <link rel="alternate" hreflang="en-us" href="/courses/gadexed_fr/tutorials/03-multidimension-modeling/">
 
   
 
@@ -219,7 +219,7 @@
   <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_3.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_3.png">
 
-  <link rel="canonical" href="/courses/gadexed_fr/tutorials/02-sql/">
+  <link rel="canonical" href="/courses/gadexed_fr/tutorials/03-multidimension-modeling/">
 
   
   
@@ -233,9 +233,9 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Gianluca Quercini">
-  <meta property="og:url" content="/courses/gadexed_fr/tutorials/02-sql/">
-  <meta property="og:title" content="SQL | Gianluca Quercini">
-  <meta property="og:description" content="Exercises on SQL"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:url" content="/courses/gadexed_fr/tutorials/03-multidimension-modeling/">
+  <meta property="og:title" content="Modélisation multidimensionnelle | Gianluca Quercini">
+  <meta property="og:description" content="Modélisation des données pour le data warehouse"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
   
     
@@ -258,7 +258,7 @@
 
 
 
-  <title>SQL | Gianluca Quercini</title>
+  <title>Modélisation multidimensionnelle | Gianluca Quercini</title>
 
 </head>
 
@@ -549,13 +549,13 @@
         <a href="/courses/gadexed_fr/tutorials/01-rel-data-modeling/">1. Modélisation des données relationnelles</a>
       </li>
       
-      <script>open_menu_on_load("tutoriels".concat("-ddowncontent"))</script>
-      <li class="active tutoriels">
+      
+      <li class="tutoriels">
         <a href="/courses/gadexed_fr/tutorials/02-sql/">2. SQL</a>
       </li>
       
-      
-      <li class="tutoriels">
+      <script>open_menu_on_load("tutoriels".concat("-ddowncontent"))</script>
+      <li class="active tutoriels">
         <a href="/courses/gadexed_fr/tutorials/03-multidimension-modeling/">3. Modélisation multidimensionnelle</a>
       </li>
       
@@ -593,8 +593,8 @@
       <article class="article">
 
         <div class="docs-article-container">
-          <div class="heading">Gestion et analyse des données — Tutoriel 2</div>
-          <h1>SQL</h1>
+          <div class="heading">Gestion et analyse des données — Tutoriel 3</div>
+          <h1>Modélisation multidimensionnelle</h1>
           <hr>
           <div class="logo">
             
@@ -607,201 +607,251 @@
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<p>L’objectif de ce tutoriel est de pratiquer les <strong>requêtes SQL</strong> sur une
-base de données relationnelle.</p>
-<div id="préparation-de-lenvironnement" class="section level1">
-<h1>Préparation de l’environnement</h1>
-<ul>
-<li><p>Démnarrez la machine virtuelle fournie pour le cours avec Remote Desktop Connection.</p></li>
-<li><p>Ouvrez <em>pgAdmin4</em> (icône sur le bureau).</p></li>
-<li><p>Dans le menu de gauche, faites un clic droit sur <em>Servers</em> et sélectionnez <em>PostgreSQL 18</em> pour vous connecter.</p></li>
-<li><p>Lorsque vous y êtes invité, entrez le mot de passe <code>postgres</code> pour vous connecter au serveur.</p></li>
-<li><p>Sélectionnez la base de données <code>travel</code>.</p></li>
-<li><p>Ouvrez un nouvel outil de requête (clic droit sur la base de données <code>travel</code>, sélectionnez <em>Query tool</em>).</p></li>
-</ul>
-</div>
-<div id="schéma-de-la-base-de-données" class="section level1">
-<h1>Schéma de la base de données</h1>
-<p>La figure 1 montre le schéma physique de la base de données <code>travel</code>.
-Vous pouvez également l’obtenir dans pgAdmin4 en faisant un clic droit sur la base de données <code>travel</code>,
-et en sélectionnant <em>ERD for database</em>.</p>
+<p>L’objectif de ce tutoriel est d’apprendre les stratégies de modélisation multidimensionnelle
+pour un data warehouse.</p>
+<div id="scénario-applicatif" class="section level1">
+<h1>Scénario applicatif</h1>
+<p>Nous voulons mettre en place un data warehouse pour une chaîne de magasins de location de DVD, que nous appellerons Sakila.
+Chaque magasin de Sakila a sa propre base de données opérationnelle, où les informations sur les locations sont stockées.
+La direction de Sakila souhaite agréger les données de tous les magasins dans un entrepôt de données centralisé (un data warehouse),
+afin de pouvoir analyser ces données et vérifier les tendances commerciales.</p>
+<p>Le modèle physique de la base de données opérationnelle de Sakila est illustré en figure 1.</p>
 <div class="figure" style="text-align: center"><span id="fig:cnm"></span>
-<img src="/courses/databases/gadexed/tutorial-2/travel_physical_schema.png" alt="Le schéma physique de la base de données travel" width="100%" />
+<img src="/courses/databases/gadexed/tutorial-3/sakila-db.png" alt="Modèle physique de la base de données Sakila" width="100%" />
 <p class="caption">
-Figure 1: Le schéma physique de la base de données travel
+Figure 1: Modèle physique de la base de données Sakila
 </p>
 </div>
 </div>
-<div id="contraintes-de-clé-étrangère" class="section level1">
-<h1>Contraintes de clé étrangère</h1>
-<p>Regardez le schéma physique de la base de données <code>travel</code>.
-Les tables sont liées par des contraintes de clé étrangère.</p>
-<p>Par exemple, la table <code>flight_booking</code> a une colonne <code>trip_id</code> qui référence
-la colonne <code>trip_id</code> dans la table <code>trip</code>.</p>
+<div id="méthodologie-de-modélisation" class="section level1">
+<h1>Méthodologie de modélisation</h1>
+<p>Ralph Kimball, dans son ouvrage <em>The Data Warehouse Toolkit: The definitive guide to dimensional modeling</em>,
+propose une méthodologie en quatre étapes pour modéliser un data warehouse.</p>
+<p><strong>1. Identifier les processus métier.</strong></p>
+<p>Un <strong>processus métier</strong> est une activité de bas niveau effectuée par une organisation, telle que la prise de commandes,
+la facturation, la réception des paiements, l’inscription des étudiants,
+la réalisation d’une procédure médicale ou le traitement des réclamations.
+Un processus métier est normalement associé à un système opérationnel, comme par exemple un système de gestion des commandes ou un système de facturation.</p>
+<p>Il faut aussi souligner qu’un processus métier ne correspond pas à un département de l’organisation, ni à l’une de ses fonctions.</p>
+<p><strong>2. Déclarer le grain</strong></p>
+<p>Déclarer le <strong>grain</strong> signifie spécifier exactement ce que représente une ligne individuelle de la table des faits. Le grain indique le niveau de détail associé aux mesures de la table des faits.
+Il répond à la question : « Comment décrivez-vous une seule ligne dans la table des faits ? »
+Le grain est déterminé par les réalités physiques du système opérationnel qui capture les événements du processus métier.
+Exemples de déclaration du grain : une ligne pour chaque article sur une facture d’un médecin, une ligne pour chaque carte d’embarquement scannée à la porte d’embarquement,
+une ligne pour chaque transaction bancaire effectuée par un client….</p>
+<p>Kimball recommande de choisir le <strong>grain le plus détaillé possible</strong>, car cela maximise la flexibilité analytique du data warehouse.</p>
+<p><strong>3. Identifier les dimensions</strong></p>
+<p>Si le grain est bien défini, les <strong>dimensions</strong> peuvent généralement être facilement identifiées, car elles représentent le « qui, quoi, où, quand, pourquoi et comment »
+associés à un événement métier.
+Des exemples de dimensions courantes incluent : <em>date</em>, <em>produit</em>, <em>client</em>, <em>employé</em>…
+Pour chaque dimension choisie, il faudra ensuite lister tous les attributs discrets, de type texte, qui décrivent chaque table de dimension.</p>
+<p><strong>4. Identifier les faits</strong></p>
+<p>Les <strong>faits</strong> sont déterminés en répondant à la question : « Qu’est-ce que le processus mesure ? »
+Les utilisateurs métier sont particulièrement intéressés par l’analyse de ces indicateurs de performance.
+Tous les faits candidats dans une conception doivent être cohérents avec le grain défini à l’étape 2.
+Les faits qui ont un grain différent doivent être placés dans une table de faits séparée.
+Normalement les faits sont des valeurs numériques additives, telles que la quantité commandée ou le montant en dollars.</p>
+<p>Il est important de déterminer les faits non seulement à partir de l’analyse des données opérationnelles existantes, mais aussi après une
+interaction approfondie avec les utilisateurs métier.</p>
+</div>
+<div id="identification-du-processus-métier" class="section level1">
+<h1>Identification du processus métier</h1>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1  </strong></span>
-Essayez de supprimer une ligne de la table <code>trip</code> qui est référencée par une ligne dans la table <code>flight_booking</code>.
-Que se passe-t-il?</p>
+Quel est le processus métier que nous voulons modéliser
+dans le data warehouse de Sakila?</p>
 </div>
 </div>
-<p>Regardons comment la contrainte de clé étrangère est définie dans la table <code>flight_booking</code>.</p>
-<ul>
-<li>Dans pgAdmin4, dans le menu de gauche, développez la base de données <code>travel</code> &gt; Schéma public &gt; Tables.</li>
-<li>Faites un clic droit sur la table <code>flight_booking</code>.</li>
-<li>Sélectionnez <em>Properties</em>.</li>
-<li>Sélectionnez l’onglet <em>Constraints</em>.</li>
-<li>Sélectionnez l’onglet <em>Foreign Key</em>.</li>
-<li>Sélectionnez la contrainte de clé étrangère nommée <code>flight_booking_trip_id_fkey</code>.</li>
-<li>Cliquez sur l’icône en forme de crayon pour modifier la contrainte.</li>
-<li>Sélectionnez l’onglet <em>Actions</em>.</li>
-</ul>
-<p>Ici vous pouvez voir que l’action de suppression est définie sur <em>No Action</em>.</p>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Le processus métier que nous voulons modéliser est la <strong>location de films</strong>.
+Un autre processus métier pourrait être l’approvisionnement des magasins en films, mais nous ne le considérons pas ici.</p>
+</div>
+</details>
+</div>
+<div id="déclaration-du-grain" class="section level1">
+<h1>Déclaration du grain</h1>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 2  </strong></span>
-Comment l’action de mise à jour est-elle définie pour la contrainte de clé étrangère
-<code>flight_booking_trip_id_fkey</code> dans la table <code>flight_booking</code>?</p>
-<p>Essayez maintenant de modifier le <code>trip_id</code> d’une ligne de la table <code>trip</code> qui est référencée par une ligne de la table <code>flight_booking</code>.</p>
-<p>Que se passe-t-il?</p>
+Déclarez le grain du data warehouse de Sakila.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Chaque fois qu’un client loue un film dans un magasin,
+un enregistrement est créé dans la base de données opérationnelle.
+Donc, le grain est : <strong>une ligne pour chaque location de film par un client dans un magasin à un moment donné</strong>.</p>
 </div>
-<div id="requêtes-sql-exploratoires" class="section level1">
-<h1>Requêtes SQL exploratoires</h1>
-<p>Lorsque vous travaillez avec une nouvelle base de données, il est important d’explorer les données
-pour se familiariser avec sa structure et son contenu.
-Nous pouvons utiliser des requêtes SQL pour effectuer cette exploration.</p>
+</details>
+</div>
+<div id="identification-des-dimensions" class="section level1">
+<h1>Identification des dimensions</h1>
+<div class="infobox exercisebox">
+<strong>Exercice</strong>
+
+<div class="exercise">
+<span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3  </strong></span>Identifiez les dimensions du data warehouse de Sakila.
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Les dimensions sont :</p>
+<ul>
+<li>La dimension <strong>client</strong> : <em>qui</em> loue le film?</li>
+<li>La dimension <strong>film</strong> : <em>quel</em> film est loué?</li>
+<li>La dimension <strong>période</strong> : <em>quand</em> le film est-il loué?</li>
+<li>La dimension <strong>magasin</strong> : dans quel magasin (<em>où</em>) le film est-il loué?</li>
+<li>La dimension <strong>employé</strong> : quel employé (<em>qui</em>) a géré la location?</li>
+</ul>
+</div>
+</details>
+</div>
+<div id="identification-des-faits" class="section level1">
+<h1>Identification des faits</h1>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3  </strong></span>
-1. Combien de clients sont des hommes et combien sont des femmes ?</p>
-<ol start="2" style="list-style-type: decimal">
-<li><p>Quel est le nombre de clients dans chaque pays ?</p></li>
-<li><p>Quel est l’âge moyen des clients dans chaque pays ?</p></li>
-<li><p>Quel est le nombre total de réservations d’hôtel effectuées pour chaque hôtel ? Triez les résultats par ordre décroissant.</p></li>
-<li><p>Quel est le montant total dépensé pour les réservations d’hôtel par chaque client ?
-Triez les résultats par ordre décroissant et affichez uniquement les 10 meilleurs clients.</p></li>
-<li><p>Combien d’aéroports y a-t-il dans chaque pays ? Listez uniquement les pays ayant plus de 10 aéroports.</p></li>
-</ol>
+<span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 4  </strong></span>Identifiez les faits du data warehouse de Sakila.
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Concernant une location de film par un client dans un magasin à un moment donné,
+nous souhaitons connaître le <strong>montant payé</strong> pour la location et la <strong>durée de la location</strong>.</p>
 </div>
-<div id="requêtes-métier" class="section level1">
-<h1>Requêtes métier</h1>
-<p>Maintenant, imaginons que vous travaillez pour l’agence de voyage qui gère la base de données.
-On vous a demandé de fournir quelques informations basées sur les données stockées dans la base de données.</p>
+</details>
+</div>
+<div id="modélisation-dimensionnelle" class="section level1">
+<h1>Modélisation dimensionnelle</h1>
+<p>Maintenant que nous avons détermine le grain, identifié les faits et les dimensions, nous dessinons progressivement le
+schéma en étoile pour le data warehouse de Sakila.</p>
 <div class="infobox exercisebox">
-<strong>Exercise</strong>
+<p><strong>Exercice</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 4  </strong></span></p>
+<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 5  </strong></span>
+Déssinez le premier croquis du schéma en étoile pour le data warehouse de Sakila.</p>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p><img src="/courses/databases/gadexed/tutorial-3/sakila-dw-sketch.png" alt="First sketch of the Sakila data warehouse"></p>
+</div>
+</details>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 6  </strong></span>
+Identifiez la clé primaire de la table des faits.</p>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>La clé primaire de la table des faits est composée de
+tous les attributs qui réfèrent aux dimensions.
+Donc, nous écrivons un attribut pour chaque dimension :</p>
+<ul>
+<li><p><TT>staff_pk</TT>, clé étrangère reférençant la dimension <TT>dim_staff</TT>.</p></li>
+<li><p><TT>film_pk</TT>, clé étrangère reférençant la dimension <TT>dim_film</TT>.</p></li>
+<li><p><TT>date_pk</TT>, clé étrangère reférençant la dimension <TT>dim_date</TT>.</p></li>
+<li><p><TT>store_pk</TT>, clé étrangère reférençant la dimension <TT>dim_store</TT>.</p></li>
+<li><p><TT>customer_pk</TT>, clé étrangère reférençant la dimension <TT>dim_customer</TT>.</p></li>
+</ul>
+<p>Voici le nouveau schéma.</p>
+<p><img src="/courses/databases/gadexed/tutorial-3/sakila-dw-sketch-keys.png" alt="First sketch of the Sakila data warehouse with PKs"></p>
+</div>
+</details>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 7  </strong></span>
+Pour chaque table de dimension, il y a une table correspondante dans la
+base de données opérationnelle.</p>
+<p>Il faudra décider quelles colonnes ajouter dans chaque table de dimension.
+En particulier, il faudra discuter les points suivants :</p>
 <ol style="list-style-type: decimal">
-<li><p>Identifiez les 5 destinations les plus populaires en fonction du nombre de vols réservés.</p></li>
-<li><p>Trouvez la durée moyenne des séjours pour chaque hôtel.</p></li>
-<li><p>Déterminez les 10 clients qui ont effectué le plus grand nombre de réservations (hôtel et vol).</p></li>
-<li><p>Analysez les tendances mensuelles des réservations de vols et des réservations d’hôtels.</p></li>
-<li><p>Affichez les détails du voyage numéro 1. En particulier, listez les prénoms et noms du client, et, pour chaque vol, les aéroports de départ et d’arrivée,
-la date de départ, et les villes de départ et d’arrivée des aéroports.</p></li>
+<li><p>Est-ce qu’on va ajouter dans une table de dimension la clé primaire
+de la table opérationnelle correspondante ?</p></li>
+<li><p>Comment va-t-on traiter les colonnes qui sont des clés étrangères
+dans la table opérationnelle correspondante ?</p></li>
 </ol>
 </div>
 </div>
-<!--
-# Installing PostgreSQL
-
-In this tutorial you'll be using **PostgreSQL** as a 
-relational database management system (RDBMS).
-
 <details>
-<summary>Instructions for Windows users</summary>
-
-You can download the latest version of PostgreSQL (14.3) 
-[**from this page**](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads){target="_blank"}.
-
-The installer contains:
-
-* The PostgreSQL server.
-* pgAdmin, a graphical administration tool. 
-
-You'll find **detailed installation instructions** [**on this page**](https://www.enterprisedb.com/docs/supported-open-source/postgresql/installer/02_installing_postgresql_with_the_graphical_installation_wizard/01_invoking_the_graphical_installer/){target="_blank"}.
-
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<ul>
+<li><p>Concernant la première question, la réponse est oui. Chaque table de dimension
+doit contenir la clé primaire de la table opérationnelle correspondante.
+Cela permet de faire le lien entre le data warehouse et la base de données opérationnelle.</p></li>
+<li><p>Concernant la deuxième question, il y a deux possibilités.</p></li>
+</ul>
+<ol style="list-style-type: decimal">
+<li>Soit on décide d’intégrer les dimensions liées, en ajoutant les attributs des tables liées
+dans la table de dimension courante.</li>
+<li>Soit on décide de ne pas intégrer les dimensions liées, et dans ce cas
+on ajoute dans la table de dimension courante les clés étrangères
+qui réfèrent aux dimensions liées.</li>
+</ol>
+<p>Si on choisit la deuxième option, on obtient un schéma en flocon (snowflake schema), qui est normalisé.</p>
+<p><img src="/courses/databases/gadexed/tutorial-3/sakila-dw-snowflake.png" alt="Snowflake schema of Sakila data warehouse"></p>
+<p>Pour un data warehouse, on préfère généralement la première option (donc un schéma dénormalisé en étoile),
+car elle permet d’éviter les jointures entre les tables de dimensions.</p>
+<p><img src="/courses/databases/gadexed/tutorial-3/sakila-dw-sketch-dim-full.png" alt="Sakila data warehouse with attributes in the dimension tables"></p>
+<p>Une dernière remarque sur l’attribut <TT>film_categories</TT> dans la table <TT>dim_film</TT>.
+La valeur de cet attribut est une liste.
+On pourrait vouloir éviter cela en utilisant un <strong>one-hot encoding</strong>.
+En d’autres termes, si l’ensemble de toutes les catégories possibles est petit, on peut avoir un attribut booléen
+pour chaque catégorie ; une valeur <em>True</em> indiquerait que le film appartient à la catégorie correspondante.</p>
+</div>
 </details>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
 
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 8  </strong></span>
+Identifiez et ajoutez les faits dans la table des faits.</p>
+</div>
+</div>
 <details>
-<summary>Instructions for macOS users</summary>
-
-The best way to get PostgreSQL is to download and install **Postgres.app**. 
-You'll find more details [**on this page**](https://postgresapp.com/){target="_blank"}.
-
-In addition, you need to [**install pgAdmin**](https://www.pgadmin.org/download/){target="blank"},
-ad administration tool that lets you interact with your database through a 
-graphical interface.
-
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p><img src="/courses/databases/gadexed/tutorial-3/sakila-dw-final.png" alt="Final schema of the Sakila data warehouse"></p>
+<p>La dimension des dates peut être enrichie avec des attributs supplémentaires,
+tels que le jour de la semaine, le mois, le trimestre, l’année fiscale, un indicateur de jour férié, etc.</p>
+</div>
 </details>
-
-
-# Starting PostgreSQL and pgAdmin
-
-<details>
-<summary>Instructions for Windows users</summary>
-
-
-
-
-Once the installation is completed, a PostgreSQL server should be 
-automatically started. 
-
-You'll open a connection to the server through the following steps:
-
-* Execute pgAdmin.
-
-* On the left-side menu, right-click on *Servers* and select *Create server*.
-
-* In the *General* tab, give the server a name of your choice.
-
-* In the *Connection* tab, write *localhost* as *host*. 
-Don't change the values of the other options.
-
-<details>
-<summary>What if I get the *Unable to connect to server* error?</summary>
-
-You might want to have a look at the list of the services running on your computer to verify
-whether the PostgreSQL server is actually running. 
-
-[**This page**](https://www.dell.com/support/kbdoc/it-it/000126393/how-to-use-windows-services-to-start-or-stop-services){target="_blank"} 
-explains you how to open the panel with the list of services.
-You should locate PostgreSQL in this panel. If the service is not running, you'll 
-need to manually start it.
-
-</details>
-
-
-
-</details>
-
-<details>
-<summary>Instructions for MacOS users</summary>
-
-You'll open a connection to the server through the following steps:
-
-* Execute pgAdmin.
-
-* On the left-side menu, right-click on *Servers* and select *Create server*.
-
-* In the *General* tab, give the server a name of your choice.
-
-* In the *Connection* tab, write *localhost* as *host*. 
-Don't change the values of the other options.
-
-</details>
-
--->
 </div>
 
           </div>

@@ -2745,15 +2745,299 @@ of the Sakila database.&lt;/p&gt;
     </item>
     
     <item>
+      <title>Cassandra</title>
+      <link>/courses/gadexed_fr/tutorials/06-cassandra/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/gadexed_fr/tutorials/06-cassandra/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;p&gt;L’objectif de ce tutoriel est de vous familiariser avec Apache Cassandra et son langage de requête CQL (Cassandra Query Language).&lt;/p&gt;
+&lt;div id=&#34;configuration-de-lenvironnement&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Configuration de l’environnement&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Cliquez sur l’icône de Docker Desktop que vous trouvé sur le bureau.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Ouvrez GitBas et saisissez la commande suivante pour démarrer un conteneur Docker avec Cassandra:&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;docker compose -f docker-compose-cassandra.yml up -d&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Cela va démarrer un conteneur Docker en arrière-plan avec le serveur Cassandra.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Attendez quelques instants que le conteneur démarre complètement.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Pour accéder au shell CQL de Cassandra à l’intérieur du conteneur, utilisez la commande suivante:&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;  docker exec -it cassandra-container cqlsh&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Lorsque vous avez démarré le shell, vous n’avez pas spécifié le noeud Cassandra auquel vous voulez vous connecter.
+Par défaut, il se connecte au noeud local que vous avez démarré dans le conteneur Docker.
+Le shell indique aussi que vous êtes connecté au cluster “Test Cluster” ; c’est le nom d’un cluster par défaut consistant en un seul noeud.&lt;/p&gt;
+&lt;p&gt;Pour visualiser la liste des commandes disponibles dans le shell CQL, vous pouvez taper &lt;code&gt;HELP;&lt;/code&gt; et appuyer sur Entrée.&lt;/p&gt;
+&lt;p&gt;Voici une liste de commandes utiles pour interagir avec Cassandra.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;décrire-lenvironnement&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Décrire l’environnement&lt;/h1&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Pour afficher les informations sur le cluster auquel vous êtes connecté, utilisez la commande suivante:&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;DESCRIBE CLUSTER;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Les informations affichées incluent :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Le nom du cluster.&lt;/li&gt;
+&lt;li&gt;L’algorithme de partitionnement utilisé.&lt;/li&gt;
+&lt;li&gt;Le type de snitch utilisé. Le snitch est un composant qui détermine comment les noeuds sont trouvés et comment router les requêtes dans le cluster.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Pour afficher la liste des keyspaces (espaces de clés) disponibles dans le cluster, utilisez la commande suivante :&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;DESCRIBE KEYSPACES;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Vous devriez trouver une liste de de keyspaces de sytème, que Cassandra gère internement et qui ne sont pas destinés à être modifiés par les utilisateurs.
+Cassandra utilise ces keyspaces pour stocker des informations sur le cluster, les métadonnées, les informations de sécurité, etc.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;création-dun-keyspace&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Création d’un keyspace&lt;/h1&gt;
+&lt;p&gt;Les commandes CQL peuvent parfois être un peu verbeuses, mais Cassandra offre une fonctionnalité de auto-complétion
+pour faciliter leur saisie.&lt;/p&gt;
+&lt;p&gt;Saisissez la commande suivante suivie par un caractère de tabulation :&lt;/p&gt;
+&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;
+CREATE KEYSPACE my_keyspace WITH
+&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Vous devriez voir que la commande est complétée automatiquement de la manière suivante :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;CREATE KEYSPACE my_keyspace WITH replication = {&amp;#39;class&amp;#39;: &amp;#39;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Si vous appuyez à nouveau sur la touche de tabulation, vous verrez une liste des options disponibles pour la stratégie de réplication.&lt;/p&gt;
+&lt;p&gt;Choisissez la stratégie &lt;code&gt;SimpleStrategy&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Ensuite, saisissez le caractère de tabulation et spécifiez un facteur de réplication de 1 (car nous avons un seul noeud dans notre cluster).&lt;/p&gt;
+&lt;p&gt;Ajouter une accolade et un point-virgule pour terminer la commande et exécutez-la.&lt;/p&gt;
+&lt;p&gt;Maintenant, saisissez la commande suivante pour vérifier que le keyspace a été créé avec succès:&lt;/p&gt;
+&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;DESCRIBE KEYSPACE my_keyspace;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Vous devriez voir la définition du keyspace que vous venez de créer, y compris la stratégie de réplication et le facteur de réplication.
+Une troisième option s’affiche égalemenet, &lt;code&gt;durable_writes&lt;/code&gt;, qui est activée par défaut.&lt;/p&gt;
+&lt;p&gt;Maintenant, utilisez la commande suivante pour sélectionner le keyspace que vous venez de créer:&lt;/p&gt;
+&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;USE my_keyspace;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;création-dune-table&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Création d’une table&lt;/h1&gt;
+&lt;p&gt;Nous allons ensuite créer une table dans ce keyspace. Saisissez la commande suivante :&lt;/p&gt;
+&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;CREATE TABLE user ( first_name text, last_name text, 
+    middle_initial text, title text, 
+    PRIMARY KEY (last_name, first_name)) ;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;La commande précédente crée une table nommée &lt;code&gt;user&lt;/code&gt; avec quatre colonnes : &lt;code&gt;first_name&lt;/code&gt;, &lt;code&gt;last_name&lt;/code&gt;, &lt;code&gt;middle_initial&lt;/code&gt; et &lt;code&gt;title&lt;/code&gt;.
+La clé primaire est composée de &lt;code&gt;last_name&lt;/code&gt; et &lt;code&gt;first_name&lt;/code&gt;, où &lt;code&gt;last_name&lt;/code&gt; est la &lt;strong&gt;clé de partition&lt;/strong&gt; et &lt;code&gt;first_name&lt;/code&gt; est la &lt;strong&gt;clé de clustering&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Pour vérifier que la table a été créée avec succès, utilisez la commande suivante:&lt;/p&gt;
+&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;DESCRIBE TABLE user;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;insérer-des-données&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Insérer des données&lt;/h1&gt;
+&lt;p&gt;Pour insérer des données dans une table, il faut utiliser la commande &lt;code&gt;INSERT INTO&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;INSERT INTO user (first_name, last_name, middle_initial, title) VALUES (&amp;#39;John&amp;#39;, &amp;#39;Doe&amp;#39;, &amp;#39;M.&amp;#39;, &amp;#39;Data Engineer&amp;#39;);&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Nous pouvons vérifier que les données ont été insérées avec succès en utilisant la commande &lt;code&gt;SELECT&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;SELECT * FROM user ;&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1  &lt;/strong&gt;&lt;/span&gt;
+Essayez d’insérer un autre utilisateur dans la table &lt;code&gt;user&lt;/code&gt; sans spécifier la valeur pour la colonne &lt;code&gt;middle_initial&lt;/code&gt;.
+Est-ce que l’insertion réussit ? Pourquoi ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Oui, l’insertion réussit car il est possible de ne pas spécifier de valeur pour une colonne qui ne fait pas partie de la clé primaire.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;INSERT INTO user (first_name, last_name, title) VALUES (&amp;#39;Jane&amp;#39;, &amp;#39;Smith&amp;#39;, &amp;#39;Data Scientist&amp;#39;);&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2  &lt;/strong&gt;&lt;/span&gt;
+Essayez d’insérer un autre utilisateur dans la table &lt;code&gt;user&lt;/code&gt; sans spécifier la valeur pour la colonne &lt;code&gt;first_name&lt;/code&gt;.
+Est-ce que l’insertion réussit ? Pourquoi ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Non, l’insertion échoue car &lt;code&gt;first_name&lt;/code&gt; fait partie de la clé primaire et doit toujours avoir une valeur.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;INSERT INTO user (last_name, title) VALUES (&amp;#39;Jane&amp;#39;, &amp;#39;Data Scientist&amp;#39;);&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Lorsqu’on insère des données dans une table Cassandra, il est obligatoire de fournir des valeurs pour toutes les colonnes
+qui font partie de la clé primaire.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3  &lt;/strong&gt;&lt;/span&gt;
+Essayez d’insérer un autre utilisateur ayant le même &lt;code&gt;last_name&lt;/code&gt; que l’utilisateur existant, mais un &lt;code&gt;first_name&lt;/code&gt; différent.
+Est-ce que l’insertion réussit ? Pourquoi ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Oui, l’insertion réussit car la combinaison de &lt;code&gt;last_name&lt;/code&gt; et &lt;code&gt;first_name&lt;/code&gt; est unique.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;INSERT INTO user (last_name, first_name, middle_initial, title) VALUES (&amp;#39;Doe&amp;#39;, &amp;#39;Peter&amp;#39;, &amp;#39;Cloud architect&amp;#39;, &amp;#39;Dr.&amp;#39;);&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4  &lt;/strong&gt;&lt;/span&gt;
+Essayez d’insérer un autre utilisateur ayant le même &lt;code&gt;last_name&lt;/code&gt; et `first_name`` que un utilisateur existant.
+Est-ce que l’insertion réussit ? Pourquoi ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Oui, l’insertion réussit, mais elle écrase les données de l’utilisateur existant.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;INSERT INTO user (last_name, first_name, middle_initial, title) VALUES (&amp;#39;Doe&amp;#39;, &amp;#39;Joe&amp;#39;, &amp;#39;Mr.&amp;#39;, &amp;#39;Developer.&amp;#39;);&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Cette opération est appelée upsert (update + insert) dans Cassandra.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;mettre-à-jour-des-données&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Mettre à jour des données&lt;/h1&gt;
+&lt;p&gt;Pour mettre à jour des données dans une table, on utilise la commande &lt;code&gt;UPDATE&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;UPDATE user SET title = &amp;#39;Senior Data Engineer&amp;#39; WHERE last_name = &amp;#39;Doe&amp;#39; and first_name = &amp;#39;John&amp;#39; ;&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5  &lt;/strong&gt;&lt;/span&gt;
+Essayez de changer le titre de l’utilisateur avec le &lt;code&gt;last_name&lt;/code&gt; ‘Doe’ sans spécifier le &lt;code&gt;first_name&lt;/code&gt;.
+Est-ce que la mise à jour réussit ? Pourquoi ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Non, la mise à jour échoue car il est obligatoire de fournir des valeurs pour toutes les composantes de la clé primaire dans la clause WHERE.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;UPDATE user SET title=&amp;#39;unknown&amp;#39; where last_name=&amp;#39;Doe&amp;#39;;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;On a vu précédemment qu’une insertion se comporte comme une opération de mise à jour si on insère une ligne avec une clé primaire existante.
+Puisqu’il n’y a pas de différence entre une insertion et une mise à jour dans Cassandra,
+il est logique que les mêmes règles s’appliquent aux deux opérations.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;colonnes&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Colonnes&lt;/h1&gt;
+&lt;p&gt;Une colonne est l’unité de base de stockage des données dans Cassandra.
+Une colonne est identifiée par un nom et a une valeur associée.
+Les valeurs d’une colonne doivent être du même type de données pour toutes les lignes d’une table.
+Deux attributs importants d’une colonne sont les timestamps et les TTL (Time To Live).&lt;/p&gt;
+&lt;div id=&#34;timestamps&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Timestamps&lt;/h2&gt;
+&lt;p&gt;A chaque fois qu’une colonne est insérée ou mise à jour, Cassandra associe un timestamp (en microsecondes) à cette opération.
+Internement, Cassandra utilise ces timestamps pour résoudre les conflits lors de la réplication
+des données entre les noeuds du cluster (&lt;em&gt;last write wins&lt;/em&gt;).
+Pour visualiser les timestamps des colonnes, vous pouvez utiliser la commande &lt;code&gt;SELECT&lt;/code&gt; avec la fonction &lt;code&gt;writetime()&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;SELECT first_name, last_name, middle_initial, writetime(middle_initial) FROM user;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Il n’y a pas de timestamp pour les colonnes qui n’ont pas de valeur (NULL).&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 6  &lt;/strong&gt;&lt;/span&gt;
+Essayez de renvoyer le timestamp pour l’une des colonnes de la clé primaire.
+Qu’est-ce que vous observez ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;pre&gt;&lt;code&gt;SELECT first_name, last_name, writetime(first_name) FROM user;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;L’opération n’est pas permise. En effet, les colonnes qui font partie de la clé primaire n’ont pas de timestamp associé, car elles sont immuables.
+Si vous essayez de modifier le prénom d’un utilisateur avec un UPDATE, vous devez en fait insérer une nouvelle ligne avec une nouvelle valeur pour le prénom.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;ttl-time-to-live&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;TTL (Time To Live)&lt;/h2&gt;
+&lt;p&gt;Une des fonctionnalités intéressantes de Cassandra est la possibilité de définir un TTL (Time To Live) pour une colonne.
+Par défaut, les colonnes n’ont pas de TTL, ce qui signifie que les données sont conservées indéfiniment.
+La requête suivante renvoie le TTL de la colonne &lt;code&gt;middle_initial&lt;/code&gt; pour chaque ligne de la table &lt;code&gt;user&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;SELECT ttl(middle_initial) FROM user;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Essayons maintenant de définir un TTL de 60 secondes pour la colonne &lt;code&gt;title&lt;/code&gt; de l’utilisateur ‘John Doe’:&lt;/p&gt;
+&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;UPDATE user USING TTL 60 SET title = &amp;#39;Temporary Title&amp;#39; WHERE last_name = &amp;#39;Doe&amp;#39; and first_name = &amp;#39;John&amp;#39; ;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Après 60 secondes, la colonne &lt;code&gt;title&lt;/code&gt; de l’utilisateur ‘John Doe’ sera automatiquement supprimée par Cassandra.
+Vérifiez-le.&lt;/p&gt;
+&lt;p&gt;On peut aussi définir un TTL lors de l’insertion d’une nouvelle ligne:&lt;/p&gt;
+&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;INSERT INTO user (first_name, last_name, middle_initial, title) VALUES (&amp;#39;Alice&amp;#39;, &amp;#39;Johnson&amp;#39;, &amp;#39;A.&amp;#39;, &amp;#39;Intern&amp;#39;) USING TTL 60 ;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;La commande précédente insère une nouvelle ligne pour l’utilisateur ‘Alice Johnson’ avec un TTL de 60 secondes pour toutes les colonnes.
+Après 60 secondes, toute la ligne sera automatiquement supprimée par Cassandra.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;lire-et-écrire-des-données&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Lire et écrire des données&lt;/h2&gt;
+&lt;p&gt;Pour insérer des données dans la table &lt;code&gt;user&lt;/code&gt;, utilisez la commande suivante:&lt;/p&gt;
+&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;INSERT INTO user (first_name, last_name, title) VALUES (&amp;#39;John&amp;#39;, &amp;#39;Doe&amp;#39;, &amp;#39;Data Engineer&amp;#39;);&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Vous pouvez lire les données que vous avez insérées en utilisant la commande suivante :&lt;/p&gt;
+&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;SELECT * FROM user WHERE last_name = &amp;#39;Doe&amp;#39; and first_name = &amp;#39;John&amp;#39; ;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Dans la commande précédente, nous avons spécifié une valeur pour chaque composant de la clé primaire dans la clause WHERE.&lt;/p&gt;
+&lt;p&gt;Que se passe-t-il si vous essayez d’exécuter la commande suivante ?&lt;/p&gt;
+&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;SELECT * FROM user WHERE last_name = &amp;#39;Doe&amp;#39; ;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Tout se passe bien.&lt;/p&gt;
+&lt;p&gt;Et avec la commande suivante ?&lt;/p&gt;
+&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;SELECT * FROM user WHERE first_name = &amp;#39;John&amp;#39; ;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Nous avons une erreur.&lt;/p&gt;
+&lt;p&gt;Nous pouvons supprimer des données en utilisant la commande DELETE.&lt;/p&gt;
+&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;DELETE FROM user WHERE last_name = &amp;#39;Doe&amp;#39; and first_name = &amp;#39;John&amp;#39; ;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Pour vérifier que les données ont été supprimées, vous pouvez exécuter à nouveau la commande SELECT.&lt;/p&gt;
+&lt;p&gt;Pour supprimer toutes les lignes d’une table, on peut utiliser la commande TRUNCATE.&lt;br /&gt;
+Pour supprimer une table, on utilise la commande DROP TABLE.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;utilisation-de-la-clé-primaire&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Utilisation de la clé primaire&lt;/h1&gt;
+&lt;p&gt;Exécutons à nouveau la commande INSERT pour insérer des données dans la table &lt;code&gt;user&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;INSERT INTO user (first_name, last_name, title) VALUES (&amp;#39;John&amp;#39;, &amp;#39;Doe&amp;#39;, &amp;#39;Data Engineer&amp;#39;);&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Lorsque nous avons créé la table &lt;code&gt;user&lt;/code&gt;, nous avons défini la clé primaire comme étant composée de &lt;code&gt;last_name&lt;/code&gt; et &lt;code&gt;first_name&lt;/code&gt;.
+Cela est interprété par Cassandra comme une clé primaire composite, où &lt;code&gt;last_name&lt;/code&gt; est la &lt;strong&gt;clé de partition&lt;/strong&gt; et &lt;code&gt;first_name&lt;/code&gt;
+est la &lt;strong&gt;clé de clustering&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Si nous essayons d’insérer une autre ligne avec le même &lt;code&gt;last_name&lt;/code&gt; mais un &lt;code&gt;first_name&lt;/code&gt; différent, comme dans la commande suivante:&lt;/p&gt;
+&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;INSERT INTO user (first_name, last_name, title) VALUES (&amp;#39;Jane&amp;#39;, &amp;#39;Doe&amp;#39;, &amp;#39;Data Scientist&amp;#39;);&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Cassandra va accepter cette insertion car la combinaison de &lt;code&gt;last_name&lt;/code&gt; et &lt;code&gt;first_name&lt;/code&gt; est unique.&lt;/p&gt;
+&lt;p&gt;Maintenant, si on cherche toutes les entrées avec &lt;code&gt;last_name&lt;/code&gt; égal à ‘Doe’:&lt;/p&gt;
+&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;SELECT * FROM user WHERE last_name = &amp;#39;Doe&amp;#39; ;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Nous obtenons un résultat. La requête précédente charge en mémoire le contenu de la partition correspondant à &lt;code&gt;last_name&lt;/code&gt; égal à ‘Doe’.&lt;/p&gt;
+&lt;p&gt;Si on essaie de récupérer les entrées avec &lt;code&gt;first_name&lt;/code&gt; égal à ‘John’:&lt;/p&gt;
+&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;SELECT * FROM user WHERE first_name = &amp;#39;John&amp;#39; ;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;on obtient une erreur. En fait, une recherche basée uniquement sur la clé de clustering n’est pas permise dans Cassandra en raison des performances.
+Si nous avons vraiment besoin de faire ce type de requête, on peut spécifier la commande suivante :&lt;/p&gt;
+&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;SELECT * FROM user WHERE first_name = &amp;#39;John&amp;#39; ALLOW FILTERING;&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Queries in Cassandra</title>
       <link>/courses/gadexed_en/tutorials/cassandra-queries/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>/courses/gadexed_en/tutorials/cassandra-queries/</guid>
       <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
 
 
 &lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
 &lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;p&gt;docker compose -f docker-compose-cassandra.yml up -d&lt;/p&gt;
+&lt;p&gt;docker exec -it cassandra-container cqlsh&lt;/p&gt;
 &lt;div id=&#34;setting-up-the-environment&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Setting up the environment&lt;/h1&gt;
 &lt;ul&gt;
@@ -3858,6 +4142,266 @@ db.rental.aggregate({$match: {rental_id: 2}},
                     {$lookup: {from: &#34;staff&#34;, localField: &#34;staff.staff_id&#34;, 
                     foreignField:&#34;staff_id&#34;, as:&#34;staff_member&#34;}}, {$project: {&#34;staff_member&#34;: 1}})
 &lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Modélisation multidimensionnelle</title>
+      <link>/courses/gadexed_fr/tutorials/03-multidimension-modeling/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/gadexed_fr/tutorials/03-multidimension-modeling/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;p&gt;L’objectif de ce tutoriel est d’apprendre les stratégies de modélisation multidimensionnelle
+pour un data warehouse.&lt;/p&gt;
+&lt;div id=&#34;scénario-applicatif&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Scénario applicatif&lt;/h1&gt;
+&lt;p&gt;Nous voulons mettre en place un data warehouse pour une chaîne de magasins de location de DVD, que nous appellerons Sakila.
+Chaque magasin de Sakila a sa propre base de données opérationnelle, où les informations sur les locations sont stockées.
+La direction de Sakila souhaite agréger les données de tous les magasins dans un entrepôt de données centralisé (un data warehouse),
+afin de pouvoir analyser ces données et vérifier les tendances commerciales.&lt;/p&gt;
+&lt;p&gt;Le modèle physique de la base de données opérationnelle de Sakila est illustré en figure 1.&lt;/p&gt;
+&lt;div class=&#34;figure&#34; style=&#34;text-align: center&#34;&gt;&lt;span id=&#34;fig:cnm&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/courses/databases/gadexed/tutorial-3/sakila-db.png&#34; alt=&#34;Modèle physique de la base de données Sakila&#34; width=&#34;100%&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 1: Modèle physique de la base de données Sakila
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;méthodologie-de-modélisation&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Méthodologie de modélisation&lt;/h1&gt;
+&lt;p&gt;Ralph Kimball, dans son ouvrage &lt;em&gt;The Data Warehouse Toolkit: The definitive guide to dimensional modeling&lt;/em&gt;,
+propose une méthodologie en quatre étapes pour modéliser un data warehouse.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;1. Identifier les processus métier.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Un &lt;strong&gt;processus métier&lt;/strong&gt; est une activité de bas niveau effectuée par une organisation, telle que la prise de commandes,
+la facturation, la réception des paiements, l’inscription des étudiants,
+la réalisation d’une procédure médicale ou le traitement des réclamations.
+Un processus métier est normalement associé à un système opérationnel, comme par exemple un système de gestion des commandes ou un système de facturation.&lt;/p&gt;
+&lt;p&gt;Il faut aussi souligner qu’un processus métier ne correspond pas à un département de l’organisation, ni à l’une de ses fonctions.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;2. Déclarer le grain&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Déclarer le &lt;strong&gt;grain&lt;/strong&gt; signifie spécifier exactement ce que représente une ligne individuelle de la table des faits. Le grain indique le niveau de détail associé aux mesures de la table des faits.
+Il répond à la question : « Comment décrivez-vous une seule ligne dans la table des faits ? »
+Le grain est déterminé par les réalités physiques du système opérationnel qui capture les événements du processus métier.
+Exemples de déclaration du grain : une ligne pour chaque article sur une facture d’un médecin, une ligne pour chaque carte d’embarquement scannée à la porte d’embarquement,
+une ligne pour chaque transaction bancaire effectuée par un client….&lt;/p&gt;
+&lt;p&gt;Kimball recommande de choisir le &lt;strong&gt;grain le plus détaillé possible&lt;/strong&gt;, car cela maximise la flexibilité analytique du data warehouse.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;3. Identifier les dimensions&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Si le grain est bien défini, les &lt;strong&gt;dimensions&lt;/strong&gt; peuvent généralement être facilement identifiées, car elles représentent le « qui, quoi, où, quand, pourquoi et comment »
+associés à un événement métier.
+Des exemples de dimensions courantes incluent : &lt;em&gt;date&lt;/em&gt;, &lt;em&gt;produit&lt;/em&gt;, &lt;em&gt;client&lt;/em&gt;, &lt;em&gt;employé&lt;/em&gt;…
+Pour chaque dimension choisie, il faudra ensuite lister tous les attributs discrets, de type texte, qui décrivent chaque table de dimension.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;4. Identifier les faits&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Les &lt;strong&gt;faits&lt;/strong&gt; sont déterminés en répondant à la question : « Qu’est-ce que le processus mesure ? »
+Les utilisateurs métier sont particulièrement intéressés par l’analyse de ces indicateurs de performance.
+Tous les faits candidats dans une conception doivent être cohérents avec le grain défini à l’étape 2.
+Les faits qui ont un grain différent doivent être placés dans une table de faits séparée.
+Normalement les faits sont des valeurs numériques additives, telles que la quantité commandée ou le montant en dollars.&lt;/p&gt;
+&lt;p&gt;Il est important de déterminer les faits non seulement à partir de l’analyse des données opérationnelles existantes, mais aussi après une
+interaction approfondie avec les utilisateurs métier.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;identification-du-processus-métier&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Identification du processus métier&lt;/h1&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1  &lt;/strong&gt;&lt;/span&gt;
+Quel est le processus métier que nous voulons modéliser
+dans le data warehouse de Sakila?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Le processus métier que nous voulons modéliser est la &lt;strong&gt;location de films&lt;/strong&gt;.
+Un autre processus métier pourrait être l’approvisionnement des magasins en films, mais nous ne le considérons pas ici.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;déclaration-du-grain&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Déclaration du grain&lt;/h1&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2  &lt;/strong&gt;&lt;/span&gt;
+Déclarez le grain du data warehouse de Sakila.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Chaque fois qu’un client loue un film dans un magasin,
+un enregistrement est créé dans la base de données opérationnelle.
+Donc, le grain est : &lt;strong&gt;une ligne pour chaque location de film par un client dans un magasin à un moment donné&lt;/strong&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;identification-des-dimensions&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Identification des dimensions&lt;/h1&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;strong&gt;Exercice&lt;/strong&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3  &lt;/strong&gt;&lt;/span&gt;Identifiez les dimensions du data warehouse de Sakila.
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Les dimensions sont :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;La dimension &lt;strong&gt;client&lt;/strong&gt; : &lt;em&gt;qui&lt;/em&gt; loue le film?&lt;/li&gt;
+&lt;li&gt;La dimension &lt;strong&gt;film&lt;/strong&gt; : &lt;em&gt;quel&lt;/em&gt; film est loué?&lt;/li&gt;
+&lt;li&gt;La dimension &lt;strong&gt;période&lt;/strong&gt; : &lt;em&gt;quand&lt;/em&gt; le film est-il loué?&lt;/li&gt;
+&lt;li&gt;La dimension &lt;strong&gt;magasin&lt;/strong&gt; : dans quel magasin (&lt;em&gt;où&lt;/em&gt;) le film est-il loué?&lt;/li&gt;
+&lt;li&gt;La dimension &lt;strong&gt;employé&lt;/strong&gt; : quel employé (&lt;em&gt;qui&lt;/em&gt;) a géré la location?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;identification-des-faits&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Identification des faits&lt;/h1&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4  &lt;/strong&gt;&lt;/span&gt;Identifiez les faits du data warehouse de Sakila.
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Concernant une location de film par un client dans un magasin à un moment donné,
+nous souhaitons connaître le &lt;strong&gt;montant payé&lt;/strong&gt; pour la location et la &lt;strong&gt;durée de la location&lt;/strong&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;modélisation-dimensionnelle&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Modélisation dimensionnelle&lt;/h1&gt;
+&lt;p&gt;Maintenant que nous avons détermine le grain, identifié les faits et les dimensions, nous dessinons progressivement le
+schéma en étoile pour le data warehouse de Sakila.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5  &lt;/strong&gt;&lt;/span&gt;
+Déssinez le premier croquis du schéma en étoile pour le data warehouse de Sakila.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/gadexed/tutorial-3/sakila-dw-sketch.png&#34; alt=&#34;First sketch of the Sakila data warehouse&#34;&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 6  &lt;/strong&gt;&lt;/span&gt;
+Identifiez la clé primaire de la table des faits.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;La clé primaire de la table des faits est composée de
+tous les attributs qui réfèrent aux dimensions.
+Donc, nous écrivons un attribut pour chaque dimension :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;TT&gt;staff_pk&lt;/TT&gt;, clé étrangère reférençant la dimension &lt;TT&gt;dim_staff&lt;/TT&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;TT&gt;film_pk&lt;/TT&gt;, clé étrangère reférençant la dimension &lt;TT&gt;dim_film&lt;/TT&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;TT&gt;date_pk&lt;/TT&gt;, clé étrangère reférençant la dimension &lt;TT&gt;dim_date&lt;/TT&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;TT&gt;store_pk&lt;/TT&gt;, clé étrangère reférençant la dimension &lt;TT&gt;dim_store&lt;/TT&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;TT&gt;customer_pk&lt;/TT&gt;, clé étrangère reférençant la dimension &lt;TT&gt;dim_customer&lt;/TT&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Voici le nouveau schéma.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/gadexed/tutorial-3/sakila-dw-sketch-keys.png&#34; alt=&#34;First sketch of the Sakila data warehouse with PKs&#34;&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 7  &lt;/strong&gt;&lt;/span&gt;
+Pour chaque table de dimension, il y a une table correspondante dans la
+base de données opérationnelle.&lt;/p&gt;
+&lt;p&gt;Il faudra décider quelles colonnes ajouter dans chaque table de dimension.
+En particulier, il faudra discuter les points suivants :&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Est-ce qu’on va ajouter dans une table de dimension la clé primaire
+de la table opérationnelle correspondante ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Comment va-t-on traiter les colonnes qui sont des clés étrangères
+dans la table opérationnelle correspondante ?&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Concernant la première question, la réponse est oui. Chaque table de dimension
+doit contenir la clé primaire de la table opérationnelle correspondante.
+Cela permet de faire le lien entre le data warehouse et la base de données opérationnelle.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Concernant la deuxième question, il y a deux possibilités.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Soit on décide d’intégrer les dimensions liées, en ajoutant les attributs des tables liées
+dans la table de dimension courante.&lt;/li&gt;
+&lt;li&gt;Soit on décide de ne pas intégrer les dimensions liées, et dans ce cas
+on ajoute dans la table de dimension courante les clés étrangères
+qui réfèrent aux dimensions liées.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Si on choisit la deuxième option, on obtient un schéma en flocon (snowflake schema), qui est normalisé.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/gadexed/tutorial-3/sakila-dw-snowflake.png&#34; alt=&#34;Snowflake schema of Sakila data warehouse&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Pour un data warehouse, on préfère généralement la première option (donc un schéma dénormalisé en étoile),
+car elle permet d’éviter les jointures entre les tables de dimensions.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/gadexed/tutorial-3/sakila-dw-sketch-dim-full.png&#34; alt=&#34;Sakila data warehouse with attributes in the dimension tables&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Une dernière remarque sur l’attribut &lt;TT&gt;film_categories&lt;/TT&gt; dans la table &lt;TT&gt;dim_film&lt;/TT&gt;.
+La valeur de cet attribut est une liste.
+On pourrait vouloir éviter cela en utilisant un &lt;strong&gt;one-hot encoding&lt;/strong&gt;.
+En d’autres termes, si l’ensemble de toutes les catégories possibles est petit, on peut avoir un attribut booléen
+pour chaque catégorie ; une valeur &lt;em&gt;True&lt;/em&gt; indiquerait que le film appartient à la catégorie correspondante.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 8  &lt;/strong&gt;&lt;/span&gt;
+Identifiez et ajoutez les faits dans la table des faits.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/gadexed/tutorial-3/sakila-dw-final.png&#34; alt=&#34;Final schema of the Sakila data warehouse&#34;&gt;&lt;/p&gt;
+&lt;p&gt;La dimension des dates peut être enrichie avec des attributs supplémentaires,
+tels que le jour de la semaine, le mois, le trimestre, l’année fiscale, un indicateur de jour férié, etc.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/details&gt;
 &lt;/div&gt;
