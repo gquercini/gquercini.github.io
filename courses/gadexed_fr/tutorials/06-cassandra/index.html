@@ -607,7 +607,104 @@
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<p>L’objectif de ce tutoriel est de vous familiariser avec Apache Cassandra et son langage de requête CQL (Cassandra Query Language).</p>
+<p>L’objectif de ce tutoriel est de vous familiariser avec Apache Cassandra; en particulier, nous allons apprendre à modéliser des données dans Cassandra
+et à exécuter des requêtes CQL (Cassandra Query Language) pour interagir avec la base de données.</p>
+<div id="scénario-applicatif" class="section level1">
+<h1>Scénario applicatif</h1>
+<p>Nous allons utiliser Sakila comme notre étude de cas.
+Pour rappel, le modèle conceptuel de la base de données relationnelle Sakila est illustré en Figure 1.</p>
+<div class="figure" style="text-align: center"><span id="fig:cnm"></span>
+<img src="/courses/databases/gadexed/tutorial-6/sakila-conceptual-model.png" alt="Modèle conceptuel de la base de données Sakila" width="100%" />
+<p class="caption">
+Figure 1: Modèle conceptuel de la base de données Sakila
+</p>
+</div>
+</div>
+<div id="modélisation-de-données" class="section level1">
+<h1>Modélisation de données</h1>
+<p>Afin de correctement modéliser les données dans Cassandra, nous avons besoin de deux éléments :</p>
+<ul>
+<li><p>Le <strong>modèle conceptuel</strong> de la base de données relationnelle Sakila (fourni ci-dessus).</p></li>
+<li><p>Le <strong>Workflow applicatif</strong>, qui décrit les requêtes que les utilisateurs finaux effectueront sur la base de données.</p></li>
+</ul>
+<p>Le workflow applicatif doit tenir en compte des besoins de chaque type d’utilisateur : gérants, employés, clients, etc.
+Dans ce tutoriel, nous allons nous concentrer sur les requêtes que les gérants de Sakila pourraient exécuter pour analyser les données.
+Donc, on ne créera qu’un seul keyspace dans Cassandra pour stocker les données ;
+cependant, dans un scénario réel, on pourrait avoir plusieurs keyspaces pour différents types d’utilisateurs.</p>
+<div id="workflow-applicatif" class="section level2">
+<h2>Workflow applicatif</h2>
+<p>Nous allons maintenant définir un ensemble de requêtes que les employés de Sakila pourraient exécuter pour analyser les données.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1  </strong></span>
+Proposez une série de requêtes que les gérants de Sakila pourraient vouloir exécuter sur la base de données.
+Numérotez chaque requête pour référence ultérieure.</p>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Voici un exemple :</p>
+<ul>
+<li><p>Q1. Voir les locations d’un client donné.</p></li>
+<li><p>Q2. Voir les locations effectuées par un employé donné.</p></li>
+<li><p>Q3. Voir les locations d’un film donné.</p></li>
+<li><p>Q4. Trouver des informations sur une location (montant, date…)</p></li>
+<li><p>Q5. Trouver des informations sur le client qui a effectué la location.</p></li>
+<li><p>Q6. Trouver des informations sur l’employé qui a effectué la location.</p></li>
+<li><p>Q7. Trouver des informations sur un film.</p></li>
+<li><p>Q8. Trouver des informations sur le support (par exemple, DVD, Blue-Ray) loué.</p></li>
+<li><p>Q9. Trouver des informations sur un magasin spécifique.</p></li>
+<li><p>Q10. Voir les acteurs d’un film.</p></li>
+<li><p>Q11. Voir les catégories d’un film.</p></li>
+</ul>
+</div>
+</details>
+<p>Nous allons maintenant organiser ces requêtes dans un workflow.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 2  </strong></span>
+À partir des requêtes que vous avez proposées dans le premier exercice, dessinez
+un workflow de l’application que les gérants de Sakila utiliseront pour interroger les données.</p>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p><img src="/courses/databases/gadexed/tutorial-6/sakila-application-queries.png" alt="Sakila Cassandra application workflow"></p>
+</div>
+</details>
+</div>
+<div id="modèle-logique" class="section level2">
+<h2>Modèle logique</h2>
+<p>À partir du workflow applicatif, nous pouvons maintenant concevoir le modèle logique de données dans Cassandra.
+Le modèle logique sera dessiné à l’aide d’un diagramme de Chebotko.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3  </strong></span>
+Sur la base du workflow applicatif, dessinez le diagramme de Chebotko (le modèle logique) de la base de données Sakila.</p>
+</div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p><img src="/courses/databases/gadexed/tutorial-6/sakila-logical-model.png" alt="Sakila Cassandra application workflow"></p>
+</div>
+</details>
+</div>
+</div>
 <div id="configuration-de-lenvironnement" class="section level1">
 <h1>Configuration de l’environnement</h1>
 <ul>
@@ -688,7 +785,7 @@ La clé primaire est composée de <code>last_name</code> et <code>first_name</co
 <p><strong>Exercice</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1  </strong></span>
+<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 4  </strong></span>
 Essayez d’insérer un autre utilisateur dans la table <code>user</code> sans spécifier la valeur pour la colonne <code>middle_initial</code>.
 Est-ce que l’insertion réussit ? Pourquoi ?</p>
 </div>
@@ -706,7 +803,7 @@ Solution
 <p><strong>Exercice</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 2  </strong></span>
+<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 5  </strong></span>
 Essayez d’insérer un autre utilisateur dans la table <code>user</code> sans spécifier la valeur pour la colonne <code>first_name</code>.
 Est-ce que l’insertion réussit ? Pourquoi ?</p>
 </div>
@@ -726,7 +823,7 @@ qui font partie de la clé primaire.</p>
 <p><strong>Exercice</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3  </strong></span>
+<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 6  </strong></span>
 Essayez d’insérer un autre utilisateur ayant le même <code>last_name</code> que l’utilisateur existant, mais un <code>first_name</code> différent.
 Est-ce que l’insertion réussit ? Pourquoi ?</p>
 </div>
@@ -744,7 +841,7 @@ Solution
 <p><strong>Exercice</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 4  </strong></span>
+<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 7  </strong></span>
 Essayez d’insérer un autre utilisateur ayant le même <code>last_name</code> et `first_name`` que un utilisateur existant.
 Est-ce que l’insertion réussit ? Pourquoi ?</p>
 </div>
@@ -768,7 +865,7 @@ Solution
 <p><strong>Exercice</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 5  </strong></span>
+<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 8  </strong></span>
 Essayez de changer le titre de l’utilisateur avec le <code>last_name</code> ‘Doe’ sans spécifier le <code>first_name</code>.
 Est-ce que la mise à jour réussit ? Pourquoi ?</p>
 </div>
@@ -804,7 +901,7 @@ Pour visualiser les timestamps des colonnes, vous pouvez utiliser la commande <c
 <p><strong>Exercice</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 6  </strong></span>
+<p><span id="exr:unnamed-chunk-9" class="exercise"><strong>Exercise 9  </strong></span>
 Essayez de renvoyer le timestamp pour l’une des colonnes de la clé primaire.
 Qu’est-ce que vous observez ?</p>
 </div>
@@ -873,6 +970,46 @@ est la <strong>clé de clustering</strong>.</p>
 <p>on obtient une erreur. En fait, une recherche basée uniquement sur la clé de clustering n’est pas permise dans Cassandra en raison des performances.
 Si nous avons vraiment besoin de faire ce type de requête, on peut spécifier la commande suivante :</p>
 <pre class="cql"><code>SELECT * FROM user WHERE first_name = &#39;John&#39; ALLOW FILTERING;</code></pre>
+<p>data available <a href="/courses/databases/gadexed/tutorial-6/sakila-data-cassandra.zip" target="_blank"><strong>data here</strong></a></p>
+<!-- * Download the [**data here**](/courses/databases/tutorial-8/sakila-data-cassandra.zip){target="_blank"}
+
+* Extract the downloaded archive. This will create a new folder containing the data. Let's refer to this folder as DATA_FOLDER.
+
+* Go back to the CQL shell and type the following command ``source 'DATAFOLDER/sakila.cql'`` (replace DATAFOLDER with the full path to the data folder). This command will 
+create the sakila keyspace (database).
+
+* In the CQL shell, type the command ``use sakila;``
+
+* We have 11 tables in this database. You can see the definition with the command ``describe sakila``.
+
+* As the last step, we need to import the data. No luck here, we need to import the data table by table with the following commands:
+
+```
+COPY sakila.actors_by_film FROM 'DATAFOLDER/actors_by_film.csv' WITH HEADER = TRUE ;
+
+COPY sakila.categories_by_film FROM 'DATAFOLDER/categories_by_film.csv' WITH HEADER = TRUE ;
+
+COPY sakila.customers FROM 'DATAFOLDER/customers.csv' WITH HEADER = TRUE ;
+
+COPY sakila.film FROM 'DATAFOLDER/film.csv' WITH HEADER = TRUE ;
+
+COPY sakila.inventory FROM 'DATAFOLDER/inventory.csv' WITH HEADER = TRUE ;
+
+COPY sakila.rentals_by_customer FROM 'DATAFOLDER/rentals_by_customer.csv' WITH HEADER = TRUE ;
+
+COPY sakila.rentals_by_film FROM 'DATAFOLDER/rentals_by_film.csv' WITH HEADER = TRUE ;
+
+COPY sakila.rentals_by_staff FROM 'DATAFOLDER/rentals_by_staff.csv' WITH HEADER = TRUE ;
+
+COPY sakila.rentals FROM 'DATAFOLDER/rentals.csv' WITH HEADER = TRUE ;
+
+COPY sakila.staff FROM 'DATAFOLDER/staff.csv' WITH HEADER = TRUE ;
+
+COPY sakila.store FROM 'DATAFOLDER/store.csv' WITH HEADER = TRUE ;
+
+```
+
+**If during the import you get the error 'too many open files' close the shell with exit and start it again.** -->
 </div>
 
           </div>

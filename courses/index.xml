@@ -2755,7 +2755,104 @@ of the Sakila database.&lt;/p&gt;
 
 &lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
 &lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
-&lt;p&gt;L’objectif de ce tutoriel est de vous familiariser avec Apache Cassandra et son langage de requête CQL (Cassandra Query Language).&lt;/p&gt;
+&lt;p&gt;L’objectif de ce tutoriel est de vous familiariser avec Apache Cassandra; en particulier, nous allons apprendre à modéliser des données dans Cassandra
+et à exécuter des requêtes CQL (Cassandra Query Language) pour interagir avec la base de données.&lt;/p&gt;
+&lt;div id=&#34;scénario-applicatif&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Scénario applicatif&lt;/h1&gt;
+&lt;p&gt;Nous allons utiliser Sakila comme notre étude de cas.
+Pour rappel, le modèle conceptuel de la base de données relationnelle Sakila est illustré en Figure 1.&lt;/p&gt;
+&lt;div class=&#34;figure&#34; style=&#34;text-align: center&#34;&gt;&lt;span id=&#34;fig:cnm&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/courses/databases/gadexed/tutorial-6/sakila-conceptual-model.png&#34; alt=&#34;Modèle conceptuel de la base de données Sakila&#34; width=&#34;100%&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 1: Modèle conceptuel de la base de données Sakila
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;modélisation-de-données&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Modélisation de données&lt;/h1&gt;
+&lt;p&gt;Afin de correctement modéliser les données dans Cassandra, nous avons besoin de deux éléments :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Le &lt;strong&gt;modèle conceptuel&lt;/strong&gt; de la base de données relationnelle Sakila (fourni ci-dessus).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Le &lt;strong&gt;Workflow applicatif&lt;/strong&gt;, qui décrit les requêtes que les utilisateurs finaux effectueront sur la base de données.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Le workflow applicatif doit tenir en compte des besoins de chaque type d’utilisateur : gérants, employés, clients, etc.
+Dans ce tutoriel, nous allons nous concentrer sur les requêtes que les gérants de Sakila pourraient exécuter pour analyser les données.
+Donc, on ne créera qu’un seul keyspace dans Cassandra pour stocker les données ;
+cependant, dans un scénario réel, on pourrait avoir plusieurs keyspaces pour différents types d’utilisateurs.&lt;/p&gt;
+&lt;div id=&#34;workflow-applicatif&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Workflow applicatif&lt;/h2&gt;
+&lt;p&gt;Nous allons maintenant définir un ensemble de requêtes que les employés de Sakila pourraient exécuter pour analyser les données.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1  &lt;/strong&gt;&lt;/span&gt;
+Proposez une série de requêtes que les gérants de Sakila pourraient vouloir exécuter sur la base de données.
+Numérotez chaque requête pour référence ultérieure.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Voici un exemple :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Q1. Voir les locations d’un client donné.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Q2. Voir les locations effectuées par un employé donné.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Q3. Voir les locations d’un film donné.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Q4. Trouver des informations sur une location (montant, date…)&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Q5. Trouver des informations sur le client qui a effectué la location.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Q6. Trouver des informations sur l’employé qui a effectué la location.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Q7. Trouver des informations sur un film.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Q8. Trouver des informations sur le support (par exemple, DVD, Blue-Ray) loué.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Q9. Trouver des informations sur un magasin spécifique.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Q10. Voir les acteurs d’un film.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Q11. Voir les catégories d’un film.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;p&gt;Nous allons maintenant organiser ces requêtes dans un workflow.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2  &lt;/strong&gt;&lt;/span&gt;
+À partir des requêtes que vous avez proposées dans le premier exercice, dessinez
+un workflow de l’application que les gérants de Sakila utiliseront pour interroger les données.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/gadexed/tutorial-6/sakila-application-queries.png&#34; alt=&#34;Sakila Cassandra application workflow&#34;&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;div id=&#34;modèle-logique&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Modèle logique&lt;/h2&gt;
+&lt;p&gt;À partir du workflow applicatif, nous pouvons maintenant concevoir le modèle logique de données dans Cassandra.
+Le modèle logique sera dessiné à l’aide d’un diagramme de Chebotko.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3  &lt;/strong&gt;&lt;/span&gt;
+Sur la base du workflow applicatif, dessinez le diagramme de Chebotko (le modèle logique) de la base de données Sakila.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/gadexed/tutorial-6/sakila-logical-model.png&#34; alt=&#34;Sakila Cassandra application workflow&#34;&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;/div&gt;
+&lt;/div&gt;
 &lt;div id=&#34;configuration-de-lenvironnement&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Configuration de l’environnement&lt;/h1&gt;
 &lt;ul&gt;
@@ -2836,7 +2933,7 @@ La clé primaire est composée de &lt;code&gt;last_name&lt;/code&gt; et &lt;code
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1  &lt;/strong&gt;&lt;/span&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4  &lt;/strong&gt;&lt;/span&gt;
 Essayez d’insérer un autre utilisateur dans la table &lt;code&gt;user&lt;/code&gt; sans spécifier la valeur pour la colonne &lt;code&gt;middle_initial&lt;/code&gt;.
 Est-ce que l’insertion réussit ? Pourquoi ?&lt;/p&gt;
 &lt;/div&gt;
@@ -2854,7 +2951,7 @@ Solution
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2  &lt;/strong&gt;&lt;/span&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5  &lt;/strong&gt;&lt;/span&gt;
 Essayez d’insérer un autre utilisateur dans la table &lt;code&gt;user&lt;/code&gt; sans spécifier la valeur pour la colonne &lt;code&gt;first_name&lt;/code&gt;.
 Est-ce que l’insertion réussit ? Pourquoi ?&lt;/p&gt;
 &lt;/div&gt;
@@ -2874,7 +2971,7 @@ qui font partie de la clé primaire.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3  &lt;/strong&gt;&lt;/span&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 6  &lt;/strong&gt;&lt;/span&gt;
 Essayez d’insérer un autre utilisateur ayant le même &lt;code&gt;last_name&lt;/code&gt; que l’utilisateur existant, mais un &lt;code&gt;first_name&lt;/code&gt; différent.
 Est-ce que l’insertion réussit ? Pourquoi ?&lt;/p&gt;
 &lt;/div&gt;
@@ -2892,7 +2989,7 @@ Solution
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4  &lt;/strong&gt;&lt;/span&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 7  &lt;/strong&gt;&lt;/span&gt;
 Essayez d’insérer un autre utilisateur ayant le même &lt;code&gt;last_name&lt;/code&gt; et `first_name`` que un utilisateur existant.
 Est-ce que l’insertion réussit ? Pourquoi ?&lt;/p&gt;
 &lt;/div&gt;
@@ -2916,7 +3013,7 @@ Solution
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5  &lt;/strong&gt;&lt;/span&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 8  &lt;/strong&gt;&lt;/span&gt;
 Essayez de changer le titre de l’utilisateur avec le &lt;code&gt;last_name&lt;/code&gt; ‘Doe’ sans spécifier le &lt;code&gt;first_name&lt;/code&gt;.
 Est-ce que la mise à jour réussit ? Pourquoi ?&lt;/p&gt;
 &lt;/div&gt;
@@ -2952,7 +3049,7 @@ Pour visualiser les timestamps des colonnes, vous pouvez utiliser la commande &l
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 6  &lt;/strong&gt;&lt;/span&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 9  &lt;/strong&gt;&lt;/span&gt;
 Essayez de renvoyer le timestamp pour l’une des colonnes de la clé primaire.
 Qu’est-ce que vous observez ?&lt;/p&gt;
 &lt;/div&gt;
@@ -3021,6 +3118,46 @@ est la &lt;strong&gt;clé de clustering&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;on obtient une erreur. En fait, une recherche basée uniquement sur la clé de clustering n’est pas permise dans Cassandra en raison des performances.
 Si nous avons vraiment besoin de faire ce type de requête, on peut spécifier la commande suivante :&lt;/p&gt;
 &lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;SELECT * FROM user WHERE first_name = &amp;#39;John&amp;#39; ALLOW FILTERING;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;data available &lt;a href=&#34;/courses/databases/gadexed/tutorial-6/sakila-data-cassandra.zip&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;data here&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;!-- * Download the [**data here**](/courses/databases/tutorial-8/sakila-data-cassandra.zip){target=&#34;_blank&#34;}
+
+* Extract the downloaded archive. This will create a new folder containing the data. Let&#39;s refer to this folder as DATA_FOLDER.
+
+* Go back to the CQL shell and type the following command ``source &#39;DATAFOLDER/sakila.cql&#39;`` (replace DATAFOLDER with the full path to the data folder). This command will 
+create the sakila keyspace (database).
+
+* In the CQL shell, type the command ``use sakila;``
+
+* We have 11 tables in this database. You can see the definition with the command ``describe sakila``.
+
+* As the last step, we need to import the data. No luck here, we need to import the data table by table with the following commands:
+
+```
+COPY sakila.actors_by_film FROM &#39;DATAFOLDER/actors_by_film.csv&#39; WITH HEADER = TRUE ;
+
+COPY sakila.categories_by_film FROM &#39;DATAFOLDER/categories_by_film.csv&#39; WITH HEADER = TRUE ;
+
+COPY sakila.customers FROM &#39;DATAFOLDER/customers.csv&#39; WITH HEADER = TRUE ;
+
+COPY sakila.film FROM &#39;DATAFOLDER/film.csv&#39; WITH HEADER = TRUE ;
+
+COPY sakila.inventory FROM &#39;DATAFOLDER/inventory.csv&#39; WITH HEADER = TRUE ;
+
+COPY sakila.rentals_by_customer FROM &#39;DATAFOLDER/rentals_by_customer.csv&#39; WITH HEADER = TRUE ;
+
+COPY sakila.rentals_by_film FROM &#39;DATAFOLDER/rentals_by_film.csv&#39; WITH HEADER = TRUE ;
+
+COPY sakila.rentals_by_staff FROM &#39;DATAFOLDER/rentals_by_staff.csv&#39; WITH HEADER = TRUE ;
+
+COPY sakila.rentals FROM &#39;DATAFOLDER/rentals.csv&#39; WITH HEADER = TRUE ;
+
+COPY sakila.staff FROM &#39;DATAFOLDER/staff.csv&#39; WITH HEADER = TRUE ;
+
+COPY sakila.store FROM &#39;DATAFOLDER/store.csv&#39; WITH HEADER = TRUE ;
+
+```
+
+**If during the import you get the error &#39;too many open files&#39; close the shell with exit and start it again.** --&gt;
 &lt;/div&gt;
 </description>
     </item>
