@@ -28,10 +28,10 @@
   
     
   
-  <meta name="description" content="Exercises on SQL">
+  <meta name="description" content="Introduction à Elastic Search.">
 
   
-  <link rel="alternate" hreflang="en-us" href="/courses/gadexed_fr/tutorials/02-sql/">
+  <link rel="alternate" hreflang="en-us" href="/courses/gadexed_fr/tutorials/08-elastic-search/">
 
   
 
@@ -219,7 +219,7 @@
   <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_3.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_3.png">
 
-  <link rel="canonical" href="/courses/gadexed_fr/tutorials/02-sql/">
+  <link rel="canonical" href="/courses/gadexed_fr/tutorials/08-elastic-search/">
 
   
   
@@ -233,9 +233,9 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Gianluca Quercini">
-  <meta property="og:url" content="/courses/gadexed_fr/tutorials/02-sql/">
-  <meta property="og:title" content="SQL | Gianluca Quercini">
-  <meta property="og:description" content="Exercises on SQL"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:url" content="/courses/gadexed_fr/tutorials/08-elastic-search/">
+  <meta property="og:title" content="Cassandra | Gianluca Quercini">
+  <meta property="og:description" content="Introduction à Elastic Search."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
   
     
@@ -258,7 +258,7 @@
 
 
 
-  <title>SQL | Gianluca Quercini</title>
+  <title>Cassandra | Gianluca Quercini</title>
 
 </head>
 
@@ -549,8 +549,8 @@
         <a href="/courses/gadexed_fr/tutorials/01-rel-data-modeling/">1. Modélisation des données relationnelles</a>
       </li>
       
-      <script>open_menu_on_load("tutoriels".concat("-ddowncontent"))</script>
-      <li class="active tutoriels">
+      
+      <li class="tutoriels">
         <a href="/courses/gadexed_fr/tutorials/02-sql/">2. SQL</a>
       </li>
       
@@ -574,8 +574,8 @@
         <a href="/courses/gadexed_fr/tutorials/07-neo4j/">7. Requêtes Neo4j</a>
       </li>
       
-      
-      <li class="tutoriels">
+      <script>open_menu_on_load("tutoriels".concat("-ddowncontent"))</script>
+      <li class="active tutoriels">
         <a href="/courses/gadexed_fr/tutorials/08-elastic-search/">8. Elastic Search</a>
       </li>
       
@@ -598,8 +598,8 @@
       <article class="article">
 
         <div class="docs-article-container">
-          <div class="heading">Gestion et analyse des données — Tutoriel 2</div>
-          <h1>SQL</h1>
+          <div class="heading">Gestion et analyse des données — Tutoriel 8</div>
+          <h1>Cassandra</h1>
           <hr>
           <div class="logo">
             
@@ -612,202 +612,7 @@
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<p>L’objectif de ce tutoriel est de pratiquer les <strong>requêtes SQL</strong> sur une
-base de données relationnelle.</p>
-<div id="préparation-de-lenvironnement" class="section level1">
-<h1>Préparation de l’environnement</h1>
-<ul>
-<li><p>Démnarrez la machine virtuelle fournie pour le cours avec Remote Desktop Connection.</p></li>
-<li><p>Ouvrez <em>pgAdmin4</em> (icône sur le bureau).</p></li>
-<li><p>Dans le menu de gauche, faites un clic droit sur <em>Servers</em> et sélectionnez <em>PostgreSQL 18</em> pour vous connecter.</p></li>
-<li><p>Lorsque vous y êtes invité, entrez le mot de passe <code>postgres</code> pour vous connecter au serveur.</p></li>
-<li><p>Sélectionnez la base de données <code>travel</code>.</p></li>
-<li><p>Ouvrez un nouvel outil de requête (clic droit sur la base de données <code>travel</code>, sélectionnez <em>Query tool</em>).</p></li>
-</ul>
-</div>
-<div id="schéma-de-la-base-de-données" class="section level1">
-<h1>Schéma de la base de données</h1>
-<p>La figure 1 montre le schéma physique de la base de données <code>travel</code>.
-Vous pouvez également l’obtenir dans pgAdmin4 en faisant un clic droit sur la base de données <code>travel</code>,
-et en sélectionnant <em>ERD for database</em>.</p>
-<div class="figure" style="text-align: center"><span id="fig:cnm"></span>
-<img src="/courses/databases/gadexed/tutorial-2/travel_physical_schema.png" alt="Le schéma physique de la base de données travel" width="100%" />
-<p class="caption">
-Figure 1: Le schéma physique de la base de données travel
-</p>
-</div>
-</div>
-<div id="contraintes-de-clé-étrangère" class="section level1">
-<h1>Contraintes de clé étrangère</h1>
-<p>Regardez le schéma physique de la base de données <code>travel</code>.
-Les tables sont liées par des contraintes de clé étrangère.</p>
-<p>Par exemple, la table <code>flight_booking</code> a une colonne <code>trip_id</code> qui référence
-la colonne <code>trip_id</code> dans la table <code>trip</code>.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercice</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1  </strong></span>
-Essayez de supprimer une ligne de la table <code>trip</code> qui est référencée par une ligne dans la table <code>flight_booking</code>.
-Que se passe-t-il?</p>
-</div>
-</div>
-<p>Regardons comment la contrainte de clé étrangère est définie dans la table <code>flight_booking</code>.</p>
-<ul>
-<li>Dans pgAdmin4, dans le menu de gauche, développez la base de données <code>travel</code> &gt; Schéma public &gt; Tables.</li>
-<li>Faites un clic droit sur la table <code>flight_booking</code>.</li>
-<li>Sélectionnez <em>Properties</em>.</li>
-<li>Sélectionnez l’onglet <em>Constraints</em>.</li>
-<li>Sélectionnez l’onglet <em>Foreign Key</em>.</li>
-<li>Sélectionnez la contrainte de clé étrangère nommée <code>flight_booking_trip_id_fkey</code>.</li>
-<li>Cliquez sur l’icône en forme de crayon pour modifier la contrainte.</li>
-<li>Sélectionnez l’onglet <em>Actions</em>.</li>
-</ul>
-<p>Ici vous pouvez voir que l’action de suppression est définie sur <em>No Action</em>.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercice</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 2  </strong></span>
-Comment l’action de mise à jour est-elle définie pour la contrainte de clé étrangère
-<code>flight_booking_trip_id_fkey</code> dans la table <code>flight_booking</code>?</p>
-<p>Essayez maintenant de modifier le <code>trip_id</code> d’une ligne de la table <code>trip</code> qui est référencée par une ligne de la table <code>flight_booking</code>.</p>
-<p>Que se passe-t-il?</p>
-</div>
-</div>
-</div>
-<div id="requêtes-sql-exploratoires" class="section level1">
-<h1>Requêtes SQL exploratoires</h1>
-<p>Lorsque vous travaillez avec une nouvelle base de données, il est important d’explorer les données
-pour se familiariser avec sa structure et son contenu.
-Nous pouvons utiliser des requêtes SQL pour effectuer cette exploration.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercice</strong></p>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3  </strong></span>
-1. Combien de clients sont des hommes et combien sont des femmes ?</p>
-<ol start="2" style="list-style-type: decimal">
-<li><p>Quel est le nombre de clients dans chaque pays ?</p></li>
-<li><p>Quel est l’âge moyen des clients dans chaque pays ?</p></li>
-<li><p>Quel est le nombre total de réservations d’hôtel effectuées pour chaque hôtel ? Triez les résultats par ordre décroissant.</p></li>
-<li><p>Quel est le montant total dépensé pour les réservations d’hôtel par chaque client ?
-Triez les résultats par ordre décroissant et affichez uniquement les 10 meilleurs clients.</p></li>
-<li><p>Combien d’aéroports y a-t-il dans chaque pays ? Listez uniquement les pays ayant plus de 10 aéroports.</p></li>
-</ol>
-</div>
-</div>
-</div>
-<div id="requêtes-métier" class="section level1">
-<h1>Requêtes métier</h1>
-<p>Maintenant, imaginons que vous travaillez pour l’agence de voyage qui gère la base de données.
-On vous a demandé de fournir quelques informations basées sur les données stockées dans la base de données.</p>
-<div class="infobox exercisebox">
-<strong>Exercise</strong>
-
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 4  </strong></span></p>
-<ol style="list-style-type: decimal">
-<li><p>Identifiez les 5 destinations les plus populaires en fonction du nombre de vols réservés.</p></li>
-<li><p>Trouvez la durée moyenne des séjours pour chaque hôtel.</p></li>
-<li><p>Déterminez les 10 clients qui ont effectué le plus grand nombre de réservations (hôtel et vol).</p></li>
-<li><p>Analysez les tendances mensuelles des réservations de vols et des réservations d’hôtels.</p></li>
-<li><p>Affichez les détails du voyage numéro 1. En particulier, listez les prénoms et noms du client, et, pour chaque vol, les aéroports de départ et d’arrivée,
-la date de départ, et les villes de départ et d’arrivée des aéroports.</p></li>
-</ol>
-</div>
-</div>
-<!--
-# Installing PostgreSQL
-
-In this tutorial you'll be using **PostgreSQL** as a 
-relational database management system (RDBMS).
-
-<details>
-<summary>Instructions for Windows users</summary>
-
-You can download the latest version of PostgreSQL (14.3) 
-[**from this page**](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads){target="_blank"}.
-
-The installer contains:
-
-* The PostgreSQL server.
-* pgAdmin, a graphical administration tool. 
-
-You'll find **detailed installation instructions** [**on this page**](https://www.enterprisedb.com/docs/supported-open-source/postgresql/installer/02_installing_postgresql_with_the_graphical_installation_wizard/01_invoking_the_graphical_installer/){target="_blank"}.
-
-</details>
-
-<details>
-<summary>Instructions for macOS users</summary>
-
-The best way to get PostgreSQL is to download and install **Postgres.app**. 
-You'll find more details [**on this page**](https://postgresapp.com/){target="_blank"}.
-
-In addition, you need to [**install pgAdmin**](https://www.pgadmin.org/download/){target="blank"},
-ad administration tool that lets you interact with your database through a 
-graphical interface.
-
-</details>
-
-
-# Starting PostgreSQL and pgAdmin
-
-<details>
-<summary>Instructions for Windows users</summary>
-
-
-
-
-Once the installation is completed, a PostgreSQL server should be 
-automatically started. 
-
-You'll open a connection to the server through the following steps:
-
-* Execute pgAdmin.
-
-* On the left-side menu, right-click on *Servers* and select *Create server*.
-
-* In the *General* tab, give the server a name of your choice.
-
-* In the *Connection* tab, write *localhost* as *host*. 
-Don't change the values of the other options.
-
-<details>
-<summary>What if I get the *Unable to connect to server* error?</summary>
-
-You might want to have a look at the list of the services running on your computer to verify
-whether the PostgreSQL server is actually running. 
-
-[**This page**](https://www.dell.com/support/kbdoc/it-it/000126393/how-to-use-windows-services-to-start-or-stop-services){target="_blank"} 
-explains you how to open the panel with the list of services.
-You should locate PostgreSQL in this panel. If the service is not running, you'll 
-need to manually start it.
-
-</details>
-
-
-
-</details>
-
-<details>
-<summary>Instructions for MacOS users</summary>
-
-You'll open a connection to the server through the following steps:
-
-* Execute pgAdmin.
-
-* On the left-side menu, right-click on *Servers* and select *Create server*.
-
-* In the *General* tab, give the server a name of your choice.
-
-* In the *Connection* tab, write *localhost* as *host*. 
-Don't change the values of the other options.
-
-</details>
-
--->
-</div>
+<p>init td qui qui qui la la la do do do</p>
 
           </div>
 
