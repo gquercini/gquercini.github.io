@@ -643,27 +643,6 @@ Proposez une série de requêtes que les gérants de Sakila pourraient vouloir e
 Numérotez chaque requête pour référence ultérieure.</p>
 </div>
 </div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<p>Voici un exemple :</p>
-<ul>
-<li><p>Q1. Voir les locations d’un client donné.</p></li>
-<li><p>Q2. Voir les locations effectuées par un employé donné.</p></li>
-<li><p>Q3. Voir les locations d’un film donné.</p></li>
-<li><p>Q4. Trouver des informations sur une location (montant, date…)</p></li>
-<li><p>Q5. Trouver des informations sur le client qui a effectué la location.</p></li>
-<li><p>Q6. Trouver des informations sur l’employé qui a effectué la location.</p></li>
-<li><p>Q7. Trouver des informations sur un film.</p></li>
-<li><p>Q8. Trouver des informations sur le support (par exemple, DVD, Blue-Ray) loué.</p></li>
-<li><p>Q9. Trouver des informations sur un magasin spécifique.</p></li>
-<li><p>Q10. Voir les acteurs d’un film.</p></li>
-<li><p>Q11. Voir les catégories d’un film.</p></li>
-</ul>
-</div>
-</details>
 <p>Nous allons maintenant organiser ces requêtes dans un workflow.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
@@ -674,14 +653,6 @@ Solution
 un workflow de l’application que les gérants de Sakila utiliseront pour interroger les données.</p>
 </div>
 </div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<p><img src="/courses/databases/gadexed/tutorial-6/sakila-application-queries.png" alt="Sakila Cassandra application workflow"></p>
-</div>
-</details>
 </div>
 <div id="modèle-logique" class="section level2">
 <h2>Modèle logique</h2>
@@ -695,14 +666,6 @@ Le modèle logique sera dessiné à l’aide d’un diagramme de Chebotko.</p>
 Sur la base du workflow applicatif, dessinez le diagramme de Chebotko de la base de données Sakila.</p>
 </div>
 </div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<p><img src="/courses/databases/gadexed/tutorial-6/sakila-logical-model.png" alt="Sakila Cassandra application workflow"></p>
-</div>
-</details>
 <p>Maintenant, nous allons voir comment utiliser Cassandra pour créer un keyspace, des tables et interagir avec les données.</p>
 </div>
 </div>
@@ -795,15 +758,6 @@ Essayez d’insérer un autre utilisateur dans la table <code>user</code> sans s
 Est-ce que l’insertion réussit ? Pourquoi ?</p>
 </div>
 </div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<p>Oui, l’insertion réussit car il est possible de ne pas spécifier de valeur pour une colonne qui ne fait pas partie de la clé primaire.</p>
-<pre><code>INSERT INTO user (first_name, last_name, title) VALUES (&#39;Jane&#39;, &#39;Smith&#39;, &#39;Data Scientist&#39;);</code></pre>
-</div>
-</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -813,17 +767,6 @@ Essayez d’insérer un autre utilisateur dans la table <code>user</code> sans s
 Est-ce que l’insertion réussit ? Pourquoi ?</p>
 </div>
 </div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<p>Non, l’insertion échoue car <code>first_name</code> fait partie de la clé primaire et doit toujours avoir une valeur.</p>
-<pre><code>INSERT INTO user (last_name, title) VALUES (&#39;Jane&#39;, &#39;Data Scientist&#39;);</code></pre>
-<p>Lorsqu’on insère des données dans une table Cassandra, il est obligatoire de fournir des valeurs pour toutes les colonnes
-qui font partie de la clé primaire.</p>
-</div>
-</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -833,15 +776,6 @@ Essayez d’insérer un autre utilisateur ayant le même <code>last_name</code> 
 Est-ce que l’insertion réussit ? Pourquoi ?</p>
 </div>
 </div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<p>Oui, l’insertion réussit car la combinaison de <code>last_name</code> et <code>first_name</code> est unique.</p>
-<pre><code>INSERT INTO user (last_name, first_name, middle_initial, title) VALUES (&#39;Doe&#39;, &#39;Peter&#39;, &#39;Cloud architect&#39;, &#39;Dr.&#39;);</code></pre>
-</div>
-</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -851,16 +785,6 @@ Essayez d’insérer un autre utilisateur ayant le même <code>last_name</code> 
 Est-ce que l’insertion réussit ? Pourquoi ?</p>
 </div>
 </div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<p>Oui, l’insertion réussit, mais elle écrase les données de l’utilisateur existant.</p>
-<pre><code>INSERT INTO user (last_name, first_name, middle_initial, title) VALUES (&#39;Doe&#39;, &#39;Joe&#39;, &#39;Mr.&#39;, &#39;Developer.&#39;);</code></pre>
-<p>Cette opération est appelée <strong>upsert</strong> (update + insert) dans Cassandra.</p>
-</div>
-</details>
 </div>
 <div id="mettre-à-jour-des-données" class="section level2">
 <h2>Mettre à jour des données</h2>
@@ -875,18 +799,6 @@ Essayez de changer le titre de l’utilisateur avec le <code>last_name</code> <e
 Est-ce que la mise à jour réussit ? Pourquoi ?</p>
 </div>
 </div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<p>Non, la mise à jour échoue car il est obligatoire de fournir des valeurs pour toutes les composantes de la clé primaire dans la clause WHERE.</p>
-<pre><code>UPDATE user SET title=&#39;unknown&#39; where last_name=&#39;Doe&#39;;</code></pre>
-<p>On a vu précédemment qu’une insertion se comporte comme une opération de mise à jour si on insère une ligne avec une clé primaire existante.
-Puisqu’il n’y a pas de différence entre une insertion et une mise à jour dans Cassandra,
-il est logique que les mêmes règles s’appliquent aux deux opérations.</p>
-</div>
-</details>
 </div>
 <div id="colonnes" class="section level2">
 <h2>Colonnes</h2>
@@ -911,16 +823,6 @@ Essayez de renvoyer le timestamp pour l’une des colonnes de la clé primaire.
 Qu’est-ce que vous observez ?</p>
 </div>
 </div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<pre><code>SELECT first_name, last_name, writetime(first_name) FROM user;</code></pre>
-<p>L’opération n’est pas permise. En effet, les colonnes qui font partie de la clé primaire n’ont pas de timestamp associé, car elles sont immuables.
-Si vous essayez de modifier le prénom d’un utilisateur avec un UPDATE, vous devez en fait insérer une nouvelle ligne avec une nouvelle valeur pour le prénom.</p>
-</div>
-</details>
 </div>
 <div id="ttl-time-to-live" class="section level3">
 <h3>TTL (Time To Live)</h3>
@@ -941,6 +843,88 @@ Après 60 secondes, toute la ligne sera automatiquement supprimée par Cassandra
 </div>
 <div id="base-de-données-sakila-dans-cassandra" class="section level1">
 <h1>Base de données Sakila dans Cassandra</h1>
+<p>Nous allons maintenant pratiquer le langage CQL en utilisant la base de données Sakila.</p>
+<div id="connectez-vous-au-keyspace-sakila" class="section level2">
+<h2>Connectez vous au keyspace Sakila</h2>
+<p>Pour vous conneter au keyspace Sakila, vous devez saisir la commande suivante dans le shell CQL :</p>
+<pre class="cql"><code>use sakila;</code></pre>
+</div>
+<div id="etude-du-order-by-dans-cassandra" class="section level2">
+<h2>Etude du ORDER BY dans Cassandra</h2>
+<p>Vous avez peut-être remarqué que CQL est très similaire à SQL.
+Cependant, nous avons déjà vu que certaines opérations sont différentes dans Cassandra par rapport aux bases de données relationnelles.
+Nous avons déjà étudié le cas de la clause WHERE.</p>
+<p>Dans cette section, nous allons étudier la clause ORDER BY.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-10" class="exercise"><strong>Exercise 10  </strong></span>
+Écrivez une requêtes pour renvoyer :
+<code>film_id</code>, <code>actor_id</code>, <code>actor_first_name</code>, <code>actor_last_name</code> pour le film <em>FORREST SONS</em>.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-11" class="exercise"><strong>Exercise 11  </strong></span>
+Ajoutez à la requête précédente une clause ORDER BY pour trier les résultats par <code>actor_last_name</code> en ordre décroissant.
+Qu’obtenez-vous ? Pourquoi ?</p>
+</div>
+</div>
+<p>Pour les prochaines requêtes, rappelez-vous que dans la table <code>actors_by_film</code>, la clé primaire est composée de <code>film_title</code> (clé de partition),
+<code>film_id</code> (clé de clustering 1) et <code>actor_id</code> (clé de clustering 2). Pour les deux clés de clustering, l’ordre par défaut est croissant.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-12" class="exercise"><strong>Exercise 12  </strong></span>
+Modifiez la requête précédentes pour trier les résultats par <code>actor_id</code> en ordre décroissant.
+Qu’obtenez-vous ? Pourquoi ? Et si on trie par ordre croissant ?</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-13" class="exercise"><strong>Exercise 13  </strong></span>
+Modifiez la requête précédente pour inclure une valeur pour <code>film_id</code> dans la clause WHERE.
+Essayez de trier les résultats par <code>actor_id</code> en ordre décroissant et croissant.
+Obtenez-vous des erreurs ? Pourquoi ?</p>
+</div>
+</div>
+<p>Maintenant on va voir si on peut trier par <code>film_id</code> and <code>actor_id</code>.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-14" class="exercise"><strong>Exercise 14  </strong></span>
+Essayez de trier les résultats par <code>film_id</code> et <code>actor_id</code> en ordre décroissant et croissant.
+Ne rajoutez pas de valeur pour <code>film_id</code> dans la clause WHERE.
+Testez toutes les combinaisons possibles (décroissant/décroissant, décroissant/croissant, croissant/décroissant, croissant/croissant).
+Obtenez-vous des erreurs ? Quand et pourquoi ?</p>
+</div>
+</div>
+</div>
+<div id="pratique-des-requêtes-cql" class="section level2">
+<h2>Pratique des requêtes CQL</h2>
+<p>Dans cette section nous allons pratiquer d’autres requêtes CQL sur la base de données Sakila.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-15" class="exercise"><strong>Exercise 15  </strong></span>
+Ecrivez les requêtes suivantes :</p>
+<ol style="list-style-type: decimal">
+<li><p>Renvoyez la liste des locations pour le film <em>FORREST SONS</em> ayant <code>rental_id</code> entre 200 et 4000</p></li>
+<li><p>Renvoyez la liste des locations pour les clients dont le nom de famille est GANNON ou BROWN.</p></li>
+<li><p>Comptez le nombre de films pour l’acteur 5.</p></li>
+<li><p>Renvoyez toutes les informations sur le client avec l’email ‘<a href="mailto:VICTOR.BARKLEY@sakilacustomer.org" class="email">VICTOR.BARKLEY@sakilacustomer.org</a>’.<br />
+</p></li>
+</ol>
+</div>
+</div>
 <!-- 
 
 
@@ -983,6 +967,7 @@ COPY sakila.store FROM '/mnt/host-downloads/store.csv' WITH HEADER = TRUE ;
 ```
 
 **If during the import you get the error 'too many open files' close the shell with exit and start it again.** -->
+</div>
 </div>
 
           </div>
