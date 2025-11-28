@@ -3438,9 +3438,9 @@ et à exécuter des requêtes CQL (Cassandra Query Language) pour interagir avec
 &lt;p&gt;Nous allons utiliser Sakila comme notre étude de cas.
 Pour rappel, le modèle conceptuel de la base de données relationnelle Sakila est illustré en Figure 1.&lt;/p&gt;
 &lt;div class=&#34;figure&#34; style=&#34;text-align: center&#34;&gt;&lt;span id=&#34;fig:cnm&#34;&gt;&lt;/span&gt;
-&lt;img src=&#34;/courses/databases/gadexed/tutorial-6/sakila-conceptual-model.png&#34; alt=&#34;Modèle conceptuel de la base de données Sakila&#34; width=&#34;100%&#34; /&gt;
+&lt;img src=&#34;/courses/databases/gadexed/tutorial-6/sakila-conceptual-model.png&#34; alt=&#34;Modèle conceptuel de la base de données Sakila.&#34; width=&#34;100%&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;
-Figure 1: Modèle conceptuel de la base de données Sakila
+Figure 1: Modèle conceptuel de la base de données Sakila.
 &lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -3449,9 +3449,9 @@ Figure 1: Modèle conceptuel de la base de données Sakila
 &lt;p&gt;Afin de correctement modéliser les données dans Cassandra, nous avons besoin de deux éléments :&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;Le &lt;strong&gt;modèle conceptuel&lt;/strong&gt; de la base de données relationnelle Sakila (fourni ci-dessus).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Le &lt;strong&gt;Workflow applicatif&lt;/strong&gt;, qui décrit les requêtes que les utilisateurs finaux effectueront sur la base de données.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Le &lt;strong&gt;workflow applicatif&lt;/strong&gt;, qui décrit les requêtes que les utilisateurs finaux effectueront sur la base de données.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;Le workflow applicatif doit tenir en compte des besoins de chaque type d’utilisateur : gérants, employés, clients, etc.
+&lt;p&gt;Le workflow applicatif doit tenir en compte les besoins de chaque type d’utilisateur : gérants, employés, clients, etc.
 Dans ce tutoriel, nous allons nous concentrer sur les requêtes que les gérants de Sakila pourraient exécuter pour analyser les données.
 Donc, on ne créera qu’un seul keyspace dans Cassandra pour stocker les données ;
 cependant, dans un scénario réel, on pourrait avoir plusieurs keyspaces pour différents types d’utilisateurs.&lt;/p&gt;
@@ -3509,14 +3509,14 @@ Solution
 &lt;/div&gt;
 &lt;div id=&#34;modèle-logique&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Modèle logique&lt;/h2&gt;
-&lt;p&gt;À partir du workflow applicatif, nous pouvons maintenant concevoir le modèle logique de données dans Cassandra.
+&lt;p&gt;À partir du workflow applicatif, nous pouvons maintenant concevoir le modèle logique.
 Le modèle logique sera dessiné à l’aide d’un diagramme de Chebotko.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
 &lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3  &lt;/strong&gt;&lt;/span&gt;
-Sur la base du workflow applicatif, dessinez le diagramme de Chebotko (le modèle logique) de la base de données Sakila.&lt;/p&gt;
+Sur la base du workflow applicatif, dessinez le diagramme de Chebotko de la base de données Sakila.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;details&gt;
@@ -3527,18 +3527,23 @@ Solution
 &lt;p&gt;&lt;img src=&#34;/courses/databases/gadexed/tutorial-6/sakila-logical-model.png&#34; alt=&#34;Sakila Cassandra application workflow&#34;&gt;&lt;/p&gt;
 &lt;/div&gt;
 &lt;/details&gt;
+&lt;p&gt;Maintenant, nous allons voir comment utiliser Cassandra pour créer un keyspace, des tables et interagir avec les données.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;configuration-de-lenvironnement&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Configuration de l’environnement&lt;/h1&gt;
+&lt;div id=&#34;intéragir-avec-cassandra-le-langage-cql&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Intéragir avec Cassandra : le langage CQL&lt;/h1&gt;
+&lt;p&gt;Dans cette section, nous allons apprendre les bases du langage CQL (Cassandra Query Language).&lt;/p&gt;
+&lt;div id=&#34;configuration-de-lenvironnement&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Configuration de l’environnement&lt;/h2&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Cliquez sur l’icône de Docker Desktop que vous trouvé sur le bureau.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Ouvrez GitBas et saisissez la commande suivante pour démarrer un conteneur Docker avec Cassandra:&lt;/p&gt;
-&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;docker compose -f docker-compose-cassandra.yml up -d&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Cela va démarrer un conteneur Docker en arrière-plan avec le serveur Cassandra.&lt;/p&gt;
+&lt;li&gt;&lt;p&gt;Cliquez sur l’icône de Docker Desktop que vous trouvez sur le bureau. Attendez que Docker démarre complètement.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Ouvrez GitBash (icône sur le bureau) et saisissez la commande suivante :&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt; cd Desktop/cassandra/&lt;/code&gt;&lt;/pre&gt;
 &lt;ul&gt;
-&lt;li&gt;Attendez quelques instants que le conteneur démarre complètement.&lt;/li&gt;
-&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Ensuite démarrez un conteneur Docker avec Cassandra via la commande suivante :&lt;/p&gt;
+&lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;docker compose -f cassandra-run up -d&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Attendez quelques instants que le conteneur démarre complètement.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Pour accéder au shell CQL de Cassandra à l’intérieur du conteneur, utilisez la commande suivante:&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;pre class=&#34;bash&#34;&gt;&lt;code&gt;  docker exec -it cassandra-container cqlsh&lt;/code&gt;&lt;/pre&gt;
@@ -3546,10 +3551,10 @@ Solution
 Par défaut, il se connecte au noeud local que vous avez démarré dans le conteneur Docker.
 Le shell indique aussi que vous êtes connecté au cluster “Test Cluster” ; c’est le nom d’un cluster par défaut consistant en un seul noeud.&lt;/p&gt;
 &lt;p&gt;Pour visualiser la liste des commandes disponibles dans le shell CQL, vous pouvez taper &lt;code&gt;HELP;&lt;/code&gt; et appuyer sur Entrée.&lt;/p&gt;
-&lt;p&gt;Voici une liste de commandes utiles pour interagir avec Cassandra.&lt;/p&gt;
+&lt;p&gt;Maintenant, on va apprendre à utiliser certaines des commandes CQL les plus courantes pour interagir avec Cassandra.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;décrire-lenvironnement&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Décrire l’environnement&lt;/h1&gt;
+&lt;div id=&#34;décrire-lenvironnement&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Décrire l’environnement&lt;/h2&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;Pour afficher les informations sur le cluster auquel vous êtes connecté, utilisez la commande suivante:&lt;/li&gt;
 &lt;/ol&gt;
@@ -3567,13 +3572,12 @@ Le shell indique aussi que vous êtes connecté au cluster “Test Cluster” ; 
 &lt;p&gt;Vous devriez trouver une liste de de keyspaces de sytème, que Cassandra gère internement et qui ne sont pas destinés à être modifiés par les utilisateurs.
 Cassandra utilise ces keyspaces pour stocker des informations sur le cluster, les métadonnées, les informations de sécurité, etc.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;création-dun-keyspace&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Création d’un keyspace&lt;/h1&gt;
+&lt;div id=&#34;création-dun-keyspace&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Création d’un keyspace&lt;/h2&gt;
 &lt;p&gt;Les commandes CQL peuvent parfois être un peu verbeuses, mais Cassandra offre une fonctionnalité de auto-complétion
 pour faciliter leur saisie.&lt;/p&gt;
 &lt;p&gt;Saisissez la commande suivante suivie par un caractère de tabulation :&lt;/p&gt;
-&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;
-CREATE KEYSPACE my_keyspace WITH
+&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;CREATE KEYSPACE my_keyspace WITH
 &lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Vous devriez voir que la commande est complétée automatiquement de la manière suivante :&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;CREATE KEYSPACE my_keyspace WITH replication = {&amp;#39;class&amp;#39;: &amp;#39;&lt;/code&gt;&lt;/pre&gt;
@@ -3584,23 +3588,24 @@ CREATE KEYSPACE my_keyspace WITH
 &lt;p&gt;Maintenant, saisissez la commande suivante pour vérifier que le keyspace a été créé avec succès:&lt;/p&gt;
 &lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;DESCRIBE KEYSPACE my_keyspace;&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Vous devriez voir la définition du keyspace que vous venez de créer, y compris la stratégie de réplication et le facteur de réplication.
-Une troisième option s’affiche égalemenet, &lt;code&gt;durable_writes&lt;/code&gt;, qui est activée par défaut.&lt;/p&gt;
-&lt;p&gt;Maintenant, utilisez la commande suivante pour sélectionner le keyspace que vous venez de créer:&lt;/p&gt;
+Une troisième option s’affiche égalemenet, &lt;code&gt;durable_writes&lt;/code&gt;, qui est activée par défaut.
+Cela veut dire que chaque opération d’écriture sera enregistrée dans un &lt;em&gt;commit log&lt;/em&gt; sur disque ; cela garantit que les données ne seront pas perdues en cas de panne du noeud.&lt;/p&gt;
+&lt;p&gt;Maintenant, utilisez la commande suivante pour sélectionner le keyspace que vous venez de créer :&lt;/p&gt;
 &lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;USE my_keyspace;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;div id=&#34;création-dune-table&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Création d’une table&lt;/h1&gt;
+&lt;div id=&#34;création-dune-table&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Création d’une table&lt;/h2&gt;
 &lt;p&gt;Nous allons ensuite créer une table dans ce keyspace. Saisissez la commande suivante :&lt;/p&gt;
 &lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;CREATE TABLE user ( first_name text, last_name text, 
     middle_initial text, title text, 
-    PRIMARY KEY (last_name, first_name)) ;&lt;/code&gt;&lt;/pre&gt;
+    PRIMARY KEY ((last_name), first_name)) ;&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;La commande précédente crée une table nommée &lt;code&gt;user&lt;/code&gt; avec quatre colonnes : &lt;code&gt;first_name&lt;/code&gt;, &lt;code&gt;last_name&lt;/code&gt;, &lt;code&gt;middle_initial&lt;/code&gt; et &lt;code&gt;title&lt;/code&gt;.
 La clé primaire est composée de &lt;code&gt;last_name&lt;/code&gt; et &lt;code&gt;first_name&lt;/code&gt;, où &lt;code&gt;last_name&lt;/code&gt; est la &lt;strong&gt;clé de partition&lt;/strong&gt; et &lt;code&gt;first_name&lt;/code&gt; est la &lt;strong&gt;clé de clustering&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;Pour vérifier que la table a été créée avec succès, utilisez la commande suivante:&lt;/p&gt;
 &lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;DESCRIBE TABLE user;&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;div id=&#34;insérer-des-données&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Insérer des données&lt;/h1&gt;
+&lt;div id=&#34;insérer-des-données&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Insérer des données&lt;/h2&gt;
 &lt;p&gt;Pour insérer des données dans une table, il faut utiliser la commande &lt;code&gt;INSERT INTO&lt;/code&gt;.&lt;/p&gt;
 &lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;INSERT INTO user (first_name, last_name, middle_initial, title) VALUES (&amp;#39;John&amp;#39;, &amp;#39;Doe&amp;#39;, &amp;#39;M.&amp;#39;, &amp;#39;Data Engineer&amp;#39;);&lt;/code&gt;&lt;/pre&gt;
 &lt;p&gt;Nous pouvons vérifier que les données ont été insérées avec succès en utilisant la commande &lt;code&gt;SELECT&lt;/code&gt;:&lt;/p&gt;
@@ -3666,7 +3671,7 @@ Solution
 
 &lt;div class=&#34;exercise&#34;&gt;
 &lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 7  &lt;/strong&gt;&lt;/span&gt;
-Essayez d’insérer un autre utilisateur ayant le même &lt;code&gt;last_name&lt;/code&gt; et `first_name`` que un utilisateur existant.
+Essayez d’insérer un autre utilisateur ayant le même &lt;code&gt;last_name&lt;/code&gt; et &lt;code&gt;first_name&lt;/code&gt; que un utilisateur existant.
 Est-ce que l’insertion réussit ? Pourquoi ?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -3677,12 +3682,12 @@ Solution
 &lt;div class=&#34;infobox exosolution&#34;&gt;
 &lt;p&gt;Oui, l’insertion réussit, mais elle écrase les données de l’utilisateur existant.&lt;/p&gt;
 &lt;pre&gt;&lt;code&gt;INSERT INTO user (last_name, first_name, middle_initial, title) VALUES (&amp;#39;Doe&amp;#39;, &amp;#39;Joe&amp;#39;, &amp;#39;Mr.&amp;#39;, &amp;#39;Developer.&amp;#39;);&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Cette opération est appelée upsert (update + insert) dans Cassandra.&lt;/p&gt;
+&lt;p&gt;Cette opération est appelée &lt;strong&gt;upsert&lt;/strong&gt; (update + insert) dans Cassandra.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/details&gt;
 &lt;/div&gt;
-&lt;div id=&#34;mettre-à-jour-des-données&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Mettre à jour des données&lt;/h1&gt;
+&lt;div id=&#34;mettre-à-jour-des-données&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Mettre à jour des données&lt;/h2&gt;
 &lt;p&gt;Pour mettre à jour des données dans une table, on utilise la commande &lt;code&gt;UPDATE&lt;/code&gt;.&lt;/p&gt;
 &lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;UPDATE user SET title = &amp;#39;Senior Data Engineer&amp;#39; WHERE last_name = &amp;#39;Doe&amp;#39; and first_name = &amp;#39;John&amp;#39; ;&lt;/code&gt;&lt;/pre&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -3690,7 +3695,7 @@ Solution
 
 &lt;div class=&#34;exercise&#34;&gt;
 &lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 8  &lt;/strong&gt;&lt;/span&gt;
-Essayez de changer le titre de l’utilisateur avec le &lt;code&gt;last_name&lt;/code&gt; ‘Doe’ sans spécifier le &lt;code&gt;first_name&lt;/code&gt;.
+Essayez de changer le titre de l’utilisateur avec le &lt;code&gt;last_name&lt;/code&gt; &lt;em&gt;Doe&lt;/em&gt; sans spécifier le &lt;code&gt;first_name&lt;/code&gt;.
 Est-ce que la mise à jour réussit ? Pourquoi ?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
@@ -3707,15 +3712,15 @@ il est logique que les mêmes règles s’appliquent aux deux opérations.&lt;/p
 &lt;/div&gt;
 &lt;/details&gt;
 &lt;/div&gt;
-&lt;div id=&#34;colonnes&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Colonnes&lt;/h1&gt;
-&lt;p&gt;Une colonne est l’unité de base de stockage des données dans Cassandra.
+&lt;div id=&#34;colonnes&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Colonnes&lt;/h2&gt;
+&lt;p&gt;Une &lt;strong&gt;colonne&lt;/strong&gt; est l’unité de base de stockage des données dans Cassandra.
 Une colonne est identifiée par un nom et a une valeur associée.
 Les valeurs d’une colonne doivent être du même type de données pour toutes les lignes d’une table.
-Deux attributs importants d’une colonne sont les timestamps et les TTL (Time To Live).&lt;/p&gt;
-&lt;div id=&#34;timestamps&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Timestamps&lt;/h2&gt;
-&lt;p&gt;A chaque fois qu’une colonne est insérée ou mise à jour, Cassandra associe un timestamp (en microsecondes) à cette opération.
+Deux attributs importants d’une colonne sont les &lt;strong&gt;timestamps&lt;/strong&gt; et les &lt;strong&gt;TTL (Time To Live)&lt;/strong&gt;.&lt;/p&gt;
+&lt;div id=&#34;timestamps&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Timestamps&lt;/h3&gt;
+&lt;p&gt;A chaque fois qu’une colonne est insérée ou mise à jour, Cassandra associe un &lt;strong&gt;timestamp&lt;/strong&gt; (en microsecondes) à cette opération.
 Internement, Cassandra utilise ces timestamps pour résoudre les conflits lors de la réplication
 des données entre les noeuds du cluster (&lt;em&gt;last write wins&lt;/em&gt;).
 Pour visualiser les timestamps des colonnes, vous pouvez utiliser la commande &lt;code&gt;SELECT&lt;/code&gt; avec la fonction &lt;code&gt;writetime()&lt;/code&gt;.&lt;/p&gt;
@@ -3741,65 +3746,33 @@ Si vous essayez de modifier le prénom d’un utilisateur avec un UPDATE, vous d
 &lt;/div&gt;
 &lt;/details&gt;
 &lt;/div&gt;
-&lt;div id=&#34;ttl-time-to-live&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;TTL (Time To Live)&lt;/h2&gt;
-&lt;p&gt;Une des fonctionnalités intéressantes de Cassandra est la possibilité de définir un TTL (Time To Live) pour une colonne.
+&lt;div id=&#34;ttl-time-to-live&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;TTL (Time To Live)&lt;/h3&gt;
+&lt;p&gt;Une des fonctionnalités intéressantes de Cassandra est la possibilité de définir un &lt;strong&gt;TTL (Time To Live)&lt;/strong&gt; pour une colonne.
 Par défaut, les colonnes n’ont pas de TTL, ce qui signifie que les données sont conservées indéfiniment.
 La requête suivante renvoie le TTL de la colonne &lt;code&gt;middle_initial&lt;/code&gt; pour chaque ligne de la table &lt;code&gt;user&lt;/code&gt;:&lt;/p&gt;
 &lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;SELECT ttl(middle_initial) FROM user;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Essayons maintenant de définir un TTL de 60 secondes pour la colonne &lt;code&gt;title&lt;/code&gt; de l’utilisateur ‘John Doe’:&lt;/p&gt;
-&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;UPDATE user USING TTL 60 SET title = &amp;#39;Temporary Title&amp;#39; WHERE last_name = &amp;#39;Doe&amp;#39; and first_name = &amp;#39;John&amp;#39; ;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Après 60 secondes, la colonne &lt;code&gt;title&lt;/code&gt; de l’utilisateur ‘John Doe’ sera automatiquement supprimée par Cassandra.
+&lt;p&gt;Essayons maintenant de définir un TTL de 60 secondes pour la colonne &lt;code&gt;title&lt;/code&gt; de l’utilisateur &lt;em&gt;John Doe&lt;/em&gt;:&lt;/p&gt;
+&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;UPDATE user USING TTL 60  SET title = &amp;#39;Temporary Title&amp;#39;  WHERE last_name = &amp;#39;Doe&amp;#39; and first_name = &amp;#39;John&amp;#39; ;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Après 60 secondes, la colonne &lt;code&gt;title&lt;/code&gt; de l’utilisateur &lt;em&gt;John Doe&lt;/em&gt; sera automatiquement supprimée par Cassandra.
 Vérifiez-le.&lt;/p&gt;
 &lt;p&gt;On peut aussi définir un TTL lors de l’insertion d’une nouvelle ligne:&lt;/p&gt;
 &lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;INSERT INTO user (first_name, last_name, middle_initial, title) VALUES (&amp;#39;Alice&amp;#39;, &amp;#39;Johnson&amp;#39;, &amp;#39;A.&amp;#39;, &amp;#39;Intern&amp;#39;) USING TTL 60 ;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;La commande précédente insère une nouvelle ligne pour l’utilisateur ‘Alice Johnson’ avec un TTL de 60 secondes pour toutes les colonnes.
+&lt;p&gt;La commande précédente insère une nouvelle ligne pour l’utilisateur &lt;em&gt;Alice Johnson&lt;/em&gt; avec un TTL de 60 secondes pour toutes les colonnes.
 Après 60 secondes, toute la ligne sera automatiquement supprimée par Cassandra.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;lire-et-écrire-des-données&#34; class=&#34;section level2&#34;&gt;
-&lt;h2&gt;Lire et écrire des données&lt;/h2&gt;
-&lt;p&gt;Pour insérer des données dans la table &lt;code&gt;user&lt;/code&gt;, utilisez la commande suivante:&lt;/p&gt;
-&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;INSERT INTO user (first_name, last_name, title) VALUES (&amp;#39;John&amp;#39;, &amp;#39;Doe&amp;#39;, &amp;#39;Data Engineer&amp;#39;);&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Vous pouvez lire les données que vous avez insérées en utilisant la commande suivante :&lt;/p&gt;
-&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;SELECT * FROM user WHERE last_name = &amp;#39;Doe&amp;#39; and first_name = &amp;#39;John&amp;#39; ;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Dans la commande précédente, nous avons spécifié une valeur pour chaque composant de la clé primaire dans la clause WHERE.&lt;/p&gt;
-&lt;p&gt;Que se passe-t-il si vous essayez d’exécuter la commande suivante ?&lt;/p&gt;
-&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;SELECT * FROM user WHERE last_name = &amp;#39;Doe&amp;#39; ;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Tout se passe bien.&lt;/p&gt;
-&lt;p&gt;Et avec la commande suivante ?&lt;/p&gt;
-&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;SELECT * FROM user WHERE first_name = &amp;#39;John&amp;#39; ;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Nous avons une erreur.&lt;/p&gt;
-&lt;p&gt;Nous pouvons supprimer des données en utilisant la commande DELETE.&lt;/p&gt;
-&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;DELETE FROM user WHERE last_name = &amp;#39;Doe&amp;#39; and first_name = &amp;#39;John&amp;#39; ;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Pour vérifier que les données ont été supprimées, vous pouvez exécuter à nouveau la commande SELECT.&lt;/p&gt;
-&lt;p&gt;Pour supprimer toutes les lignes d’une table, on peut utiliser la commande TRUNCATE.&lt;br /&gt;
-Pour supprimer une table, on utilise la commande DROP TABLE.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;utilisation-de-la-clé-primaire&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Utilisation de la clé primaire&lt;/h1&gt;
-&lt;p&gt;Exécutons à nouveau la commande INSERT pour insérer des données dans la table &lt;code&gt;user&lt;/code&gt;:&lt;/p&gt;
-&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;INSERT INTO user (first_name, last_name, title) VALUES (&amp;#39;John&amp;#39;, &amp;#39;Doe&amp;#39;, &amp;#39;Data Engineer&amp;#39;);&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Lorsque nous avons créé la table &lt;code&gt;user&lt;/code&gt;, nous avons défini la clé primaire comme étant composée de &lt;code&gt;last_name&lt;/code&gt; et &lt;code&gt;first_name&lt;/code&gt;.
-Cela est interprété par Cassandra comme une clé primaire composite, où &lt;code&gt;last_name&lt;/code&gt; est la &lt;strong&gt;clé de partition&lt;/strong&gt; et &lt;code&gt;first_name&lt;/code&gt;
-est la &lt;strong&gt;clé de clustering&lt;/strong&gt;.&lt;/p&gt;
-&lt;p&gt;Si nous essayons d’insérer une autre ligne avec le même &lt;code&gt;last_name&lt;/code&gt; mais un &lt;code&gt;first_name&lt;/code&gt; différent, comme dans la commande suivante:&lt;/p&gt;
-&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;INSERT INTO user (first_name, last_name, title) VALUES (&amp;#39;Jane&amp;#39;, &amp;#39;Doe&amp;#39;, &amp;#39;Data Scientist&amp;#39;);&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Cassandra va accepter cette insertion car la combinaison de &lt;code&gt;last_name&lt;/code&gt; et &lt;code&gt;first_name&lt;/code&gt; est unique.&lt;/p&gt;
-&lt;p&gt;Maintenant, si on cherche toutes les entrées avec &lt;code&gt;last_name&lt;/code&gt; égal à ‘Doe’:&lt;/p&gt;
-&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;SELECT * FROM user WHERE last_name = &amp;#39;Doe&amp;#39; ;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Nous obtenons un résultat. La requête précédente charge en mémoire le contenu de la partition correspondant à &lt;code&gt;last_name&lt;/code&gt; égal à ‘Doe’.&lt;/p&gt;
-&lt;p&gt;Si on essaie de récupérer les entrées avec &lt;code&gt;first_name&lt;/code&gt; égal à ‘John’:&lt;/p&gt;
-&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;SELECT * FROM user WHERE first_name = &amp;#39;John&amp;#39; ;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;on obtient une erreur. En fait, une recherche basée uniquement sur la clé de clustering n’est pas permise dans Cassandra en raison des performances.
-Si nous avons vraiment besoin de faire ce type de requête, on peut spécifier la commande suivante :&lt;/p&gt;
-&lt;pre class=&#34;cql&#34;&gt;&lt;code&gt;SELECT * FROM user WHERE first_name = &amp;#39;John&amp;#39; ALLOW FILTERING;&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;data available &lt;a href=&#34;/courses/databases/gadexed/tutorial-6/sakila-data-cassandra.zip&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;data here&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;!-- * Download the [**data here**](/courses/databases/tutorial-8/sakila-data-cassandra.zip){target=&#34;_blank&#34;}
+&lt;div id=&#34;base-de-données-sakila-dans-cassandra&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Base de données Sakila dans Cassandra&lt;/h1&gt;
+&lt;!-- 
+
+
+data available [**data here**](/courses/databases/gadexed/tutorial-6/sakila-data-cassandra.zip){target=&#34;_blank&#34;}
 
 * Extract the downloaded archive. This will create a new folder containing the data. Let&#39;s refer to this folder as DATA_FOLDER.
 
-* Go back to the CQL shell and type the following command ``source &#39;DATAFOLDER/sakila.cql&#39;`` (replace DATAFOLDER with the full path to the data folder). This command will 
+* Go back to the CQL shell and type the following command ``source &#39;/mnt/host-downloads/sakila.cql&#39;`` (replace DATAFOLDER with the full path to the data folder). This command will 
 create the sakila keyspace (database).
 
 * In the CQL shell, type the command ``use sakila;``
@@ -3809,27 +3782,27 @@ create the sakila keyspace (database).
 * As the last step, we need to import the data. No luck here, we need to import the data table by table with the following commands:
 
 ```
-COPY sakila.actors_by_film FROM &#39;DATAFOLDER/actors_by_film.csv&#39; WITH HEADER = TRUE ;
+COPY sakila.actors_by_film FROM &#39;/mnt/host-downloads/actors_by_film.csv&#39; WITH HEADER = TRUE ;
 
-COPY sakila.categories_by_film FROM &#39;DATAFOLDER/categories_by_film.csv&#39; WITH HEADER = TRUE ;
+COPY sakila.categories_by_film FROM &#39;/mnt/host-downloads/categories_by_film.csv&#39; WITH HEADER = TRUE ;
 
-COPY sakila.customers FROM &#39;DATAFOLDER/customers.csv&#39; WITH HEADER = TRUE ;
+COPY sakila.customers FROM &#39;/mnt/host-downloads/customers.csv&#39; WITH HEADER = TRUE ;
 
-COPY sakila.film FROM &#39;DATAFOLDER/film.csv&#39; WITH HEADER = TRUE ;
+COPY sakila.film FROM &#39;/mnt/host-downloads/film.csv&#39; WITH HEADER = TRUE ;
 
-COPY sakila.inventory FROM &#39;DATAFOLDER/inventory.csv&#39; WITH HEADER = TRUE ;
+COPY sakila.inventory FROM &#39;/mnt/host-downloads/inventory.csv&#39; WITH HEADER = TRUE ;
 
-COPY sakila.rentals_by_customer FROM &#39;DATAFOLDER/rentals_by_customer.csv&#39; WITH HEADER = TRUE ;
+COPY sakila.rentals_by_customer FROM &#39;/mnt/host-downloads/rentals_by_customer.csv&#39; WITH HEADER = TRUE ;
 
-COPY sakila.rentals_by_film FROM &#39;DATAFOLDER/rentals_by_film.csv&#39; WITH HEADER = TRUE ;
+COPY sakila.rentals_by_film FROM &#39;/mnt/host-downloads/rentals_by_film.csv&#39; WITH HEADER = TRUE ;
 
-COPY sakila.rentals_by_staff FROM &#39;DATAFOLDER/rentals_by_staff.csv&#39; WITH HEADER = TRUE ;
+COPY sakila.rentals_by_staff FROM &#39;/mnt/host-downloads/rentals_by_staff.csv&#39; WITH HEADER = TRUE ;
 
-COPY sakila.rentals FROM &#39;DATAFOLDER/rentals.csv&#39; WITH HEADER = TRUE ;
+COPY sakila.rentals FROM &#39;/mnt/host-downloads/rentals.csv&#39; WITH HEADER = TRUE ;
 
-COPY sakila.staff FROM &#39;DATAFOLDER/staff.csv&#39; WITH HEADER = TRUE ;
+COPY sakila.staff FROM &#39;/mnt/host-downloads/staff.csv&#39; WITH HEADER = TRUE ;
 
-COPY sakila.store FROM &#39;DATAFOLDER/store.csv&#39; WITH HEADER = TRUE ;
+COPY sakila.store FROM &#39;/mnt/host-downloads/store.csv&#39; WITH HEADER = TRUE ;
 
 ```
 
