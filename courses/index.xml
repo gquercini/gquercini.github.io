@@ -3485,6 +3485,214 @@ cd Desktop\kibana-9.2.1
     </item>
     
     <item>
+      <title>Modélisation de données dans MongoDB</title>
+      <link>/courses/gadexed_fr/tutorials/04-mongodb-modeling/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/gadexed_fr/tutorials/04-mongodb-modeling/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;div id=&#34;scénario-applicatif&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Scénario applicatif&lt;/h1&gt;
+&lt;p&gt;La base de données Sakila est soumise à un nombre croissant de requêtes
+de la part du personnel et des clients à travers le monde.
+Une base de données centralisée n’est plus suffisante pour servir toutes
+les requêtes et la société envisage de distribuer la base de données sur
+plusieurs serveurs (scalabilité horizontale).
+Cependant, une base de données relationnelle ne gère pas très bien la scalabilité
+horizontale, en raison du fait que les données sont dispersées dans de nombreuses
+tables, résultat du processus de normalisation.
+Ainsi, l’équipe Sakila se tourne vers vous pour l’aider à migrer la base
+de données de PostgreSQL vers MongoDB.&lt;/p&gt;
+&lt;p&gt;Pour que la migration ait lieu, il est nécessaire de concevoir un modèle de données
+approprié.
+Dès les premières discussions avec la direction de Sakila,
+vous comprenez rapidement qu’une des principales utilisations de la base de données est de
+gérer (ajouter, mettre à jour et lire) les informations de location.&lt;/p&gt;
+&lt;div class=&#34;figure&#34; style=&#34;text-align: center&#34;&gt;&lt;span id=&#34;fig:cnm&#34;&gt;&lt;/span&gt;
+&lt;img src=&#34;/courses/databases/gadexed/tutorial-3/sakila-db.png&#34; alt=&#34;Modèle physique de la base de données Sakila&#34; width=&#34;100%&#34; /&gt;
+&lt;p class=&#34;caption&#34;&gt;
+Figure 1: Modèle physique de la base de données Sakila
+&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;analysis-of-the-existing-model&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Analysis of the existing model&lt;/h1&gt;
+&lt;p&gt;Le modèle physique de la base de données Sakila est illustré dans la figure 1.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1  &lt;/strong&gt;&lt;/span&gt;
+Determinez la cardinalité (un-à-un, un-à-plusieurs, plusieurs-à-plusieurs)
+de chacune des associations
+dans lesquelles la table &lt;TT&gt;Rental&lt;/TT&gt; est impliquée.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2  &lt;/strong&gt;&lt;/span&gt;
+Regardez la définition des tables &lt;TT&gt;Rental&lt;/TT&gt; et &lt;TT&gt;Customer&lt;/TT&gt; en Figure 1.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Estimez la taille d’une ligne en octets dans les deux tables.&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Les informations suivantes vous aideront dans la tâche :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;La taille de stockage d’un type de données numériques est clairement indiquée dans &lt;a href=&#34;https://www.postgresql.org/docs/8.1/datatype.html#DATATYPE-NUMERIC&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;la documentation PostgreSQL&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;La taille de stockage des types de date/heure est clairement indiquée dans &lt;a href=&#34;https://www.postgresql.org/docs/8.1/datatype-datetime.html&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;la documentation PostgreSQL&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Les colonnes de type &lt;TT&gt;text&lt;/TT&gt; contiennent des caractères UTF-8. Nous supposons que chaque caractère occupe 1 octet (bien que certains caractères puissent nécessiter plus d’un octet).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Les colonnes de type &lt;T&gt;boolean&lt;/T&gt; nécessitent 1 octet de stockage.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Nous supposons qu’une adresse e-mail fait en moyenne 25 caractères.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Nous supposont qu’un nom de famille fait en moyenne 7 caractères.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Nous supposont qu’un prénom fait en moyenne 6 caractères.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Nous ignorons les colonnes &lt;TT&gt;last_update&lt;/TT&gt; et &lt;TT&gt;create_date&lt;/TT&gt; dans les deux tables.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Dans la table &lt;TT&gt;Customer&lt;/TT&gt;, nous ignorons la colonne &lt;TT&gt;active&lt;/TT&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;considérations-pour-le-modèle-mongodb&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Considérations pour le modèle MongoDB&lt;/h1&gt;
+&lt;p&gt;Nous devons maintenant réfléchir à la manière de modéliser les données
+dans MongoDB. Les considérations faites à la section précédente seront
+utiles pour cette tâche.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3  &lt;/strong&gt;&lt;/span&gt;
+Comment modéliseriez-vous dans MongoDB les entités &lt;TT&gt;Rental&lt;/TT&gt;
+et &lt;TT&gt;Payment&lt;/TT&gt;, compte tenu des cardinalités que vous avez identifiées dans la section précédente?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4  &lt;/strong&gt;&lt;/span&gt;
+Supposons que nous créons une collection &lt;TT&gt;Customer&lt;/TT&gt;
+et que nous intégrons dans chaque document décrivant un client la liste des locations
+effectuées par ce client.&lt;/p&gt;
+&lt;p&gt;Combien de locations pouvons-nous stocker au maximum pour un client donné, sachant
+que la taille d’un document ne peut pas dépasser 16 Mo?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5  &lt;/strong&gt;&lt;/span&gt;
+Dans notre bases PostgreSQL nous avons :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;599 clients.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;16044 locations.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;En moyenne chaque client a environ 27 locations.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Calculez la taille en octets des deux collections suivantes :&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;La collection &lt;TT&gt;Customer&lt;/TT&gt;, où chaque document contient les
+informations sur un client et une liste intégrée avec les informations
+sur toutes les locations effectuées par le client.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;La collection &lt;TT&gt;Rental&lt;/TT&gt;, où chaque document contient les
+informations sur une location et un document intégré avec les informations
+sur le client qui a effectué la location.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 6  &lt;/strong&gt;&lt;/span&gt;
+Discurez des avantages et des inconvénients des deux options présentées à la question précédente.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Il semblerait qu’une des deux solutions ait des exigences de stockage
+plus élevées que l’autre, et donc les chances semblent être empilées contre cette solution&lt;/p&gt;
+&lt;p&gt;Il semble que l’une des deux solutions nécessite plus d’espace de stockage que l’autre, et que les chances soient donc défavorables à cette solution.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Par contre&lt;/strong&gt;, nous n’avons pas encore pris en compte deux autres entités qui sont
+liées aux locations : le personnel et l’inventaire.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 7  &lt;/strong&gt;&lt;/span&gt;
+Discutez comment vous pouvez intégrer le personnel et l’inventaire dans chacune des solutions
+présentées dans l’exercice précédent.
+Discutez des avantages et des inconvénients de chaque option que vous présentez.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Sur la base des discussions précédentes, il semble que la solution 2
+soit la meilleure option pour modéliser les données de la base de données Sakila dans
+MongoDB.
+Nous allons regarder de plus près les exigences de stockage de la solution adoptée.
+Considérons que :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;La taille en octets d’un document stockant les informations sur un membre du personnel est de 84000 octets
+(nous stockons également une photo de profil).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;La taille en octets d’un document stockant les informations sur un élément d’inventaire est de 16 octets.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 8  &lt;/strong&gt;&lt;/span&gt;
+Si on note par &lt;span class=&#34;math inline&#34;&gt;\(N_{rentals}\)&lt;/span&gt; le nombre de locations, quelle est la taille en octets
+de la base de données entière pour la solution adoptée?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Bien que la taille que nous avons déterminée dans l’exercice précédent, puisse ne pas sembler
+impressionnante, nous devons encore stocker d’autres informations
+(films, acteurs….).
+Il serait donc souhaitable de réduire la taille de la base de données.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 9  &lt;/strong&gt;&lt;/span&gt;
+Comment pourriez-vous économiser de l’espace dans la solution adoptée?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 10  &lt;/strong&gt;&lt;/span&gt;
+Proposez une solution pour toutes les entités impliquées et
+estimez l’économie en termes d’exigences de stockage.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;le-modèle-complet&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Le modèle complet&lt;/h1&gt;
+&lt;p&gt;Nous pouvons finaliser notre modèle de données en examinant les autres entités
+de la base de données Sakila.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-11&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 11  &lt;/strong&gt;&lt;/span&gt;
+Considérez le modèle que nous avons obtenu à la fin de la section précédente.
+Quelles données pouvez-vous encore dénormaliser?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-12&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 12  &lt;/strong&gt;&lt;/span&gt;
+Completez le diagramme obtenu dans l’exercice précédent de manière à obtenir
+un modèle de données complet pour la base de données Sakila.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Data modeling in MongoDB</title>
       <link>/courses/gadexed_en/tutorials/mongodb-data-modeling/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
@@ -5679,8 +5887,8 @@ deped on flight_number.&lt;/p&gt;
 &lt;li&gt;&lt;p&gt;&lt;strong&gt;Schéma logique&lt;/strong&gt; d’une base de données relationnelle.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;&lt;strong&gt;Clés primaires&lt;/strong&gt; et &lt;strong&gt;clés étrangères&lt;/strong&gt;.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;div id=&#34;scénario-applicatif&#34; class=&#34;section level1&#34; number=&#34;1&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Scénario applicatif&lt;/h1&gt;
+&lt;div id=&#34;scénario-applicatif&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Scénario applicatif&lt;/h1&gt;
 &lt;p&gt;Nous souhaitons gérer les données d’un système de réservation de voyages
 avec des clients partout dans le monde.
 Lors de leur inscription, les clients se voient automatiquement attribuer un identifiant numérique
@@ -5734,8 +5942,8 @@ la date et son auteur.
 Lorsque un client réserve un hôtel, le système conserve le prix payé,
 les dates d’arrivée et de départ et si le petit-déjeuner est inclus.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;schéma-conceptuel&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Schéma conceptuel&lt;/h1&gt;
+&lt;div id=&#34;schéma-conceptuel&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Schéma conceptuel&lt;/h1&gt;
 &lt;p&gt;Le &lt;strong&gt;schéma conceptuel&lt;/strong&gt; de la base de données est une représentation abstraite des entités de l’application et de leurs associations.
 Le schéma conceptuel ne comprend aucun détail de mise en œuvre,
 comme la définition des clés primaires ou des clés étrangères, ni aucune information sur les types des attributs.
@@ -5744,7 +5952,7 @@ Le schéma conceptuel est généralement représenté à travers un &lt;strong&g
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1  &lt;/strong&gt;&lt;/span&gt;
 Proposez un diagramme Entité-Association (ER) décrivant le modèle conceptuel
 d’une base de données relationnelle pour le contexte applicatif donné.&lt;/p&gt;
 &lt;ul&gt;
@@ -5756,17 +5964,17 @@ d’une base de données relationnelle pour le contexte applicatif donné.&lt;/p
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;schéma-logique&#34; class=&#34;section level1&#34; number=&#34;3&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Schéma logique&lt;/h1&gt;
+&lt;div id=&#34;schéma-logique&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Schéma logique&lt;/h1&gt;
 &lt;p&gt;Le &lt;strong&gt;schéma logique&lt;/strong&gt; d’une base de données relationnelle est l’ensemble des tables
 qui implémentent le schéma conceptuel.
 Le schéma logique inclut la définition des clés primaires et des clés étrangères,
 mais il n’inclut aucune information sur les types des colonnes.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2  &lt;/strong&gt;&lt;/span&gt;
 Donnez le &lt;strong&gt;schéma logique&lt;/strong&gt; de la base de données.
 Pour chaque table, soulignez la clé primaire et spécifiez les clés étrangères.&lt;/p&gt;
 &lt;/div&gt;
@@ -6825,9 +7033,9 @@ Nous pouvons utiliser des requêtes SQL pour effectuer cette exploration.&lt;/p&
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3  &lt;/strong&gt;&lt;/span&gt;
-1. Combien de clients sont des hommes et combien sont des femmes ?&lt;/p&gt;
-&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Combien de clients sont des hommes et combien sont des femmes ?&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Quel est le nombre de clients dans chaque pays ?&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Quel est l’âge moyen des clients dans chaque pays ?&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Quel est le nombre total de réservations d’hôtel effectuées pour chaque hôtel ? Triez les résultats par ordre décroissant.&lt;/p&gt;&lt;/li&gt;
@@ -6843,7 +7051,7 @@ Triez les résultats par ordre décroissant et affichez uniquement les 10 meille
 &lt;p&gt;Maintenant, imaginons que vous travaillez pour l’agence de voyage qui gère la base de données.
 On vous a demandé de fournir quelques informations basées sur les données stockées dans la base de données.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;strong&gt;Exercise&lt;/strong&gt;
+&lt;strong&gt;Exercice&lt;/strong&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
 &lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;

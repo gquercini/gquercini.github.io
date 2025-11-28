@@ -28,10 +28,10 @@
   
     
   
-  <meta name="description" content="Exercises on SQL">
+  <meta name="description" content="MongoDB data modeling exercises">
 
   
-  <link rel="alternate" hreflang="en-us" href="/courses/gadexed_fr/tutorials/02-sql/">
+  <link rel="alternate" hreflang="en-us" href="/courses/gadexed_fr/tutorials/04-mongodb-modeling/">
 
   
 
@@ -219,7 +219,7 @@
   <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_3.png">
   <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_3.png">
 
-  <link rel="canonical" href="/courses/gadexed_fr/tutorials/02-sql/">
+  <link rel="canonical" href="/courses/gadexed_fr/tutorials/04-mongodb-modeling/">
 
   
   
@@ -233,9 +233,9 @@
   <meta property="twitter:card" content="summary">
   
   <meta property="og:site_name" content="Gianluca Quercini">
-  <meta property="og:url" content="/courses/gadexed_fr/tutorials/02-sql/">
-  <meta property="og:title" content="SQL | Gianluca Quercini">
-  <meta property="og:description" content="Exercises on SQL"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:url" content="/courses/gadexed_fr/tutorials/04-mongodb-modeling/">
+  <meta property="og:title" content="Modélisation de données dans MongoDB | Gianluca Quercini">
+  <meta property="og:description" content="MongoDB data modeling exercises"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
   
     
@@ -258,7 +258,7 @@
 
 
 
-  <title>SQL | Gianluca Quercini</title>
+  <title>Modélisation de données dans MongoDB | Gianluca Quercini</title>
 
 </head>
 
@@ -549,8 +549,8 @@
         <a href="/courses/gadexed_fr/tutorials/01-rel-data-modeling/">1. Modélisation des données relationnelles</a>
       </li>
       
-      <script>open_menu_on_load("tutoriels".concat("-ddowncontent"))</script>
-      <li class="active tutoriels">
+      
+      <li class="tutoriels">
         <a href="/courses/gadexed_fr/tutorials/02-sql/">2. SQL</a>
       </li>
       
@@ -559,8 +559,8 @@
         <a href="/courses/gadexed_fr/tutorials/03-multidimension-modeling/">3. Modélisation multidimensionnelle</a>
       </li>
       
-      
-      <li class="tutoriels">
+      <script>open_menu_on_load("tutoriels".concat("-ddowncontent"))</script>
+      <li class="active tutoriels">
         <a href="/courses/gadexed_fr/tutorials/04-mongodb-modeling/">4. Modélisation de données dans MongoDB</a>
       </li>
       
@@ -603,8 +603,8 @@
       <article class="article">
 
         <div class="docs-article-container">
-          <div class="heading">Gestion et analyse des données — Tutoriel 2</div>
-          <h1>SQL</h1>
+          <div class="heading">Gestion et analyse des données — Tutoriel 4</div>
+          <h1>Modélisation de données dans MongoDB</h1>
           <hr>
           <div class="logo">
             
@@ -617,201 +617,199 @@
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<p>L’objectif de ce tutoriel est de pratiquer les <strong>requêtes SQL</strong> sur une
-base de données relationnelle.</p>
-<div id="préparation-de-lenvironnement" class="section level1">
-<h1>Préparation de l’environnement</h1>
-<ul>
-<li><p>Démnarrez la machine virtuelle fournie pour le cours avec Remote Desktop Connection.</p></li>
-<li><p>Ouvrez <em>pgAdmin4</em> (icône sur le bureau).</p></li>
-<li><p>Dans le menu de gauche, faites un clic droit sur <em>Servers</em> et sélectionnez <em>PostgreSQL 18</em> pour vous connecter.</p></li>
-<li><p>Lorsque vous y êtes invité, entrez le mot de passe <code>postgres</code> pour vous connecter au serveur.</p></li>
-<li><p>Sélectionnez la base de données <code>travel</code>.</p></li>
-<li><p>Ouvrez un nouvel outil de requête (clic droit sur la base de données <code>travel</code>, sélectionnez <em>Query tool</em>).</p></li>
-</ul>
-</div>
-<div id="schéma-de-la-base-de-données" class="section level1">
-<h1>Schéma de la base de données</h1>
-<p>La figure 1 montre le schéma physique de la base de données <code>travel</code>.
-Vous pouvez également l’obtenir dans pgAdmin4 en faisant un clic droit sur la base de données <code>travel</code>,
-et en sélectionnant <em>ERD for database</em>.</p>
+<div id="scénario-applicatif" class="section level1">
+<h1>Scénario applicatif</h1>
+<p>La base de données Sakila est soumise à un nombre croissant de requêtes
+de la part du personnel et des clients à travers le monde.
+Une base de données centralisée n’est plus suffisante pour servir toutes
+les requêtes et la société envisage de distribuer la base de données sur
+plusieurs serveurs (scalabilité horizontale).
+Cependant, une base de données relationnelle ne gère pas très bien la scalabilité
+horizontale, en raison du fait que les données sont dispersées dans de nombreuses
+tables, résultat du processus de normalisation.
+Ainsi, l’équipe Sakila se tourne vers vous pour l’aider à migrer la base
+de données de PostgreSQL vers MongoDB.</p>
+<p>Pour que la migration ait lieu, il est nécessaire de concevoir un modèle de données
+approprié.
+Dès les premières discussions avec la direction de Sakila,
+vous comprenez rapidement qu’une des principales utilisations de la base de données est de
+gérer (ajouter, mettre à jour et lire) les informations de location.</p>
 <div class="figure" style="text-align: center"><span id="fig:cnm"></span>
-<img src="/courses/databases/gadexed/tutorial-2/travel_physical_schema.png" alt="Le schéma physique de la base de données travel" width="100%" />
+<img src="/courses/databases/gadexed/tutorial-3/sakila-db.png" alt="Modèle physique de la base de données Sakila" width="100%" />
 <p class="caption">
-Figure 1: Le schéma physique de la base de données travel
+Figure 1: Modèle physique de la base de données Sakila
 </p>
 </div>
 </div>
-<div id="contraintes-de-clé-étrangère" class="section level1">
-<h1>Contraintes de clé étrangère</h1>
-<p>Regardez le schéma physique de la base de données <code>travel</code>.
-Les tables sont liées par des contraintes de clé étrangère.</p>
-<p>Par exemple, la table <code>flight_booking</code> a une colonne <code>trip_id</code> qui référence
-la colonne <code>trip_id</code> dans la table <code>trip</code>.</p>
+<div id="analysis-of-the-existing-model" class="section level1">
+<h1>Analysis of the existing model</h1>
+<p>Le modèle physique de la base de données Sakila est illustré dans la figure 1.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1  </strong></span>
-Essayez de supprimer une ligne de la table <code>trip</code> qui est référencée par une ligne dans la table <code>flight_booking</code>.
-Que se passe-t-il?</p>
+Determinez la cardinalité (un-à-un, un-à-plusieurs, plusieurs-à-plusieurs)
+de chacune des associations
+dans lesquelles la table <TT>Rental</TT> est impliquée.</p>
 </div>
 </div>
-<p>Regardons comment la contrainte de clé étrangère est définie dans la table <code>flight_booking</code>.</p>
-<ul>
-<li>Dans pgAdmin4, dans le menu de gauche, développez la base de données <code>travel</code> &gt; Schéma public &gt; Tables.</li>
-<li>Faites un clic droit sur la table <code>flight_booking</code>.</li>
-<li>Sélectionnez <em>Properties</em>.</li>
-<li>Sélectionnez l’onglet <em>Constraints</em>.</li>
-<li>Sélectionnez l’onglet <em>Foreign Key</em>.</li>
-<li>Sélectionnez la contrainte de clé étrangère nommée <code>flight_booking_trip_id_fkey</code>.</li>
-<li>Cliquez sur l’icône en forme de crayon pour modifier la contrainte.</li>
-<li>Sélectionnez l’onglet <em>Actions</em>.</li>
-</ul>
-<p>Ici vous pouvez voir que l’action de suppression est définie sur <em>No Action</em>.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 2  </strong></span>
-Comment l’action de mise à jour est-elle définie pour la contrainte de clé étrangère
-<code>flight_booking_trip_id_fkey</code> dans la table <code>flight_booking</code>?</p>
-<p>Essayez maintenant de modifier le <code>trip_id</code> d’une ligne de la table <code>trip</code> qui est référencée par une ligne de la table <code>flight_booking</code>.</p>
-<p>Que se passe-t-il?</p>
+Regardez la définition des tables <TT>Rental</TT> et <TT>Customer</TT> en Figure 1.</p>
+<p><strong>Estimez la taille d’une ligne en octets dans les deux tables.</strong></p>
+<p>Les informations suivantes vous aideront dans la tâche :</p>
+<ul>
+<li><p>La taille de stockage d’un type de données numériques est clairement indiquée dans <a href="https://www.postgresql.org/docs/8.1/datatype.html#DATATYPE-NUMERIC" target="_blank"><strong>la documentation PostgreSQL</strong></a>.</p></li>
+<li><p>La taille de stockage des types de date/heure est clairement indiquée dans <a href="https://www.postgresql.org/docs/8.1/datatype-datetime.html" target="_blank"><strong>la documentation PostgreSQL</strong></a>.</p></li>
+<li><p>Les colonnes de type <TT>text</TT> contiennent des caractères UTF-8. Nous supposons que chaque caractère occupe 1 octet (bien que certains caractères puissent nécessiter plus d’un octet).</p></li>
+<li><p>Les colonnes de type <T>boolean</T> nécessitent 1 octet de stockage.</p></li>
+<li><p>Nous supposons qu’une adresse e-mail fait en moyenne 25 caractères.</p></li>
+<li><p>Nous supposont qu’un nom de famille fait en moyenne 7 caractères.</p></li>
+<li><p>Nous supposont qu’un prénom fait en moyenne 6 caractères.</p></li>
+<li><p>Nous ignorons les colonnes <TT>last_update</TT> et <TT>create_date</TT> dans les deux tables.</p></li>
+<li><p>Dans la table <TT>Customer</TT>, nous ignorons la colonne <TT>active</TT>.</p></li>
+</ul>
 </div>
 </div>
 </div>
-<div id="requêtes-sql-exploratoires" class="section level1">
-<h1>Requêtes SQL exploratoires</h1>
-<p>Lorsque vous travaillez avec une nouvelle base de données, il est important d’explorer les données
-pour se familiariser avec sa structure et son contenu.
-Nous pouvons utiliser des requêtes SQL pour effectuer cette exploration.</p>
+<div id="considérations-pour-le-modèle-mongodb" class="section level1">
+<h1>Considérations pour le modèle MongoDB</h1>
+<p>Nous devons maintenant réfléchir à la manière de modéliser les données
+dans MongoDB. Les considérations faites à la section précédente seront
+utiles pour cette tâche.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3  </strong></span></p>
-<ol style="list-style-type: decimal">
-<li><p>Combien de clients sont des hommes et combien sont des femmes ?</p></li>
-<li><p>Quel est le nombre de clients dans chaque pays ?</p></li>
-<li><p>Quel est l’âge moyen des clients dans chaque pays ?</p></li>
-<li><p>Quel est le nombre total de réservations d’hôtel effectuées pour chaque hôtel ? Triez les résultats par ordre décroissant.</p></li>
-<li><p>Quel est le montant total dépensé pour les réservations d’hôtel par chaque client ?
-Triez les résultats par ordre décroissant et affichez uniquement les 10 meilleurs clients.</p></li>
-<li><p>Combien d’aéroports y a-t-il dans chaque pays ? Listez uniquement les pays ayant plus de 10 aéroports.</p></li>
-</ol>
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3  </strong></span>
+Comment modéliseriez-vous dans MongoDB les entités <TT>Rental</TT>
+et <TT>Payment</TT>, compte tenu des cardinalités que vous avez identifiées dans la section précédente?</p>
 </div>
 </div>
-</div>
-<div id="requêtes-métier" class="section level1">
-<h1>Requêtes métier</h1>
-<p>Maintenant, imaginons que vous travaillez pour l’agence de voyage qui gère la base de données.
-On vous a demandé de fournir quelques informations basées sur les données stockées dans la base de données.</p>
 <div class="infobox exercisebox">
-<strong>Exercice</strong>
+<p><strong>Exercice</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 4  </strong></span></p>
+<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 4  </strong></span>
+Supposons que nous créons une collection <TT>Customer</TT>
+et que nous intégrons dans chaque document décrivant un client la liste des locations
+effectuées par ce client.</p>
+<p>Combien de locations pouvons-nous stocker au maximum pour un client donné, sachant
+que la taille d’un document ne peut pas dépasser 16 Mo?</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 5  </strong></span>
+Dans notre bases PostgreSQL nous avons :</p>
+<ul>
+<li><p>599 clients.</p></li>
+<li><p>16044 locations.</p></li>
+<li><p>En moyenne chaque client a environ 27 locations.</p></li>
+</ul>
+<p>Calculez la taille en octets des deux collections suivantes :</p>
 <ol style="list-style-type: decimal">
-<li><p>Identifiez les 5 destinations les plus populaires en fonction du nombre de vols réservés.</p></li>
-<li><p>Trouvez la durée moyenne des séjours pour chaque hôtel.</p></li>
-<li><p>Déterminez les 10 clients qui ont effectué le plus grand nombre de réservations (hôtel et vol).</p></li>
-<li><p>Analysez les tendances mensuelles des réservations de vols et des réservations d’hôtels.</p></li>
-<li><p>Affichez les détails du voyage numéro 1. En particulier, listez les prénoms et noms du client, et, pour chaque vol, les aéroports de départ et d’arrivée,
-la date de départ, et les villes de départ et d’arrivée des aéroports.</p></li>
+<li><p>La collection <TT>Customer</TT>, où chaque document contient les
+informations sur un client et une liste intégrée avec les informations
+sur toutes les locations effectuées par le client.</p></li>
+<li><p>La collection <TT>Rental</TT>, où chaque document contient les
+informations sur une location et un document intégré avec les informations
+sur le client qui a effectué la location.</p></li>
 </ol>
 </div>
 </div>
-<!--
-# Installing PostgreSQL
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
 
-In this tutorial you'll be using **PostgreSQL** as a 
-relational database management system (RDBMS).
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 6  </strong></span>
+Discurez des avantages et des inconvénients des deux options présentées à la question précédente.</p>
+</div>
+</div>
+<p>Il semblerait qu’une des deux solutions ait des exigences de stockage
+plus élevées que l’autre, et donc les chances semblent être empilées contre cette solution</p>
+<p>Il semble que l’une des deux solutions nécessite plus d’espace de stockage que l’autre, et que les chances soient donc défavorables à cette solution.</p>
+<p><strong>Par contre</strong>, nous n’avons pas encore pris en compte deux autres entités qui sont
+liées aux locations : le personnel et l’inventaire.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
 
-<details>
-<summary>Instructions for Windows users</summary>
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 7  </strong></span>
+Discutez comment vous pouvez intégrer le personnel et l’inventaire dans chacune des solutions
+présentées dans l’exercice précédent.
+Discutez des avantages et des inconvénients de chaque option que vous présentez.</p>
+</div>
+</div>
+<p>Sur la base des discussions précédentes, il semble que la solution 2
+soit la meilleure option pour modéliser les données de la base de données Sakila dans
+MongoDB.
+Nous allons regarder de plus près les exigences de stockage de la solution adoptée.
+Considérons que :</p>
+<ul>
+<li><p>La taille en octets d’un document stockant les informations sur un membre du personnel est de 84000 octets
+(nous stockons également une photo de profil).</p></li>
+<li><p>La taille en octets d’un document stockant les informations sur un élément d’inventaire est de 16 octets.</p></li>
+</ul>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
 
-You can download the latest version of PostgreSQL (14.3) 
-[**from this page**](https://www.enterprisedb.com/downloads/postgres-postgresql-downloads){target="_blank"}.
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 8  </strong></span>
+Si on note par <span class="math inline">\(N_{rentals}\)</span> le nombre de locations, quelle est la taille en octets
+de la base de données entière pour la solution adoptée?</p>
+</div>
+</div>
+<p>Bien que la taille que nous avons déterminée dans l’exercice précédent, puisse ne pas sembler
+impressionnante, nous devons encore stocker d’autres informations
+(films, acteurs….).
+Il serait donc souhaitable de réduire la taille de la base de données.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
 
-The installer contains:
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-9" class="exercise"><strong>Exercise 9  </strong></span>
+Comment pourriez-vous économiser de l’espace dans la solution adoptée?</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
 
-* The PostgreSQL server.
-* pgAdmin, a graphical administration tool. 
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-10" class="exercise"><strong>Exercise 10  </strong></span>
+Proposez une solution pour toutes les entités impliquées et
+estimez l’économie en termes d’exigences de stockage.</p>
+</div>
+</div>
+</div>
+<div id="le-modèle-complet" class="section level1">
+<h1>Le modèle complet</h1>
+<p>Nous pouvons finaliser notre modèle de données en examinant les autres entités
+de la base de données Sakila.</p>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
 
-You'll find **detailed installation instructions** [**on this page**](https://www.enterprisedb.com/docs/supported-open-source/postgresql/installer/02_installing_postgresql_with_the_graphical_installation_wizard/01_invoking_the_graphical_installer/){target="_blank"}.
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-11" class="exercise"><strong>Exercise 11  </strong></span>
+Considérez le modèle que nous avons obtenu à la fin de la section précédente.
+Quelles données pouvez-vous encore dénormaliser?</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
 
-</details>
-
-<details>
-<summary>Instructions for macOS users</summary>
-
-The best way to get PostgreSQL is to download and install **Postgres.app**. 
-You'll find more details [**on this page**](https://postgresapp.com/){target="_blank"}.
-
-In addition, you need to [**install pgAdmin**](https://www.pgadmin.org/download/){target="blank"},
-ad administration tool that lets you interact with your database through a 
-graphical interface.
-
-</details>
-
-
-# Starting PostgreSQL and pgAdmin
-
-<details>
-<summary>Instructions for Windows users</summary>
-
-
-
-
-Once the installation is completed, a PostgreSQL server should be 
-automatically started. 
-
-You'll open a connection to the server through the following steps:
-
-* Execute pgAdmin.
-
-* On the left-side menu, right-click on *Servers* and select *Create server*.
-
-* In the *General* tab, give the server a name of your choice.
-
-* In the *Connection* tab, write *localhost* as *host*. 
-Don't change the values of the other options.
-
-<details>
-<summary>What if I get the *Unable to connect to server* error?</summary>
-
-You might want to have a look at the list of the services running on your computer to verify
-whether the PostgreSQL server is actually running. 
-
-[**This page**](https://www.dell.com/support/kbdoc/it-it/000126393/how-to-use-windows-services-to-start-or-stop-services){target="_blank"} 
-explains you how to open the panel with the list of services.
-You should locate PostgreSQL in this panel. If the service is not running, you'll 
-need to manually start it.
-
-</details>
-
-
-
-</details>
-
-<details>
-<summary>Instructions for MacOS users</summary>
-
-You'll open a connection to the server through the following steps:
-
-* Execute pgAdmin.
-
-* On the left-side menu, right-click on *Servers* and select *Create server*.
-
-* In the *General* tab, give the server a name of your choice.
-
-* In the *Connection* tab, write *localhost* as *host*. 
-Don't change the values of the other options.
-
-</details>
-
--->
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-12" class="exercise"><strong>Exercise 12  </strong></span>
+Completez le diagramme obtenu dans l’exercice précédent de manière à obtenir
+un modèle de données complet pour la base de données Sakila.</p>
+</div>
+</div>
 </div>
 
           </div>
