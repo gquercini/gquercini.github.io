@@ -4108,55 +4108,6 @@ a given film by a given customer in the given period, and the number of returns.
 
 &lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
 &lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
-&lt;!-- L&#39;objectif de ce tutoriel est de se familiariser avec Elastic Search, un moteur de recherche et d&#39;analyse distribué basé sur Lucene. 
-
-
-# Préparation de l&#39;environnement
-
-La première chose à faire est de démarrer Elastic Search.
-
-* Ouvrez une fenêtre du PowerShell.
-
-* Déplacez-vous dans le répertoire `elasticsearch-9.2.1`  via la commande suivante :
-
-```
-cd Desktop\elasticsearch-9.2.1
-``` 
-
-* Lancez Elastic Search avec la commande suivante :
-
-```
-\bin\elasticsearch.bat
-```
-
-* Attendez que le serveur démarre (il restera bloqué sur cette fenêtre).
-
-* Ouvrez un nouvel onglet dans le PowerShell.
-
-* Testez que le serveur fonctionne en tapant la commande suivante :
-
-```
-curl.exe -X GET &#34;localhost:9200&#34;
-```
-
-* Vous devriez obtenir une réponse JSON où l&#39;attribut *tagline* vaut *You Know, for Search*.
-
-* Vous devriez obtenir la même réponse, si vous saisissez l&#39;adresse suivante dans votre navigateur web : `http://localhost:9200`.
-
-Ensuite, nous allons démarrer Kibana, l&#39;interface web d&#39;Elastic Search qui nous permettra, entre autres, d&#39;exécuter des requêtes et visualiser les résultats.
-
-* Ouvrez un nouvel onglet dans le PowerShell.
-
-* Déplacez-vous dans le répertoire `kibana-9.2.1`  via la commande suivante :
-
-```
-cd Desktop\kibana-9.2.1
-```
-
-
-
-# Manipulation de documents
---&gt;
 </description>
     </item>
     
@@ -6639,6 +6590,14 @@ d’une base de données relationnelle pour le contexte applicatif donné.&lt;/p
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/gadexed/tutorial-1/travel_db_conceptual.png&#34; alt=&#34;Conceptual model of the travel agency database&#34;&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;schéma-logique&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Schéma logique&lt;/h1&gt;
@@ -6655,6 +6614,38 @@ Donnez le &lt;strong&gt;schéma logique&lt;/strong&gt; de la base de données.
 Pour chaque table, soulignez la clé primaire et spécifiez les clés étrangères.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;customer (&lt;u&gt;cust_code&lt;/u&gt;, first_name, last_name, gender, birth_date, phone_number, email_address, cust_country)&lt;/p&gt;
+&lt;p&gt;trip (&lt;u&gt;trip_code&lt;/u&gt;, cust_code)&lt;/p&gt;
+&lt;p&gt;flight (&lt;u&gt;flight_id&lt;/u&gt;, flight_number, flight_date, departure_time, arrival_time, departure_airport, arrival_airport, airline_name, aircraft_name)&lt;/p&gt;
+&lt;p&gt;hotel (&lt;u&gt;hotel_id&lt;/u&gt;, hotel_name, hotel_address)&lt;/p&gt;
+&lt;p&gt;hotel_reservation (&lt;u&gt;trip_code&lt;/u&gt;, &lt;u&gt;hotel_id&lt;/u&gt;, price, checkin_date, checkout_date, breakfast)&lt;/p&gt;
+&lt;p&gt;flight_booking (&lt;u&gt;trip_code&lt;/u&gt;, &lt;u&gt;flight_id&lt;/u&gt;, seat_number , travel_class, booking_date, price)&lt;/p&gt;
+&lt;p&gt;review (&lt;u&gt;hotel_id&lt;/u&gt;, &lt;u&gt;cust_code&lt;/u&gt;, content, date)&lt;/p&gt;
+&lt;p&gt;airline (&lt;u&gt;airline_name&lt;/u&gt;, airline_country, airline_iata, airline_icao, airline_alias)&lt;/p&gt;
+&lt;p&gt;aircraft (&lt;u&gt;aircraft_name&lt;/u&gt;, aircraft_iata, aircraft_icao)&lt;/p&gt;
+&lt;p&gt;airport (&lt;u&gt;airport_id&lt;/u&gt;, airport_name, airport_iata, airport_icao, city, country, latitude, longitude)&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Clés étrangères :&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;trip(cust_code) → customer(cust_code)&lt;/p&gt;
+&lt;p&gt;flight(departure_airport) → airport(airport_id)&lt;/p&gt;
+&lt;p&gt;flight(arrival_airport) → airport(airport_id)&lt;/p&gt;
+&lt;p&gt;flight(airline_name) → airline(airline_name)&lt;/p&gt;
+&lt;p&gt;flight(aircraft_name) → aircraft(aircraft_name)&lt;/p&gt;
+&lt;p&gt;hotel_reservation(hotel_id) → hotel(hotel_id)&lt;/p&gt;
+&lt;p&gt;flight_booking(trip_code) → trip(trip_code)&lt;/p&gt;
+&lt;p&gt;flight_booking(flight_id) → flight(flight_id)&lt;/p&gt;
+&lt;p&gt;review(cust_code) → customer(cust_code)&lt;/p&gt;
+&lt;p&gt;review(hotel_id) → hotel(hotel_id)&lt;/p&gt;
+&lt;p&gt;Dans la table flight, nous avons introduit une clé primaire substitutive flight_id
+pour identifier de manière unique chaque instance de vol.
+Cependant, la table n’est pas en troisième forme normale (3NF), car les attributs departure_airport et arrival_airport
+dépendent de flight_number.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
@@ -7676,6 +7667,25 @@ Essayez de supprimer une ligne de la table &lt;code&gt;trip&lt;/code&gt; qui est
 Que se passe-t-il?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;D’abord, nous devons identifier une ligne dans la table &lt;code&gt;trip&lt;/code&gt; qui est référencée par une ligne dans la table &lt;code&gt;flight_booking&lt;/code&gt;.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT * 
+FROM flight_booking JOIN trip USING (trip_id)
+LIMIT 1;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Le trip_id 0 est obtenu à partir du résultat de la requête précédente.&lt;/p&gt;
+&lt;p&gt;Si on essaie de supprimer le trip 0 de la table &lt;code&gt;trip&lt;/code&gt; :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;DELETE FROM trip
+WHERE trip_id = 0;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Nous obtenons l’erreur suivante :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;ERROR:  update or delete on table trip violates foreign key constraint flight_booking_trip_id_fkey on table flight_booking
+Key (trip_id)=(0) is still referenced from table flight_booking. &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Par défaut, les contraintes de clé étrangère empêchent la suppression d’une ligne qui est référencée par une autre ligne dans une table différente.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;Regardons comment la contrainte de clé étrangère est définie dans la table &lt;code&gt;flight_booking&lt;/code&gt;.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Dans pgAdmin4, dans le menu de gauche, développez la base de données &lt;code&gt;travel&lt;/code&gt; &amp;gt; Schéma public &amp;gt; Tables.&lt;/li&gt;
@@ -7699,6 +7709,21 @@ Comment l’action de mise à jour est-elle définie pour la contrainte de clé 
 &lt;p&gt;Que se passe-t-il?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;L’action de mise à jour est définie par &lt;em&gt;Cascade&lt;/em&gt;.
+Cela signifie que si nous mettons à jour la valeur de la clé primaire dans la table &lt;code&gt;trip&lt;/code&gt;,
+les valeurs correspondantes de la clé étrangère dans la table &lt;code&gt;flight_booking&lt;/code&gt; seront automatiquement mises à jour.&lt;/p&gt;
+&lt;p&gt;Remplaçons le trip_id 0 par 5432 dans la table &lt;code&gt;trip&lt;/code&gt;:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;UPDATE trip
+SET trip_id = 5432
+WHERE trip_id = 0;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Maintenant la valeur correspondante de la clé étrangère dans la table &lt;code&gt;flight_booking&lt;/code&gt; a été automatiquement mise à jour.&lt;/p&gt;
+&lt;/details&gt;
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;requêtes-sql-exploratoires&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Requêtes SQL exploratoires&lt;/h1&gt;
@@ -7721,6 +7746,55 @@ Triez les résultats par ordre décroissant et affichez uniquement les 10 meille
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Combien de clients sont des hommes et combien sont des femmes ?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;SELECT gender, COUNT(*) AS num_customers
+FROM customer
+GROUP BY gender&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Quel est le nombre de clients dans chaque pays ?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;SELECT country, COUNT(*) AS num_customers
+FROM customer
+GROUP BY country&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Quel est l’âge moyen des clients dans chaque pays ?&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;SELECT country, AVG(EXTRACT(YEAR FROM AGE(CURRENT_DATE, birth_date))) AS avg_age
+FROM customer
+GROUP BY country&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Quel est le nombre total de réservations d’hôtel effectuées pour chaque hôtel ? Triez les résultats par ordre décroissant.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;SELECT hotel_id, COUNT(*) AS num_reservations
+FROM hotel_booking
+GROUP BY hotel_id
+ORDER BY num_reservations DESC&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Quel est le montant total dépensé pour les réservations d’hôtel par chaque client ?
+Triez les résultats par ordre décroissant et affichez uniquement les 10 meilleurs clients.
+=&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;SELECT customer_id, SUM(price) AS total_spent
+FROM hotel_booking JOIN trip USING (trip_id)
+GROUP BY customer_id
+ORDER BY total_spent DESC
+LIMIT 10&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;6&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Combien d’aéroports y a-t-il dans chaque pays ? Listez uniquement les pays ayant plus de 10 aéroports.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;SELECT country, COUNT(*) AS num_airports
+FROM airport
+GROUP BY country
+HAVING COUNT(*) &amp;gt; 10&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
+&lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;requêtes-métier&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Requêtes métier&lt;/h1&gt;
@@ -7740,6 +7814,74 @@ On vous a demandé de fournir quelques informations basées sur les données sto
 la date de départ, et les villes de départ et d’arrivée des aéroports.&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Identifiez les 5 destinations les plus populaires en fonction du nombre de vols réservés.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;SELECT airport_dst, city, country,  COUNT(*) AS num_bookings
+FROM flight_booking JOIN flight USING (flight_id)
+        JOIN airport ON airport_id=airport_dst
+GROUP BY airport_dst, city, country
+ORDER BY num_bookings DESC
+LIMIT 5&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Trouvez la durée moyenne des séjours pour chaque hôtel.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;SELECT hotel_id, AVG(CHECKOUT_DATE - CHECKIN_DATE) AS avg_stay_duration
+FROM hotel_booking
+GROUP BY hotel_id&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Déterminez les 10 clients qui ont effectué le plus grand nombre de réservations (hôtel et vol).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;SELECT customer_id, first_name, last_name, COUNT(*) AS num_bookings
+FROM (
+    SELECT customer_id, first_name, last_name
+    FROM flight_booking JOIN trip USING (trip_id) JOIN customer USING(customer_id)
+    UNION ALL
+    SELECT customer_id, first_name, last_name
+    FROM hotel_booking JOIN trip USING (trip_id) JOIN customer USING(customer_id)
+) AS all_bookings
+GROUP BY customer_id , first_name, last_name
+ORDER BY num_bookings DESC
+LIMIT 10&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Analysez les tendances mensuelles des réservations de vols et des réservations d’hôtels.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;-- Flight bookings by month
+SELECT EXTRACT(MONTH FROM departure_date) AS month, COUNT(*) AS num_flights
+FROM flight_booking JOIN flight USING (flight_id)
+GROUP BY month
+ORDER BY month;
+
+-- Hotel reservations by month
+SELECT EXTRACT(MONTH FROM check_in_date) AS month, COUNT(*) AS num_reservations
+FROM hotel_booking
+GROUP BY month
+ORDER BY month;&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Affichez les détails du voyage numéro 1. En particulier, listez les prénoms et noms du client, et, pour chaque vol, les aéroports de départ et d’arrivée,
+la date de départ, et les villes de départ et d’arrivée des aéroports.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;SELECT c.first_name,
+        c.last_name, 
+        s.airport_name as departure_airport, 
+        concat(s.city, &amp;#39;, &amp;#39;, s.country) as departure_loc, 
+        departure_date,
+        d.airport_name as arrival_airport,
+        concat(d.city, &amp;#39;, &amp;#39;, d.country) as arrival_loc
+FROM customer c
+    JOIN trip t USING (customer_id)
+    JOIN flight_booking USING (trip_id)
+    JOIN flight f USING(flight_id)
+    JOIN airport s ON s.airport_id = f.airport_src 
+    JOIN airport d ON d.airport_id = f.airport_dst
+WHERE t.trip_id=1&lt;/code&gt;&lt;/pre&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;!--
 # Installing PostgreSQL

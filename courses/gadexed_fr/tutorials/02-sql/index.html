@@ -657,6 +657,25 @@ Essayez de supprimer une ligne de la table <code>trip</code> qui est référenc�
 Que se passe-t-il?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>D’abord, nous devons identifier une ligne dans la table <code>trip</code> qui est référencée par une ligne dans la table <code>flight_booking</code>.</p>
+<pre><code>SELECT * 
+FROM flight_booking JOIN trip USING (trip_id)
+LIMIT 1;</code></pre>
+<p>Le trip_id 0 est obtenu à partir du résultat de la requête précédente.</p>
+<p>Si on essaie de supprimer le trip 0 de la table <code>trip</code> :</p>
+<pre><code>DELETE FROM trip
+WHERE trip_id = 0;</code></pre>
+<p>Nous obtenons l’erreur suivante :</p>
+<pre><code>ERROR:  update or delete on table trip violates foreign key constraint flight_booking_trip_id_fkey on table flight_booking
+Key (trip_id)=(0) is still referenced from table flight_booking. </code></pre>
+<p>Par défaut, les contraintes de clé étrangère empêchent la suppression d’une ligne qui est référencée par une autre ligne dans une table différente.</p>
+</div>
+</details>
 <p>Regardons comment la contrainte de clé étrangère est définie dans la table <code>flight_booking</code>.</p>
 <ul>
 <li>Dans pgAdmin4, dans le menu de gauche, développez la base de données <code>travel</code> &gt; Schéma public &gt; Tables.</li>
@@ -680,6 +699,21 @@ Comment l’action de mise à jour est-elle définie pour la contrainte de clé 
 <p>Que se passe-t-il?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>L’action de mise à jour est définie par <em>Cascade</em>.
+Cela signifie que si nous mettons à jour la valeur de la clé primaire dans la table <code>trip</code>,
+les valeurs correspondantes de la clé étrangère dans la table <code>flight_booking</code> seront automatiquement mises à jour.</p>
+<p>Remplaçons le trip_id 0 par 5432 dans la table <code>trip</code>:</p>
+<pre><code>UPDATE trip
+SET trip_id = 5432
+WHERE trip_id = 0;</code></pre>
+<p>Maintenant la valeur correspondante de la clé étrangère dans la table <code>flight_booking</code> a été automatiquement mise à jour.</p>
+</details>
+</div>
 </div>
 <div id="requêtes-sql-exploratoires" class="section level1">
 <h1>Requêtes SQL exploratoires</h1>
@@ -702,6 +736,55 @@ Triez les résultats par ordre décroissant et affichez uniquement les 10 meille
 </ol>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<ol style="list-style-type: decimal">
+<li>Combien de clients sont des hommes et combien sont des femmes ?</li>
+</ol>
+<pre><code>SELECT gender, COUNT(*) AS num_customers
+FROM customer
+GROUP BY gender</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Quel est le nombre de clients dans chaque pays ?</li>
+</ol>
+<pre><code>SELECT country, COUNT(*) AS num_customers
+FROM customer
+GROUP BY country</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>Quel est l’âge moyen des clients dans chaque pays ?</li>
+</ol>
+<pre><code>SELECT country, AVG(EXTRACT(YEAR FROM AGE(CURRENT_DATE, birth_date))) AS avg_age
+FROM customer
+GROUP BY country</code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li>Quel est le nombre total de réservations d’hôtel effectuées pour chaque hôtel ? Triez les résultats par ordre décroissant.</li>
+</ol>
+<pre><code>SELECT hotel_id, COUNT(*) AS num_reservations
+FROM hotel_booking
+GROUP BY hotel_id
+ORDER BY num_reservations DESC</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li>Quel est le montant total dépensé pour les réservations d’hôtel par chaque client ?
+Triez les résultats par ordre décroissant et affichez uniquement les 10 meilleurs clients.
+=</li>
+</ol>
+<pre><code>SELECT customer_id, SUM(price) AS total_spent
+FROM hotel_booking JOIN trip USING (trip_id)
+GROUP BY customer_id
+ORDER BY total_spent DESC
+LIMIT 10</code></pre>
+<ol start="6" style="list-style-type: decimal">
+<li>Combien d’aéroports y a-t-il dans chaque pays ? Listez uniquement les pays ayant plus de 10 aéroports.</li>
+</ol>
+<pre><code>SELECT country, COUNT(*) AS num_airports
+FROM airport
+GROUP BY country
+HAVING COUNT(*) &gt; 10</code></pre>
+</details>
+</div>
 </div>
 <div id="requêtes-métier" class="section level1">
 <h1>Requêtes métier</h1>
@@ -721,6 +804,74 @@ On vous a demandé de fournir quelques informations basées sur les données sto
 la date de départ, et les villes de départ et d’arrivée des aéroports.</p></li>
 </ol>
 </div>
+</div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<ol style="list-style-type: decimal">
+<li>Identifiez les 5 destinations les plus populaires en fonction du nombre de vols réservés.</li>
+</ol>
+<pre><code>SELECT airport_dst, city, country,  COUNT(*) AS num_bookings
+FROM flight_booking JOIN flight USING (flight_id)
+        JOIN airport ON airport_id=airport_dst
+GROUP BY airport_dst, city, country
+ORDER BY num_bookings DESC
+LIMIT 5</code></pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Trouvez la durée moyenne des séjours pour chaque hôtel.</li>
+</ol>
+<pre><code>SELECT hotel_id, AVG(CHECKOUT_DATE - CHECKIN_DATE) AS avg_stay_duration
+FROM hotel_booking
+GROUP BY hotel_id</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>Déterminez les 10 clients qui ont effectué le plus grand nombre de réservations (hôtel et vol).</li>
+</ol>
+<pre><code>SELECT customer_id, first_name, last_name, COUNT(*) AS num_bookings
+FROM (
+    SELECT customer_id, first_name, last_name
+    FROM flight_booking JOIN trip USING (trip_id) JOIN customer USING(customer_id)
+    UNION ALL
+    SELECT customer_id, first_name, last_name
+    FROM hotel_booking JOIN trip USING (trip_id) JOIN customer USING(customer_id)
+) AS all_bookings
+GROUP BY customer_id , first_name, last_name
+ORDER BY num_bookings DESC
+LIMIT 10</code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li>Analysez les tendances mensuelles des réservations de vols et des réservations d’hôtels.</li>
+</ol>
+<pre><code>-- Flight bookings by month
+SELECT EXTRACT(MONTH FROM departure_date) AS month, COUNT(*) AS num_flights
+FROM flight_booking JOIN flight USING (flight_id)
+GROUP BY month
+ORDER BY month;
+
+-- Hotel reservations by month
+SELECT EXTRACT(MONTH FROM check_in_date) AS month, COUNT(*) AS num_reservations
+FROM hotel_booking
+GROUP BY month
+ORDER BY month;</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li>Affichez les détails du voyage numéro 1. En particulier, listez les prénoms et noms du client, et, pour chaque vol, les aéroports de départ et d’arrivée,
+la date de départ, et les villes de départ et d’arrivée des aéroports.</li>
+</ol>
+<pre><code>SELECT c.first_name,
+        c.last_name, 
+        s.airport_name as departure_airport, 
+        concat(s.city, &#39;, &#39;, s.country) as departure_loc, 
+        departure_date,
+        d.airport_name as arrival_airport,
+        concat(d.city, &#39;, &#39;, d.country) as arrival_loc
+FROM customer c
+    JOIN trip t USING (customer_id)
+    JOIN flight_booking USING (trip_id)
+    JOIN flight f USING(flight_id)
+    JOIN airport s ON s.airport_id = f.airport_src 
+    JOIN airport d ON d.airport_id = f.airport_dst
+WHERE t.trip_id=1</code></pre>
+</details>
 </div>
 <!--
 # Installing PostgreSQL

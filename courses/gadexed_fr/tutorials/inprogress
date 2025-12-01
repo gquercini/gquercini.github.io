@@ -1,0 +1,1460 @@
+---
+title: "Elastic Search"
+heading: Gestion et analyse des données — Tutoriel 8
+linktitle: gad-elastic-fr
+output:
+  bookdown::pdf_book:
+    toc: false
+    includes:
+      in_header: ./latex-files/preamble.tex
+    number_sections: yes
+  blogdown::html_page:
+    number_sections: no
+  html_document:
+    df_print: paged
+
+menu:
+  gadfr:
+    parent: tutoriels
+    identifier: gad-elastic-fr
+    name: 8. Elastic Search
+    weight: 8
+
+params:
+  solution: true
+summary: Introduction à Elastic Search.
+draft: no
+type: docs
+
+---
+
+<link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/cloud-computing.css">
+
+
+L'objectif de ce tutoriel est de se familiariser avec Elastic Search, un moteur de recherche et d'analyse distribué basé sur Lucene. 
+
+
+# Préparation de l'environnement
+
+La première chose à faire est de **démarrer Elastic Search** via la procédure suivante :
+
+* Ouvrez une fenêtre de *PowerShell*.
+
+* Déplacez-vous dans le répertoire `elasticsearch-9.2.1`  via la commande suivante :
+
+```
+cd Desktop\elasticsearch-9.2.1
+``` 
+
+* Lancez Elastic Search avec la commande suivante :
+
+```
+bin\elasticsearch.bat
+```
+
+* Attendez environ 30 secondes : le serveur va démarrer et il restera bloqué sur cette fenêtre.
+
+* Ouvrez une page du navigateur web et saisissez l'adresse suivante : `http://localhost:9200`.
+
+* Vous devriez obtenir une réponse JSON où l'attribut *tagline* vaut *You Know, for Search*. Si la réponse n'apparaît pas, attendez encore quelques secondes et rafraîchissez la page.
+
+
+Ensuite, nous allons **démarrer Kibana**, l'interface web d'Elastic Search qui nous permettra, entre autres, d'exécuter des requêtes et visualiser les résultats.
+
+* Ouvrez un nouvel onglet dans le PowerShell, **sans fermer** celui où Elastic Search est en cours d'exécution.
+
+* Déplacez-vous dans le répertoire `kibana-9.2.1`  via la commande suivante :
+
+```
+cd Desktop\kibana-9.2.1
+```
+
+* Lancez Kibana avec la commande suivante :
+
+```
+bin\kibana.bat
+```
+
+* Attendez **5-6 minutes** pour que Kibana démarre complètement.
+
+* Ouvrez une page du navigateur web et saisissez l'adresse suivante : `http://localhost:5601`.
+
+* Dans la page d'accueil de Kibana, cliquez sur *Explore on my own*.
+
+* Cliquez sur ☰ dans le menu en haut à gauche.
+
+* Sélectionnez *Management*  et *Dev tools*.
+
+* Une console apparaît où nous pourrons saisir des requêtes Elastic Search.
+
+* Essayez la requête suivante dans la console et cliquez sur le bouton ▶️ pour l'exécuter :
+
+```
+GET /
+```
+
+* Vous devriez obtenir une réponse JSON similaire à celle obtenue précédemment dans le navigateur web.
+
+
+# Terminolgie 
+
+* **Document** : unité de données de base dans Elastic Search. Un document est représenté en JSON et contient un ensemble de champs (attributs) et de valeurs. 
+  C'est l'équivalent d'une ligne dans une base de données relationnelle ou d'un document dans MongoDB.
+  
+* **Index** : collection de documents qui partagent des propriétés similaires. C'est l'équivalent d'une table dans une base de données relationnelle ou d'une collection dans MongoDB.
+
+* **Mapping** : le processus de définition de la manière dont un document, et les champs qu'il contient, sont stockés et indexés. En d'autres termes, c'est le schéma d'un index
+    (un peu comme le schéma d'une table dans une base de données relationnelle).
+
+
+# Vérification d'Elastic Search
+
+
+Nous allons vérifier l'etant de santé du cluster via la commande suivante :
+
+```
+GET _cluster/health 
+```
+
+Vous devriez obtenir une réponse JSON où l'attribut *status* vaut *green* ; il y a déjà 36 shards actifs. 
+Pourquoi ? 
+Parce qu'Elastic Search crée automatiquement des indices de système pour son propre fonctionnement interne.
+Vérifions-le avec la commande suivante :
+
+```
+GET /_cat/indices?expand_wildcards=all&v
+```
+
+Vous devriez voir une liste de 36 indices ; comme nous travaillons sur un cluster composé d'un seul nœud, il y a un seul shard primaire pour chaque indice et aucun shard répliqué.
+
+
+# Mapping
+
+Lorsqu'on crée un index, Elastic Search génère automatiquement un mapping basé sur les données des documents indexés. 
+C'est ce qu'on appelle le **dynamic mapping**.
+Le dynamic mapping utilise des règles heuristiques pour déterminer le type de données de chaque champ (texte, nombre, date, etc.) et les propriétés associées (analyseur, indexation, etc.).
+Bien que le dynamic mapping soit pratique pour des cas simples et rapides, et qu'il fonctionne bien dans de nombreux scénarios, il n'est pas toujours optimal.
+Par exemple, lorsqu'on souhaite indexer des dates, Elastic Search peut ne pas les reconnaître correctement si elles ne sont pas dans un format standard ISO.
+
+En règle générale, il est recommandé de **définir explicitement le mapping** lors de la création d'un index.
+
+La commande suivante crée un index nommé ``employees``, avec un mapping explicite :
+
+```json
+PUT employees
+{
+  "mappings": {
+    "properties": {
+      "name":{ "type": "text"},
+      "age": {"type": "integer"},
+      "email": {"type": "keyword"},
+      "address":{
+        "properties": {
+          "street":{ "type":"text" },
+          "country":{ "type":"text" }
+        }
+      }
+    }
+  },
+  "settings": {
+    "number_of_replicas" : 0
+  }
+}
+```
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercice**
+
+
+```{exercise}
+
+Exécutez la commande ci-dessus dans la console de Kibana pour créer l'index ``employees`` avec le mapping spécifié.
+Observez la définition du mapping et expliquez le choix des types de données pour chaque champ.
+
+
+```
+
+:::
+
+`r if(params$solution) {"
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+Le champ \x60\x60name\x60\x60 est de type \x60\x60text\x60\x60 car il peut contenir des phrases ou des mots, et on souhaite effectuer des recherches en texte intégral.
+Le champ \x60\x60age\x60\x60 est de type \x60\x60integer\x60\x60 car il représente un nombre entier.
+Le champ \x60\x60email\x60\x60 est de type \x60\x60keyword\x60\x60 car il s'agit d'une valeur unique qui ne nécessite pas d'analyse en texte intégral.
+Le champ \x60\x60address\x60\x60 est un objet imbriqué contenant deux sous-champs : \x60\x60street\x60\x60 et \x60\x60country\x60\x60, 
+tous deux de type \x60\x60text\x60\x60 car ils peuvent contenir des phrases ou des mots.
+
+A noter que le nombre de réplicas est défini à 0 dans les paramètres de l'index, car nous travaillons sur un cluster à nœud unique.
+Par défaut, Elastic Search crée un réplica pour chaque shard primaire, mais si sur un noeud cela entraîne le passage de l'état du cluster à jaune,
+car les réplicas ne peuvent pas être alloués sur le même nœud que les shards primaires.
+
+Le message de confirmation de la création de l'index devrait ressembler à ceci :
+\x60\x60\x60json
+{
+  \"acknowledged\": true,
+  \"shards_acknowledged\": true,
+  \"index\": \"employees\"
+}
+\x60\x60\x60
+
+Le premier message indique que la requête a été acceptée, le deuxième que tous les shards primaires ont été alloués avec succès,
+et le troisième donne le nom de l'index créé.
+
+:::
+</details>
+"}`
+
+## Mettre à jour le mapping
+
+Il est possible de mettre à jour le mapping d'un index existant en utilisant la commande ``PUT`` avec le chemin ``_mapping``.
+
+Exécutez la commande suivante dans la console de Kibana pour ajouter deux nouveaux champs au mapping de l'index ``employees`` : ``joining_date`` (de type ``date``) et ``phone_number`` (de type ``keyword``).
+
+```json
+PUT employees/_mapping
+{
+  "properties":{
+    "joining_date":{
+      "type":"date",
+      "format":"dd-MM-yyyy"
+    },
+    "phone_number":{
+      "type":"keyword"
+    }
+  }
+}
+```
+
+Remarquez que pour le champ ``joining_date``, nous avons spécifié un format de date personnalisé (jour-mois-année) pour correspondre au format des dates que nous allons indexer par la suite.
+
+::: {.infobox .warning data-latex="{warning}"}
+**Modifications des champs existants**
+
+
+Il n'est **pas possible** de modifier le type ou les propriétés d'un champ existant dans le mapping.
+La raison en est que cela entraînerait des erreurs lorsqu'on cherche les données déjà indexées car ils ne correspondraient plus au nouveau mapping.
+Si on souhaite modifier le type ou les propriétés d'un champ existant, il faut créer un nouvel index avec le mapping mis à jour,
+puis réindexer les documents de l'ancien index vers le nouveau en utilisant l'API de réindexation d'Elastic Search.
+
+:::
+
+
+
+## Le type de données ``text``
+
+Afin de gérer les recherches en texte intégral, Elastic Search propose le type de données ``text``.
+Avant de stocker un champ de type ``text``, Elastic Search applique un processus appelé **analyse**.
+L'analyse est appliquée par un objet appelé **analyseur** (ang., *analyzer*) ; selon l'analyseur utilisé, le texte est transformé en une suite de **tokens** et ensuite 
+stocké dans un format interne optimisé pour la recherche.
+
+Pour chaque champ de type ``text``, Elastic Search utilise par défaut l'analyseur **standard**.
+
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercice**
+
+
+````{exercise}
+
+Exécutez la commande suivante :
+
+
+    POST _analyze
+    {
+        "text": "The movie was sick!!! Hilarious :) :) and WITTY ;) a KiLLer 👍"
+    }
+
+Pourriez expliquer les étapes de l'analyse effectuée par l'analyseur standard ?
+
+````
+
+:::
+
+`r if(params$solution) {"
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+L'analyseur standard effectue les étapes suivantes :
+
+* Les caractères de ponctuation et les caractères spéciaux sont supprimés.
+
+* Le texte est divisé en tokens en utilisant les espaces comme séparateurs.
+
+* Les tokens sont convertis en minuscules.
+
+
+
+:::
+</details>
+"}`
+
+Nous pouvons également changer l'analyseur par défaut pour un champ de type ``text``.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercice**
+
+
+````{exercise}
+
+Exécutez la commande suivante pour analyser le même texte en utilisant l'analyseur ``english`` : 
+
+    POST _analyze
+    {
+        "text": "The movie was sick!!! Hilarious :) :) and WITTY ;) a KiLLer 👍",
+        "analyzer": "english"
+    }
+    
+Pourriez expliquer les différences entre les tokens produits par l'analyseur ``standard`` et ceux produits par l'analyseur ``english`` ?
+
+
+````
+
+:::
+
+`r if(params$solution) {"
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+Mêmes étapes que l'analyseur standard, mais en plus :
+* Les mots vides (ang., *stop words*) sont supprimés. Par exemple, les mots \"the\", \"was\", \"and\", \"a\" sont supprimés.
+
+* Les tokens sont réduits à leur racine (ang., *stem*). Par exemple, les tokens \"hilarious\", \"witty\" et \"movie\" sont réduits à leurs racines \"hilari\", \"witti\" et \"movi\".
+
+
+:::
+</details>
+"}`
+
+D'autres analyseurs sont disponibles dans Elastic Search, adaptés à différentes langues et besoins : 
+
+* **standard** : analyseur par défaut, adapté pour l'anglais et d'autres langues.
+
+* **simple** : divise le texte en tokens en utilisant des caractères non alphabétiques comme séparateurs, et convertit les tokens en minuscules.
+
+* **whitespace** : divise le texte en tokens en utilisant uniquement les espaces comme séparateurs, sans convertir en minuscules.
+
+* **stop** : similaire à l'analyseur simple, mais supprime également les mots vides (ang., *stop words*). Fonctionne pour l'anglais.
+
+* **keyword** : ne divise pas le texte en tokens, mais le traite comme un seul token. Utile pour les champs qui ne nécessitent pas d'analyse en texte intégral, comme les identifiants ou les codes postaux.
+
+* **language-specific analyzers** : analyseurs spécifiques pour différentes langues, comme ``french``, ``german``, ``spanish``, etc., qui incluent des règles de traitement spécifiques à chaque langue.
+
+* **pattern** : permet de définir des expressions regulières pour diviser le texte en tokens.
+
+* **custom analyzers** : permet de créer des analyseurs personnalisés en combinant différents composants, comme des tokenizers, des filtres de tokens et des filtres de caractères.
+
+# Documents
+
+Elastic Search permet de manipuler des documents via les APIs suivantes :
+
+* **Document Indexing API** : pour indexer (c'est à dire, ajouter à un index) des documents.
+
+* **Read and Search API** : pour récupérer et rechercher des documents.
+
+* **Update API** : pour mettre à jour des documents existants.
+
+* **Delete API** : pour supprimer des documents.
+
+Ces APIs peuvent être utilisées pour manipuler des documents individuellement (*single-document API*) ou en masse (*multi-document API*).
+
+## Indexer des documents
+
+Chaque document a un identifiant unique (ID) qui permet de le retrouver dans l'index.
+C'est équivalent à la clé primaire dans une base de données relationnelle.
+Les identifiants peuvent être spécifiés manuellement lors de l'indexation d'un document, ou générés automatiquement par Elastic Search si aucun identifiant n'est fourni.
+
+* Pour indexer un document avec un identifiant spécifié, on utilise la commande ``PUT`` avec le chemin suivant : ``/{index}/_doc/{id}``.
+
+* Pour indexer un document sans spécifier d'identifiant, on utilise la commande ``POST`` avec le chemin suivant : ``/{index}/_doc/``.
+
+Créons un index d'abord. 
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercice**
+
+
+````{exercise}
+
+Créez un index nommé ``movies`` avec les champs suivants :
+
+* ``title`` (de type ``text``);
+
+* ``release_year`` (de type ``date`` avec le format ``yyyy``);
+
+* ``synopsis`` (de type ``text``).
+
+
+````
+
+:::
+
+`r if(params$solution) {"
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+\x60\x60\x60
+PUT movies
+    {
+      \"settings\": {
+        \"number_of_replicas\" : 0
+      },
+      \"mappings\": {
+        \"properties\": {
+          \"title\": { \"type\": \"text\" },
+          \"release_year\": { \"type\": \"date\", \"format\": \"yyyy\" },
+          \"synopsis\": { \"type\": \"text\" }
+        }
+      }
+    }
+\x60\x60\x60
+
+:::
+</details>
+"}`
+
+
+Vous pouvez maintenant indexer des documents dans l'index ``movies``.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercice**
+
+
+````{exercise}
+
+Ajoutez un nouveau document (avec identifiant 1) dans l'index ``movies`` pour le film **The Godfather 1** avec les champs suivants :
+
+* ``title`` : ``The Godfather 1``
+* ``release_year`` : ``1972``
+* ``synopsis`` : ``The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.``
+
+````
+
+:::
+
+`r if(params$solution) {"
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+\x60\x60\x60
+PUT movies/_doc/1
+{
+  \"title\": \"The Godfather 1\",
+  \"release_year\": \"1972\",
+  \"synopsis\": \"The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.\"
+}
+\x60\x60\x60
+
+:::
+</details>
+"}`
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercice**
+
+
+````{exercise}
+
+Observez la réponse JSON retournée par Elastic Search après l'indexation du document.
+Copiez-la dans un fichier texte.
+Ré-exécutez la même commande pour indexer le même document (avec le même identifiant 1) mais en modifiant le synopsis.
+Observez la nouvelle réponse JSON et comparez-la avec la précédente.
+Quelles différences remarquez-vous ?
+
+````
+
+:::
+
+`r if(params$solution) {"
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+* Le \x60\x60result\x60 dans la réponse JSON change de \x60\x60created\x60 à \x60\x60updated\x60.
+
+* Le \x60\x60_version\x60 dans la réponse JSON est incrémenté de 1.
+
+* Le \x60\x60sequence number\x60 dans la réponse JSON est incrémenté de 1.
+
+:::
+</details>
+"}`
+
+Nous pouvons également indexer des documents sans spécifier d'identifiant (en utilisant POST).
+La commande suivante :
+
+```json
+POST movies/_doc/
+{
+  "title": "The Godfather 2",
+  "release_year": "1974",
+  "synopsis": "The early life and career of Vito Corleone in 1920s New York City is portrayed while his son, Michael, expands and tightens his grip on his crime syndicate."
+}
+```
+
+créera un nouveau document avec un identifiant généré automatiquement par Elastic Search. Nous pourrons retrouver cet identifiant dans la réponse JSON retournée après l'indexation du document.
+
+::: {.infobox .warning data-latex="{warning}"}
+**Bonne pratique**
+
+
+Il n'est **pas conseillé** de mélanger des documents avec des ID manuellement spécifiés et des documents avec des ID générés automatiquement dans le même index.
+
+:::
+
+## Récupérer des documents
+
+Pour récupérer un document par son identifiant, on utilise la commande ``GET`` avec le chemin suivant : ``/{index}/_doc/{id}``.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercice**
+
+
+````{exercise}
+
+Utilisez la commande GET pour récupérer le document avec l'identifiant 1 dans l'index ``movies``.
+Analysez la réponse JSON retournée par Elastic Search.
+
+````
+
+:::
+
+`r if(params$solution) {"
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+\x60\x60\x60
+GET movies/_doc/1
+\x60\x60\x60
+
+Dans la réponse JSON, on retrouve deux sections principales : les métadonnées du document et le contenu du document lui-même.
+Dans les métadonnées, on trouve des informations telles que l'index, le type de document, l'identifiant, la version, etc.
+
+Pour ne retourner que le contenu du document, on peut accéder à l'attribut \x60\x60_source\x60\x60 dans la réponse JSON.
+
+\x60\x60\x60
+GET movies/_source/1
+\x60\x60\x60
+
+Si nous voulons récupérer seulement les métadonnées du document sans le contenu, nous pouvons utiliser la commande suivante :
+
+\x60\x60\x60
+GET movies/_doc/1?_source=false
+\x60\x60\x60
+
+
+:::
+</details>
+"}`
+
+Dans l'exercice précédent, nous avons récupéré tous les champs du document.
+Il est possible de récupérer seulement certains champs spécifiques en utilisant le paramètre ``?_source_includes`` dans la commande ``GET``.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercice**
+
+````{exercise}
+
+Utilisez la commande GET pour récupérer seulement le champ ``title`` du document avec l'identifiant 1 dans l'index ``movies``.
+
+````
+:::
+`r if(params$solution) {"
+<details>
+<summary>Solution</summary>
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+\x60\x60\x60
+GET movies/_doc/1?_source_includes=title
+\x60\x60\x60
+:::
+</details>
+"}`
+
+
+::: {.infobox .warning data-latex="{warning}"}
+**Exclusions des champs**
+
+Il existe aussi le paramètre ``?_source_excludes`` qui permet d'exclure certains champs spécifiques lors de la récupération d'un document.
+
+:::
+
+## Mettre à jour des documents
+
+La mise à jour d'un document existant est effectuée via les étapes suivantes :
+
+* Elastic Search récupère le document existant.
+
+* Applique les modifications spécifiées dans la requête de mise à jour.
+
+* Réindexe le document mis à jour.
+
+Lorsqu'on met à jour un document, Elastic Search incrémente la version du document ; l'ancienne version du document n'est pas conservée.
+
+### Ajouter un champ à un document
+
+La commande suivante ajoute deux nouveaux champs ``director`` et ``actors`` au document avec l'identifiant 1 dans l'index ``movies`` :
+
+```json
+POST movies/_update/1
+{
+  "doc": {
+    "actors":["Marlon Brando","Al Pacino","James Caan"],
+    "director":"Francis Ford Coppola"  
+  }
+}
+```
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercice**
+
+
+````{exercise}
+
+Exécutez la commande ci-dessus. 
+Est-ce que la commande réussit même si les champs ``director`` et ``actors`` n'existent pas encore dans le mapping de l'index ``movies`` ?
+
+
+````
+
+:::
+
+`r if(params$solution) {"
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+La commande réussit car Elastic Search utilise le dynamic mapping pour ajouter automatiquement les nouveaux champs au mapping de l'index.
+On peut vérifier cela en récupérant le mapping de l'index \x60\x60movies\x60\x60 après la mise à jour du document.
+
+\x60\x60\x60
+GET movies/_mapping
+\x60\x60\x60
+
+:::
+</details>
+"}`
+
+### Modification des champs existants
+
+Pour mettre à jour un champ existant dans un document, on spécifie simplement la nouvelle valeur du champ dans la requête de mise à jour.
+
+```json
+POST movies/_update/1
+{
+  "doc": {
+    "title":"The Godfather 1 (Original)"
+  }
+}
+```
+
+Lorsqu'il faut ajouter un élément à un tableau dans un document, il faut spécifier les nouvelles et les anciennes valeurs du tableau.
+La commande suivante ajoute un nouvel acteur au tableau ``actors`` dans le document avec l'identifiant 1 dans l'index ``movies`` :
+
+```json
+POST movies/_update/1
+{   
+  "doc": {
+    "actors":["Marlon Brando","Al Pacino","James Caan","Robert Duvall"]
+  }
+}
+```
+
+On peut éviter de spécifier les anciennes valeurs du tableau en utilisant une mise à jour par script :
+
+```json
+POST movies/_update/1
+{
+  "script": {
+   "source": "ctx._source.actors.add('Diane Keaton')"
+  }
+}
+```
+
+De manière similaire, on peut supprimer un élément d'un tableau en utilisant une mise à jour par script :
+
+```json
+POST movies/_update/1
+{
+ "script":{
+   "source":
+     "ctx._source.actors.remove(ctx._source.actors.indexOf('Diane Keaton'))"
+  }
+}
+```
+
+Nous pouvons également utiliser des scripts pour ajouter un champ :
+
+```json
+POST movies/_update/1
+{
+  "script": {
+    "source": "ctx._source.imdb_user_rating = 9.2"
+  }
+}
+```
+
+ou bien pour supprimer un champ :
+
+```json
+POST movies/_update/1
+{
+  "script": {
+    "source": "ctx._source.remove('imdb_user_rating')"
+  }
+}
+```
+
+Nous pouvons aussi ajouter plusieurs champs en une seule mise à jour par script :
+
+```json
+POST movies/_update/1
+{
+  "script": {
+    "source": """
+    ctx._source.runtime_in_minutes = 175;
+    ctx._source.metacritic_rating= 100;
+    ctx._source.tomatometer = 97;
+    ctx._source.boxoffice_gross_in_millions = 134.8;
+    """
+  }
+}
+```
+
+Et enfin, nous pouvons aussi faire des mises à jour conditionnelles en utilisant des scripts.
+
+```json
+POST movies/_update/1
+{
+  "script": {
+    "source": """
+    if(ctx._source.boxoffice_gross_in_millions > 125) 
+      {ctx._source.blockbuster = true} 
+     else 
+      {ctx._source.blockbuster = false}
+    """
+  }
+}
+```
+
+### Mise à jour via des requêtes
+
+Dans les exemples précédents, nous avons mis à jour des documents en spécifiant leur identifiant.
+Il est aussi possible de mettre à jour des documents en utilisant des requêtes pour sélectionner les documents à mettre à jour.
+Lorsque nous avons ajouté le film **The Godfather 2**, un nouvel identifiant a été généré automatiquement par Elastic Search.
+Supposons que nous ne connaissons pas cet identifiant, mais que nous voulons ajouter des acteurs au film **The Godfather 2**.
+
+Nous pouvons utiliser la commande suivante :
+
+```json
+POST /movies/_update_by_query
+{
+  "script": {
+    "source": """
+      if (ctx._source.actors == null) {
+        ctx._source.actors = [];
+      }
+      for (actor in params.new_actors) {
+        if (!ctx._source.actors.contains(actor)) {
+          ctx._source.actors.add(actor);
+        }
+      }
+    """,
+    "params": {
+      "new_actors": ["Al Pacino", "Robert De Niro", "Diane Keaton"]
+    }
+  },
+  "query": {
+    "match": {
+      "title": "The Godfather 2"
+    }
+  }
+}
+```
+
+::: {.infobox .warning data-latex="{warning}"}
+**Langage de scripting**
+
+Elastic Search utilise **Painless** comme langage de scripting par défaut pour les mises à jour par script.
+D'autres langages de scripting peuvent être utilisés, comme par exemple **expression**, **mustache** ou **java**.
+
+
+:::
+
+## Supprimer des documents
+
+La suppression d'un document est effectuée en utilisant la commande ``DELETE`` avec le chemin suivant : ``/{index}/_doc/{id}``.
+On peut aussi supprimer des documents en utilisant des requêtes pour sélectionner les documents à supprimer via la commande ``DELETE`` avec le chemin suivant : ``/{index}/_delete_by_query``.
+
+```json
+POST movies/_delete_by_query
+{
+  "query":{
+    "match":{
+      "director":"Francis Ford Coppola"
+    }
+  }
+}
+```
+
+Si nous voulons supprimer les films où Al Pacino est un des acteurs, nous pouvons utiliser la commande suivante :
+
+```json
+POST movies/_delete_by_query
+{
+  "query":{
+    "match":{
+      "actors":"Al Pacino"
+    }
+  }
+}
+```
+
+# Rechercher des documents
+
+ElasticSearch permet de faire des recherches **structurées** et **non structurées** via l'API de recherche.
+
+Les premières renvoient des résultats qui ne sont pas associés à un score de pertinence.
+ElasticSearch renvoie des documents qui correspondent exactement aux critères de la requête.
+Cela est similaire aux requêtes SQL dans les bases de données relationnelles.
+Ces types de requêtes sont appelées **term-level queries**.
+
+Les secondes renvoient des résultats associés à un score de pertinence.
+ElasticSearch renvoie des documents qui sont similaires à la requête. 
+Ces requêtes sont appelées **full-text queries**.
+
+## Term-level queries
+
+Elastic Search fournit plusieurs types de term-level queries, parmi lesquelles : **term query**, **terms query**, **range query**, **exists query** ...
+Nous allons voir quelques exemples.
+
+### Term query
+
+Une term query recherche des documents qui contiennent un terme exact dans un champ spécifique.
+
+```json
+GET /movies/_search
+{
+  "query": {
+    "term": {
+      "year": 1972
+    }
+  }
+}
+```
+
+Lorsqu'on fait une term query, la valeur recherchée n'est pas analysée, mais elle est recherchée telle quelle dans l'index.
+Par conséquent, les term queries sont généralement utilisées pour les champs de type ``keyword``, ``integer``, ``date``, etc., mais pas pour les champs de type ``text``.
+Regardons ce qui se passe si nous faisons une term query sur le champ ``title``, qui est de type ``text`` :
+
+```json
+GET /movies/_search
+{
+  "query": {
+    "term": {
+      "title": "The Godfather"
+    }
+  }
+}
+```
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercice**
+
+
+````{exercise}
+
+Pourquoi cette requête ne retourne-t-elle aucun document, même si nous avons indexé un film dont le titre exact est "The Godfather" ?
+
+
+````
+
+:::
+
+`r if(params$solution) {"
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+La requête ne retourne aucun document car le champ \x60\x60title\x60\x60 est de type \x60\x60text\x60\x60, et donc le texte a été analysé avant d'être indexé.
+L'analyseur standard a divisé le titre en tokens : \x60\x60the\x60\x60 et \x60\x60godfather\x60\x60, et les a convertis en minuscules.
+Par conséquent, il n'y a pas de terme exact \x60\x60The Godfather\x60\x60 dans l'index.
+
+:::
+</details>
+"}`
+
+### Terms query
+
+Une terms query recherche des documents qui contiennent au moins un des termes spécifiés dans un champ spécifique.
+
+```json
+GET /movies/_search
+{
+  "query": {
+    "terms": {
+      "year": [1972, 1974]
+    }
+  }
+}
+```
+
+### Exists query
+
+La exists query recherche des documents qui contiennent un champ spécifique, quel que soit sa valeur.
+
+```json
+GET /movies/_search
+{
+  "query": {
+    "exists": {
+      "field": "director"
+    }
+  }
+}
+```
+
+### Range query
+
+Une range query recherche des documents dont la valeur d'un champ spécifique se situe dans une plage donnée.
+
+```json
+GET /movies/_search
+{
+  "query": {
+    "range": {
+      "year": {
+        "gte": 1970,
+        "lte": 2010
+      }
+    }
+  }
+}
+```
+
+Nous pouvons mieux aprécier le résultat de la range query en ajoutant un tri sur le champ ``release_year`` :
+
+```json
+GET /movies/_search
+{
+  "query": {
+    "range": {
+      "year": {
+        "gte": 1970,
+        "lte": 2010
+      }
+    }
+  },
+  "sort": [
+    {
+      "year": { "order": "asc" }
+    }
+  ]
+}
+```
+
+### Wildcard query
+
+Une wildcard query recherche des documents qui correspondent à un motif spécifié dans un champ spécifique.
+Par exemple, pour rechercher des titres de films qui commencent par "g" et se terminent par "er", nous utilisons la commande suivante :
+```json
+GET /movies/_search
+{
+  "query": {
+    "wildcard": {
+      "title": "g*er"
+    }
+  }
+}
+```
+
+Remarquez que nous avons utilisé des lettres minuscules dans le motif, car le champ ``title`` est de type ``text`` et a été analysé en minuscules avant d'être indexé.
+
+Les types de wildcards disponibles sont :
+* ``?`` : correspond à un seul caractère.
+* ``*`` : correspond à zéro ou plusieurs caractères.
+
+### Prefix queries
+
+Les prefix queries recherchent des documents dont la valeur d'un champ spécifique commence par un préfixe donné.
+
+Par exemple, pour recherche des films où un des acteurs commence par "Al", nous utilisons la commande suivante :
+
+```json
+GET /movies/_search
+{
+  "query": {
+    "prefix": {
+      "actors": "al"
+    }
+  }
+}
+```
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercice**
+
+
+````{exercise}
+
+Pourquoi la commande ci-dessus retourne des films où Tim Allen est un des acteurs, alors que son nom ne commence pas par "Al" ?
+
+````
+
+:::
+
+`r if(params$solution) {"
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+Le champ \x60\x60actors\x60\x60 est de type \x60\x60text\x60\x60, et donc les noms des acteurs ont été analysés avant d'être indexés.
+L'analyseur standard a divisé les noms en tokens et les a convertis en minuscules.
+Ainsi, le nom \x60\x60Tim Allen\x60\x60 a été divisé en deux tokens : \x60\x60tim\x60\x60 et \x60\x60allen\x60\x60.
+Le token \x60\x60allen\x60\x60 commence par \x60\x60al\x60\x60, donc le film est retourné dans les résultats de la requête.
+
+
+:::
+</details>
+"}`
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercice**
+
+
+````{exercise}
+
+Pourriez-vous exprimer la même requête en utilisant une wildcard query au lieu d'une prefix query ?
+
+````
+
+:::
+
+`r if(params$solution) {"
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+\x60\x60\x60
+GET /movies/_search
+{
+  \"query\": {
+    \"wildcard\": {
+      \"actors\": \"al*\"
+    }
+  }
+}
+\x60\x60\x60
+
+:::
+</details>
+"}`
+
+### Fuzzy query
+
+Les fuzzy queries recherchent des documents qui correspondent approximativement à une valeur donnée dans un champ spécifique.
+Elles sont utiles pour gérer les fautes de frappe ou les variations orthographiques.
+La recherche est basée sur la distance de Levenshtein, qui mesure le nombre de modifications nécessaires pour transformer une chaîne de caractères en une autre.
+Par exemple, le terme "roam" peut être transformé en "foam" avec une seule modification (remplacer 'r' par 'f'), donc la distance de Levenshtein est 1.
+
+La commande suivante recherche des titres de films qui sont similaires à "godfater" avec une distance maximale de 1 :
+
+```json
+GET /movies/_search
+{
+  "query": {
+    "fuzzy": {
+      "title": {
+        "value": "godfater",
+        "fuzziness": 1
+      }
+    }
+  }
+}
+```
+
+Il n'est pas généralement possible de prédire combien de fautes de frappe seront présentes dans une requête de recherche.
+Par conséquent, Elastic Search permet d'utiliser le paramètre ``AUTO`` pour la fuzziness, qui ajuste automatiquement la distance maximale en fonction de la longueur du terme recherché.
+Les valeurs utilisées sont les suivantes :
+* 0 pour les termes de longueur 1 ou 2. Pour des mots très courts, l'utilisateur est censé taper correctement le mot.
+* 1 pour les termes de longueur 3, 4 ou 5.
+* 2 pour les termes de longueur supérieure à 5.
+
+Un exemple d'utilisation de ``AUTO`` pour la fuzziness est le suivant :
+
+```json
+GET /movies/_search
+{
+  "query": {
+    "fuzzy": {
+      "title": {
+        "value": "godfater",
+        "fuzziness": "AUTO"
+      }
+    }
+  }
+}
+```
+
+## Full-text queries
+
+
+
+
+
+
+
+
+
+ 
+On va maintenant voir des exemples de recherches. 
+
+D'abord, supprimez l'index ``movies``:
+
+```json
+DELETE movies
+```
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercice**
+
+
+````{exercise}
+
+
+* Téléchargez le fichier que vous trouverez 
+<a href="/courses/databases/gadexed/tutorial-8/movies.json" download="movies.json">à ce lien</a>
+qui contient des documents à indexer dans un index nommé `movies`.
+
+* Ouvrez un nouvel onglet dans PowerShell, déplacez-vous dans le répertoire où vous avez téléchargé le fichier et exécutez la commande suivante pour indexer les documents dans l'index `movies` :
+
+        curl.exe -XPOST "http://localhost:9200/_bulk" -H "Content-Type: application/x-ndjson" --data-binary "@movies.json"
+
+* Dans la console de Kibana, exécutez la commande suivante pour vérifier que les documents ont été indexés correctement :
+
+        GET /movies/_count
+
+* Vou devriez obtenir 53 documents.
+
+````
+
+:::
+
+::: {.infobox .warning data-latex="{warning}"}
+**État du cluster**
+
+Si vous exécutez la commande :
+
+```
+GET _cluster/health
+```
+
+vous verrez que l'état du cluster est *yellow*. Cela est dû au fait que l'index `movies` a été automatiquement créé avec le nombre par défaut de réplicas (1).
+:::
+
+
+Elastic Search fournit l'endpoint ``_search`` pour effectuer des recherches dans un index.
+
+Pour chercher tous les films dont le titre contient le mot "Godfather", nous utilisons la commande suivante :
+
+```json
+GET /movies/_search
+{
+  "query": {
+    "match": {
+      "title": "Godfather"
+    }
+  }
+}
+```
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercice**
+
+
+````{exercise}
+
+Observez le resultat retourné par Elastic Search.
+
+* Combien de documents ont été trouvés ?
+
+* Comment sont-ils ordonnés dans le résultat ?
+
+* Pourquoi le premier document a un score plus élevé que les autres ?
+
+
+````
+
+:::
+
+`r if(params$solution) {"
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+* 2 documents ont été trouvés.
+
+* Ils sont ordonnés par score de pertinence décroissant (du plus pertinent au moins pertinent).
+
+* Le premier document a un score plus élevé car le mot Godfather apparaît dans un ttitre plus court (The Godfather) que dans le deuxième document (The Godfather Part II).
+
+:::
+</details>
+"}`
+
+## Expliquer le score
+
+Si nous voulons comprendre comment le score de pertinence est calculé, nous pouvons utiliser un drapeau spécial appelé ``explain`` dans notre requête de recherche.
+
+```json
+GET /movies/_search
+{
+   "explain": true, 
+  "_source": false, 
+  "query": {
+    "match": {
+      "title": "Godfather"
+    }
+  }
+}
+```
+
+Vous devriez pouvoir identifier les différentes composantes du score de pertinence dans la réponse JSON retournée par Elastic Search 
+(le term frequency, le inverse document frequency...).
+
+## Requêtes composées 
+
+Elastic Search permet de combiner plusieurs critères de recherche en utilisant des requêtes booléennes via l'opérateur ``bool``.
+
+Les clauses booléennes disponibles sont :
+
+* **must** : les documents doivent correspondre à tous les critères spécifiés dans cette clause (c'est l'opérateur logique AND).
+
+* **should** : les documents doivent correspondre à au moins un des critères spécifiés dans cette clause (c'est l'opérateur logique OR).
+
+* **must_not** : les documents ne doivent pas correspondre aux critères spécifiés dans cette clause (c'est l'opérateur logique NOT).
+
+* **filter** : les documents doivent correspondre aux critères spécifiés dans cette clause (comme pour **must**), mais ces critères n'affectent pas le score de pertinence.
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercice**
+
+
+````{exercise}
+
+Que fait la requête suivante ?
+    
+    GET movies/_search
+    {
+      "query": {
+        "bool": {
+          "must": [
+            {
+              "match": {
+                "title": "Godfather"
+              }
+            },
+            {
+              "range": {
+                "year": {
+                  "gte": 1970,
+                  "lte": 1972
+                }
+              }
+            }
+          ]
+        }
+      }
+    }
+
+
+
+````
+
+:::
+
+`r if(params$solution) {"
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+Elle recherche les films dont le titre contient le mot \"Godfather\" **et** dont l'année de sortie est comprise entre 1970 et 1972 (inclus).
+
+:::
+</details>
+"}`
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercice**
+
+
+````{exercise}
+
+Écrivez une requête qui recherche les films dont le titre contient le mot "Godfather" **ou** "Pulp Fiction", mais **pas** "Part II".
+
+````
+
+:::
+
+`r if(params$solution) {"
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex=\"{exercisebox}\"}
+
+\x60\x60\x60
+GET /movies/_search
+{
+  \"query\": {
+    \"bool\": {
+      \"should\": [
+        {
+          \"match\": {
+            \"title\": \"Godfather\"
+          }
+        },
+        {
+          \"match\": {
+            \"title\": \"Pulp Fiction\"
+          }
+        }
+      ],
+      \"must_not\": {
+        \"match\": {
+          \"title\": \"Part II\"
+        }
+      }
+    }
+  }
+}
+\x60\x60\x60
+
+:::
+</details>
+"}`
+
+La requête suivante utilise la clause ``filter`` pour rechercher les films dont le titre contient le mot "Godfather".
+
+
+
+```json
+GET /movies/_search
+{
+  "query": {
+    "bool": {
+      "filter": {
+        "match": {
+          "title": "Godfather"
+        }
+      }
+    }
+  }
+}
+```
+
+Ces requêtes sont plus rapides car Elastic Search n'a pas besoin de calculer les scores de pertinence.
+
+
+
+## Pagination 
+
+Les requêtes peuvent retourner un grand nombre de documents, dans l'ordre de plusieurs milliers.
+Il ne serait pas efficace de retourner tous ces documents en une seule requête, car aussi bien le serveur que le client ne pourraient pas disposer de suffisamment de 
+mémoire pour traiter un si grand volume de données.
+
+Par défaut, Elastic Search retourne seulement les 10 premiers documents correspondant à une requête, mais nous pouvons contrôler 
+le nombre de documents retournés en utilisant le paramètre ``size``.
+
+```json
+GET movies/_search
+{
+  "size": 20, 
+  "query": {
+    "match_all": {}
+  }
+}
+```
+
+On peut aussi utiliser le paramètre ``from`` pour spécifier l'offset (le nombre de documents à ignorer avant de commencer à retourner les résultats).
+La requête suivante retourne 2 documents, en ignorant les 5 premiers documents correspondant à la requête.
+
+```json
+GET movies/_search
+{
+  "from": 5,
+  "size": 2,
+  "query": {
+    "match_all": {}
+  }
+}
+```
+
+## Sélection des champs retournés
+
+Par défaut, Elastic Search retourne tous les champs des documents correspondant à une requête.
+Nous avons vu précédemment que nous pouvons contrôler les champs retournés en utilisant les paramètres ``_source_includes`` et ``_source_excludes``.
+Une autre manière de sélectionner les champs retournés est d'utiliser l'objet ``fields`` dans la requête de recherche.
+Notez que lorsque nous utilisons l'objet ``fields``, nous devons désactiver le retour du champ ``_source`` en utilisant le paramètre ``"_source": false``.
+
+```json
+GET /movies/_search
+{
+  "_source": false,
+  "query": {
+    "match": {
+      "title": "Godfather"
+    }
+  },
+  "fields": ["title", "year"]
+}
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Bibliographie
+
+Plusieurs exemples de ce tutoriel sont tirés du livre suivant :
+
+Madhusudhan Konda, *Elasticsearch in Action*, Second Edition, Mnning Publications, 2023.
+
+
+
+
+
