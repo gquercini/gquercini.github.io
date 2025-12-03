@@ -3432,6 +3432,945 @@ a given film by a given customer in the given period, and the number of returns.
 
 &lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
 &lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;p&gt;L’objectif de ce tutoriel est de se familiariser avec Elastic Search, un moteur de recherche et d’analyse distribué basé sur Lucene.&lt;/p&gt;
+&lt;div id=&#34;préparation-de-lenvironnement&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Préparation de l’environnement&lt;/h1&gt;
+&lt;p&gt;La première chose à faire est de &lt;strong&gt;démarrer Elastic Search&lt;/strong&gt; via la procédure suivante :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Ouvrez une fenêtre de &lt;em&gt;PowerShell&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Déplacez-vous dans le répertoire &lt;code&gt;elasticsearch-9.2.1&lt;/code&gt; via la commande suivante :&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;cd Desktop\elasticsearch-9.2.1&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Lancez Elastic Search avec la commande suivante :&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;bin\elasticsearch.bat&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Attendez environ 30 secondes : le serveur va démarrer et il restera bloqué sur cette fenêtre.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Ouvrez une page du navigateur web et saisissez l’adresse suivante : &lt;code&gt;http://localhost:9200&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Vous devriez obtenir une réponse JSON où l’attribut &lt;em&gt;tagline&lt;/em&gt; vaut &lt;em&gt;You Know, for Search&lt;/em&gt;. Si la réponse n’apparaît pas, attendez encore quelques secondes et rafraîchissez la page.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Ensuite, nous allons &lt;strong&gt;démarrer Kibana&lt;/strong&gt;, l’interface web d’Elastic Search qui nous permettra d’exécuter des requêtes et visualiser les résultats.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Ouvrez un nouvel onglet dans le PowerShell, &lt;strong&gt;sans fermer&lt;/strong&gt; celui où Elastic Search est en cours d’exécution.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Déplacez-vous dans le répertoire &lt;code&gt;kibana-9.2.1&lt;/code&gt; via la commande suivante :&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;cd Desktop\kibana-9.2.1&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Lancez Kibana avec la commande suivante :&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;bin\kibana.bat&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Attendez &lt;strong&gt;5-6 minutes&lt;/strong&gt; pour que Kibana démarre complètement.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Ouvrez une page du navigateur web et saisissez l’adresse suivante : &lt;code&gt;http://localhost:5601&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Dans la page d’accueil de Kibana, cliquez sur &lt;em&gt;Explore on my own&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Cliquez sur ☰ dans le menu en haut à gauche.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Sélectionnez &lt;em&gt;Management&lt;/em&gt; et &lt;em&gt;Dev tools&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Une console apparaît où nous pourrons saisir des requêtes Elastic Search.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Essayez la requête suivante dans la console et cliquez sur le bouton ▶️ pour l’exécuter :&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;pre&gt;&lt;code&gt;GET /&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;Vous devriez obtenir la réponse JSON obtenue précédemment dans le navigateur web.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;terminologie&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Terminologie&lt;/h1&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Document&lt;/strong&gt; : unité de données de base dans Elastic Search. Un document est représenté en JSON et contient un ensemble de champs (attributs) et de valeurs.
+C’est l’équivalent d’une ligne dans une base de données relationnelle ou d’un document dans MongoDB.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Index&lt;/strong&gt; : collection de documents qui partagent des propriétés similaires. C’est l’équivalent d’une table dans une base de données relationnelle ou d’une collection dans MongoDB.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Mapping&lt;/strong&gt; : le processus de définition de la manière dont un document, et les champs qu’il contient, sont stockés et indexés. En d’autres termes, c’est le schéma d’un index
+(un peu comme le schéma d’une table dans une base de données relationnelle).&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;vérification-delastic-search&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Vérification d’Elastic Search&lt;/h1&gt;
+&lt;p&gt;Nous allons vérifier l’etant de santé du cluster via la commande suivante :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;GET _cluster/health &lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Vous devriez obtenir une réponse JSON où l’attribut &lt;em&gt;status&lt;/em&gt; vaut &lt;em&gt;green&lt;/em&gt; ; il y a déjà 36 shards actifs.
+Pourquoi ?
+Parce qu’Elastic Search crée automatiquement des indices de système pour son propre fonctionnement interne.
+Vérifions-le avec la commande suivante :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;GET /_cat/indices?expand_wildcards=all&amp;amp;v&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Vous devriez voir une liste de 36 indices ; comme nous travaillons sur un cluster composé d’un seul nœud, il y a un seul shard primaire pour chaque indice et aucun shard répliqué.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;mapping&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Mapping&lt;/h1&gt;
+&lt;p&gt;Lorsqu’on crée un index, Elastic Search génère automatiquement un mapping basé sur les données des documents indexés.
+C’est ce qu’on appelle le &lt;strong&gt;dynamic mapping&lt;/strong&gt;.
+Le dynamic mapping utilise des règles heuristiques pour déterminer le type de données de chaque champ (texte, nombre, date, etc.) et les propriétés associées (analyseur, indexation, etc.).
+Bien que le dynamic mapping soit pratique pour des cas simples et rapides, et qu’il fonctionne bien dans de nombreux scénarios, il n’est pas toujours optimal.
+Par exemple, lorsqu’on souhaite indexer des dates, Elastic Search peut ne pas les reconnaître correctement si elles ne sont pas dans un format standard ISO.&lt;/p&gt;
+&lt;p&gt;En règle générale, il est recommandé de &lt;strong&gt;définir explicitement le mapping&lt;/strong&gt; lors de la création d’un index.&lt;/p&gt;
+&lt;p&gt;La commande suivante crée un index nommé &lt;code&gt;employees&lt;/code&gt;, avec un mapping explicite :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;PUT employees
+{
+  &amp;quot;mappings&amp;quot;: {
+    &amp;quot;properties&amp;quot;: {
+      &amp;quot;name&amp;quot;:{ &amp;quot;type&amp;quot;: &amp;quot;text&amp;quot;},
+      &amp;quot;age&amp;quot;: {&amp;quot;type&amp;quot;: &amp;quot;integer&amp;quot;},
+      &amp;quot;email&amp;quot;: {&amp;quot;type&amp;quot;: &amp;quot;keyword&amp;quot;},
+      &amp;quot;address&amp;quot;:{
+        &amp;quot;properties&amp;quot;: {
+          &amp;quot;street&amp;quot;:{ &amp;quot;type&amp;quot;:&amp;quot;text&amp;quot; },
+          &amp;quot;country&amp;quot;:{ &amp;quot;type&amp;quot;:&amp;quot;text&amp;quot; }
+        }
+      }
+    }
+  },
+  &amp;quot;settings&amp;quot;: {
+    &amp;quot;number_of_replicas&amp;quot; : 0
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1  &lt;/strong&gt;&lt;/span&gt;
+Exécutez la commande ci-dessus dans la console de Kibana pour créer l’index &lt;code&gt;employees&lt;/code&gt; avec le mapping spécifié.
+Observez la définition du mapping et expliquez le choix des types de données pour chaque champ.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;mettre-à-jour-le-mapping&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Mettre à jour le mapping&lt;/h2&gt;
+&lt;p&gt;Il est possible de mettre à jour le mapping d’un index existant en utilisant la commande &lt;code&gt;PUT&lt;/code&gt; avec le chemin &lt;code&gt;_mapping&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Exécutez la commande suivante dans la console de Kibana pour ajouter deux nouveaux champs au mapping de l’index &lt;code&gt;employees&lt;/code&gt; : &lt;code&gt;joining_date&lt;/code&gt; (de type &lt;code&gt;date&lt;/code&gt;) et &lt;code&gt;phone_number&lt;/code&gt; (de type &lt;code&gt;keyword&lt;/code&gt;).&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;PUT employees/_mapping
+{
+  &amp;quot;properties&amp;quot;:{
+    &amp;quot;joining_date&amp;quot;:{
+      &amp;quot;type&amp;quot;:&amp;quot;date&amp;quot;,
+      &amp;quot;format&amp;quot;:&amp;quot;dd-MM-yyyy&amp;quot;
+    },
+    &amp;quot;phone_number&amp;quot;:{
+      &amp;quot;type&amp;quot;:&amp;quot;keyword&amp;quot;
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Remarquez que pour le champ &lt;code&gt;joining_date&lt;/code&gt;, nous avons spécifié un format de date personnalisé (jour-mois-année).&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Modifications des champs existants&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Il n’est &lt;strong&gt;pas possible&lt;/strong&gt; de modifier le type ou les propriétés d’un champ existant dans le mapping.
+La raison en est que cela entraînerait des erreurs lorsqu’on cherche les données déjà indexées car ils ne correspondraient plus au nouveau mapping.
+Si on souhaite modifier le type ou les propriétés d’un champ existant, il faut créer un nouvel index avec le mapping mis à jour,
+puis réindexer les documents de l’ancien index vers le nouveau en utilisant l’API de réindexation d’Elastic Search.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;le-type-de-données-text&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Le type de données &lt;code&gt;text&lt;/code&gt;&lt;/h2&gt;
+&lt;p&gt;Afin de gérer les recherches en texte intégral, Elastic Search propose le type de données &lt;code&gt;text&lt;/code&gt;.
+Avant de stocker un champ de type &lt;code&gt;text&lt;/code&gt;, Elastic Search applique un processus appelé &lt;strong&gt;analyse&lt;/strong&gt;.
+L’analyse est appliquée par un objet appelé &lt;strong&gt;analyseur&lt;/strong&gt; (ang., &lt;em&gt;analyzer&lt;/em&gt;) ; selon l’analyseur utilisé, le texte est transformé en une suite de &lt;strong&gt;tokens&lt;/strong&gt; et ensuite
+stocké dans un format interne optimisé pour la recherche.&lt;/p&gt;
+&lt;p&gt;Pour chaque champ de type &lt;code&gt;text&lt;/code&gt;, Elastic Search utilise par défaut l’analyseur &lt;strong&gt;standard&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2  &lt;/strong&gt;&lt;/span&gt;
+Exécutez la commande suivante :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;POST _analyze
+{
+    &amp;quot;text&amp;quot;: &amp;quot;The movie was sick!!! Hilarious :) :) and WITTY ;) a KiLLer 👍&amp;quot;
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Pourriez expliquer les étapes de l’analyse effectuée par l’analyseur standard ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Nous pouvons également changer l’analyseur par défaut pour un champ de type &lt;code&gt;text&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3  &lt;/strong&gt;&lt;/span&gt;
+Exécutez la commande suivante pour analyser le même texte en utilisant l’analyseur &lt;code&gt;english&lt;/code&gt; :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;POST _analyze
+{
+    &amp;quot;text&amp;quot;: &amp;quot;The movie was sick!!! Hilarious :) :) and WITTY ;) a KiLLer 👍&amp;quot;,
+    &amp;quot;analyzer&amp;quot;: &amp;quot;english&amp;quot;
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Pourriez expliquer les différences entre les tokens produits par l’analyseur &lt;code&gt;standard&lt;/code&gt; et ceux produits par l’analyseur &lt;code&gt;english&lt;/code&gt; ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;D’autres analyseurs sont disponibles dans Elastic Search, adaptés à différentes langues et besoins :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;standard&lt;/strong&gt; : analyseur par défaut, adapté pour l’anglais et d’autres langues.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;simple&lt;/strong&gt; : divise le texte en tokens en utilisant des caractères non alphabétiques comme séparateurs, et convertit les tokens en minuscules.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;whitespace&lt;/strong&gt; : divise le texte en tokens en utilisant uniquement les espaces comme séparateurs, sans convertir en minuscules.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;stop&lt;/strong&gt; : similaire à l’analyseur simple, mais supprime également les mots vides (ang., &lt;em&gt;stop words&lt;/em&gt;). Fonctionne pour l’anglais.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;keyword&lt;/strong&gt; : ne divise pas le texte en tokens, mais le traite comme un seul token. Utile pour les champs qui ne nécessitent pas d’analyse en texte intégral, comme les identifiants ou les codes postaux.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;language-specific analyzers&lt;/strong&gt; : analyseurs spécifiques pour différentes langues, comme &lt;code&gt;french&lt;/code&gt;, &lt;code&gt;german&lt;/code&gt;, &lt;code&gt;spanish&lt;/code&gt;, etc., qui incluent des règles de traitement spécifiques à chaque langue.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;pattern&lt;/strong&gt; : permet de définir des expressions regulières pour diviser le texte en tokens.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;custom analyzers&lt;/strong&gt; : permet de créer des analyseurs personnalisés en combinant différents composants, comme des tokenizers, des filtres de tokens et des filtres de caractères.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;documents&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Documents&lt;/h1&gt;
+&lt;p&gt;Elastic Search permet de manipuler des documents via les APIs suivantes :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Document Indexing API&lt;/strong&gt; : pour indexer (c’est à dire, ajouter à un index) des documents.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Read and Search API&lt;/strong&gt; : pour récupérer et rechercher des documents.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Update API&lt;/strong&gt; : pour mettre à jour des documents existants.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Delete API&lt;/strong&gt; : pour supprimer des documents.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Ces APIs peuvent être utilisées pour manipuler des documents individuellement (&lt;em&gt;single-document API&lt;/em&gt;) ou en masse (&lt;em&gt;multi-document API&lt;/em&gt;).&lt;/p&gt;
+&lt;div id=&#34;indexer-des-documents&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Indexer des documents&lt;/h2&gt;
+&lt;p&gt;Chaque document a un identifiant unique (ID) qui permet de le retrouver dans l’index.
+C’est équivalent à la clé primaire dans une base de données relationnelle.
+Les identifiants peuvent être spécifiés manuellement lors de l’indexation d’un document, ou générés automatiquement par Elastic Search si aucun identifiant n’est fourni.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Pour indexer un document avec un identifiant spécifié, on utilise la commande &lt;code&gt;PUT&lt;/code&gt; avec le chemin suivant : &lt;code&gt;/{index}/_doc/{id}&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Pour indexer un document sans spécifier d’identifiant, on utilise la commande &lt;code&gt;POST&lt;/code&gt; avec le chemin suivant : &lt;code&gt;/{index}/_doc/&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Créons un index d’abord.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4  &lt;/strong&gt;&lt;/span&gt;
+Créez un index nommé &lt;code&gt;movies&lt;/code&gt; avec les champs suivants :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;title&lt;/code&gt; (de type &lt;code&gt;text&lt;/code&gt;);&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;release_year&lt;/code&gt; (de type &lt;code&gt;date&lt;/code&gt; avec le format &lt;code&gt;yyyy&lt;/code&gt;);&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;code&gt;synopsis&lt;/code&gt; (de type &lt;code&gt;text&lt;/code&gt;).&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Rappelez-vous de définir le nombre de réplicas à 0, car nous travaillons sur un cluster à nœud unique.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Vous pouvez maintenant indexer des documents dans l’index &lt;code&gt;movies&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5  &lt;/strong&gt;&lt;/span&gt;
+Ajoutez un nouveau document (avec identifiant 1) dans l’index &lt;code&gt;movies&lt;/code&gt; pour le film &lt;em&gt;The Godfather 1&lt;/em&gt; avec les champs suivants :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;title&lt;/code&gt; : &lt;code&gt;The Godfather 1&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;release_year&lt;/code&gt; : &lt;code&gt;1972&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;synopsis&lt;/code&gt; : &lt;code&gt;The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 6  &lt;/strong&gt;&lt;/span&gt;
+Observez la réponse JSON retournée par Elastic Search après l’indexation du document.
+Copiez-la dans un fichier texte.
+Ré-exécutez la même commande pour indexer le même document (avec le même identifiant 1) mais en modifiant le synopsis.
+Observez la nouvelle réponse JSON et comparez-la avec la précédente.
+Quelles différences remarquez-vous ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Nous pouvons également indexer des documents sans spécifier d’identifiant (en utilisant POST).
+La commande suivante :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;POST movies/_doc/
+{
+  &amp;quot;title&amp;quot;: &amp;quot;The Godfather 2&amp;quot;,
+  &amp;quot;release_year&amp;quot;: &amp;quot;1974&amp;quot;,
+  &amp;quot;synopsis&amp;quot;: &amp;quot;The early life and career of Vito Corleone in 1920s New York City is portrayed while his son, Michael, expands and tightens his grip on his crime syndicate.&amp;quot;
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;créera un nouveau document avec un identifiant généré automatiquement par Elastic Search. Nous pourrons retrouver cet identifiant dans la réponse JSON retournée après l’indexation du document.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Bonne pratique&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Il n’est &lt;strong&gt;pas conseillé&lt;/strong&gt; de mélanger des documents avec des ID manuellement spécifiés et des documents avec des ID générés automatiquement dans le même index.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;récupérer-des-documents&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Récupérer des documents&lt;/h2&gt;
+&lt;p&gt;Pour récupérer un document par son identifiant, on utilise la commande &lt;code&gt;GET&lt;/code&gt; avec le chemin suivant : &lt;code&gt;/{index}/_doc/{id}&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 7  &lt;/strong&gt;&lt;/span&gt;
+Utilisez la commande GET pour récupérer le document avec l’identifiant 1 dans l’index &lt;code&gt;movies&lt;/code&gt;.
+Analysez la réponse JSON retournée par Elastic Search.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;Dans l’exercice précédent, nous avons récupéré tous les champs du document.
+Il est possible de récupérer seulement certains champs spécifiques en utilisant le paramètre &lt;code&gt;?_source_includes&lt;/code&gt; dans la commande &lt;code&gt;GET&lt;/code&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 8  &lt;/strong&gt;&lt;/span&gt;
+Utilisez la commande GET pour récupérer seulement le champ &lt;code&gt;title&lt;/code&gt; du document avec l’identifiant 1 dans l’index &lt;code&gt;movies&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exclusions des champs&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Il existe aussi le paramètre &lt;code&gt;?_source_excludes&lt;/code&gt; qui permet d’exclure certains champs spécifiques lors de la récupération d’un document.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;mettre-à-jour-des-documents&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Mettre à jour des documents&lt;/h2&gt;
+&lt;p&gt;La mise à jour d’un document existant est effectuée via les étapes suivantes :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Elastic Search récupère le document existant.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Applique les modifications spécifiées dans la requête de mise à jour.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Réindexe le document mis à jour.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Lorsqu’on met à jour un document, Elastic Search incrémente la version du document ; l’ancienne version du document n’est pas conservée.&lt;/p&gt;
+&lt;div id=&#34;ajouter-un-champ-à-un-document&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Ajouter un champ à un document&lt;/h3&gt;
+&lt;p&gt;La commande suivante ajoute deux nouveaux champs &lt;code&gt;director&lt;/code&gt; et &lt;code&gt;actors&lt;/code&gt; au document avec l’identifiant 1 dans l’index &lt;code&gt;movies&lt;/code&gt; :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;POST movies/_update/1
+{
+  &amp;quot;doc&amp;quot;: {
+    &amp;quot;actors&amp;quot;:[&amp;quot;Marlon Brando&amp;quot;,&amp;quot;Al Pacino&amp;quot;,&amp;quot;James Caan&amp;quot;],
+    &amp;quot;director&amp;quot;:&amp;quot;Francis Ford Coppola&amp;quot;  
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 9  &lt;/strong&gt;&lt;/span&gt;
+Exécutez la commande ci-dessus.
+Est-ce que la commande réussit même si les champs &lt;code&gt;director&lt;/code&gt; et &lt;code&gt;actors&lt;/code&gt; n’existent pas encore dans le mapping de l’index &lt;code&gt;movies&lt;/code&gt; ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;modification-des-champs-existants&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Modification des champs existants&lt;/h3&gt;
+&lt;p&gt;Pour mettre à jour un champ existant dans un document, on spécifie simplement la nouvelle valeur du champ dans la requête de mise à jour.&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;POST movies/_update/1
+{
+  &amp;quot;doc&amp;quot;: {
+    &amp;quot;title&amp;quot;:&amp;quot;The Godfather 1 (Original)&amp;quot;
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Lorsqu’il faut ajouter un élément à un tableau dans un document, il faut spécifier les nouvelles et les anciennes valeurs du tableau.
+La commande suivante ajoute un nouvel acteur au tableau &lt;code&gt;actors&lt;/code&gt; dans le document avec l’identifiant 1 dans l’index &lt;code&gt;movies&lt;/code&gt; :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;POST movies/_update/1
+{   
+  &amp;quot;doc&amp;quot;: {
+    &amp;quot;actors&amp;quot;:[&amp;quot;Marlon Brando&amp;quot;,&amp;quot;Al Pacino&amp;quot;,&amp;quot;James Caan&amp;quot;,&amp;quot;Robert Duvall&amp;quot;]
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;On peut éviter de spécifier les anciennes valeurs du tableau en utilisant une mise à jour par script :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;POST movies/_update/1
+{
+  &amp;quot;script&amp;quot;: {
+   &amp;quot;source&amp;quot;: &amp;quot;ctx._source.actors.add(&amp;#39;Diane Keaton&amp;#39;)&amp;quot;
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;De manière similaire, on peut supprimer un élément d’un tableau en utilisant une mise à jour par script :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;POST movies/_update/1
+{
+ &amp;quot;script&amp;quot;:{
+   &amp;quot;source&amp;quot;:
+     &amp;quot;ctx._source.actors.remove(ctx._source.actors.indexOf(&amp;#39;Diane Keaton&amp;#39;))&amp;quot;
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Nous pouvons également utiliser des scripts pour ajouter un champ :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;POST movies/_update/1
+{
+  &amp;quot;script&amp;quot;: {
+    &amp;quot;source&amp;quot;: &amp;quot;ctx._source.imdb_user_rating = 9.2&amp;quot;
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;ou bien pour supprimer un champ :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;POST movies/_update/1
+{
+  &amp;quot;script&amp;quot;: {
+    &amp;quot;source&amp;quot;: &amp;quot;ctx._source.remove(&amp;#39;imdb_user_rating&amp;#39;)&amp;quot;
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Nous pouvons aussi ajouter plusieurs champs en une seule mise à jour par script :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;POST movies/_update/1
+{
+  &amp;quot;script&amp;quot;: {
+    &amp;quot;source&amp;quot;: &amp;quot;&amp;quot;&amp;quot;
+    ctx._source.runtime_in_minutes = 175;
+    ctx._source.metacritic_rating= 100;
+    ctx._source.tomatometer = 97;
+    ctx._source.boxoffice_gross_in_millions = 134.8;
+    &amp;quot;&amp;quot;&amp;quot;
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Et enfin, nous pouvons aussi faire des mises à jour conditionnelles en utilisant des scripts.&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;POST movies/_update/1
+{
+  &amp;quot;script&amp;quot;: {
+    &amp;quot;source&amp;quot;: &amp;quot;&amp;quot;&amp;quot;
+    if(ctx._source.boxoffice_gross_in_millions &amp;gt; 125) 
+      {ctx._source.blockbuster = true} 
+     else 
+      {ctx._source.blockbuster = false}
+    &amp;quot;&amp;quot;&amp;quot;
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;mise-à-jour-via-des-requêtes&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Mise à jour via des requêtes&lt;/h3&gt;
+&lt;p&gt;Dans les exemples précédents, nous avons mis à jour des documents en spécifiant leur identifiant.
+Il est aussi possible de mettre à jour des documents en utilisant des requêtes pour sélectionner les documents.
+Lorsque nous avons ajouté le film &lt;em&gt;The Godfather 2&lt;/em&gt;, un nouvel identifiant a été généré automatiquement par Elastic Search.
+Supposons que nous ne connaissons pas cet identifiant, mais que nous voulons ajouter des acteurs au film &lt;em&gt;The Godfather 2&lt;/em&gt;.&lt;/p&gt;
+&lt;p&gt;Nous pouvons utiliser la commande suivante :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;POST /movies/_update_by_query
+{
+  &amp;quot;script&amp;quot;: {
+    &amp;quot;source&amp;quot;: &amp;quot;&amp;quot;&amp;quot;
+      if (ctx._source.actors == null) {
+        ctx._source.actors = [];
+      }
+      for (actor in params.new_actors) {
+        if (!ctx._source.actors.contains(actor)) {
+          ctx._source.actors.add(actor);
+        }
+      }
+    &amp;quot;&amp;quot;&amp;quot;,
+    &amp;quot;params&amp;quot;: {
+      &amp;quot;new_actors&amp;quot;: [&amp;quot;Al Pacino&amp;quot;, &amp;quot;Robert De Niro&amp;quot;, &amp;quot;Diane Keaton&amp;quot;]
+    }
+  },
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;match&amp;quot;: {
+      &amp;quot;title&amp;quot;: &amp;quot;The Godfather 2&amp;quot;
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Langage de scripting&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Elastic Search utilise &lt;strong&gt;Painless&lt;/strong&gt; comme langage de scripting par défaut pour les mises à jour par script.
+D’autres langages de scripting peuvent être utilisés, comme par exemple &lt;strong&gt;expression&lt;/strong&gt;, &lt;strong&gt;mustache&lt;/strong&gt; ou &lt;strong&gt;java&lt;/strong&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;supprimer-des-documents&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Supprimer des documents&lt;/h2&gt;
+&lt;p&gt;La suppression d’un document est effectuée en utilisant la commande &lt;code&gt;DELETE&lt;/code&gt; avec le chemin suivant : &lt;code&gt;/{index}/_doc/{id}&lt;/code&gt;.
+On peut aussi supprimer des documents en utilisant des requêtes pour sélectionner les documents à supprimer via la commande &lt;code&gt;DELETE&lt;/code&gt; avec le chemin suivant : &lt;code&gt;/{index}/_delete_by_query&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;POST movies/_delete_by_query
+{
+  &amp;quot;query&amp;quot;:{
+    &amp;quot;match&amp;quot;:{
+      &amp;quot;director&amp;quot;:&amp;quot;Francis Ford Coppola&amp;quot;
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Si nous voulons supprimer les films où Al Pacino est un des acteurs, nous pouvons utiliser la commande suivante :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;POST movies/_delete_by_query
+{
+  &amp;quot;query&amp;quot;:{
+    &amp;quot;match&amp;quot;:{
+      &amp;quot;actors&amp;quot;:&amp;quot;Al Pacino&amp;quot;
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;rechercher-des-documents&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Rechercher des documents&lt;/h1&gt;
+&lt;p&gt;ElasticSearch permet de faire des recherches &lt;strong&gt;structurées&lt;/strong&gt; et &lt;strong&gt;non structurées&lt;/strong&gt; via l’API de recherche.&lt;/p&gt;
+&lt;p&gt;Les premières renvoient des résultats qui ne sont pas associés à un score de pertinence.
+ElasticSearch renvoie des documents qui correspondent exactement aux critères de la requête.
+Cela est similaire aux requêtes SQL dans les bases de données relationnelles.
+Ces types de requêtes sont appelées &lt;strong&gt;term-level queries&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;Les secondes renvoient des résultats associés à un score de pertinence.
+ElasticSearch renvoie des documents qui sont similaires à la requête.
+Ces requêtes sont appelées &lt;strong&gt;full-text queries&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;On va maintenant voir des exemples de recherches.&lt;/p&gt;
+&lt;p&gt;D’abord, supprimez l’index &lt;code&gt;movies&lt;/code&gt;:&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;DELETE movies&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 10  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Téléchargez le fichier que vous trouverez
+&lt;a href=&#34;/courses/databases/gadexed/tutorial-8/movies.json&#34; download=&#34;movies.json&#34;&gt;à ce lien&lt;/a&gt;
+qui contient des documents à indexer dans un index nommé &lt;code&gt;movies&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Ouvrez un nouvel onglet dans PowerShell, déplacez-vous dans le répertoire où vous avez téléchargé le fichier et exécutez la commande suivante pour indexer les documents dans l’index &lt;code&gt;movies&lt;/code&gt; :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;  curl.exe -XPOST &amp;quot;http://localhost:9200/_bulk&amp;quot; -H &amp;quot;Content-Type: application/x-ndjson&amp;quot; --data-binary &amp;quot;@movies.json&amp;quot;&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Dans la console de Kibana, exécutez la commande suivante pour vérifier que les documents ont été indexés correctement :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;  GET /movies/_count&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Vou devriez obtenir 53 documents.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;État du cluster&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Si vous exécutez la commande :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;GET _cluster/health&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;vous verrez que l’état du cluster est &lt;em&gt;yellow&lt;/em&gt;. Cela est dû au fait que l’index &lt;code&gt;movies&lt;/code&gt; a été automatiquement créé avec le nombre par défaut de réplicas (1).&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;term-level-queries&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Term-level queries&lt;/h2&gt;
+&lt;p&gt;Elastic Search fournit plusieurs types de term-level queries, parmi lesquelles : &lt;strong&gt;term query&lt;/strong&gt;, &lt;strong&gt;terms query&lt;/strong&gt;, &lt;strong&gt;range query&lt;/strong&gt;, &lt;strong&gt;exists query&lt;/strong&gt; …
+Nous allons voir quelques exemples.&lt;/p&gt;
+&lt;div id=&#34;term-query&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Term query&lt;/h3&gt;
+&lt;p&gt;Une term query recherche des documents qui contiennent un terme exact dans un champ spécifique.&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET /movies/_search
+{
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;term&amp;quot;: {
+      &amp;quot;year&amp;quot;: 1972
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Lorsqu’on fait une term query, la valeur recherchée n’est pas analysée, mais elle est recherchée telle quelle dans l’index.
+Par conséquent, les term queries sont généralement utilisées pour les champs de type &lt;code&gt;keyword&lt;/code&gt;, &lt;code&gt;integer&lt;/code&gt;, &lt;code&gt;date&lt;/code&gt;, etc., mais pas pour les champs de type &lt;code&gt;text&lt;/code&gt;.
+Regardons ce qui se passe si nous faisons une term query sur le champ &lt;code&gt;title&lt;/code&gt;, qui est de type &lt;code&gt;text&lt;/code&gt; :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET /movies/_search
+{
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;term&amp;quot;: {
+      &amp;quot;title&amp;quot;: &amp;quot;The Godfather&amp;quot;
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-11&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 11  &lt;/strong&gt;&lt;/span&gt;
+Pourquoi cette requête ne retourne-t-elle aucun document, même si nous avons indexé un film dont le titre exact est &lt;em&gt;The Godfather&lt;/em&gt; ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;terms-query&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Terms query&lt;/h3&gt;
+&lt;p&gt;Une terms query recherche des documents qui contiennent au moins un des termes spécifiés dans un champ spécifique.&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET /movies/_search
+{
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;terms&amp;quot;: {
+      &amp;quot;year&amp;quot;: [1972, 1974]
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;exists-query&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Exists query&lt;/h3&gt;
+&lt;p&gt;La exists query recherche des documents qui contiennent un champ spécifique, quel que soit sa valeur.&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET /movies/_search
+{
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;exists&amp;quot;: {
+      &amp;quot;field&amp;quot;: &amp;quot;director&amp;quot;
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;range-query&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Range query&lt;/h3&gt;
+&lt;p&gt;Une range query recherche des documents dont la valeur d’un champ spécifique se situe dans une plage donnée.&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET /movies/_search
+{
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;range&amp;quot;: {
+      &amp;quot;year&amp;quot;: {
+        &amp;quot;gte&amp;quot;: 1970,
+        &amp;quot;lte&amp;quot;: 2010
+      }
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Nous pouvons mieux aprécier le résultat de la range query en ajoutant un tri sur le champ &lt;code&gt;release_year&lt;/code&gt; :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET /movies/_search
+{
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;range&amp;quot;: {
+      &amp;quot;year&amp;quot;: {
+        &amp;quot;gte&amp;quot;: 1970,
+        &amp;quot;lte&amp;quot;: 2010
+      }
+    }
+  },
+  &amp;quot;sort&amp;quot;: [
+    {
+      &amp;quot;year&amp;quot;: { &amp;quot;order&amp;quot;: &amp;quot;asc&amp;quot; }
+    }
+  ]
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;wildcard-query&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Wildcard query&lt;/h3&gt;
+&lt;p&gt;Une wildcard query recherche des documents qui correspondent à un motif spécifié dans un champ spécifique.
+Par exemple, pour rechercher des titres de films qui commencent par &lt;em&gt;g&lt;/em&gt; et se terminent par &lt;em&gt;er&lt;/em&gt;, nous utilisons la commande suivante :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET /movies/_search
+{
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;wildcard&amp;quot;: {
+      &amp;quot;title&amp;quot;: &amp;quot;g*er&amp;quot;
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Remarquez que nous avons utilisé des lettres minuscules dans le motif, car le champ &lt;code&gt;title&lt;/code&gt; est de type &lt;code&gt;text&lt;/code&gt; et a été transformé en minuscules avant d’être indexé.&lt;/p&gt;
+&lt;p&gt;Les types de wildcards disponibles sont :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;?&lt;/code&gt; : correspond à un seul caractère.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;*&lt;/code&gt; : correspond à zéro ou plusieurs caractères.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;div id=&#34;prefix-queries&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Prefix queries&lt;/h3&gt;
+&lt;p&gt;Les prefix queries recherchent des documents dont la valeur d’un champ spécifique commence par un préfixe donné.&lt;/p&gt;
+&lt;p&gt;Par exemple, pour recherche des films où un des acteurs commence par &lt;em&gt;Al&lt;/em&gt;, nous utilisons la commande suivante :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET /movies/_search
+{
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;prefix&amp;quot;: {
+      &amp;quot;actors&amp;quot;: &amp;quot;al&amp;quot;
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-12&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 12  &lt;/strong&gt;&lt;/span&gt;
+Pourquoi la commande ci-dessus retourne des films où Tim Allen est un des acteurs, alors que son nom ne commence pas par &lt;em&gt;Al&lt;/em&gt; ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-13&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 13  &lt;/strong&gt;&lt;/span&gt;
+Pourriez-vous exprimer la même requête en utilisant une wildcard query au lieu d’une prefix query ?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;fuzzy-query&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Fuzzy query&lt;/h3&gt;
+&lt;p&gt;Les fuzzy queries recherchent des documents qui correspondent approximativement à une valeur donnée dans un champ spécifique.
+Elles sont utiles pour gérer les fautes de frappe ou les variations orthographiques.
+La recherche est basée sur la distance de Levenshtein, qui mesure le nombre de modifications nécessaires pour transformer une chaîne de caractères en une autre.
+Par exemple, le terme &lt;em&gt;roam&lt;/em&gt; peut être transformé en &lt;em&gt;foam&lt;/em&gt; avec une seule modification (remplacer &lt;em&gt;r&lt;/em&gt; par &lt;em&gt;f&lt;/em&gt;), donc la distance de Levenshtein est 1.&lt;/p&gt;
+&lt;p&gt;La commande suivante recherche des titres de films qui sont similaires à &lt;em&gt;godfater&lt;/em&gt; avec une distance maximale de 1 :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET /movies/_search
+{
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;fuzzy&amp;quot;: {
+      &amp;quot;title&amp;quot;: {
+        &amp;quot;value&amp;quot;: &amp;quot;godfater&amp;quot;,
+        &amp;quot;fuzziness&amp;quot;: 1
+      }
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Il n’est pas possible de prédire combien de fautes de frappe seront présentes dans une requête de recherche.
+Par conséquent, Elastic Search permet d’utiliser le paramètre &lt;code&gt;AUTO&lt;/code&gt; pour la fuzziness, qui ajuste automatiquement la distance maximale en fonction de la longueur du terme recherché.
+Les valeurs utilisées sont les suivantes :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;0 pour les termes de longueur 1 ou 2. Pour des mots très courts, l’utilisateur est censé taper correctement le mot.&lt;/li&gt;
+&lt;li&gt;1 pour les termes de longueur 3, 4 ou 5.&lt;/li&gt;
+&lt;li&gt;2 pour les termes de longueur supérieure à 5.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Un exemple d’utilisation de &lt;code&gt;AUTO&lt;/code&gt; pour la fuzziness est le suivant :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET /movies/_search
+{
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;fuzzy&amp;quot;: {
+      &amp;quot;title&amp;quot;: {
+        &amp;quot;value&amp;quot;: &amp;quot;godfater&amp;quot;,
+        &amp;quot;fuzziness&amp;quot;: &amp;quot;AUTO&amp;quot;
+      }
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;full-text-queries&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Full-text queries&lt;/h2&gt;
+&lt;p&gt;Les full-text queries sont utilisées pour rechercher des documents en texte intégral.
+Les documents retournés sont associés à un score de pertinence qui indique à quel point chaque document correspond à la requête de recherche.
+Il est possible que certains documents retournés n’aient pas finalement une pertinence élevée par rapport à la requête.
+De même, il est aussi possible que certains documents très pertinents ne soient pas retournés du tout.
+Ça revient à l’utilisateur final de juger de la pertinence des résultats retournés.
+On pourrait donc évaluer la performance d’une requête de recherche en fonction de la &lt;strong&gt;précision&lt;/strong&gt; et du &lt;strong&gt;rappel&lt;/strong&gt; (ang., recall) des résultats retournés.&lt;/p&gt;
+&lt;p&gt;Plusieurs types de full-text queries sont disponibles dans Elastic Search, parmi lesquelles : &lt;strong&gt;match query&lt;/strong&gt;, &lt;strong&gt;match_all query&lt;/strong&gt;, &lt;strong&gt;match_phrase query&lt;/strong&gt;, &lt;strong&gt;multi_match query&lt;/strong&gt; …
+Nous allons voir quelques exemples.&lt;/p&gt;
+&lt;div id=&#34;match-query&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Match query&lt;/h3&gt;
+&lt;p&gt;Une match query recherche des documents qui correspondent à une requête en texte intégral dans un champ spécifique.
+La requêtes peut également inclure plusieurs termes. On peut aussi spécifier différentes options.&lt;/p&gt;
+&lt;p&gt;La commande suivante recherche des titres de films qui contiennent le mot &lt;em&gt;Godfather&lt;/em&gt; :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET /movies/_search
+{
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;match&amp;quot;: {
+      &amp;quot;title&amp;quot;: &amp;quot;Godfather&amp;quot;
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-14&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 14  &lt;/strong&gt;&lt;/span&gt;
+Observez le resultat retourné par Elastic Search.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Combien de documents ont été trouvés ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Comment sont-ils ordonnés dans le résultat ?&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Pourquoi le premier document a un score plus élevé que les autres ?&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Comprendre le score de pertinence&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Si nous voulons comprendre comment le score de pertinence est calculé, nous pouvons utiliser un drapeau spécial appelé &lt;code&gt;explain&lt;/code&gt; dans notre requête de recherche.&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET /movies/_search
+{
+   &amp;quot;explain&amp;quot;: true, 
+  &amp;quot;_source&amp;quot;: false, 
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;match&amp;quot;: {
+      &amp;quot;title&amp;quot;: &amp;quot;Godfather&amp;quot;
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Vous devriez pouvoir identifier les différentes composantes du score de pertinence dans la réponse JSON retournée par Elastic Search
+(le term frequency, le inverse document frequency…).&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Nous pouvons aussi rechercher des titres de films qui contiennent plusieurs mots. Par exemple, la commande suivante recherche des titres de films qui contiennent les mots &lt;em&gt;Godfath&lt;/em&gt; ou &lt;em&gt;Part&lt;/em&gt; :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET /movies/_search
+{
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;match&amp;quot;: {
+      &amp;quot;title&amp;quot;: &amp;quot;Godfather Part&amp;quot;
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Il faut souligner que la match query analyse la requête de recherche avant de l’exécuter.
+Par conséquent, les termes de la requête sont convertis en minuscules et divisés en tokens.
+Ainsi, la requête ci-dessus est équivalente à la suivante : &lt;strong&gt;“godfather part”&lt;/strong&gt;.&lt;br /&gt;
+Remarquons aussi que les documents retournés sont ceux qui contiennent au moins un des termes de la requête (c’est l’opérateur logique OR qui est utilisé par défaut).&lt;/p&gt;
+&lt;p&gt;Si nous voulons que les documents retournés contiennent tous les termes de la requête (c’est l’opérateur logique AND), nous devons spécifier l’option &lt;code&gt;operator&lt;/code&gt; comme suit :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET /movies/_search
+{
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;match&amp;quot;: {
+      &amp;quot;title&amp;quot;: {
+        &amp;quot;query&amp;quot;: &amp;quot;Godfather Part&amp;quot;,
+        &amp;quot;operator&amp;quot;: &amp;quot;and&amp;quot;
+      }
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Une autre option utile est &lt;code&gt;minimum_should_match&lt;/code&gt;, qui permet de spécifier le nombre minimum de termes de la requête qui doivent être présents dans les documents retournés.
+Par exemple, la commande suivante recherche des titres de films qui contiennent au moins 2 des termes de la requête :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET /movies/_search
+{
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;match&amp;quot;: {
+      &amp;quot;title&amp;quot;: {
+        &amp;quot;query&amp;quot;: &amp;quot;Godfather Part Fiction&amp;quot;,
+        &amp;quot;minimum_should_match&amp;quot;: 2
+      }
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Si on avait spécifié &lt;code&gt;minimum_should_match&lt;/code&gt; à 3, la requête aurait été équivalente à une match query avec l’option &lt;code&gt;operator&lt;/code&gt; définie à &lt;code&gt;and&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Une autre option intéressante est &lt;code&gt;fuzziness&lt;/code&gt;, qui permet de faire des recherches approximatives en texte intégral. Par exemple, la commande suivante recherche des titres de films qui sont similaires à &lt;em&gt;godfater&lt;/em&gt; :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET /movies/_search
+{
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;match&amp;quot;: {
+      &amp;quot;title&amp;quot;: {
+        &amp;quot;query&amp;quot;: &amp;quot;godfater&amp;quot;,
+        &amp;quot;fuzziness&amp;quot;: &amp;quot;AUTO&amp;quot;
+      }
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Par défaut, Elastic Search retourne tous les champs des documents correspondant à une requête.
+Nous avons vu précédemment que nous pouvons contrôler les champs retournés en utilisant les paramètres &lt;code&gt;_source_includes&lt;/code&gt; et &lt;code&gt;_source_excludes&lt;/code&gt;.
+Une autre manière de sélectionner les champs retournés est d’utiliser l’objet &lt;code&gt;fields&lt;/code&gt; dans la requête de recherche.
+Notez que lorsque nous utilisons l’objet &lt;code&gt;fields&lt;/code&gt;, nous devons désactiver le retour du champ &lt;code&gt;_source&lt;/code&gt; en utilisant le paramètre &lt;code&gt;&#34;_source&#34;: false&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET /movies/_search
+{
+  &amp;quot;_source&amp;quot;: false,
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;match&amp;quot;: {
+      &amp;quot;title&amp;quot;: &amp;quot;Godfather&amp;quot;
+    }
+  },
+  &amp;quot;fields&amp;quot;: [&amp;quot;title&amp;quot;, &amp;quot;year&amp;quot;]
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;match_all-query&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;Match_all query&lt;/h3&gt;
+&lt;p&gt;Une match_all query recherche tous les documents dans un index, sans appliquer de filtre ou de critère de recherche.
+Le rappel est donc de 100%, mais la précision dépendra du nombre total de documents dans l’index.&lt;/p&gt;
+&lt;p&gt;Si on veut récupérer tous les documents dans l’index &lt;code&gt;movies&lt;/code&gt;, on utilise la commande suivante :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET /movies/_search
+{
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;match_all&amp;quot;: {}
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Remarquez que le score de pertinence retourné pour chaque document est le même (1.0) car tous les documents sont considérés comme également pertinents pour cette requête.&lt;/p&gt;
+&lt;p&gt;Ces requêtes peuvent retourner un grand nombre de documents, dans l’ordre de plusieurs milliers.
+Il ne serait pas efficace de retourner tous ces documents en une seule requête, car aussi bien le serveur que le client ne pourraient pas disposer de suffisamment de
+mémoire pour stocker un si grand volume de données.&lt;/p&gt;
+&lt;p&gt;Par défaut, Elastic Search retourne seulement les 10 premiers documents correspondant à une requête, mais nous pouvons contrôler
+le nombre de documents retournés en utilisant le paramètre &lt;code&gt;size&lt;/code&gt;.&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET movies/_search
+{
+  &amp;quot;size&amp;quot;: 20, 
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;match_all&amp;quot;: {}
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;On peut aussi utiliser le paramètre &lt;code&gt;from&lt;/code&gt; pour spécifier l’offset (le nombre de documents à ignorer avant de commencer à retourner les résultats).
+La requête suivante retourne 2 documents, en ignorant les 5 premiers documents correspondant à la requête.&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET movies/_search
+{
+  &amp;quot;from&amp;quot;: 5,
+  &amp;quot;size&amp;quot;: 2,
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;match_all&amp;quot;: {}
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;match_phrase-query&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;match_phrase query&lt;/h3&gt;
+&lt;p&gt;Une match_phrase query recherche des documents qui contiennent une phrase exacte dans un champ spécifique.
+La commande suivante recherche des titres de films qui contiennent la phrase “hacker discovers the reality” :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET /movies/_search
+{
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;match_phrase&amp;quot;: {
+      &amp;quot;synopsis&amp;quot;: &amp;quot;hacker discovers the reality&amp;quot;
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Remarquez que si on enlève des mots de la phrase, par exemple en recherchant “hacker reality”, la requête ne retournera aucun document.
+Dans ce cas, un paramètre utile est &lt;code&gt;slop&lt;/code&gt;, qui permet de spécifier le nombre de mots qui peuvent séparer les mots de la phrase recherchée dans les documents.
+Par exemple, la commande suivante recherche des titres de films qui contiennent les mots “hacker” et “reality” avec un slop de 2 :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET /movies/_search
+{
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;match_phrase&amp;quot;: {
+      &amp;quot;synopsis&amp;quot;: {
+        &amp;quot;query&amp;quot;: &amp;quot;hacker reality&amp;quot;,
+        &amp;quot;slop&amp;quot;: 2
+      }
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;match_query_prefix-query&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;match_query_prefix query&lt;/h3&gt;
+&lt;p&gt;Une match_query_prefix query recherche des documents via une phrase exact, mais le dernier mot de la phrase peut être un préfixe.
+La requêtes suivante recherche des synopsis de films qui contiennent un mot commençant par “dream” :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET /movies/_search
+{
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;match_phrase_prefix&amp;quot;: {
+      &amp;quot;synopsis&amp;quot;: &amp;quot;dream&amp;quot;
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;multi_match-query&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;multi_match query&lt;/h3&gt;
+&lt;p&gt;Une multi_match query recherche des documents qui correspondent à une requête en texte intégral dans plusieurs champs spécifiques.
+La commande suivante recherche des titres et des synopsis de films qui contiennent le mot “redemption” :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET /movies/_search
+{
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;multi_match&amp;quot;: {
+      &amp;quot;query&amp;quot;: &amp;quot;redemption&amp;quot;,
+      &amp;quot;fields&amp;quot;: [&amp;quot;title&amp;quot;, &amp;quot;synopsis&amp;quot;]
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;div id=&#34;query_string-query&#34; class=&#34;section level3&#34;&gt;
+&lt;h3&gt;query_string query&lt;/h3&gt;
+&lt;p&gt;Une query_string query permet de rechercher des documents en utilisant des opérateurs booléens et des expressions régulières dans une chaîne de requête.&lt;/p&gt;
+&lt;p&gt;La requêtes suivante recherce des films dont l’un des acteurs est Morgan Freeman &lt;strong&gt;et&lt;/strong&gt; dont l’année de sortie est postérieure à 1990 :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET /movies/_search
+{
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;query_string&amp;quot;: {
+      &amp;quot;query&amp;quot;: &amp;quot;actors:\&amp;quot;Morgan Freeman\&amp;quot; AND year:&amp;gt;1990&amp;quot;
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;requêtes-composées&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;Requêtes composées&lt;/h2&gt;
+&lt;p&gt;Elastic Search permet de combiner plusieurs critères de recherche en utilisant des requêtes booléennes via l’opérateur &lt;code&gt;bool&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Les clauses booléennes disponibles sont :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;must&lt;/strong&gt; : les documents doivent correspondre à tous les critères spécifiés dans cette clause (c’est l’opérateur logique AND).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;should&lt;/strong&gt; : les documents doivent correspondre à au moins un des critères spécifiés dans cette clause (c’est l’opérateur logique OR).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;must_not&lt;/strong&gt; : les documents ne doivent pas correspondre aux critères spécifiés dans cette clause (c’est l’opérateur logique NOT).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;filter&lt;/strong&gt; : les documents doivent correspondre aux critères spécifiés dans cette clause (comme pour &lt;strong&gt;must&lt;/strong&gt;), mais ces critères n’affectent pas le score de pertinence.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-15&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 15  &lt;/strong&gt;&lt;/span&gt;
+Que fait la requête suivante ?&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;GET movies/_search
+{
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;bool&amp;quot;: {
+      &amp;quot;must&amp;quot;: [
+        {
+          &amp;quot;match&amp;quot;: {
+            &amp;quot;title&amp;quot;: &amp;quot;Godfather&amp;quot;
+          }
+        },
+        {
+          &amp;quot;range&amp;quot;: {
+            &amp;quot;year&amp;quot;: {
+              &amp;quot;gte&amp;quot;: 1970,
+              &amp;quot;lte&amp;quot;: 1972
+            }
+          }
+        }
+      ]
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-16&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 16  &lt;/strong&gt;&lt;/span&gt;
+Écrivez une requête qui recherche les films dont le titre contient le mot “Godfather” &lt;strong&gt;ou&lt;/strong&gt; “Pulp Fiction”, mais &lt;strong&gt;pas&lt;/strong&gt; “Part II”.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;p&gt;La requête suivante utilise la clause &lt;code&gt;filter&lt;/code&gt; pour rechercher les films dont le titre contient le mot “Godfather”.&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET /movies/_search
+{
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;bool&amp;quot;: {
+      &amp;quot;filter&amp;quot;: {
+        &amp;quot;match&amp;quot;: {
+          &amp;quot;title&amp;quot;: &amp;quot;Godfather&amp;quot;
+        }
+      }
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Ces requêtes sont plus rapides car Elastic Search n’a pas besoin de calculer les scores de pertinence.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;bibliographie&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Bibliographie&lt;/h1&gt;
+&lt;p&gt;Plusieurs exemples de ce tutoriel sont tirés du livre suivant :&lt;/p&gt;
+&lt;p&gt;Madhusudhan Konda, &lt;em&gt;Elasticsearch in Action&lt;/em&gt;, Second Edition, Mnning Publications, 2023.&lt;/p&gt;
+&lt;/div&gt;
 </description>
     </item>
     
@@ -4545,6 +5484,15 @@ Quel est le processus métier que nous voulons modéliser
 dans le data warehouse de Sakila?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Le processus métier que nous voulons modéliser est la &lt;strong&gt;location de films&lt;/strong&gt;.
+Un autre processus métier pourrait être l’approvisionnement des magasins en films, mais nous ne le considérons pas ici.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;déclaration-du-grain&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Déclaration du grain&lt;/h1&gt;
@@ -4556,6 +5504,16 @@ dans le data warehouse de Sakila?&lt;/p&gt;
 Déclarez le grain du data warehouse de Sakila.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Chaque fois qu’un client loue un film dans un magasin,
+un enregistrement est créé dans la base de données opérationnelle.
+Donc, le grain est : &lt;strong&gt;une ligne pour chaque location de film par un client dans un magasin à un moment donné&lt;/strong&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;identification-des-dimensions&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Identification des dimensions&lt;/h1&gt;
@@ -4566,6 +5524,21 @@ Déclarez le grain du data warehouse de Sakila.&lt;/p&gt;
 &lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3  &lt;/strong&gt;&lt;/span&gt;Identifiez les dimensions du data warehouse de Sakila.
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Les dimensions sont :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;La dimension &lt;strong&gt;client&lt;/strong&gt; : &lt;em&gt;qui&lt;/em&gt; loue le film?&lt;/li&gt;
+&lt;li&gt;La dimension &lt;strong&gt;film&lt;/strong&gt; : &lt;em&gt;quel&lt;/em&gt; film est loué?&lt;/li&gt;
+&lt;li&gt;La dimension &lt;strong&gt;période&lt;/strong&gt; : &lt;em&gt;quand&lt;/em&gt; le film est-il loué?&lt;/li&gt;
+&lt;li&gt;La dimension &lt;strong&gt;magasin&lt;/strong&gt; : dans quel magasin (&lt;em&gt;où&lt;/em&gt;) le film est-il loué?&lt;/li&gt;
+&lt;li&gt;La dimension &lt;strong&gt;employé&lt;/strong&gt; : quel employé (&lt;em&gt;qui&lt;/em&gt;) a géré la location?&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;identification-des-faits&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Identification des faits&lt;/h1&gt;
@@ -4576,6 +5549,15 @@ Déclarez le grain du data warehouse de Sakila.&lt;/p&gt;
 &lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4  &lt;/strong&gt;&lt;/span&gt;Identifiez les faits du data warehouse de Sakila.
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Concernant une location de film par un client dans un magasin à un moment donné,
+nous souhaitons connaître le &lt;strong&gt;montant payé&lt;/strong&gt; pour la location et la &lt;strong&gt;durée de la location&lt;/strong&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;modélisation-dimensionnelle&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Modélisation dimensionnelle&lt;/h1&gt;
@@ -4589,6 +5571,14 @@ schéma en étoile pour le data warehouse de Sakila.&lt;/p&gt;
 Déssinez le premier croquis du schéma en étoile pour le data warehouse de Sakila.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/gadexed/tutorial-3/sakila-dw-sketch.png&#34; alt=&#34;First sketch of the Sakila data warehouse&#34;&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
 
@@ -4597,6 +5587,25 @@ Déssinez le premier croquis du schéma en étoile pour le data warehouse de Sak
 Identifiez la clé primaire de la table des faits.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;La clé primaire de la table des faits est composée de
+tous les attributs qui réfèrent aux dimensions.
+Donc, nous écrivons un attribut pour chaque dimension :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;&lt;TT&gt;staff_pk&lt;/TT&gt;, clé étrangère reférençant la dimension &lt;TT&gt;dim_staff&lt;/TT&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;TT&gt;film_pk&lt;/TT&gt;, clé étrangère reférençant la dimension &lt;TT&gt;dim_film&lt;/TT&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;TT&gt;date_pk&lt;/TT&gt;, clé étrangère reférençant la dimension &lt;TT&gt;dim_date&lt;/TT&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;TT&gt;store_pk&lt;/TT&gt;, clé étrangère reférençant la dimension &lt;TT&gt;dim_store&lt;/TT&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;TT&gt;customer_pk&lt;/TT&gt;, clé étrangère reférençant la dimension &lt;TT&gt;dim_customer&lt;/TT&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Voici le nouveau schéma.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/gadexed/tutorial-3/sakila-dw-sketch-keys.png&#34; alt=&#34;First sketch of the Sakila data warehouse with PKs&#34;&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
 
@@ -4614,6 +5623,36 @@ dans la table opérationnelle correspondante ?&lt;/p&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Concernant la première question, la réponse est oui. Chaque table de dimension
+doit contenir la clé primaire de la table opérationnelle correspondante.
+Cela permet de faire le lien entre le data warehouse et la base de données opérationnelle.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Concernant la deuxième question, il y a deux possibilités.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Soit on décide d’intégrer les dimensions liées, en ajoutant les attributs des tables liées
+dans la table de dimension courante.&lt;/li&gt;
+&lt;li&gt;Soit on décide de ne pas intégrer les dimensions liées, et dans ce cas
+on ajoute dans la table de dimension courante les clés étrangères
+qui réfèrent aux dimensions liées.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Si on choisit la deuxième option, on obtient un schéma en flocon (snowflake schema), qui est normalisé.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/gadexed/tutorial-3/sakila-dw-snowflake.png&#34; alt=&#34;Snowflake schema of Sakila data warehouse&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Pour un data warehouse, on préfère généralement la première option (donc un schéma dénormalisé en étoile),
+car elle permet d’éviter les jointures entre les tables de dimensions.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/gadexed/tutorial-3/sakila-dw-sketch-dim-full.png&#34; alt=&#34;Sakila data warehouse with attributes in the dimension tables&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Une dernière remarque sur l’attribut &lt;TT&gt;film_categories&lt;/TT&gt; dans la table &lt;TT&gt;dim_film&lt;/TT&gt;.
+La valeur de cet attribut est une liste.
+On pourrait vouloir éviter cela en utilisant un &lt;strong&gt;one-hot encoding&lt;/strong&gt;.
+En d’autres termes, si l’ensemble de toutes les catégories possibles est petit, on peut avoir un attribut booléen
+pour chaque catégorie ; une valeur &lt;em&gt;True&lt;/em&gt; indiquerait que le film appartient à la catégorie correspondante.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
 
@@ -4622,6 +5661,16 @@ dans la table opérationnelle correspondante ?&lt;/p&gt;&lt;/li&gt;
 Identifiez et ajoutez les faits dans la table des faits.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/gadexed/tutorial-3/sakila-dw-final.png&#34; alt=&#34;Final schema of the Sakila data warehouse&#34;&gt;&lt;/p&gt;
+&lt;p&gt;La dimension des dates peut être enrichie avec des attributs supplémentaires,
+tels que le jour de la semaine, le mois, le trimestre, l’année fiscale, un indicateur de jour férié, etc.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>

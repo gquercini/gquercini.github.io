@@ -675,6 +675,15 @@ Quel est le processus métier que nous voulons modéliser
 dans le data warehouse de Sakila?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Le processus métier que nous voulons modéliser est la <strong>location de films</strong>.
+Un autre processus métier pourrait être l’approvisionnement des magasins en films, mais nous ne le considérons pas ici.</p>
+</div>
+</details>
 </div>
 <div id="déclaration-du-grain" class="section level1">
 <h1>Déclaration du grain</h1>
@@ -686,6 +695,16 @@ dans le data warehouse de Sakila?</p>
 Déclarez le grain du data warehouse de Sakila.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Chaque fois qu’un client loue un film dans un magasin,
+un enregistrement est créé dans la base de données opérationnelle.
+Donc, le grain est : <strong>une ligne pour chaque location de film par un client dans un magasin à un moment donné</strong>.</p>
+</div>
+</details>
 </div>
 <div id="identification-des-dimensions" class="section level1">
 <h1>Identification des dimensions</h1>
@@ -696,6 +715,21 @@ Déclarez le grain du data warehouse de Sakila.</p>
 <span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3  </strong></span>Identifiez les dimensions du data warehouse de Sakila.
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Les dimensions sont :</p>
+<ul>
+<li>La dimension <strong>client</strong> : <em>qui</em> loue le film?</li>
+<li>La dimension <strong>film</strong> : <em>quel</em> film est loué?</li>
+<li>La dimension <strong>période</strong> : <em>quand</em> le film est-il loué?</li>
+<li>La dimension <strong>magasin</strong> : dans quel magasin (<em>où</em>) le film est-il loué?</li>
+<li>La dimension <strong>employé</strong> : quel employé (<em>qui</em>) a géré la location?</li>
+</ul>
+</div>
+</details>
 </div>
 <div id="identification-des-faits" class="section level1">
 <h1>Identification des faits</h1>
@@ -706,6 +740,15 @@ Déclarez le grain du data warehouse de Sakila.</p>
 <span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 4  </strong></span>Identifiez les faits du data warehouse de Sakila.
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Concernant une location de film par un client dans un magasin à un moment donné,
+nous souhaitons connaître le <strong>montant payé</strong> pour la location et la <strong>durée de la location</strong>.</p>
+</div>
+</details>
 </div>
 <div id="modélisation-dimensionnelle" class="section level1">
 <h1>Modélisation dimensionnelle</h1>
@@ -719,6 +762,14 @@ schéma en étoile pour le data warehouse de Sakila.</p>
 Déssinez le premier croquis du schéma en étoile pour le data warehouse de Sakila.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p><img src="/courses/databases/gadexed/tutorial-3/sakila-dw-sketch.png" alt="First sketch of the Sakila data warehouse"></p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -727,6 +778,25 @@ Déssinez le premier croquis du schéma en étoile pour le data warehouse de Sak
 Identifiez la clé primaire de la table des faits.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>La clé primaire de la table des faits est composée de
+tous les attributs qui réfèrent aux dimensions.
+Donc, nous écrivons un attribut pour chaque dimension :</p>
+<ul>
+<li><p><TT>staff_pk</TT>, clé étrangère reférençant la dimension <TT>dim_staff</TT>.</p></li>
+<li><p><TT>film_pk</TT>, clé étrangère reférençant la dimension <TT>dim_film</TT>.</p></li>
+<li><p><TT>date_pk</TT>, clé étrangère reférençant la dimension <TT>dim_date</TT>.</p></li>
+<li><p><TT>store_pk</TT>, clé étrangère reférençant la dimension <TT>dim_store</TT>.</p></li>
+<li><p><TT>customer_pk</TT>, clé étrangère reférençant la dimension <TT>dim_customer</TT>.</p></li>
+</ul>
+<p>Voici le nouveau schéma.</p>
+<p><img src="/courses/databases/gadexed/tutorial-3/sakila-dw-sketch-keys.png" alt="First sketch of the Sakila data warehouse with PKs"></p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -744,6 +814,36 @@ dans la table opérationnelle correspondante ?</p></li>
 </ol>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<ul>
+<li><p>Concernant la première question, la réponse est oui. Chaque table de dimension
+doit contenir la clé primaire de la table opérationnelle correspondante.
+Cela permet de faire le lien entre le data warehouse et la base de données opérationnelle.</p></li>
+<li><p>Concernant la deuxième question, il y a deux possibilités.</p></li>
+</ul>
+<ol style="list-style-type: decimal">
+<li>Soit on décide d’intégrer les dimensions liées, en ajoutant les attributs des tables liées
+dans la table de dimension courante.</li>
+<li>Soit on décide de ne pas intégrer les dimensions liées, et dans ce cas
+on ajoute dans la table de dimension courante les clés étrangères
+qui réfèrent aux dimensions liées.</li>
+</ol>
+<p>Si on choisit la deuxième option, on obtient un schéma en flocon (snowflake schema), qui est normalisé.</p>
+<p><img src="/courses/databases/gadexed/tutorial-3/sakila-dw-snowflake.png" alt="Snowflake schema of Sakila data warehouse"></p>
+<p>Pour un data warehouse, on préfère généralement la première option (donc un schéma dénormalisé en étoile),
+car elle permet d’éviter les jointures entre les tables de dimensions.</p>
+<p><img src="/courses/databases/gadexed/tutorial-3/sakila-dw-sketch-dim-full.png" alt="Sakila data warehouse with attributes in the dimension tables"></p>
+<p>Une dernière remarque sur l’attribut <TT>film_categories</TT> dans la table <TT>dim_film</TT>.
+La valeur de cet attribut est une liste.
+On pourrait vouloir éviter cela en utilisant un <strong>one-hot encoding</strong>.
+En d’autres termes, si l’ensemble de toutes les catégories possibles est petit, on peut avoir un attribut booléen
+pour chaque catégorie ; une valeur <em>True</em> indiquerait que le film appartient à la catégorie correspondante.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -752,6 +852,16 @@ dans la table opérationnelle correspondante ?</p></li>
 Identifiez et ajoutez les faits dans la table des faits.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p><img src="/courses/databases/gadexed/tutorial-3/sakila-dw-final.png" alt="Final schema of the Sakila data warehouse"></p>
+<p>La dimension des dates peut être enrichie avec des attributs supplémentaires,
+tels que le jour de la semaine, le mois, le trimestre, l’année fiscale, un indicateur de jour férié, etc.</p>
+</div>
+</details>
 </div>
 
           </div>
