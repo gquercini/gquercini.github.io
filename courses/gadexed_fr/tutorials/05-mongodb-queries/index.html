@@ -581,7 +581,12 @@
       
       
       <li class="tutoriels">
-        <a href="/courses/gadexed_fr/tutorials/08-elastic-search/">8. Elastic Search</a>
+        <a href="/courses/gadexed_fr/tutorials/08-elastic-search/">8. Elasticsearch</a>
+      </li>
+      
+      
+      <li class="tutoriels">
+        <a href="/courses/gadexed_fr/tutorials/09-spark-streaming/">9. Spark Streaming</a>
       </li>
       
     </ul>
@@ -663,6 +668,33 @@ Ecrivez les requêtes suivantes en MongoDB :</p>
 </ol>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<ol style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>db.customer.find()</pre>
+<ol start="2" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>db.customer.find({}, {email:1})</pre>
+<ol start="3" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>db.customer.find({"store.country": "Canada"}, {email:1});</pre>
+<ol start="4" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>db.rental.find({"customer.country": "Iran", amount: {$gt: 10}}, {rental_id: 1, _id:0});</pre>
+<ol start="5" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>db.film.find({film_id: 213}, {"actors.first_name":1, "actors.last_name": 1}).sort({"actors.last_name": -1});</pre>
+</div>
+</details>
 </div>
 <div id="opérations-sur-les-tableaux" class="section level1">
 <h1>Opérations sur les tableaux</h1>
@@ -680,6 +712,29 @@ Ecrivez les requêtes suivantes en MongoDB :</p>
 </ol>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<ol style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>db.film.find({special_features : {$elemMatch: {$eq: "Behind the Scenes"}}}, {film_id: 1, _id:0});</pre>
+<ol start="2" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>db.film.find({special_features : {$all: ["Commentaries", "Deleted Scenes"]}}, {film_id: 1, _id:0});</pre>
+<ol start="3" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>db.film.find({"actors.first_name": "BURT", "actors.last_name": "POSEY"}, {film_id: 1, _id:0});</pre>
+<ol start="4" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>db.film.find({actors: {$size : 15}}, {film_id: 1, _id:0});</pre>
+</div>
+</details>
 </div>
 <div id="pipeline-dagrégation" class="section level1">
 <h1>Pipeline d’agrégation</h1>
@@ -701,6 +756,76 @@ Ecrivez les requêtes suivantes en MongoDB :</p>
 </ol>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<ol style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>
+db.rental.aggregate({$match: {"customer.first_name": "TOMMY", "customer.last_name": "COLLAZO"}}, 
+                    {$project: {"inventory.film.title": 1, _id:0}})
+</pre>
+One can also express this query with the function find()
+<pre>
+db.rental.find({"customer.first_name": "TOMMY", "customer.last_name": "COLLAZO"}, {"inventory.film.title": 1, _id:0});
+</pre>
+<ol start="2" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>
+db.rental.aggregate({$group: {"_id": null, total_amount: {$sum: "$amount"}}})
+</pre>
+<ol start="3" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>
+db.film.aggregate({$project: {nb_actors: {$size: "$actors"}}})
+</pre>
+<ol start="4" style="list-style-type: decimal">
+<li></li>
+</ol>
+<p>If we don’t put the match condition, we get an error because for some films
+the field actors is not defined.</p>
+<pre>db.film.aggregate({$match: {actors: {$elemMatch: {$exists: true}}}}, 
+                {$project: {film_id: 1, "nb_actors": {$size: "$actors"}}}, 
+                {$sort: {nb_actors: -1}})
+</pre>
+<ol start="5" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>
+db.film.aggregate({$match: {actors: {$elemMatch: {$exists: true}}}}, 
+                {$project: {film_id: 1, "nb_actors": {$size: "$actors"}}}, 
+                {$group: {_id: null, avg_actors: {$avg: "$nb_actors"}}})
+</pre>
+<ol start="6" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>
+db.rental.aggregate({$group: {_id: "$customer.customer_id", count: {$sum: 1}}}, {$sort: {count: -1}})
+</pre>
+<ol start="7" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>
+db.rental.aggregate({$group: {_id: {cust_id: "$customer.customer_id", cust_first_name: "$customer.first_name", 
+                                    cust_last_name: "$customer.last_name"}, count: {$sum: 1}}}, 
+                            {$sort: {count: -1}}, {$limit :1})
+</pre>
+<ol start="8" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>
+db.rental.aggregate(
+    {$match: {"inventory.film.categories.category": "Music"}}, 
+    {$group: {_id: "$customer.country", count: {$sum: 1}}},
+    {$sort:{count: -1}}, {$limit: 1})
+</pre>
+</div>
+</details>
 </div>
 <div id="opérations-de-jointure" class="section level1">
 <h1>Opérations de jointure</h1>
@@ -716,6 +841,29 @@ Ecrivez les requêtes suivantes en MongoDB en utilisant le pipeline d’agrégat
 </ol>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<ol style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>
+db.rental.aggregate({$match: {"inventory.film.title": "ACE GOLDFINGER"}}, 
+            {$lookup: {from: "film", localField: "inventory.film.film_id", foreignField:"film_id", as:"film"}}, 
+            {$project: {"film.language": 1}}, {$limit : 1})
+</pre>
+<ol start="2" style="list-style-type: decimal">
+<li></li>
+</ol>
+<pre>
+db.rental.aggregate({$match: {rental_id: 2}}, 
+                    {$lookup: {from: "staff", localField: "staff.staff_id", 
+                    foreignField:"staff_id", as:"staff_member"}}, {$project: {"staff_member": 1}})
+</pre>
+</div>
+</details>
 </div>
 
           </div>

@@ -581,7 +581,12 @@
       
       
       <li class="tutoriels">
-        <a href="/courses/gadexed_fr/tutorials/08-elastic-search/">8. Elastic Search</a>
+        <a href="/courses/gadexed_fr/tutorials/08-elastic-search/">8. Elasticsearch</a>
+      </li>
+      
+      
+      <li class="tutoriels">
+        <a href="/courses/gadexed_fr/tutorials/09-spark-streaming/">9. Spark Streaming</a>
       </li>
       
     </ul>
@@ -654,6 +659,24 @@ de chacune des associations
 dans lesquelles la table <TT>Rental</TT> est impliquée.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>L’entité <TT>Rental</TT> est associée aux tables suivantes :</p>
+<ul>
+<li><p><TT>Inventory</TT>. Une location porte sur un seul support (par ex., un DVD).
+Un support peut être loué plusieurs fois. Il s’agit d’une <strong>association un-à-plusieurs</strong>.</p></li>
+<li><p><TT>Staff</TT>. Une location est prise en charge par un seul membre du personnel.
+Un membre du personnel peut prendre en charge plusieurs locations. Il s’agit d’une <strong>association un-à-plusieurs</strong>.</p></li>
+<li><p><TT>Customer</TT>. Une location est effectuée par un seul client. Un client peut effectuer
+plusieurs locations. Il s’agit d’une <strong>association un-à-plusieurs</strong>.</p></li>
+<li><p><TT>Payment</TT>. Un paiement est associé à une seule location. Une location peut avoir un seul
+paiement. Il s’agit d’une <strong>association un-à-un</strong>.</p></li>
+</ul>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -675,6 +698,34 @@ Regardez la définition des tables <TT>Rental</TT> et <TT>Customer</TT> en Figur
 </ul>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Pour la table <TT>Rental</TT> nous avons :</p>
+<ul>
+<li><p><TT>rental_id</TT>, <TT>integer</TT>, <strong>4 octets</strong>.</p></li>
+<li><p><TT>rental_date</TT>, <TT>timestamp with time zone</TT>, <strong>8 octets</strong>.</p></li>
+<li><p><TT>inventory_id</TT>, <TT>integer</TT>, <strong>4 octets</strong>.</p></li>
+<li><p><TT>customer_id</TT>, <TT>smallint</TT>, <strong>2 octets</strong>.</p></li>
+<li><p><TT>return_date</TT>, <TT>timestamp with time zone</TT>, <strong>8 octets</strong>.</p></li>
+<li><p><TT>staff_id</TT>, <TT>smallint</TT>, <strong>2 octets</strong>.</p></li>
+</ul>
+<p>En total, une ligne dans la table <TT>Rental</TT> nécessite <strong>28 octets</strong> de stockage.</p>
+<p>Pour la table <TT>Customer</TT> nous avons :</p>
+<ul>
+<li><p><TT>customer_id</TT>, <TT>integer</TT>, <strong>4 octets</strong>.</p></li>
+<li><p><TT>store_id</TT>, <TT>smallint</TT>, <strong>2 octets</strong>.</p></li>
+<li><p><TT>first_name</TT>, <TT>text</TT>, <strong>6 octets</strong> (average).</p></li>
+<li><p><TT>last_name</TT>, <TT>text</TT>, <strong>7 octets</strong> (average).</p></li>
+<li><p><TT>email</TT>, <TT>text</TT>, <strong>25 octets</strong> (average).</p></li>
+<li><p><TT>address_id</TT>, <TT>smallint</TT>, <strong>2 octets</strong>.</p></li>
+<li><p><TT>activebool</TT>, <TT>boolean</TT>, <strong>1 octets</strong>.</p></li>
+</ul>
+<p>En total, une ligne dans la table <TT>Customer</TT> nécessite <strong>47 octets</strong> de stockage.</p>
+</div>
+</details>
 </div>
 <div id="considérations-pour-le-modèle-mongodb" class="section level1">
 <h1>Considérations pour le modèle MongoDB</h1>
@@ -690,6 +741,29 @@ Comment modéliseriez-vous dans MongoDB les entités <TT>Rental</TT>
 et <TT>Payment</TT>, compte tenu des cardinalités que vous avez identifiées dans la section précédente?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>L’association entre les deux entités est <B>un-à-un</B>.
+Par conséquent, nous pouvons utiliser un schéma dénormalisé dans MongoDB.</p>
+<p>C’est-à-dire que nous pouvons créer une seule collection pour stocker les informations sur les deux entités.</p>
+<p>Nous avons deux options :</p>
+<ul>
+<li><p>Nous créons une collection <TT>Payment</TT>, où chaque document contient
+les attributs d’un paiement et un document intégré avec les détails de la location
+relative au paiement.</p></li>
+<li><p>Nous créons une collection <TT>Rental</TT>, où chaque document contient
+les attributs d’une location et un document intégré avec les détails du paiement
+relatif à la location.</p></li>
+</ul>
+<p>Bien que les deux options soient parfaitement valables, nous préférons la deuxième, car
+les locations sont les acteurs principaux dans notre base de données.</p>
+<p>Nous pouvons aussi considérer les attributs d’un paiement comme des attributs
+d’une location, sans créer de document intégré pour le paiement.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -702,6 +776,21 @@ effectuées par ce client.</p>
 que la taille d’un document ne peut pas dépasser 16 Mo?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Nous avons vu précédemment que chaque document de location nécessite 28 octets.
+Pour faciliter le calcul, nous arrondissons cette taille à 32 octets (une puissance de deux).
+Sachant que 16 Mo = <span class="math inline">\(16 \times 2^{20}\)</span>, le nombre maximum de locations que nous pouvons stocker
+pour un client donné est donné par :</p>
+<p><span class="math display">\[
+\frac{16 \times 2^{20}}{32} = 2^{-1} \times 2^{20} = 2^{19}
+\]</span></p>
+<p>Ceci fait environ 524 288 locations.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -724,6 +813,23 @@ sur le client qui a effectué la location.</p></li>
 </ol>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Nous avons vu précédemment que pour chaque client nous avons besoin de 47 octets
+et pour chaque location nous avons besoin de 28 octets.</p>
+<p>Un document qui contient les informations sur un client et la liste de toutes les
+locations du client nécessitera <span class="math inline">\(47 + 27 \times 28 = 830\)</span> octets.</p>
+<p>Donc, la taille totale de la collection <TT>Customer</TT> est de
+<span class="math inline">\(803 \times 599 = 480977\)</span> octets, soit 469 Ko.</p>
+<p>Un document qui contient les informations sur une location et
+le client qui a effectué la location nécessitera <span class="math inline">\(28 + 47 = 75\)</span> octets.</p>
+<p>Donc, la taille totale de la collection <TT>Rental</TT> est de
+<span class="math inline">\(75 \times 16044 = 1203300\)</span> octets, soit 1,1 Mo.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -732,6 +838,41 @@ sur le client qui a effectué la location.</p></li>
 Discurez des avantages et des inconvénients des deux options présentées à la question précédente.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Avantages of solution 1. :</p>
+<ul>
+<li><p>Il n’y a pas de redondance. En fait, une location est relative à au plus un client, donc
+les données sur une location ne sont pas dupliquées dans différents documents.</p></li>
+<li><p>Par conséquent, la taille de la collection est plus petite que la collection de la solution 2.</p></li>
+<li><p>Pour chaque client, nous avons toutes les informations sur ses locations avec une seule opération de lecture.</p></li>
+</ul>
+<p>Désavantages de la solution 1. :</p>
+<ul>
+<li><p>Il y a une limite (quoique acceptable) sur le nombre de locations que nous pouvons stocker
+pour chaque client.</p></li>
+<li><p>Nous perdons une vue <em>centrée sur la location</em> de nos données.
+Par conséquent, si nous voulons agréger des informations sur les locations, nous devons parcourir
+la liste des locations de chaque client.</p></li>
+</ul>
+<p>Avantages de la solution 2. :</p>
+<ul>
+<li><p>Une vision centrée sur la location de nos données.</p></li>
+<li><p>La taille de chaque document est petite et ne dépassera jamais la limite de 16 Mo.</p></li>
+<li><p>Lire un document de la collection prend moins de temps et de mémoire que
+de lire un document de la collection de la solution 1.</p></li>
+</ul>
+<p>Désavantages de la solution 2. :</p>
+<ul>
+<li><p>Il y a une redondance importante. En fait, les informations sur un client sont dupliquées
+à chaque fois que le client effectue une location.</p></li>
+<li><p>Par conséquent, la taille de la collection est plus grande que dans la solution 1.</p></li>
+</ul>
+</div>
+</details>
 <p>Il semblerait qu’une des deux solutions ait des exigences de stockage
 plus élevées que l’autre, et donc les chances semblent être empilées contre cette solution</p>
 <p>Il semble que l’une des deux solutions nécessite plus d’espace de stockage que l’autre, et que les chances soient donc défavorables à cette solution.</p>
@@ -747,6 +888,42 @@ présentées dans l’exercice précédent.
 Discutez des avantages et des inconvénients de chaque option que vous présentez.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p><strong>Solution 1</strong></p>
+<p>Nous avons besoin de lier le personnel et l’inventaire à une location.</p>
+<p>Trois options sont possibles :</p>
+<ul>
+<li><p>Nous intégrons les informations du personnel et de l’inventaire dans chaque document de location,
+qui, rappelons-le, est déjà intégré dans un tableau.
+Cela crée de la redondance, car un membre du personnel ou un élément de l’inventaire peut apparaître dans plusieurs locations.</p></li>
+<li><p>Nous créons trois collections séparées (<TT>Customer</TT>, <TT>Staff</TT> et <TT>Inventory</TT>)
+et dans chacune d’elles, nous intégrons un tableau avec la liste des locations relatives.
+Le problème est que les données sur les locations sont maintenant répliquées trois fois.
+Cette solution est particulièrement mauvaise, car les locations sont fréquemment modifiées.
+Lorsque nous créons une location, nous devons modifier trois documents ; lorsqu’un client
+rend un article, nous devons mettre à jour la date de retour dans trois documents.</p></li>
+<li><p>Nous créons quatre collections (<TT>Customer</TT>, <TT>Staff</TT>, <TT>Inventory</TT> et
+<TT>Rentals</TT>) ; pour chaque client, membre du personnel et inventaire, nous conservons une liste des locations,
+chaque élément étant l’identifiant qui fait référence à la location appropriée.
+Nous revenons au schéma normalisé de la base de données PostgreSQL.
+Il n’est pas clair comment ce schéma normalisé aidera à faire évoluer horizontalement la base de données.</p></li>
+</ul>
+<p><strong>Solution 2</strong></p>
+<p>Nous avons une seule collection <TT>Rental</TT> ; dans chaque document, nous avons un attribut customer,
+dont la valeur est un document intégré avec toutes les informations sur un client,
+un attribut staff, dont la valeur est un document intégré avec toutes les informations sur un membre du personnel,
+et un attribut inventory, dont la valeur est un document intégré avec toutes les informations sur un élément d’inventaire.</p>
+<p>Cette solution a des exigences de stockage plus élevées que les options présentées dans la solution 1,
+mais elle a l’avantage clair d’être un schéma dénormalisé,
+où nous contrôlons chaque facette d’une location (client, personnel, inventaire).
+De plus, lorsque nous créons une location, nous n’écrivons qu’un seul document ; lorsque nous
+mettons à jour la date de retour d’une location, nous ne mettons à jour qu’un seul document.</p>
+</div>
+</details>
 <p>Sur la base des discussions précédentes, il semble que la solution 2
 soit la meilleure option pour modéliser les données de la base de données Sakila dans
 MongoDB.
@@ -766,6 +943,21 @@ Si on note par <span class="math inline">\(N_{rentals}\)</span> le nombre de loc
 de la base de données entière pour la solution adoptée?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Rappellons que la taille en octets d’un document stockant les informations sur un client est de 47 octets.</p>
+<p>La taille en octets d’un document de la collection <TT>Rental</TT> est donc donnée par :</p>
+<p><span class="math display">\[
+N_{rentals} \times (47 + 84000 + 16) = N_{rentals} \times 84063
+\]</span></p>
+<p>Avec 10,000 locations, la taille de la base de données sera 800 Mo.
+Avec 100,000 locations, la taille de la base de données sera 7 Go.
+Avec 1,000,000 locations, la taille de la base de données sera 78 Go.</p>
+</div>
+</details>
 <p>Bien que la taille que nous avons déterminée dans l’exercice précédent, puisse ne pas sembler
 impressionnante, nous devons encore stocker d’autres informations
 (films, acteurs….).
@@ -778,6 +970,25 @@ Il serait donc souhaitable de réduire la taille de la base de données.</p>
 Comment pourriez-vous économiser de l’espace dans la solution adoptée?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Lors de la modélisation des données pour une base de données MongoDB, le choix
+entre un schéma normalisé et un schéma dénormalisé
+n’a pas besoin d’être une décision binaire.</p>
+<p>Nous pouvons avoir un schéma dénormalisé, où nous intégrons dans les mêmes documents
+les informations qui sont interrogées ensemble, tout en stockant dans une collection séparée
+les informations qui sont rarement interrogées.</p>
+<p>Par exemple, la photo de profil d’un membre du personnel peut ne pas être
+une information importante lorsque nous essayons de déterminer
+qui est le plus productif.</p>
+<p>Donc, nous pourrions ajouter une autre collection <TT>Staff</TT> où chaque
+document ne contient que les attributs qui ne sont pas dans les documents intégrés dans la collection
+<TT>Rental</TT>.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -787,6 +998,60 @@ Proposez une solution pour toutes les entités impliquées et
 estimez l’économie en termes d’exigences de stockage.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Ici nous avons une solution avec trois collections différentes.
+Les informations sur l’inventaire sont complètement dénormalisées dans la
+collection <TT>Rental</TT>. Pour les clients et les membres du personnel, nous ne
+conservons que les informations nécessaires et nous normalisons les informations qui sont moins
+susceptibles d’être interrogées lors de l’analyse des locations.</p>
+<p><img src="/courses/databases/tutorial-5/mongodb-sakila-first-solution.png" alt="First schema MongoDB"></p>
+<p>Maintenant nous pouvons estimer les économies en termes de stockage.</p>
+<p>Dans un document de la collection <TT>Rental</TT>, nous avons les attributs suivants :</p>
+<ul>
+<li><p>rental_id: 4 octets.</p></li>
+<li><p>rental_date + return_date: 16 octets.</p></li>
+<li><p>inventory_id: 4 octets</p></li>
+<li><p>film_id + store_id: 4 octets</p></li>
+<li><p>customer_id: 4 octets</p></li>
+<li><p>customer first + last names: 13 octets.</p></li>
+<li><p>country: 9 octets (en moyenne le nom d’un pays consiste en 9 caractères).</p></li>
+<li><p>staff_id: 4 octets.</p></li>
+<li><p>staff first + last name: 13 octets.</p></li>
+</ul>
+<p>En total, un document de notre collection <TT>Rental</TT> aura 71 octets
+(une énorme amélioration par rapport aux 84000 octets de notre première solution).</p>
+<p>Bien sûr, la taille d’un document dans la collection <TT>Staff</TT> sera d’environ
+84000 octets (nous stockons toujours la photo de profil).
+Mais le nombre de membres du personnel <span class="math inline">\(N_{staff}\)</span> est bien inférieur
+au nombre de locations <span class="math inline">\(N_{rentals}\)</span>.</p>
+<p>Il est facile de vérifier que la taille d’un document de la collection <TT>Customer</TT>
+est de 34 octets (mêmes informations que précédemment sauf le prénom et le nom de famille).
+Encore une fois, le nombre de clients <span class="math inline">\(N_{customers}\)</span> est bien inférieur à
+<span class="math inline">\(N_{rentals}\)</span>.</p>
+<p>Si nous supposons que chaque client a en moyenne 30 locations et pour 100 clients nous
+avons 1 membre du personnel, nous avons que :</p>
+<ul>
+<li><p>$N_{customer} = N_{rental}/30 $</p></li>
+<li><p>$N_{staff} = N_{customer}/100 = N_{rental}/3000 $</p></li>
+</ul>
+<p>La taille totale de la base de données est donc donnée par :</p>
+<p><span class="math display">\[
+71\times N_{rentals} + 84000 \times N_{rentals}/3000 + 34 \times N_{rentals}/30 = 100 \times N_{rental}
+\]</span></p>
+<p>Cela nous permet de comparer l’espace de stockage requis par cette solution par rapport à la solution précédente :</p>
+<ul>
+<li><p>Avec 10,000 locations, la taille de la base de données est de 976 Ko (au lieu de 800 Mo).</p></li>
+<li><p>Avec 100,000 locations, la taille de la base de données est de 9,5 Mo (au lieu de 7 Go).</p></li>
+<li><p>Avec 1,000,000 locations, la taille de la base de données est de 95 M0 (au lieu de 78 Go).</p></li>
+</ul>
+<p>Cela est une amélioration considérable ! En plus, nous avons un schéma dénormalisé qui
+nous permet de tirer parti de la scalabilité horizontale de MongoDB.</p>
+</div>
+</details>
 </div>
 <div id="le-modèle-complet" class="section level1">
 <h1>Le modèle complet</h1>
@@ -801,6 +1066,28 @@ Considérez le modèle que nous avons obtenu à la fin de la section précédent
 Quelles données pouvez-vous encore dénormaliser?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p><strong>Collection <TT>Staff</TT></strong></p>
+<ul>
+<li><p>L’attribute <TT>address_id</TT> réfère à une adresse complète. Nous pouvons complètement
+dénormaliser cette information dans les documents de la collection.</p></li>
+<li><p>L’attribut <TT>store_id</TT> réfère au magasin où travaille une membre du personnel.
+La table <TT>Store</TT> dans la base de données PostgreSQL originale n’a pas
+trop de colonnes. Par conséquent, il pourrait être raisonnable de dénormaliser complètement ces données.
+Cependant, les informations sur les magasins sont également liées aux clients et aux articles d’inventaire.
+Si nous devons mettre à jour, disons, le gestionnaire d’un magasin, nous devrons mettre à jour
+trois documents différents.
+Par conséquent, nous préférons créer une collection <TT>Store</TT> et ne garder dans les documents de la
+collection <TT>Staff</TT> que l’identifiant.</p></li>
+</ul>
+<p>En général, nous pouvons proposer le modèle de données illustré dans la figure suivante.</p>
+<p><img src="/courses/databases/tutorial-5/mongodb-sakila-first-model-further-denormalized.png" alt="Sakila MongoDB data model further normalized"></p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -810,6 +1097,14 @@ Completez le diagramme obtenu dans l’exercice précédent de manière à obten
 un modèle de données complet pour la base de données Sakila.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p><img src="/courses/databases/tutorial-5/mongodb-sakila-complete.png" alt="Sakila MongoDB full data model"></p>
+</div>
+</details>
 </div>
 
           </div>

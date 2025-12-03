@@ -28,7 +28,7 @@
   
     
   
-  <meta name="description" content="Introduction à Elastic Search.">
+  <meta name="description" content="Introduction à Elasticsearch.">
 
   
   <link rel="alternate" hreflang="en-us" href="/courses/gadexed_fr/tutorials/08-elastic-search/">
@@ -234,8 +234,8 @@
   
   <meta property="og:site_name" content="Gianluca Quercini">
   <meta property="og:url" content="/courses/gadexed_fr/tutorials/08-elastic-search/">
-  <meta property="og:title" content="Elastic Search | Gianluca Quercini">
-  <meta property="og:description" content="Introduction à Elastic Search."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="og:title" content="Elasticsearch | Gianluca Quercini">
+  <meta property="og:description" content="Introduction à Elasticsearch."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
   <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
   
     
@@ -258,7 +258,7 @@
 
 
 
-  <title>Elastic Search | Gianluca Quercini</title>
+  <title>Elasticsearch | Gianluca Quercini</title>
 
 </head>
 
@@ -581,7 +581,12 @@
       
       <script>open_menu_on_load("tutoriels".concat("-ddowncontent"))</script>
       <li class="active tutoriels">
-        <a href="/courses/gadexed_fr/tutorials/08-elastic-search/">8. Elastic Search</a>
+        <a href="/courses/gadexed_fr/tutorials/08-elastic-search/">8. Elasticsearch</a>
+      </li>
+      
+      
+      <li class="tutoriels">
+        <a href="/courses/gadexed_fr/tutorials/09-spark-streaming/">9. Spark Streaming</a>
       </li>
       
     </ul>
@@ -604,7 +609,7 @@
 
         <div class="docs-article-container">
           <div class="heading">Gestion et analyse des données — Tutoriel 8</div>
-          <h1>Elastic Search</h1>
+          <h1>Elasticsearch</h1>
           <hr>
           <div class="logo">
             
@@ -617,17 +622,17 @@
 
 <p><link rel="stylesheet" href="/styles/course.css">
 <link rel="stylesheet" href="/styles/cloud-computing.css"></p>
-<p>L’objectif de ce tutoriel est de se familiariser avec Elastic Search, un moteur de recherche et d’analyse distribué basé sur Lucene.</p>
+<p>L’objectif de ce tutoriel est de se familiariser avec Elasticsearch, un moteur de recherche et d’analyse distribué basé sur Lucene.</p>
 <div id="préparation-de-lenvironnement" class="section level1">
 <h1>Préparation de l’environnement</h1>
-<p>La première chose à faire est de <strong>démarrer Elastic Search</strong> via la procédure suivante :</p>
+<p>La première chose à faire est de <strong>démarrer Elasticsearch</strong> via la procédure suivante :</p>
 <ul>
 <li><p>Ouvrez une fenêtre de <em>PowerShell</em>.</p></li>
 <li><p>Déplacez-vous dans le répertoire <code>elasticsearch-9.2.1</code> via la commande suivante :</p></li>
 </ul>
 <pre><code>cd Desktop\elasticsearch-9.2.1</code></pre>
 <ul>
-<li>Lancez Elastic Search avec la commande suivante :</li>
+<li>Lancez Elasticsearch avec la commande suivante :</li>
 </ul>
 <pre><code>bin\elasticsearch.bat</code></pre>
 <ul>
@@ -635,9 +640,9 @@
 <li><p>Ouvrez une page du navigateur web et saisissez l’adresse suivante : <code>http://localhost:9200</code>.</p></li>
 <li><p>Vous devriez obtenir une réponse JSON où l’attribut <em>tagline</em> vaut <em>You Know, for Search</em>. Si la réponse n’apparaît pas, attendez encore quelques secondes et rafraîchissez la page.</p></li>
 </ul>
-<p>Ensuite, nous allons <strong>démarrer Kibana</strong>, l’interface web d’Elastic Search qui nous permettra d’exécuter des requêtes et visualiser les résultats.</p>
+<p>Ensuite, nous allons <strong>démarrer Kibana</strong>, l’interface web d’Elasticsearch qui nous permettra d’exécuter des requêtes et visualiser les résultats.</p>
 <ul>
-<li><p>Ouvrez un nouvel onglet dans le PowerShell, <strong>sans fermer</strong> celui où Elastic Search est en cours d’exécution.</p></li>
+<li><p>Ouvrez un nouvel onglet dans le PowerShell, <strong>sans fermer</strong> celui où Elasticsearch est en cours d’exécution.</p></li>
 <li><p>Déplacez-vous dans le répertoire <code>kibana-9.2.1</code> via la commande suivante :</p></li>
 </ul>
 <pre><code>cd Desktop\kibana-9.2.1</code></pre>
@@ -651,7 +656,7 @@
 <li><p>Dans la page d’accueil de Kibana, cliquez sur <em>Explore on my own</em>.</p></li>
 <li><p>Cliquez sur ☰ dans le menu en haut à gauche.</p></li>
 <li><p>Sélectionnez <em>Management</em> et <em>Dev tools</em>.</p></li>
-<li><p>Une console apparaît où nous pourrons saisir des requêtes Elastic Search.</p></li>
+<li><p>Une console apparaît où nous pourrons saisir des requêtes Elasticsearch.</p></li>
 <li><p>Essayez la requête suivante dans la console et cliquez sur le bouton ▶️ pour l’exécuter :</p></li>
 </ul>
 <pre><code>GET /</code></pre>
@@ -662,31 +667,31 @@
 <div id="terminologie" class="section level1">
 <h1>Terminologie</h1>
 <ul>
-<li><p><strong>Document</strong> : unité de données de base dans Elastic Search. Un document est représenté en JSON et contient un ensemble de champs (attributs) et de valeurs.
+<li><p><strong>Document</strong> : unité de données de base dans Elasticsearch. Un document est représenté en JSON et contient un ensemble de champs (attributs) et de valeurs.
 C’est l’équivalent d’une ligne dans une base de données relationnelle ou d’un document dans MongoDB.</p></li>
 <li><p><strong>Index</strong> : collection de documents qui partagent des propriétés similaires. C’est l’équivalent d’une table dans une base de données relationnelle ou d’une collection dans MongoDB.</p></li>
 <li><p><strong>Mapping</strong> : le processus de définition de la manière dont un document, et les champs qu’il contient, sont stockés et indexés. En d’autres termes, c’est le schéma d’un index
 (un peu comme le schéma d’une table dans une base de données relationnelle).</p></li>
 </ul>
 </div>
-<div id="vérification-delastic-search" class="section level1">
-<h1>Vérification d’Elastic Search</h1>
+<div id="vérification-delasticsearch" class="section level1">
+<h1>Vérification d’Elasticsearch</h1>
 <p>Nous allons vérifier l’etant de santé du cluster via la commande suivante :</p>
 <pre><code>GET _cluster/health </code></pre>
 <p>Vous devriez obtenir une réponse JSON où l’attribut <em>status</em> vaut <em>green</em> ; il y a déjà 36 shards actifs.
 Pourquoi ?
-Parce qu’Elastic Search crée automatiquement des indices de système pour son propre fonctionnement interne.
+Parce qu’Elasticsearch crée automatiquement des indices de système pour son propre fonctionnement interne.
 Vérifions-le avec la commande suivante :</p>
 <pre><code>GET /_cat/indices?expand_wildcards=all&amp;v</code></pre>
 <p>Vous devriez voir une liste de 36 indices ; comme nous travaillons sur un cluster composé d’un seul nœud, il y a un seul shard primaire pour chaque indice et aucun shard répliqué.</p>
 </div>
 <div id="mapping" class="section level1">
 <h1>Mapping</h1>
-<p>Lorsqu’on crée un index, Elastic Search génère automatiquement un mapping basé sur les données des documents indexés.
+<p>Lorsqu’on crée un index, Elasticsearch génère automatiquement un mapping basé sur les données des documents indexés.
 C’est ce qu’on appelle le <strong>dynamic mapping</strong>.
 Le dynamic mapping utilise des règles heuristiques pour déterminer le type de données de chaque champ (texte, nombre, date, etc.) et les propriétés associées (analyseur, indexation, etc.).
 Bien que le dynamic mapping soit pratique pour des cas simples et rapides, et qu’il fonctionne bien dans de nombreux scénarios, il n’est pas toujours optimal.
-Par exemple, lorsqu’on souhaite indexer des dates, Elastic Search peut ne pas les reconnaître correctement si elles ne sont pas dans un format standard ISO.</p>
+Par exemple, lorsqu’on souhaite indexer des dates, Elasticsearch peut ne pas les reconnaître correctement si elles ne sont pas dans un format standard ISO.</p>
 <p>En règle générale, il est recommandé de <strong>définir explicitement le mapping</strong> lors de la création d’un index.</p>
 <p>La commande suivante crée un index nommé <code>employees</code>, avec un mapping explicite :</p>
 <pre class="json"><code>PUT employees
@@ -739,16 +744,16 @@ Observez la définition du mapping et expliquez le choix des types de données p
 <p>Il n’est <strong>pas possible</strong> de modifier le type ou les propriétés d’un champ existant dans le mapping.
 La raison en est que cela entraînerait des erreurs lorsqu’on cherche les données déjà indexées car ils ne correspondraient plus au nouveau mapping.
 Si on souhaite modifier le type ou les propriétés d’un champ existant, il faut créer un nouvel index avec le mapping mis à jour,
-puis réindexer les documents de l’ancien index vers le nouveau en utilisant l’API de réindexation d’Elastic Search.</p>
+puis réindexer les documents de l’ancien index vers le nouveau en utilisant l’API de réindexation d’Elasticsearch.</p>
 </div>
 </div>
 <div id="le-type-de-données-text" class="section level2">
 <h2>Le type de données <code>text</code></h2>
-<p>Afin de gérer les recherches en texte intégral, Elastic Search propose le type de données <code>text</code>.
-Avant de stocker un champ de type <code>text</code>, Elastic Search applique un processus appelé <strong>analyse</strong>.
+<p>Afin de gérer les recherches en texte intégral, Elasticsearch propose le type de données <code>text</code>.
+Avant de stocker un champ de type <code>text</code>, Elasticsearch applique un processus appelé <strong>analyse</strong>.
 L’analyse est appliquée par un objet appelé <strong>analyseur</strong> (ang., <em>analyzer</em>) ; selon l’analyseur utilisé, le texte est transformé en une suite de <strong>tokens</strong> et ensuite
 stocké dans un format interne optimisé pour la recherche.</p>
-<p>Pour chaque champ de type <code>text</code>, Elastic Search utilise par défaut l’analyseur <strong>standard</strong>.</p>
+<p>Pour chaque champ de type <code>text</code>, Elasticsearch utilise par défaut l’analyseur <strong>standard</strong>.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -777,7 +782,7 @@ Exécutez la commande suivante pour analyser le même texte en utilisant l’ana
 <p>Pourriez expliquer les différences entre les tokens produits par l’analyseur <code>standard</code> et ceux produits par l’analyseur <code>english</code> ?</p>
 </div>
 </div>
-<p>D’autres analyseurs sont disponibles dans Elastic Search, adaptés à différentes langues et besoins :</p>
+<p>D’autres analyseurs sont disponibles dans Elasticsearch, adaptés à différentes langues et besoins :</p>
 <ul>
 <li><p><strong>standard</strong> : analyseur par défaut, adapté pour l’anglais et d’autres langues.</p></li>
 <li><p><strong>simple</strong> : divise le texte en tokens en utilisant des caractères non alphabétiques comme séparateurs, et convertit les tokens en minuscules.</p></li>
@@ -792,7 +797,7 @@ Exécutez la commande suivante pour analyser le même texte en utilisant l’ana
 </div>
 <div id="documents" class="section level1">
 <h1>Documents</h1>
-<p>Elastic Search permet de manipuler des documents via les APIs suivantes :</p>
+<p>Elasticsearch permet de manipuler des documents via les APIs suivantes :</p>
 <ul>
 <li><p><strong>Document Indexing API</strong> : pour indexer (c’est à dire, ajouter à un index) des documents.</p></li>
 <li><p><strong>Read and Search API</strong> : pour récupérer et rechercher des documents.</p></li>
@@ -804,7 +809,7 @@ Exécutez la commande suivante pour analyser le même texte en utilisant l’ana
 <h2>Indexer des documents</h2>
 <p>Chaque document a un identifiant unique (ID) qui permet de le retrouver dans l’index.
 C’est équivalent à la clé primaire dans une base de données relationnelle.
-Les identifiants peuvent être spécifiés manuellement lors de l’indexation d’un document, ou générés automatiquement par Elastic Search si aucun identifiant n’est fourni.</p>
+Les identifiants peuvent être spécifiés manuellement lors de l’indexation d’un document, ou générés automatiquement par Elasticsearch si aucun identifiant n’est fourni.</p>
 <ul>
 <li><p>Pour indexer un document avec un identifiant spécifié, on utilise la commande <code>PUT</code> avec le chemin suivant : <code>/{index}/_doc/{id}</code>.</p></li>
 <li><p>Pour indexer un document sans spécifier d’identifiant, on utilise la commande <code>POST</code> avec le chemin suivant : <code>/{index}/_doc/</code>.</p></li>
@@ -843,7 +848,7 @@ Ajoutez un nouveau document (avec identifiant 1) dans l’index <code>movies</co
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 6  </strong></span>
-Observez la réponse JSON retournée par Elastic Search après l’indexation du document.
+Observez la réponse JSON retournée par Elasticsearch après l’indexation du document.
 Copiez-la dans un fichier texte.
 Ré-exécutez la même commande pour indexer le même document (avec le même identifiant 1) mais en modifiant le synopsis.
 Observez la nouvelle réponse JSON et comparez-la avec la précédente.
@@ -858,7 +863,7 @@ La commande suivante :</p>
   &quot;release_year&quot;: &quot;1974&quot;,
   &quot;synopsis&quot;: &quot;The early life and career of Vito Corleone in 1920s New York City is portrayed while his son, Michael, expands and tightens his grip on his crime syndicate.&quot;
 }</code></pre>
-<p>créera un nouveau document avec un identifiant généré automatiquement par Elastic Search. Nous pourrons retrouver cet identifiant dans la réponse JSON retournée après l’indexation du document.</p>
+<p>créera un nouveau document avec un identifiant généré automatiquement par Elasticsearch. Nous pourrons retrouver cet identifiant dans la réponse JSON retournée après l’indexation du document.</p>
 <div class="infobox warning">
 <p><strong>Bonne pratique</strong></p>
 <p>Il n’est <strong>pas conseillé</strong> de mélanger des documents avec des ID manuellement spécifiés et des documents avec des ID générés automatiquement dans le même index.</p>
@@ -873,7 +878,7 @@ La commande suivante :</p>
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 7  </strong></span>
 Utilisez la commande GET pour récupérer le document avec l’identifiant 1 dans l’index <code>movies</code>.
-Analysez la réponse JSON retournée par Elastic Search.</p>
+Analysez la réponse JSON retournée par Elasticsearch.</p>
 </div>
 </div>
 <p>Dans l’exercice précédent, nous avons récupéré tous les champs du document.
@@ -895,11 +900,11 @@ Utilisez la commande GET pour récupérer seulement le champ <code>title</code> 
 <h2>Mettre à jour des documents</h2>
 <p>La mise à jour d’un document existant est effectuée via les étapes suivantes :</p>
 <ul>
-<li><p>Elastic Search récupère le document existant.</p></li>
+<li><p>Elasticsearch récupère le document existant.</p></li>
 <li><p>Applique les modifications spécifiées dans la requête de mise à jour.</p></li>
 <li><p>Réindexe le document mis à jour.</p></li>
 </ul>
-<p>Lorsqu’on met à jour un document, Elastic Search incrémente la version du document ; l’ancienne version du document n’est pas conservée.</p>
+<p>Lorsqu’on met à jour un document, Elasticsearch incrémente la version du document ; l’ancienne version du document n’est pas conservée.</p>
 <div id="ajouter-un-champ-à-un-document" class="section level3">
 <h3>Ajouter un champ à un document</h3>
 <p>La commande suivante ajoute deux nouveaux champs <code>director</code> et <code>actors</code> au document avec l’identifiant 1 dans l’index <code>movies</code> :</p>
@@ -995,7 +1000,7 @@ La commande suivante ajoute un nouvel acteur au tableau <code>actors</code> dans
 <h3>Mise à jour via des requêtes</h3>
 <p>Dans les exemples précédents, nous avons mis à jour des documents en spécifiant leur identifiant.
 Il est aussi possible de mettre à jour des documents en utilisant des requêtes pour sélectionner les documents.
-Lorsque nous avons ajouté le film <em>The Godfather 2</em>, un nouvel identifiant a été généré automatiquement par Elastic Search.
+Lorsque nous avons ajouté le film <em>The Godfather 2</em>, un nouvel identifiant a été généré automatiquement par Elasticsearch.
 Supposons que nous ne connaissons pas cet identifiant, mais que nous voulons ajouter des acteurs au film <em>The Godfather 2</em>.</p>
 <p>Nous pouvons utiliser la commande suivante :</p>
 <pre class="json"><code>POST /movies/_update_by_query
@@ -1023,7 +1028,7 @@ Supposons que nous ne connaissons pas cet identifiant, mais que nous voulons ajo
 }</code></pre>
 <div class="infobox warning">
 <p><strong>Langage de scripting</strong></p>
-<p>Elastic Search utilise <strong>Painless</strong> comme langage de scripting par défaut pour les mises à jour par script.
+<p>Elasticsearch utilise <strong>Painless</strong> comme langage de scripting par défaut pour les mises à jour par script.
 D’autres langages de scripting peuvent être utilisés, comme par exemple <strong>expression</strong>, <strong>mustache</strong> ou <strong>java</strong>.</p>
 </div>
 </div>
@@ -1053,13 +1058,13 @@ On peut aussi supprimer des documents en utilisant des requêtes pour sélection
 </div>
 <div id="rechercher-des-documents" class="section level1">
 <h1>Rechercher des documents</h1>
-<p>ElasticSearch permet de faire des recherches <strong>structurées</strong> et <strong>non structurées</strong> via l’API de recherche.</p>
+<p>Elasticsearch permet de faire des recherches <strong>structurées</strong> et <strong>non structurées</strong> via l’API de recherche.</p>
 <p>Les premières renvoient des résultats qui ne sont pas associés à un score de pertinence.
-ElasticSearch renvoie des documents qui correspondent exactement aux critères de la requête.
+Elasticsearch renvoie des documents qui correspondent exactement aux critères de la requête.
 Cela est similaire aux requêtes SQL dans les bases de données relationnelles.
 Ces types de requêtes sont appelées <strong>term-level queries</strong>.</p>
 <p>Les secondes renvoient des résultats associés à un score de pertinence.
-ElasticSearch renvoie des documents qui sont similaires à la requête.
+Elasticsearch renvoie des documents qui sont similaires à la requête.
 Ces requêtes sont appelées <strong>full-text queries</strong>.</p>
 <p>On va maintenant voir des exemples de recherches.</p>
 <p>D’abord, supprimez l’index <code>movies</code>:</p>
@@ -1089,7 +1094,7 @@ qui contient des documents à indexer dans un index nommé <code>movies</code>.<
 </div>
 <div id="term-level-queries" class="section level2">
 <h2>Term-level queries</h2>
-<p>Elastic Search fournit plusieurs types de term-level queries, parmi lesquelles : <strong>term query</strong>, <strong>terms query</strong>, <strong>range query</strong>, <strong>exists query</strong> …
+<p>Elasticsearch fournit plusieurs types de term-level queries, parmi lesquelles : <strong>term query</strong>, <strong>terms query</strong>, <strong>range query</strong>, <strong>exists query</strong> …
 Nous allons voir quelques exemples.</p>
 <div id="term-query" class="section level3">
 <h3>Term query</h3>
@@ -1245,7 +1250,7 @@ Par exemple, le terme <em>roam</em> peut être transformé en <em>foam</em> avec
   }
 }</code></pre>
 <p>Il n’est pas possible de prédire combien de fautes de frappe seront présentes dans une requête de recherche.
-Par conséquent, Elastic Search permet d’utiliser le paramètre <code>AUTO</code> pour la fuzziness, qui ajuste automatiquement la distance maximale en fonction de la longueur du terme recherché.
+Par conséquent, Elasticsearch permet d’utiliser le paramètre <code>AUTO</code> pour la fuzziness, qui ajuste automatiquement la distance maximale en fonction de la longueur du terme recherché.
 Les valeurs utilisées sont les suivantes :</p>
 <ul>
 <li>0 pour les termes de longueur 1 ou 2. Pour des mots très courts, l’utilisateur est censé taper correctement le mot.</li>
@@ -1274,7 +1279,7 @@ Il est possible que certains documents retournés n’aient pas finalement une p
 De même, il est aussi possible que certains documents très pertinents ne soient pas retournés du tout.
 Ça revient à l’utilisateur final de juger de la pertinence des résultats retournés.
 On pourrait donc évaluer la performance d’une requête de recherche en fonction de la <strong>précision</strong> et du <strong>rappel</strong> (ang., recall) des résultats retournés.</p>
-<p>Plusieurs types de full-text queries sont disponibles dans Elastic Search, parmi lesquelles : <strong>match query</strong>, <strong>match_all query</strong>, <strong>match_phrase query</strong>, <strong>multi_match query</strong> …
+<p>Plusieurs types de full-text queries sont disponibles dans Elasticsearch, parmi lesquelles : <strong>match query</strong>, <strong>match_all query</strong>, <strong>match_phrase query</strong>, <strong>multi_match query</strong> …
 Nous allons voir quelques exemples.</p>
 <div id="match-query" class="section level3">
 <h3>Match query</h3>
@@ -1294,7 +1299,7 @@ La requêtes peut également inclure plusieurs termes. On peut aussi spécifier 
 
 <div class="exercise">
 <p><span id="exr:unnamed-chunk-14" class="exercise"><strong>Exercise 14  </strong></span>
-Observez le resultat retourné par Elastic Search.</p>
+Observez le resultat retourné par Elasticsearch.</p>
 <ul>
 <li><p>Combien de documents ont été trouvés ?</p></li>
 <li><p>Comment sont-ils ordonnés dans le résultat ?</p></li>
@@ -1315,7 +1320,7 @@ Observez le resultat retourné par Elastic Search.</p>
     }
   }
 }</code></pre>
-<p>Vous devriez pouvoir identifier les différentes composantes du score de pertinence dans la réponse JSON retournée par Elastic Search
+<p>Vous devriez pouvoir identifier les différentes composantes du score de pertinence dans la réponse JSON retournée par Elasticsearch
 (le term frequency, le inverse document frequency…).</p>
 </div>
 <p>Nous pouvons aussi rechercher des titres de films qui contiennent plusieurs mots. Par exemple, la commande suivante recherche des titres de films qui contiennent les mots <em>Godfath</em> ou <em>Part</em> :</p>
@@ -1369,7 +1374,7 @@ Par exemple, la commande suivante recherche des titres de films qui contiennent 
     }
   }
 }</code></pre>
-<p>Par défaut, Elastic Search retourne tous les champs des documents correspondant à une requête.
+<p>Par défaut, Elasticsearch retourne tous les champs des documents correspondant à une requête.
 Nous avons vu précédemment que nous pouvons contrôler les champs retournés en utilisant les paramètres <code>_source_includes</code> et <code>_source_excludes</code>.
 Une autre manière de sélectionner les champs retournés est d’utiliser l’objet <code>fields</code> dans la requête de recherche.
 Notez que lorsque nous utilisons l’objet <code>fields</code>, nous devons désactiver le retour du champ <code>_source</code> en utilisant le paramètre <code>"_source": false</code>.</p>
@@ -1399,7 +1404,7 @@ Le rappel est donc de 100%, mais la précision dépendra du nombre total de docu
 <p>Ces requêtes peuvent retourner un grand nombre de documents, dans l’ordre de plusieurs milliers.
 Il ne serait pas efficace de retourner tous ces documents en une seule requête, car aussi bien le serveur que le client ne pourraient pas disposer de suffisamment de
 mémoire pour stocker un si grand volume de données.</p>
-<p>Par défaut, Elastic Search retourne seulement les 10 premiers documents correspondant à une requête, mais nous pouvons contrôler
+<p>Par défaut, Elasticsearch retourne seulement les 10 premiers documents correspondant à une requête, mais nous pouvons contrôler
 le nombre de documents retournés en utilisant le paramètre <code>size</code>.</p>
 <pre class="json"><code>GET movies/_search
 {
@@ -1489,7 +1494,7 @@ La commande suivante recherche des titres et des synopsis de films qui contienne
 </div>
 <div id="requêtes-composées" class="section level2">
 <h2>Requêtes composées</h2>
-<p>Elastic Search permet de combiner plusieurs critères de recherche en utilisant des requêtes booléennes via l’opérateur <code>bool</code>.</p>
+<p>Elasticsearch permet de combiner plusieurs critères de recherche en utilisant des requêtes booléennes via l’opérateur <code>bool</code>.</p>
 <p>Les clauses booléennes disponibles sont :</p>
 <ul>
 <li><p><strong>must</strong> : les documents doivent correspondre à tous les critères spécifiés dans cette clause (c’est l’opérateur logique AND).</p></li>
@@ -1548,7 +1553,7 @@ Que fait la requête suivante ?</p>
     }
   }
 }</code></pre>
-<p>Ces requêtes sont plus rapides car Elastic Search n’a pas besoin de calculer les scores de pertinence.</p>
+<p>Ces requêtes sont plus rapides car Elasticsearch n’a pas besoin de calculer les scores de pertinence.</p>
 </div>
 </div>
 <div id="bibliographie" class="section level1">
