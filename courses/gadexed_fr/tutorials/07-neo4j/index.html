@@ -816,6 +816,16 @@ RETURN m;
 Cliquez une fois sur le nœud pour afficher ses propriétés.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Le sommet demandé est affiché dans le Neo4j Browser.
+En cliquant sur le nœud, on voit que les propriétés sont :
+<em>movie_id</em>, <em>title_en</em>, <em>title_fr</em>, <em>year</em>.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <strong>Exercice</strong>
 
@@ -826,6 +836,14 @@ Analysez les nœuds voisins (leurs labels et propriétés)
 et les liens incidents (type et propriétés).</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Il faut cliquer sur la fenêtre de résultat pour afficher sur la droite les informations sur les noeuds et les relations.</p>
+</div>
+</details>
 </div>
 <div id="requêtes-de-base" class="section level1">
 <h1>Requêtes de base</h1>
@@ -845,6 +863,51 @@ Ecrivez et exécutez les requêtes suivantes en Cypher :</p>
 Triez par note décroissante.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+Q1.
+<pre>
+MATCH (g:Genre) 
+RETURN g.name
+</pre>
+Q2.
+<pre>
+MATCH (n:Movie) 
+RETURN count(n)
+</pre>
+Q3.
+<pre>
+MATCH (n:Movie {year:2015}) 
+RETURN n.title_en;
+</pre>
+Q4.
+<pre>
+MATCH (n:Movie)<-[:DIRECTED]-(d:Director) 
+RETURN n.title_en, count(*) AS nb_directors 
+ORDER BY nb_directors DESC
+</pre>
+Q5.
+<pre>
+MATCH (a:Actor)-[:ACTED_IN]->(m:Movie)<-[:DIRECTED]-(d:Director) 
+WHERE a.name=d.name 
+RETURN a.name, m.title_en;
+</pre>
+Q6.
+<pre>
+MATCH (:Actor {name:"Tom Hanks"})-[:ACTED_IN]->(:Movie)-[:HAS_GENRE]->(g:Genre) 
+RETURN DISTINCT (g.name);
+</pre>
+Q7.
+<pre>
+MATCH (n:User {user_id:3})-[r:RATED]->(m:Movie) 
+RETURN m.title_en, r.rate 
+ORDER BY r.rate desc;
+</pre>
+</div>
+</details>
 <div id="chaînes-de-requêtes-avec-with" class="section level2">
 <h2>Chaînes de requêtes avec WITH</h2>
 <p>Cypher permet la spécification de
@@ -892,6 +955,20 @@ ayant obtenu la meilleure note moyenne parmi les films
 ayant été notés par au moins 100 utilisateurs.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+MATCH (n:Movie)<-[r:RATED]-(u:User) 
+WITH n, avg(r.rate) as avg,  count(u) AS nb_rates 
+WHERE nb_rates >= 100 
+RETURN n.title_en,  avg 
+ORDER BY avg DESC;
+</pre>
+</div>
+</details>
 </div>
 </div>
 <div id="système-de-recommandation-de-films" class="section level1">
@@ -944,6 +1021,18 @@ Cette requête doit renvoyer l’utilisateur cible
 et le nombre de films qu’il adore.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+MATCH (target:User {user_id:3})-[r:RATED]->(m:Movie) 
+WHERE r.rate >= 3 
+RETURN target, count(m) AS lovedByTarget;
+</pre>
+</div>
+</details>
 <p>Après, nous allons déterminer la valeur <span class="math inline">\(|L(u)|\)</span>,
 pour tous les utilisateurs <span class="math inline">\(u\)</span> sauf <span class="math inline">\(v\)</span>.</p>
 <div class="infobox exercisebox">
@@ -958,6 +1047,18 @@ Cette requête doit renvoyer chaque utilisateur <span class="math inline">\(u\)<
 de films qu’il adore.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+MATCH (other:User)-[r:RATED]->(m:Movie) 
+WHERE other.user_id <> 3 and r.rate >= 3 
+RETURN other, count(m) as lovedByOther
+</pre>
+</div>
+</details>
 <p>On met ensuite les deux requêtes ensemble avec la clause WITH.</p>
 <div class="infobox exercisebox">
 <strong>Exercice</strong>
@@ -972,6 +1073,21 @@ les autres utilisateurs <span class="math inline">\(u\)</span> et le nombre de f
 qu’ils adorent.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+MATCH (target:User {user_id:3})-[r:RATED]->(m:Movie) 
+WHERE r.rate >= 3 
+WITH target, count(m) AS lovedByTarget
+MATCH (other:User)-[r:RATED]->(m:Movie) 
+WHERE other <> target and r.rate >= 3 
+RETURN target, lovedByTarget, other, count(m) as lovedByOther
+</pre>
+</div>
+</details>
 <p>Maintenant, nous devons
 déterminer la valeur <span class="math inline">\(|L(u)\cup L(v)|\)</span>,
 pour chaque utilisateur <span class="math inline">\(u\)</span>, et calculer le score de similarité via le
@@ -1000,6 +1116,32 @@ par 1.0, sinon Cypher effectuera une division entière.
 </details>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>La requête suivante est celle écrite à l’exercice précédent,
+où la clause RETURN a été remplacée par WITH.</p>
+<pre>
+MATCH (target:User {user_id:3})-[r:RATED]->(m:Movie) 
+WHERE r.rate >= 3 
+WITH target, count(m) AS lovedByTarget
+MATCH (other:User)-[r:RATED]->(m:Movie) 
+WHERE other <> target and r.rate >= 3 
+WITH target, lovedByTarget, other, count(m) as lovedByOther
+</pre>
+<p>Il faut maintenant concatener une nouvelle requête :</p>
+<pre>
+MATCH (target)-[rTarget:RATED]->(m:Movie)<-[rOther:RATED]-(other) 
+WHERE rTarget.rate >= 3 AND rOther.rate >= 3
+WITH target, other, lovedByTarget, lovedByOther, count(m) AS commonLoved
+RETURN other, commonLoved * 1.0 / (lovedByTarget + lovedByOther - commonLoved) AS sim
+ORDER BY sim DESC
+LIMIT 5
+</pre>
+</div>
+</details>
 <p>La dernière étape consiste à recommander
 des films à l’utilisateur cible.
 À partir de la requête précédente,
@@ -1047,6 +1189,21 @@ none(x in movies where x=m.title_en)
 </details>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+MATCH (target:User {user_id:3})-[r:RATED]->(m:Movie)  
+WITH collect(m.title_en) as movies  
+MATCH (u:User {user_id:129})-[r:RATED]->(m:Movie)  
+WHERE r.rate >=3 AND none(x IN movies WHERE x=m.title_en) 
+RETURN m.title_en 
+ORDER BY r.rate DESC;
+</pre>
+</div>
+</details>
 </div>
 
           </div>
