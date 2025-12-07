@@ -722,6 +722,31 @@ Exécutez la commande ci-dessus dans la console de Kibana pour créer l’index 
 Observez la définition du mapping et expliquez le choix des types de données pour chaque champ.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<ul>
+<li><p>Le champ <code>name</code> est de type <code>text</code> car il peut contenir des phrases ou des mots, et on souhaite effectuer des recherches en texte intégral.</p></li>
+<li><p>Le champ <code>age</code> est de type <code>integer</code> car il représente un nombre entier.</p></li>
+<li><p>Le champ <code>email</code> est de type <code>keyword</code> car il s’agit d’une valeur unique qui ne nécessite pas d’analyse en texte intégral.</p></li>
+<li><p>Le champ <code>address</code> est un objet imbriqué contenant deux sous-champs : <code>street</code> et <code>country</code>,
+tous deux de type <code>text</code> car ils peuvent contenir des phrases ou des mots.</p></li>
+</ul>
+<p>A noter que le nombre de réplicas est défini à 0 dans les paramètres de l’index, car nous travaillons sur un cluster à nœud unique.
+Par défaut, Elasticsearch crée un réplica pour chaque shard primaire, mais puisque nous travaillons avec un seul noeud, cela entraînerait le passage de l’état du cluster à jaune,
+car les réplicas ne peuvent pas être alloués sur le même nœud que les shards primaires.</p>
+<p>Le message de confirmation de la création de l’index devrait ressembler à ceci :</p>
+<pre class="json"><code>{
+  &quot;acknowledged&quot;: true,
+  &quot;shards_acknowledged&quot;: true,
+  &quot;index&quot;: &quot;employees&quot;
+}</code></pre>
+<p>Le premier message indique que la requête a été acceptée, le deuxième que tous les shards primaires ont été alloués avec succès,
+et le troisième donne le nom de l’index créé.</p>
+</div>
+</details>
 <div id="mettre-à-jour-le-mapping" class="section level2">
 <h2>Mettre à jour le mapping</h2>
 <p>Il est possible de mettre à jour le mapping d’un index existant en utilisant la commande <code>PUT</code> avec le chemin <code>_mapping</code>.</p>
@@ -767,6 +792,19 @@ Exécutez la commande suivante :</p>
 <p>Pourriez expliquer les étapes de l’analyse effectuée par l’analyseur standard ?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>L’analyseur standard effectue les étapes suivantes :</p>
+<ul>
+<li><p>Les caractères de ponctuation et les caractères spéciaux sont supprimés.</p></li>
+<li><p>Le texte est divisé en tokens en utilisant les espaces comme séparateurs.</p></li>
+<li><p>Les tokens sont convertis en minuscules.</p></li>
+</ul>
+</div>
+</details>
 <p>Nous pouvons également changer l’analyseur par défaut pour un champ de type <code>text</code>.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
@@ -782,6 +820,18 @@ Exécutez la commande suivante pour analyser le même texte en utilisant l’ana
 <p>Pourriez expliquer les différences entre les tokens produits par l’analyseur <code>standard</code> et ceux produits par l’analyseur <code>english</code> ?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Mêmes étapes que l’analyseur standard, mais en plus :</p>
+<ul>
+<li><p>Les mots vides (ang., <em>stop words</em>) sont supprimés. Par exemple, les mots “the”, “was”, “and”, “a” sont supprimés.</p></li>
+<li><p>Les tokens sont réduits à leur racine (ang., <em>stem</em>). Par exemple, les tokens “hilarious”, “witty” et “movie” sont réduits à leurs racines “hilari”, “witti” et “movi”.</p></li>
+</ul>
+</div>
+</details>
 <p>D’autres analyseurs sont disponibles dans Elasticsearch, adaptés à différentes langues et besoins :</p>
 <ul>
 <li><p><strong>standard</strong> : analyseur par défaut, adapté pour l’anglais et d’autres langues.</p></li>
@@ -829,6 +879,26 @@ Créez un index nommé <code>movies</code> avec les champs suivants :</p>
 <p>Rappelez-vous de définir le nombre de réplicas à 0, car nous travaillons sur un cluster à nœud unique.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre><code>PUT movies
+    {
+      &quot;settings&quot;: {
+        &quot;number_of_replicas&quot; : 0
+      },
+      &quot;mappings&quot;: {
+        &quot;properties&quot;: {
+          &quot;title&quot;: { &quot;type&quot;: &quot;text&quot; },
+          &quot;release_year&quot;: { &quot;type&quot;: &quot;date&quot;, &quot;format&quot;: &quot;yyyy&quot; },
+          &quot;synopsis&quot;: { &quot;type&quot;: &quot;text&quot; }
+        }
+      }
+    }</code></pre>
+</div>
+</details>
 <p>Vous pouvez maintenant indexer des documents dans l’index <code>movies</code>.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
@@ -843,6 +913,19 @@ Ajoutez un nouveau document (avec identifiant 1) dans l’index <code>movies</co
 </ul>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre><code>PUT movies/_doc/1
+{
+  &quot;title&quot;: &quot;The Godfather 1&quot;,
+  &quot;release_year&quot;: &quot;1972&quot;,
+  &quot;synopsis&quot;: &quot;The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.&quot;
+}</code></pre>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -855,6 +938,18 @@ Observez la nouvelle réponse JSON et comparez-la avec la précédente.
 Quelles différences remarquez-vous ?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<ul>
+<li><p>Le champ <code>result</code> dans la réponse JSON change de <code>created</code> à <code>updated</code>.</p></li>
+<li><p>Le champ <code>_version</code> dans la réponse JSON est incrémenté de 1.</p></li>
+<li><p>Le champ <code>sequence number</code> dans la réponse JSON est incrémenté de 1.</p></li>
+</ul>
+</div>
+</details>
 <p>Nous pouvons également indexer des documents sans spécifier d’identifiant (en utilisant POST).
 La commande suivante :</p>
 <pre class="json"><code>POST movies/_doc/
@@ -881,6 +976,20 @@ Utilisez la commande GET pour récupérer le document avec l’identifiant 1 dan
 Analysez la réponse JSON retournée par Elasticsearch.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre><code>GET movies/_doc/1</code></pre>
+<p>Dans la réponse JSON, on retrouve deux sections principales : les métadonnées du document et le contenu du document lui-même.
+Dans les métadonnées, on trouve des informations telles que l’index, le type de document, l’identifiant, la version, etc.</p>
+<p>Pour ne retourner que le contenu du document, on peut accéder à l’attribut <code>_source</code> dans la réponse JSON.</p>
+<pre><code>GET movies/_source/1</code></pre>
+<p>Si nous voulons récupérer seulement les métadonnées du document sans le contenu, nous pouvons utiliser la commande suivante :</p>
+<pre><code>GET movies/_doc/1?_source=false</code></pre>
+</div>
+</details>
 <p>Dans l’exercice précédent, nous avons récupéré tous les champs du document.
 Il est possible de récupérer seulement certains champs spécifiques en utilisant le paramètre <code>?_source_includes</code> dans la commande <code>GET</code>.</p>
 <div class="infobox exercisebox">
@@ -891,6 +1000,14 @@ Il est possible de récupérer seulement certains champs spécifiques en utilisa
 Utilisez la commande GET pour récupérer seulement le champ <code>title</code> du document avec l’identifiant 1 dans l’index <code>movies</code>.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre><code>GET movies/_doc/1?_source_includes=title</code></pre>
+</div>
+</details>
 <div class="infobox warning">
 <p><strong>Exclusions des champs</strong></p>
 <p>Il existe aussi le paramètre <code>?_source_excludes</code> qui permet d’exclure certains champs spécifiques lors de la récupération d’un document.</p>
@@ -924,6 +1041,16 @@ Exécutez la commande ci-dessus.
 Est-ce que la commande réussit même si les champs <code>director</code> et <code>actors</code> n’existent pas encore dans le mapping de l’index <code>movies</code> ?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>La commande réussit car Elasticsearch utilise le dynamic mapping pour ajouter automatiquement les nouveaux champs au mapping de l’index.
+On peut vérifier cela en récupérant le mapping de l’index <code>movies</code> après la mise à jour du document.</p>
+<pre><code>GET movies/_mapping</code></pre>
+</div>
+</details>
 </div>
 <div id="modification-des-champs-existants" class="section level3">
 <h3>Modification des champs existants</h3>
@@ -1126,6 +1253,16 @@ Regardons ce qui se passe si nous faisons une term query sur le champ <code>titl
 Pourquoi cette requête ne retourne-t-elle aucun document, même si nous avons indexé un film dont le titre exact est <em>The Godfather</em> ?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>La requête ne retourne aucun document car le champ <code>title</code> est de type <code>text</code>, et donc le texte a été analysé avant d’être indexé.
+L’analyseur standard a divisé le titre en tokens : <code>the</code> et <code>godfather</code>, et les a convertis en minuscules.
+Par conséquent, il n’y a pas de terme exact <code>The Godfather</code> dans l’index.</p>
+</div>
+</details>
 </div>
 <div id="terms-query" class="section level3">
 <h3>Terms query</h3>
@@ -1222,6 +1359,17 @@ Par exemple, pour rechercher des titres de films qui commencent par <em>g</em> e
 Pourquoi la commande ci-dessus retourne des films où Tim Allen est un des acteurs, alors que son nom ne commence pas par <em>Al</em> ?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Le champ <code>actors</code> est de type <code>text</code>, et donc les noms des acteurs ont été analysés avant d’être indexés.
+L’analyseur standard a divisé les noms en tokens et les a convertis en minuscules.
+Ainsi, le nom <code>Tim Allen</code> a été divisé en deux tokens : <code>tim</code> et <code>allen</code>.
+Le token <code>allen</code> commence par <code>al</code>, donc le film est retourné dans les résultats de la requête.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -1230,6 +1378,21 @@ Pourquoi la commande ci-dessus retourne des films où Tim Allen est un des acteu
 Pourriez-vous exprimer la même requête en utilisant une wildcard query au lieu d’une prefix query ?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre><code>GET /movies/_search
+{
+  &quot;query&quot;: {
+    &quot;wildcard&quot;: {
+      &quot;actors&quot;: &quot;al*&quot;
+    }
+  }
+}</code></pre>
+</div>
+</details>
 </div>
 <div id="fuzzy-query" class="section level3">
 <h3>Fuzzy query</h3>
@@ -1307,6 +1470,18 @@ Observez le resultat retourné par Elasticsearch.</p>
 </ul>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<ul>
+<li><p>2 documents ont été trouvés.</p></li>
+<li><p>Ils sont ordonnés par score de pertinence décroissant (du plus pertinent au moins pertinent).</p></li>
+<li><p>Le premier document a un score plus élevé car le mot Godfather apparaît dans un titre plus court (The Godfather) que dans le deuxième document (The Godfather Part II).</p></li>
+</ul>
+</div>
+</details>
 <div class="infobox warning">
 <p><strong>Comprendre le score de pertinence</strong></p>
 <p>Si nous voulons comprendre comment le score de pertinence est calculé, nous pouvons utiliser un drapeau spécial appelé <code>explain</code> dans notre requête de recherche.</p>
@@ -1532,6 +1707,14 @@ Que fait la requête suivante ?</p>
 }</code></pre>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Elle recherche les films dont le titre contient le mot “Godfather” <strong>et</strong> dont l’année de sortie est comprise entre 1970 et 1972 (inclus).</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -1540,6 +1723,37 @@ Que fait la requête suivante ?</p>
 Écrivez une requête qui recherche les films dont le titre contient le mot “Godfather” <strong>ou</strong> “Pulp Fiction”, mais <strong>pas</strong> “Part II”.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre><code>GET /movies/_search
+{
+  &quot;query&quot;: {
+    &quot;bool&quot;: {
+      &quot;should&quot;: [
+        {
+          &quot;match&quot;: {
+            &quot;title&quot;: &quot;Godfather&quot;
+          }
+        },
+        {
+          &quot;match&quot;: {
+            &quot;title&quot;: &quot;Pulp Fiction&quot;
+          }
+        }
+      ],
+      &quot;must_not&quot;: {
+        &quot;match&quot;: {
+          &quot;title&quot;: &quot;Part II&quot;
+        }
+      }
+    }
+  }
+}</code></pre>
+</div>
+</details>
 <p>La requête suivante utilise la clause <code>filter</code> pour rechercher les films dont le titre contient le mot “Godfather”.</p>
 <pre class="json"><code>GET /movies/_search
 {

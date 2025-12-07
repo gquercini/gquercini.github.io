@@ -694,6 +694,22 @@ streamingQuery.awaitTermination()</code></pre>
 </ol>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<ol style="list-style-type: decimal">
+<li>Le programme obtient ses données d’entrée d’une socket TCP.</li>
+<li>lines est un <strong>dataframe</strong>.</li>
+<li>Dans le terminal.</li>
+<li>Il copie simplement l’entrée vers la sortie.</li>
+<li>C’est l’endroit où le programme Spark écrit la progression de la requête de streaming.</li>
+<li>Les instructions signifient que le programme va bloquer sur cette instruction. Le programme ne s’arrêtera pas tant qu’il n’y a pas de
+données à traiter.</li>
+</ol>
+</div>
+</details>
 <p>Vous pouvez maintenant vérifier vos réponses aux questions précédentes en <strong>exécutant le programme</strong>.</p>
 <div class="infobox activitybox">
 <p><strong>Activité</strong></p>
@@ -747,6 +763,27 @@ de la machine du cluster.</p>
 </ol>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>La politique de déclenchement régit la fréquence à laquelle les micro-batchs sont traités.</p>
+<ol style="list-style-type: decimal">
+<li><p>Comme nous n’avons pas spécifié de politique de déclenchement, la politique par défaut est choisie. Dès que le micro-batch précédent a fini d’être traité, le suivant est lu.</p></li>
+<li><p>Voici le code. Nous devons spécifier un `<code>trigger</code>.</p></li>
+</ol>
+<pre><code>streamingQuery = lines.writeStream
+            .trigger(processingTime = &quot;15 seconds&quot;)
+            .format(&quot;console&quot;).start()</code></pre>
+<ol start="3" style="list-style-type: decimal">
+<li>Spark vérifie toutes les 15 secondes si de nouvelles données sont disponibles. Si c’est le cas, il traite ces nouvelles données.
+Comme il est possible que dans l’intervalle spécifié (15 secondes), nous écrivions
+plusieurs lignes, le programme obtiendra plusieurs lignes dans un micro-batch (contrairement à avant, lorsque
+le traitement est déclenché dès qu’il y a des données disponibles).</li>
+</ol>
+</div>
+</details>
 </div>
 <div id="dossier-de-point-de-contrôle-et-mode-de-sortie" class="section level1">
 <h1>Dossier de point de contrôle et mode de sortie</h1>
@@ -762,6 +799,20 @@ de la machine du cluster.</p>
 </ol>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<ol style="list-style-type: decimal">
+<li><p>Le mode de sortie indique à Spark comment les résultats sont présentés.
+Il existe plusieurs options : append (seules les nouvelles lignes ajoutées à la table de résultats depuis le dernier déclenchement sont visibles dans la sortie),
+complete (la table de résultats entière est visible après chaque déclenchement) et update (seules les lignes qui ont été mises à jour depuis le dernier déclenchement sont visibles dans la
+sortie).</p></li>
+<li><p>Dans le programme précédent, le mode de sortie est append (nous n’avons pas spécifié de mode de sortie, donc le mode par défaut, append, est sélectionné).</p></li>
+</ol>
+</div>
+</details>
 <p>Nous allons maintenant écrire une nouvelle requête streaming.</p>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
@@ -783,45 +834,127 @@ dans le terminal netcat. Que pouvez-vous dire sur le nombre d’occurrence des m
 </ol>
 </div>
 </div>
-</div>
-<div id="opérations-sur-des-fenêtres-temporelles" class="section level1">
-<h1>Opérations sur des fenêtres temporelles</h1>
-<div class="infobox warning">
-<p><strong>Netcat et checkpoint</strong></p>
-<ol style="list-style-type: decimal">
-<li><p>Arrêtez le serveur netcat que vous aviez démarré précédemment.</p></li>
-<li><p>Rappelez-vous de créer un nouveau dossier de point de contrôle dans HDFS.
-Alternativement, vous pouvez également utiliser le même répertoire qu’auparavant, mais
-vous devez supprimer tous ses fichiers.</p></li>
-</ol>
-</div>
-<p>Nous allons maintenant découvrir comment effectuer des agrégations sur une fenêtre temporelle glissante.
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Le nouveau programme est le suivant :</p>
+<p>```{python}
+lines = (spark<br />
+.readStream.format(“socket”)<br />
+.option(“host”, “localhost”)<br />
+.option(“port”, port_number)<br />
+.load())</p>
+<p>lines = lines.select(F.explode(F.split(lines.value, ” “))<br />
+.alias(”word”))<br />
+.groupBy(“word”).count()</p>
+<p>streamingQuery = lines.writeStream<br />
+.trigger(processingTime = “15 seconds”)<br />
+.option(“checkpointLocation”, checkpoint_location)<br />
+.outputMode(“update”)<br />
+.format(“console”)<br />
+.start()</p>
+<p>streamingQuery.awaitTermination()</p>
+<pre><code>
+Le mode append ne fonctionne pas, car la fonction d&#39;agrégation pourrait modifier les lignes précédentes de la table de résultats.
+Donc, les seules options restantes sont update et complete. Nous choisissons update pour n&#39;avoir que les valeurs qui ont changé depuis le dernier déclenchement.
+
+
+:::
+
+&lt;/details&gt;
+
+
+# Opérations sur des fenêtres temporelles
+
+
+
+::: {.infobox .warning data-latex=&quot;{warning}&quot;}
+**Netcat et checkpoint**
+
+1. Arrêtez le serveur netcat que vous aviez démarré précédemment.
+
+2. Rappelez-vous de créer un nouveau dossier de point de contrôle dans HDFS.
+Alternativement, vous pouvez également utiliser le même répertoire qu&#39;auparavant, mais
+vous devez supprimer tous ses fichiers.
+
+
+
+:::
+
+
+Nous allons maintenant découvrir comment effectuer des agrégations sur une fenêtre temporelle glissante.
 Une source de données génère des mots pendant un certain intervalle de temps.
 Chaque mot est associé à un horodatage qui indique le moment exact où le mot est
-généré. Cet horodatage est le <strong>temps de l’événement</strong> (ang., event time).</p>
-<p>Après avoir généré un mot, la source de données enregistre le mot et son horodatage dans
-un fichier CSV dans un répertoire sur HDFS. Pour plus de commodité, nous appellerons ce répertoire le <strong>répertoire source</strong></p>
-<div class="infobox activitybox">
-<p><strong>Activité</strong></p>
-<p>Créz le dossier source sous votre répertoire personnel
-<code>hdfs://sar01:9000/dga25/dga25_X</code> <strong>sur HDFS</strong>.</p>
-</div>
-<p>À tout moment, la source contiendra zéro à plusieurs fichiers CSV,
-où chaque fichier ne contient qu’une seule ligne au format
-<code>word,timestamp</code> (sans espace avant ni après la virgule).</p>
-<div class="infobox exercisebox">
-<p><strong>Exercice</strong></p>
+généré. Cet horodatage est le **temps de l&#39;événement** (ang., event time).
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 5  </strong></span></p>
-<p>Écrivez un programme Spark qui :</p>
-<ol style="list-style-type: decimal">
-<li><p>Lit le flux de données à partir du dossier source.</p></li>
-<li><p>Compte le nombre d’occurrences de chaque mot dans des fenêtres de 10 minutes qui glissent toutes les 5 minutes.</p></li>
-<li><p>Affiche les nombre d’occurrences dans le terminal. Utilisez des déclencheurs de 5 secondes.</p></li>
-</ol>
+Après avoir généré un mot, la source de données enregistre le mot et son horodatage dans
+un fichier CSV dans un répertoire sur HDFS.  Pour plus de commodité, nous appellerons ce répertoire le **répertoire source**
+
+
+::: {.infobox .activitybox data-latex=&quot;{exercisebox}&quot;}
+**Activité**
+
+Créz le dossier source sous votre répertoire personnel
+``hdfs://sar01:9000/dga25/dga25_X`` **sur HDFS**. 
+
+:::
+
+À tout moment, la source contiendra zéro à plusieurs fichiers CSV,
+où chaque fichier ne contient qu&#39;une seule ligne au format
+``word,timestamp`` (sans espace avant ni après la virgule).
+
+
+
+::: {.infobox .exercisebox data-latex=&quot;{exercisebox}&quot;}
+**Exercice**
+
+\BeginKnitrBlock{exercise}&lt;div class=&quot;exercise&quot;&gt;&lt;span class=&quot;exercise&quot; id=&quot;exr:unnamed-chunk-7&quot;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-7) &lt;/strong&gt;&lt;/span&gt;
+
+Écrivez un programme Spark qui :
+
+1. Lit le flux de données à partir du dossier source.
+
+2. Compte le nombre d&#39;occurrences de chaque mot dans des fenêtres de 10 minutes qui glissent toutes les 5 minutes.
+
+3. Affiche les nombre d&#39;occurrences dans le terminal. Utilisez des déclencheurs de 5 secondes.
+
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&quot;{exercisebox}&quot;}
+
+Le nouveau programme est le suivant :
+
+```{python}
+
+source_directory = hdfs://....
+
+words = (spark
+        .readStream.format(&quot;csv&quot;)
+        .schema(&quot;word STRING, timestamp TIMESTAMP&quot;)
+        .load(source_directory))
+
+
+windowedCount = words.groupBy(F.window(words.timestamp, 
+                &quot;10 seconds&quot;, &quot;5 seconds&quot;, startTime=0), words.word).count()
+
+windowedQuery = windowedCount.withColumn(&quot;trigger_timestamp&quot;, F.expr(&quot;get_current_timestamp()&quot;)).writeStream\
+            .trigger(processingTime=&quot;5 seconds&quot;)\
+            .outputMode(&quot;update&quot;)\
+            .format(&quot;console&quot;)\
+            .option(&quot;truncate&quot;, False)\
+            .start()
+
+streamingQuery.awaitTermination()</code></pre>
 </div>
-</div>
+</details>
 <p>Maintenant, nous allons tester le nouveau programme Spark.</p>
 <div class="infobox warning">
 <p><strong>Source de données et visualisation temporelle</strong></p>
@@ -889,13 +1022,26 @@ regarder l’horodatage associé au premier et au dernier micro-batch.</p>
 <p><strong>Exercice</strong></p>
 
 <div class="exercise">
-<p><span id="exr:unnamed-chunk-12" class="exercise"><strong>Exercise 6  </strong></span>
+<p><span id="exr:unnamed-chunk-12" class="exercise"><strong>Exercise 5  </strong></span>
 1. Analysez la sortie de votre programme Spark et la ligne temporelle des mots générés.</p>
 <ol start="2" style="list-style-type: decimal">
 <li>Décrivez comment les nombre d’occurrences sont mis à jour par le programme Spark.</li>
 </ol>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>À la différence de l’exercice précédent, ici le nombre d’occurrences de chaque mot est compté
+sur une fenêtre de 10 secondes qui glisse toutes les 5 secondes.
+Chaque mot est associé à un <strong>temps de l’événement</strong> qui est utilisé pour calculer le nombre d’occurrences.
+La fenêtre temporelle commence à partir du premier déclenchement, disons à 12:00.
+Si un mot arrive à 12:07, le compte associé à ce mot est mis à jour dans deux
+fenêtres temporelles, 12:00 - 12:10 et 12:05 - 12:15.</p>
+</div>
+</details>
 </div>
 
           </div>

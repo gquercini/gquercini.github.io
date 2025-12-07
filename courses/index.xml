@@ -3773,6 +3773,31 @@ Exécutez la commande ci-dessus dans la console de Kibana pour créer l’index 
 Observez la définition du mapping et expliquez le choix des types de données pour chaque champ.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Le champ &lt;code&gt;name&lt;/code&gt; est de type &lt;code&gt;text&lt;/code&gt; car il peut contenir des phrases ou des mots, et on souhaite effectuer des recherches en texte intégral.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Le champ &lt;code&gt;age&lt;/code&gt; est de type &lt;code&gt;integer&lt;/code&gt; car il représente un nombre entier.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Le champ &lt;code&gt;email&lt;/code&gt; est de type &lt;code&gt;keyword&lt;/code&gt; car il s’agit d’une valeur unique qui ne nécessite pas d’analyse en texte intégral.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Le champ &lt;code&gt;address&lt;/code&gt; est un objet imbriqué contenant deux sous-champs : &lt;code&gt;street&lt;/code&gt; et &lt;code&gt;country&lt;/code&gt;,
+tous deux de type &lt;code&gt;text&lt;/code&gt; car ils peuvent contenir des phrases ou des mots.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;A noter que le nombre de réplicas est défini à 0 dans les paramètres de l’index, car nous travaillons sur un cluster à nœud unique.
+Par défaut, Elasticsearch crée un réplica pour chaque shard primaire, mais puisque nous travaillons avec un seul noeud, cela entraînerait le passage de l’état du cluster à jaune,
+car les réplicas ne peuvent pas être alloués sur le même nœud que les shards primaires.&lt;/p&gt;
+&lt;p&gt;Le message de confirmation de la création de l’index devrait ressembler à ceci :&lt;/p&gt;
+&lt;pre class=&#34;json&#34;&gt;&lt;code&gt;{
+  &amp;quot;acknowledged&amp;quot;: true,
+  &amp;quot;shards_acknowledged&amp;quot;: true,
+  &amp;quot;index&amp;quot;: &amp;quot;employees&amp;quot;
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Le premier message indique que la requête a été acceptée, le deuxième que tous les shards primaires ont été alloués avec succès,
+et le troisième donne le nom de l’index créé.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div id=&#34;mettre-à-jour-le-mapping&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Mettre à jour le mapping&lt;/h2&gt;
 &lt;p&gt;Il est possible de mettre à jour le mapping d’un index existant en utilisant la commande &lt;code&gt;PUT&lt;/code&gt; avec le chemin &lt;code&gt;_mapping&lt;/code&gt;.&lt;/p&gt;
@@ -3818,6 +3843,19 @@ Exécutez la commande suivante :&lt;/p&gt;
 &lt;p&gt;Pourriez expliquer les étapes de l’analyse effectuée par l’analyseur standard ?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;L’analyseur standard effectue les étapes suivantes :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Les caractères de ponctuation et les caractères spéciaux sont supprimés.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Le texte est divisé en tokens en utilisant les espaces comme séparateurs.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Les tokens sont convertis en minuscules.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;Nous pouvons également changer l’analyseur par défaut pour un champ de type &lt;code&gt;text&lt;/code&gt;.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
@@ -3833,6 +3871,18 @@ Exécutez la commande suivante pour analyser le même texte en utilisant l’ana
 &lt;p&gt;Pourriez expliquer les différences entre les tokens produits par l’analyseur &lt;code&gt;standard&lt;/code&gt; et ceux produits par l’analyseur &lt;code&gt;english&lt;/code&gt; ?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Mêmes étapes que l’analyseur standard, mais en plus :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Les mots vides (ang., &lt;em&gt;stop words&lt;/em&gt;) sont supprimés. Par exemple, les mots “the”, “was”, “and”, “a” sont supprimés.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Les tokens sont réduits à leur racine (ang., &lt;em&gt;stem&lt;/em&gt;). Par exemple, les tokens “hilarious”, “witty” et “movie” sont réduits à leurs racines “hilari”, “witti” et “movi”.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;D’autres analyseurs sont disponibles dans Elasticsearch, adaptés à différentes langues et besoins :&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;p&gt;&lt;strong&gt;standard&lt;/strong&gt; : analyseur par défaut, adapté pour l’anglais et d’autres langues.&lt;/p&gt;&lt;/li&gt;
@@ -3880,6 +3930,26 @@ Créez un index nommé &lt;code&gt;movies&lt;/code&gt; avec les champs suivants 
 &lt;p&gt;Rappelez-vous de définir le nombre de réplicas à 0, car nous travaillons sur un cluster à nœud unique.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;pre&gt;&lt;code&gt;PUT movies
+    {
+      &amp;quot;settings&amp;quot;: {
+        &amp;quot;number_of_replicas&amp;quot; : 0
+      },
+      &amp;quot;mappings&amp;quot;: {
+        &amp;quot;properties&amp;quot;: {
+          &amp;quot;title&amp;quot;: { &amp;quot;type&amp;quot;: &amp;quot;text&amp;quot; },
+          &amp;quot;release_year&amp;quot;: { &amp;quot;type&amp;quot;: &amp;quot;date&amp;quot;, &amp;quot;format&amp;quot;: &amp;quot;yyyy&amp;quot; },
+          &amp;quot;synopsis&amp;quot;: { &amp;quot;type&amp;quot;: &amp;quot;text&amp;quot; }
+        }
+      }
+    }&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;Vous pouvez maintenant indexer des documents dans l’index &lt;code&gt;movies&lt;/code&gt;.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
@@ -3894,6 +3964,19 @@ Ajoutez un nouveau document (avec identifiant 1) dans l’index &lt;code&gt;movi
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;pre&gt;&lt;code&gt;PUT movies/_doc/1
+{
+  &amp;quot;title&amp;quot;: &amp;quot;The Godfather 1&amp;quot;,
+  &amp;quot;release_year&amp;quot;: &amp;quot;1972&amp;quot;,
+  &amp;quot;synopsis&amp;quot;: &amp;quot;The aging patriarch of an organized crime dynasty transfers control of his clandestine empire to his reluctant son.&amp;quot;
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
 
@@ -3906,6 +3989,18 @@ Observez la nouvelle réponse JSON et comparez-la avec la précédente.
 Quelles différences remarquez-vous ?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Le champ &lt;code&gt;result&lt;/code&gt; dans la réponse JSON change de &lt;code&gt;created&lt;/code&gt; à &lt;code&gt;updated&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Le champ &lt;code&gt;_version&lt;/code&gt; dans la réponse JSON est incrémenté de 1.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Le champ &lt;code&gt;sequence number&lt;/code&gt; dans la réponse JSON est incrémenté de 1.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;Nous pouvons également indexer des documents sans spécifier d’identifiant (en utilisant POST).
 La commande suivante :&lt;/p&gt;
 &lt;pre class=&#34;json&#34;&gt;&lt;code&gt;POST movies/_doc/
@@ -3932,6 +4027,20 @@ Utilisez la commande GET pour récupérer le document avec l’identifiant 1 dan
 Analysez la réponse JSON retournée par Elasticsearch.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;pre&gt;&lt;code&gt;GET movies/_doc/1&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Dans la réponse JSON, on retrouve deux sections principales : les métadonnées du document et le contenu du document lui-même.
+Dans les métadonnées, on trouve des informations telles que l’index, le type de document, l’identifiant, la version, etc.&lt;/p&gt;
+&lt;p&gt;Pour ne retourner que le contenu du document, on peut accéder à l’attribut &lt;code&gt;_source&lt;/code&gt; dans la réponse JSON.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;GET movies/_source/1&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Si nous voulons récupérer seulement les métadonnées du document sans le contenu, nous pouvons utiliser la commande suivante :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;GET movies/_doc/1?_source=false&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;Dans l’exercice précédent, nous avons récupéré tous les champs du document.
 Il est possible de récupérer seulement certains champs spécifiques en utilisant le paramètre &lt;code&gt;?_source_includes&lt;/code&gt; dans la commande &lt;code&gt;GET&lt;/code&gt;.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
@@ -3942,6 +4051,14 @@ Il est possible de récupérer seulement certains champs spécifiques en utilisa
 Utilisez la commande GET pour récupérer seulement le champ &lt;code&gt;title&lt;/code&gt; du document avec l’identifiant 1 dans l’index &lt;code&gt;movies&lt;/code&gt;.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;pre&gt;&lt;code&gt;GET movies/_doc/1?_source_includes=title&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exclusions des champs&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Il existe aussi le paramètre &lt;code&gt;?_source_excludes&lt;/code&gt; qui permet d’exclure certains champs spécifiques lors de la récupération d’un document.&lt;/p&gt;
@@ -3975,6 +4092,16 @@ Exécutez la commande ci-dessus.
 Est-ce que la commande réussit même si les champs &lt;code&gt;director&lt;/code&gt; et &lt;code&gt;actors&lt;/code&gt; n’existent pas encore dans le mapping de l’index &lt;code&gt;movies&lt;/code&gt; ?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;La commande réussit car Elasticsearch utilise le dynamic mapping pour ajouter automatiquement les nouveaux champs au mapping de l’index.
+On peut vérifier cela en récupérant le mapping de l’index &lt;code&gt;movies&lt;/code&gt; après la mise à jour du document.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;GET movies/_mapping&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;modification-des-champs-existants&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;Modification des champs existants&lt;/h3&gt;
@@ -4177,6 +4304,16 @@ Regardons ce qui se passe si nous faisons une term query sur le champ &lt;code&g
 Pourquoi cette requête ne retourne-t-elle aucun document, même si nous avons indexé un film dont le titre exact est &lt;em&gt;The Godfather&lt;/em&gt; ?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;La requête ne retourne aucun document car le champ &lt;code&gt;title&lt;/code&gt; est de type &lt;code&gt;text&lt;/code&gt;, et donc le texte a été analysé avant d’être indexé.
+L’analyseur standard a divisé le titre en tokens : &lt;code&gt;the&lt;/code&gt; et &lt;code&gt;godfather&lt;/code&gt;, et les a convertis en minuscules.
+Par conséquent, il n’y a pas de terme exact &lt;code&gt;The Godfather&lt;/code&gt; dans l’index.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;terms-query&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;Terms query&lt;/h3&gt;
@@ -4273,6 +4410,17 @@ Par exemple, pour rechercher des titres de films qui commencent par &lt;em&gt;g&
 Pourquoi la commande ci-dessus retourne des films où Tim Allen est un des acteurs, alors que son nom ne commence pas par &lt;em&gt;Al&lt;/em&gt; ?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Le champ &lt;code&gt;actors&lt;/code&gt; est de type &lt;code&gt;text&lt;/code&gt;, et donc les noms des acteurs ont été analysés avant d’être indexés.
+L’analyseur standard a divisé les noms en tokens et les a convertis en minuscules.
+Ainsi, le nom &lt;code&gt;Tim Allen&lt;/code&gt; a été divisé en deux tokens : &lt;code&gt;tim&lt;/code&gt; et &lt;code&gt;allen&lt;/code&gt;.
+Le token &lt;code&gt;allen&lt;/code&gt; commence par &lt;code&gt;al&lt;/code&gt;, donc le film est retourné dans les résultats de la requête.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
 
@@ -4281,6 +4429,21 @@ Pourquoi la commande ci-dessus retourne des films où Tim Allen est un des acteu
 Pourriez-vous exprimer la même requête en utilisant une wildcard query au lieu d’une prefix query ?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;pre&gt;&lt;code&gt;GET /movies/_search
+{
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;wildcard&amp;quot;: {
+      &amp;quot;actors&amp;quot;: &amp;quot;al*&amp;quot;
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;fuzzy-query&#34; class=&#34;section level3&#34;&gt;
 &lt;h3&gt;Fuzzy query&lt;/h3&gt;
@@ -4358,6 +4521,18 @@ Observez le resultat retourné par Elasticsearch.&lt;/p&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;2 documents ont été trouvés.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Ils sont ordonnés par score de pertinence décroissant (du plus pertinent au moins pertinent).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Le premier document a un score plus élevé car le mot Godfather apparaît dans un titre plus court (The Godfather) que dans le deuxième document (The Godfather Part II).&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Comprendre le score de pertinence&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Si nous voulons comprendre comment le score de pertinence est calculé, nous pouvons utiliser un drapeau spécial appelé &lt;code&gt;explain&lt;/code&gt; dans notre requête de recherche.&lt;/p&gt;
@@ -4583,6 +4758,14 @@ Que fait la requête suivante ?&lt;/p&gt;
 }&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Elle recherche les films dont le titre contient le mot “Godfather” &lt;strong&gt;et&lt;/strong&gt; dont l’année de sortie est comprise entre 1970 et 1972 (inclus).&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
 
@@ -4591,6 +4774,37 @@ Que fait la requête suivante ?&lt;/p&gt;
 Écrivez une requête qui recherche les films dont le titre contient le mot “Godfather” &lt;strong&gt;ou&lt;/strong&gt; “Pulp Fiction”, mais &lt;strong&gt;pas&lt;/strong&gt; “Part II”.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;pre&gt;&lt;code&gt;GET /movies/_search
+{
+  &amp;quot;query&amp;quot;: {
+    &amp;quot;bool&amp;quot;: {
+      &amp;quot;should&amp;quot;: [
+        {
+          &amp;quot;match&amp;quot;: {
+            &amp;quot;title&amp;quot;: &amp;quot;Godfather&amp;quot;
+          }
+        },
+        {
+          &amp;quot;match&amp;quot;: {
+            &amp;quot;title&amp;quot;: &amp;quot;Pulp Fiction&amp;quot;
+          }
+        }
+      ],
+      &amp;quot;must_not&amp;quot;: {
+        &amp;quot;match&amp;quot;: {
+          &amp;quot;title&amp;quot;: &amp;quot;Part II&amp;quot;
+        }
+      }
+    }
+  }
+}&lt;/code&gt;&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;La requête suivante utilise la clause &lt;code&gt;filter&lt;/code&gt; pour rechercher les films dont le titre contient le mot “Godfather”.&lt;/p&gt;
 &lt;pre class=&#34;json&#34;&gt;&lt;code&gt;GET /movies/_search
 {
@@ -7937,6 +8151,22 @@ streamingQuery.awaitTermination()&lt;/code&gt;&lt;/pre&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Le programme obtient ses données d’entrée d’une socket TCP.&lt;/li&gt;
+&lt;li&gt;lines est un &lt;strong&gt;dataframe&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Dans le terminal.&lt;/li&gt;
+&lt;li&gt;Il copie simplement l’entrée vers la sortie.&lt;/li&gt;
+&lt;li&gt;C’est l’endroit où le programme Spark écrit la progression de la requête de streaming.&lt;/li&gt;
+&lt;li&gt;Les instructions signifient que le programme va bloquer sur cette instruction. Le programme ne s’arrêtera pas tant qu’il n’y a pas de
+données à traiter.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;Vous pouvez maintenant vérifier vos réponses aux questions précédentes en &lt;strong&gt;exécutant le programme&lt;/strong&gt;.&lt;/p&gt;
 &lt;div class=&#34;infobox activitybox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Activité&lt;/strong&gt;&lt;/p&gt;
@@ -7990,6 +8220,27 @@ de la machine du cluster.&lt;/p&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;La politique de déclenchement régit la fréquence à laquelle les micro-batchs sont traités.&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Comme nous n’avons pas spécifié de politique de déclenchement, la politique par défaut est choisie. Dès que le micro-batch précédent a fini d’être traité, le suivant est lu.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Voici le code. Nous devons spécifier un `&lt;code&gt;trigger&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;pre&gt;&lt;code&gt;streamingQuery = lines.writeStream
+            .trigger(processingTime = &amp;quot;15 seconds&amp;quot;)
+            .format(&amp;quot;console&amp;quot;).start()&lt;/code&gt;&lt;/pre&gt;
+&lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Spark vérifie toutes les 15 secondes si de nouvelles données sont disponibles. Si c’est le cas, il traite ces nouvelles données.
+Comme il est possible que dans l’intervalle spécifié (15 secondes), nous écrivions
+plusieurs lignes, le programme obtiendra plusieurs lignes dans un micro-batch (contrairement à avant, lorsque
+le traitement est déclenché dès qu’il y a des données disponibles).&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;div id=&#34;dossier-de-point-de-contrôle-et-mode-de-sortie&#34; class=&#34;section level1&#34;&gt;
 &lt;h1&gt;Dossier de point de contrôle et mode de sortie&lt;/h1&gt;
@@ -8005,6 +8256,20 @@ de la machine du cluster.&lt;/p&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Le mode de sortie indique à Spark comment les résultats sont présentés.
+Il existe plusieurs options : append (seules les nouvelles lignes ajoutées à la table de résultats depuis le dernier déclenchement sont visibles dans la sortie),
+complete (la table de résultats entière est visible après chaque déclenchement) et update (seules les lignes qui ont été mises à jour depuis le dernier déclenchement sont visibles dans la
+sortie).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Dans le programme précédent, le mode de sortie est append (nous n’avons pas spécifié de mode de sortie, donc le mode par défaut, append, est sélectionné).&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;Nous allons maintenant écrire une nouvelle requête streaming.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
@@ -8026,45 +8291,127 @@ dans le terminal netcat. Que pouvez-vous dire sur le nombre d’occurrence des m
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;opérations-sur-des-fenêtres-temporelles&#34; class=&#34;section level1&#34;&gt;
-&lt;h1&gt;Opérations sur des fenêtres temporelles&lt;/h1&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Netcat et checkpoint&lt;/strong&gt;&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;Arrêtez le serveur netcat que vous aviez démarré précédemment.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Rappelez-vous de créer un nouveau dossier de point de contrôle dans HDFS.
-Alternativement, vous pouvez également utiliser le même répertoire qu’auparavant, mais
-vous devez supprimer tous ses fichiers.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
-&lt;p&gt;Nous allons maintenant découvrir comment effectuer des agrégations sur une fenêtre temporelle glissante.
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Le nouveau programme est le suivant :&lt;/p&gt;
+&lt;p&gt;```{python}
+lines = (spark&lt;br /&gt;
+.readStream.format(“socket”)&lt;br /&gt;
+.option(“host”, “localhost”)&lt;br /&gt;
+.option(“port”, port_number)&lt;br /&gt;
+.load())&lt;/p&gt;
+&lt;p&gt;lines = lines.select(F.explode(F.split(lines.value, ” “))&lt;br /&gt;
+.alias(”word”))&lt;br /&gt;
+.groupBy(“word”).count()&lt;/p&gt;
+&lt;p&gt;streamingQuery = lines.writeStream&lt;br /&gt;
+.trigger(processingTime = “15 seconds”)&lt;br /&gt;
+.option(“checkpointLocation”, checkpoint_location)&lt;br /&gt;
+.outputMode(“update”)&lt;br /&gt;
+.format(“console”)&lt;br /&gt;
+.start()&lt;/p&gt;
+&lt;p&gt;streamingQuery.awaitTermination()&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;
+Le mode append ne fonctionne pas, car la fonction d&amp;#39;agrégation pourrait modifier les lignes précédentes de la table de résultats.
+Donc, les seules options restantes sont update et complete. Nous choisissons update pour n&amp;#39;avoir que les valeurs qui ont changé depuis le dernier déclenchement.
+
+
+:::
+
+&amp;lt;/details&amp;gt;
+
+
+# Opérations sur des fenêtres temporelles
+
+
+
+::: {.infobox .warning data-latex=&amp;quot;{warning}&amp;quot;}
+**Netcat et checkpoint**
+
+1. Arrêtez le serveur netcat que vous aviez démarré précédemment.
+
+2. Rappelez-vous de créer un nouveau dossier de point de contrôle dans HDFS.
+Alternativement, vous pouvez également utiliser le même répertoire qu&amp;#39;auparavant, mais
+vous devez supprimer tous ses fichiers.
+
+
+
+:::
+
+
+Nous allons maintenant découvrir comment effectuer des agrégations sur une fenêtre temporelle glissante.
 Une source de données génère des mots pendant un certain intervalle de temps.
 Chaque mot est associé à un horodatage qui indique le moment exact où le mot est
-généré. Cet horodatage est le &lt;strong&gt;temps de l’événement&lt;/strong&gt; (ang., event time).&lt;/p&gt;
-&lt;p&gt;Après avoir généré un mot, la source de données enregistre le mot et son horodatage dans
-un fichier CSV dans un répertoire sur HDFS. Pour plus de commodité, nous appellerons ce répertoire le &lt;strong&gt;répertoire source&lt;/strong&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox activitybox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Activité&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Créz le dossier source sous votre répertoire personnel
-&lt;code&gt;hdfs://sar01:9000/dga25/dga25_X&lt;/code&gt; &lt;strong&gt;sur HDFS&lt;/strong&gt;.&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;À tout moment, la source contiendra zéro à plusieurs fichiers CSV,
-où chaque fichier ne contient qu’une seule ligne au format
-&lt;code&gt;word,timestamp&lt;/code&gt; (sans espace avant ni après la virgule).&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+généré. Cet horodatage est le **temps de l&amp;#39;événement** (ang., event time).
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5  &lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;Écrivez un programme Spark qui :&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;Lit le flux de données à partir du dossier source.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Compte le nombre d’occurrences de chaque mot dans des fenêtres de 10 minutes qui glissent toutes les 5 minutes.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Affiche les nombre d’occurrences dans le terminal. Utilisez des déclencheurs de 5 secondes.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
+Après avoir généré un mot, la source de données enregistre le mot et son horodatage dans
+un fichier CSV dans un répertoire sur HDFS.  Pour plus de commodité, nous appellerons ce répertoire le **répertoire source**
+
+
+::: {.infobox .activitybox data-latex=&amp;quot;{exercisebox}&amp;quot;}
+**Activité**
+
+Créz le dossier source sous votre répertoire personnel
+``hdfs://sar01:9000/dga25/dga25_X`` **sur HDFS**. 
+
+:::
+
+À tout moment, la source contiendra zéro à plusieurs fichiers CSV,
+où chaque fichier ne contient qu&amp;#39;une seule ligne au format
+``word,timestamp`` (sans espace avant ni après la virgule).
+
+
+
+::: {.infobox .exercisebox data-latex=&amp;quot;{exercisebox}&amp;quot;}
+**Exercice**
+
+\BeginKnitrBlock{exercise}&amp;lt;div class=&amp;quot;exercise&amp;quot;&amp;gt;&amp;lt;span class=&amp;quot;exercise&amp;quot; id=&amp;quot;exr:unnamed-chunk-7&amp;quot;&amp;gt;&amp;lt;strong&amp;gt;(\#exr:unnamed-chunk-7) &amp;lt;/strong&amp;gt;&amp;lt;/span&amp;gt;
+
+Écrivez un programme Spark qui :
+
+1. Lit le flux de données à partir du dossier source.
+
+2. Compte le nombre d&amp;#39;occurrences de chaque mot dans des fenêtres de 10 minutes qui glissent toutes les 5 minutes.
+
+3. Affiche les nombre d&amp;#39;occurrences dans le terminal. Utilisez des déclencheurs de 5 secondes.
+
+&amp;lt;/div&amp;gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+&amp;lt;details&amp;gt;
+&amp;lt;summary&amp;gt;Solution&amp;lt;/summary&amp;gt;
+
+::: {.infobox .exosolution data-latex=&amp;quot;{exercisebox}&amp;quot;}
+
+Le nouveau programme est le suivant :
+
+```{python}
+
+source_directory = hdfs://....
+
+words = (spark
+        .readStream.format(&amp;quot;csv&amp;quot;)
+        .schema(&amp;quot;word STRING, timestamp TIMESTAMP&amp;quot;)
+        .load(source_directory))
+
+
+windowedCount = words.groupBy(F.window(words.timestamp, 
+                &amp;quot;10 seconds&amp;quot;, &amp;quot;5 seconds&amp;quot;, startTime=0), words.word).count()
+
+windowedQuery = windowedCount.withColumn(&amp;quot;trigger_timestamp&amp;quot;, F.expr(&amp;quot;get_current_timestamp()&amp;quot;)).writeStream\
+            .trigger(processingTime=&amp;quot;5 seconds&amp;quot;)\
+            .outputMode(&amp;quot;update&amp;quot;)\
+            .format(&amp;quot;console&amp;quot;)\
+            .option(&amp;quot;truncate&amp;quot;, False)\
+            .start()
+
+streamingQuery.awaitTermination()&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
-&lt;/div&gt;
+&lt;/details&gt;
 &lt;p&gt;Maintenant, nous allons tester le nouveau programme Spark.&lt;/p&gt;
 &lt;div class=&#34;infobox warning&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Source de données et visualisation temporelle&lt;/strong&gt;&lt;/p&gt;
@@ -8132,13 +8479,26 @@ regarder l’horodatage associé au premier et au dernier micro-batch.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-12&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 6  &lt;/strong&gt;&lt;/span&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-12&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5  &lt;/strong&gt;&lt;/span&gt;
 1. Analysez la sortie de votre programme Spark et la ligne temporelle des mots générés.&lt;/p&gt;
 &lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;Décrivez comment les nombre d’occurrences sont mis à jour par le programme Spark.&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;À la différence de l’exercice précédent, ici le nombre d’occurrences de chaque mot est compté
+sur une fenêtre de 10 secondes qui glisse toutes les 5 secondes.
+Chaque mot est associé à un &lt;strong&gt;temps de l’événement&lt;/strong&gt; qui est utilisé pour calculer le nombre d’occurrences.
+La fenêtre temporelle commence à partir du premier déclenchement, disons à 12:00.
+Si un mot arrive à 12:07, le compte associé à ce mot est mis à jour dans deux
+fenêtres temporelles, 12:00 - 12:10 et 12:05 - 12:15.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 </description>
     </item>
