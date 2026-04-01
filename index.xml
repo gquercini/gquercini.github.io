@@ -1437,6 +1437,158 @@ Table 5. Execution times of the queries on the sales dataset.
     </item>
     
     <item>
+      <title>Getting started with Microsoft Azure</title>
+      <link>/courses/cloud-en/azure-vm-en/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/cloud-en/azure-vm-en/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34; number=&#34;1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Introduction&lt;/h1&gt;
+&lt;p&gt;We will use the Azure Portal (a browser-based user interface)
+to create a Linux virtual machine running Ubuntu 20.04 LTS.
+We will then connect to the virtual machine via SSH and install an NGINX web server.
+Finally, we will use the browser to connect to this server.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;creating-the-virtual-machine&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Creating the virtual machine&lt;/h1&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Log in to the &lt;a href=&#34;https://portal.azure.com/&#34; target=&#34;_blank&#34;&gt;Azure portal&lt;/a&gt; using your CentraleSupélec credentials.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Select &lt;code&gt;Virtual Machines&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Click on &lt;code&gt;Create&lt;/code&gt; and then &lt;code&gt;Azure Virtual Machine&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Create a new &lt;code&gt;resource group&lt;/code&gt; and give it a name of your choice.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Assign a name to your virtual machine.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Select (Europe) France Central as the region. If that region does not work for you, try another one.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Accept the default settings for &lt;code&gt;availability zone&lt;/code&gt; and &lt;code&gt;security&lt;/code&gt; type.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Select &lt;code&gt;Ubuntu Server 20.04 LTS - Generation 2&lt;/code&gt; as the &lt;code&gt;image&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Select &lt;code&gt;Standard_B1s - 1 virtual CPU, 1 GiB memory&lt;/code&gt; as the &lt;code&gt;Size&lt;/code&gt;, if available. Otherwise, choose the closest or most affordable configuration.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Choose &lt;code&gt;SSH public key&lt;/code&gt; as the &lt;code&gt;authentication type&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Choose a &lt;code&gt;username&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Accept the default SSH key options.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Under &lt;code&gt;inbound ports&lt;/code&gt;, select &lt;code&gt;SSH&lt;/code&gt; (22) and &lt;code&gt;HTTP&lt;/code&gt; (80).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Click on the button &lt;code&gt;Review + Create&lt;/code&gt; and then &lt;code&gt;Create&lt;/code&gt;. You will be asked to download the &lt;code&gt;private key&lt;/code&gt;. Accept and save the key in a folder of your choice.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div id=&#34;connect-to-the-virtual-machine&#34; class=&#34;section level1&#34; number=&#34;3&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Connect to the virtual machine&lt;/h1&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Click on &lt;code&gt;Go to Resource&lt;/code&gt; to view your virtual machine’s details.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Copy the &lt;code&gt;public IP address&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Enter the following command to change the permissions of your private key. The private key is stored in a &lt;code&gt;.pem&lt;/code&gt; file that you downloaded earlier.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;center&gt;
+&lt;code&gt;chmod 644 &amp;lt;path_to_pem_file&amp;gt;&lt;/code&gt;
+&lt;/center&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Enter the following command to connect to your virtual machine.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;center&gt;
+&lt;code&gt;ssh -i &amp;lt;path_to_pem&amp;gt; &amp;lt;username&amp;gt;@&amp;lt;vm_ip_address&amp;gt;&lt;/code&gt;
+&lt;/center&gt;
+&lt;/div&gt;
+&lt;div id=&#34;install-the-nginx-web-server&#34; class=&#34;section level1&#34; number=&#34;4&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Install the Nginx Web Server&lt;/h1&gt;
+Simply enter the following two commands in the terminal of the virtual machine:
+&lt;center&gt;
+&lt;code&gt;sudo apt-get -y update&lt;/code&gt;
+&lt;/center&gt;
+&lt;center&gt;
+&lt;code&gt;sudo apt-get -y install nginx&lt;/code&gt;
+&lt;/center&gt;
+&lt;p&gt;Once the installation is complete, open the web browser of your choice and enter the virtual machine’s IP address.
+You should see the default NGINX welcome page.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;cleaning-up-resources&#34; class=&#34;section level1&#34; number=&#34;5&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;5&lt;/span&gt; Cleaning up resources&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;Don’t forget to stop the virtual machine&lt;/strong&gt; or your credit will be used up!
+Since we will no longer be using this virtual machine,
+it is recommended to &lt;strong&gt;delete the entire resource group created during this activity&lt;/strong&gt;.
+You can check the credit associated with your subscription at any time by clicking &lt;a href=&#34;https://www.microsoftazuresponsorships.com/Balance&#34; target=&#34;_blank&#34;&gt;on this link&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Prise en main de Microsoft Azure</title>
+      <link>/courses/cloud-fr/azure-vm-fr/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/cloud-fr/azure-vm-fr/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;div id=&#34;introduction&#34; class=&#34;section level1&#34; number=&#34;1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Introduction&lt;/h1&gt;
+&lt;p&gt;Nous allons utiliser le portail Azure (une interface utilisateur accessible via un navigateur)
+pour créer une machine virtuelle Linux exécutant Ubuntu 20.04 LTS.
+Nous nous connecterons ensuite à la machine virtuelle via SSH et installerons un serveur web NGINX.
+Enfin, nous utiliserons le navigateur pour nous connecter à ce serveur.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;création-de-la-machine-virtuelle&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Création de la machine virtuelle&lt;/h1&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Connectez-vous au &lt;a href=&#34;https://portal.azure.com/&#34; target=&#34;_blank&#34;&gt;portail Azure&lt;/a&gt; avec vos identifiants CentraleSupélec.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Sélectionnez &lt;code&gt;Machines virtuelles&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Cliquez sur &lt;code&gt;Créer&lt;/code&gt; puis sur &lt;code&gt;Machine virtuelle Azure&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Créez un nouveau &lt;code&gt;groupe de ressources&lt;/code&gt; et donnez-lui un nom de votre choix.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Donnez un nom à votre machine virtuelle.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Sélectionnez la région (Europe) France Central. Si cette région ne fonctionne pas, essayez-en une autre.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Acceptez les paramètres par défaut pour &lt;code&gt;zone de disponibilité&lt;/code&gt; et le type de &lt;code&gt;sécurité&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Sélectionnez &lt;code&gt;Ubuntu Server 20.04 LTS - Generation 2&lt;/code&gt; comme &lt;code&gt;image&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Sélectionnez &lt;code&gt;Standard_B1s - 1 CPU virtuel, 1 Gio de mémoire&lt;/code&gt; comme &lt;code&gt;taille&lt;/code&gt;, si disponible. Sinon, choisissez la configuration la plus proche ou la plus économique.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Choisissez &lt;code&gt;Clé publique SSH&lt;/code&gt; comme type &lt;code&gt;d’authentification&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Choisissez un &lt;code&gt;nom d&#39;utilisateur&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Acceptez les options par défaut pour la clé SSH.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Parmi les &lt;code&gt;ports entrants&lt;/code&gt;, sélectionnez &lt;code&gt;SSH&lt;/code&gt; (22) et &lt;code&gt;HTTP&lt;/code&gt; (80).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Cliquez sur le bouton &lt;code&gt;Vérifier + créer&lt;/code&gt; puis sur &lt;code&gt;Créer&lt;/code&gt;. Il vous sera demandé de télécharger la &lt;code&gt;clé privée&lt;/code&gt;. Acceptez et enregistrez-la dans un dossier de votre choix.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+&lt;div id=&#34;connexion-à-la-machine-virtuelle&#34; class=&#34;section level1&#34; number=&#34;3&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Connexion à la machine virtuelle&lt;/h1&gt;
+&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;&lt;p&gt;Cliquez sur &lt;code&gt;Accéder à la ressource&lt;/code&gt; pour afficher les détails de votre machine virtuelle.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Copiez l’&lt;code&gt;adresse IP publique&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Entrez la commande suivante pour modifier les permissions de votre clé privée. La clé privée est stockée dans un fichier &lt;code&gt;.pem&lt;/code&gt; que vous avez téléchargé précédemment.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;center&gt;
+&lt;code&gt;chmod 644 &amp;lt;chemin_vers_fichier_pem&amp;gt;&lt;/code&gt;
+&lt;/center&gt;
+&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
+&lt;li&gt;Entrez la commande suivante pour vous connecter à votre machine virtuelle.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;center&gt;
+&lt;code&gt;ssh -i &amp;lt;chemin_vers_pem&amp;gt; &amp;lt;nom_utilisateur&amp;gt;@&amp;lt;adresse_ip_vm&amp;gt;&lt;/code&gt;
+&lt;/center&gt;
+&lt;/div&gt;
+&lt;div id=&#34;installation-du-serveur-web-nginx&#34; class=&#34;section level1&#34; number=&#34;4&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Installation du serveur web Nginx&lt;/h1&gt;
+Entrez simplement les deux commandes suivantes dans le terminal de la machine virtuelle :
+&lt;center&gt;
+&lt;code&gt;sudo apt-get -y update&lt;/code&gt;
+&lt;/center&gt;
+&lt;center&gt;
+&lt;code&gt;sudo apt-get -y install nginx&lt;/code&gt;
+&lt;/center&gt;
+&lt;p&gt;Une fois l’installation terminée, ouvrez le navigateur web de votre choix et saisissez l’adresse IP de la machine virtuelle.
+Vous devriez voir la page d’accueil par défaut de NGINX.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;nettoyage-des-ressources&#34; class=&#34;section level1&#34; number=&#34;5&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;5&lt;/span&gt; Nettoyage des ressources&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;N’oubliez pas d’arrêter la machine virtuelle&lt;/strong&gt;, sinon votre crédit sera consommé !
+Comme nous n’utiliserons plus cette machine virtuelle,
+il est recommandé de &lt;strong&gt;supprimer l’ensemble du groupe de ressources créé lors de cette activité&lt;/strong&gt;.
+Vous pouvez consulter à tout moment le crédit associé à votre abonnement en cliquant &lt;a href=&#34;https://www.microsoftazuresponsorships.com/Balance&#34; target=&#34;_blank&#34;&gt;sur ce lien&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
       <title>Lectures</title>
       <link>/courses/bdia_old/lectures/lectures/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
