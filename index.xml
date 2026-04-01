@@ -20679,85 +20679,122 @@ Moreover, we didn’t specify any command to run in the guest terminal.&lt;/p&gt
 &lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.6  &lt;/strong&gt;&lt;/span&gt;What do you obtain?
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;starting-and-stopping-containers.&#34; class=&#34;section level2&#34; number=&#34;1.2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.2&lt;/span&gt; Starting and stopping containers.&lt;/h2&gt;
-&lt;p&gt;&lt;code&gt;docker run&lt;/code&gt; is a shorthand for two Docker commands, namely
-&lt;code&gt;docker create&lt;/code&gt;, that creates a container from an image,
-and &lt;code&gt;docker start&lt;/code&gt;, that starts the container after its creation.&lt;/p&gt;
-&lt;p&gt;Suppose now that you want to download a Web page
-by using Linux Alpine.
-You can use the Linux command &lt;code&gt;wget&lt;/code&gt; followed by the URL of the page
-that you want to download.&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;!-- ## Starting and stopping containers.
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:wget-exo&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.7  &lt;/strong&gt;&lt;/span&gt;By using the guest terminal
-in the container &lt;em&gt;my-alpine&lt;/em&gt;,
-download
-&lt;a href=&#34;https://www.centralesupelec.fr/fr/presentation&#34; target=&#34;_blank&#34;&gt;this Web page&lt;/a&gt;.&lt;/p&gt;
-&lt;div class=&#34;last-child&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;Where will the Web page be saved? The host computer or the container?&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
+``docker run`` is a shorthand for two Docker commands, namely
+``docker create``, that creates a container from an image, 
+and ``docker start``, that starts the container after its creation.
+
+Suppose now that you want to download a Web page 
+by using Linux Alpine.
+You can use the Linux command ``wget`` followed by the URL of the page 
+that you want to download.
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:wget-exo&#34;&gt;&lt;strong&gt;(\#exr:wget-exo) &lt;/strong&gt;&lt;/span&gt;By using the guest terminal 
+in the container *my-alpine*,
+download 
+[this Web page](https://www.centralesupelec.fr/fr/presentation){target=&#34;_blank&#34;}.
+
+::::: {.last-child}
+* Where will the Web page be saved? The host computer or the container?
+:::::
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+
+
 &lt;details&gt;
-&lt;summary&gt;
-Want to copy the donwloaded file from the container to your computer?
-&lt;/summary&gt;
-&lt;p&gt;To copy the file &lt;code&gt;presentation&lt;/code&gt; to your working directory, type the following command in
-the host terminal:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;  docker cp &amp;lt;containerId&amp;gt;:/presentation .&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;In the previous command, replace &lt;code&gt;&amp;lt;containerId&amp;gt;&lt;/code&gt; with the identifier of your container. You can obtain
-the identifier of the container from the output of the command &lt;code&gt;docker container ls -a&lt;/code&gt;.&lt;/p&gt;
+  &lt;summary&gt;Want to copy the donwloaded file from the container to your computer?&lt;/summary&gt;
+
+  To copy the file ``presentation`` to your working directory, type the following command in 
+  the host terminal:
+
+  ```
+  docker cp &lt;containerId&gt;:/presentation .
+  ```
+
+  In the previous command, replace ``&lt;containerId&gt;`` with the identifier of your container. You can obtain 
+  the identifier of the container from the output of the command ``docker container ls -a``.
+
 &lt;/details&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Where are the containers files stored?&lt;/strong&gt;&lt;/p&gt;
+
+
+::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**Where are the containers files stored?**
+
 &lt;details&gt;
-&lt;summary&gt;
-If you use MacOS or Windows
-&lt;/summary&gt;
-&lt;p&gt;The files managed by Docker are not stored directly in your computer, but
-in the Linux virtual machine installed and operated by Docker Desktop (remember, Docker always need Linux to be executed).&lt;/p&gt;
-&lt;p&gt;Therefore, you need to open a terminal inside that Linux virtual machine by typing the following command:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;docker run -it --rm --privileged --pid=host justincormack/nsenter1&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Once the terminal is opened, you can follow the instructions given below for Linux users.&lt;/p&gt;
+&lt;summary&gt;If you use MacOS or Windows&lt;/summary&gt;
+
+The files managed by Docker are not stored directly in your computer, but 
+in the Linux virtual machine installed and operated by Docker Desktop (remember, Docker always need Linux to be executed).
+
+Therefore, you need to open a terminal inside that Linux virtual machine by typing the following command:
+
+```
+docker run -it --rm --privileged --pid=host justincormack/nsenter1
+```
+
+Once the terminal is opened, you can follow the instructions given below for Linux users.
+
 &lt;/details&gt;
+
 &lt;details&gt;
-&lt;summary&gt;
-If you use Docker on Linux
-&lt;/summary&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;All files managed by Docker are stored under folder &lt;code&gt;/var/lib/docker&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;To access that folder, you need to be root (i.e., administrator). Type the command &lt;code&gt;sudo su&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;If you type &lt;code&gt;ls /var/lib/docker&lt;/code&gt; you can look at the folders stored under this directory. You’ll see that there are
-folders corresponding to the different objects managed by Docker (containers, images, volumes and networks).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;To locate the files of a specific container, you first need to get the &lt;strong&gt;container identifier&lt;/strong&gt; by typing &lt;code&gt;docker container ls -a&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Type the command &lt;code&gt;docker inspect &amp;lt;container-id&amp;gt;&lt;/code&gt; (replace &lt;code&gt;&amp;lt;container-id&amp;gt;&lt;/code&gt; with the identifier of the container that you intend to inspect).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Locate the field &lt;code&gt;UpperDir&lt;/code&gt;. The value of this field is the path to the directory (let’s call it &lt;code&gt;CONTAINER_DIR&lt;/code&gt;) that contains the upper layer of the container (the writable layer).
-It should be a path that ends by &lt;code&gt;/diff&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;If you type &lt;code&gt;cd CONTAINER_DIR&lt;/code&gt; (replace &lt;code&gt;CONTAINER_DIR&lt;/code&gt; with the value of the field &lt;code&gt;UpperDir&lt;/code&gt;) you can finally see the files stored in
-your container.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
+&lt;summary&gt;If you use Docker on Linux&lt;/summary&gt;
+
+
+* All files managed by Docker are stored under folder ``/var/lib/docker``. 
+
+* To access that folder, you need to be root (i.e., administrator). Type the command ``sudo su``.
+
+* If you type ``ls /var/lib/docker`` you can look at the folders stored under this directory. You&#39;ll see that there are 
+folders corresponding to the different objects managed by Docker (containers, images, volumes and networks).
+
+* To locate the files of a specific container, you first need to get the **container identifier** by typing ``docker container ls -a``.
+
+* Type the command ``docker inspect &lt;container-id&gt;`` (replace ``&lt;container-id&gt;`` with the identifier of the container that you intend to inspect).
+
+* Locate the field ``UpperDir``. The value of this field is the path to the directory (let&#39;s call it ``CONTAINER_DIR``) that contains the upper layer of the container (the writable layer).
+It should be a path that ends by ``/diff``.
+
+* If you type ``cd CONTAINER_DIR`` (replace ``CONTAINER_DIR`` with the value of the field ``UpperDir``) you can finally see the files stored in 
+your container. 
+
 &lt;/details&gt;
-&lt;/div&gt;
-&lt;p&gt;In &lt;em&gt;my-alpine&lt;/em&gt; guest terminal type &lt;code&gt;exit&lt;/code&gt;.
+
+
+
+
+:::
+
+In *my-alpine* guest terminal type ``exit``.
 This closes the guest terminal and, as a result, stops the
-container.&lt;/p&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;NOTICE&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Stopping the container will not erase any of the files
-stored in the container. Removing the container will.&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;If you want to start the container &lt;em&gt;my-alpine&lt;/em&gt; again, you can
-use the following command:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker container start -ai my-alpine&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;This will open the guest terminal of the container again;
-type &lt;code&gt;ls&lt;/code&gt; to verify that
-the Web page that you downloaded before is still there.&lt;/p&gt;
+container.
+
+::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**NOTICE**
+
+Stopping the container will not erase any of the files
+stored in the container. Removing the container will.
+
+:::
+
+If you want to start the container *my-alpine* again, you can
+use the following command:
+
+``
+docker container start -ai my-alpine
+``
+
+This will open the guest terminal of the container again; 
+type ``ls`` to verify that
+the Web page that you downloaded before is still there. 
+
 &lt;!-- &lt;details&gt;
 &lt;summary&gt;Homework (optional)&lt;/summary&gt;
 
@@ -20850,7 +20887,9 @@ and then:
 When you&#39;re done, you can simply type the command `exit` to quit 
 the guest terminal and stop the container.
 
-&lt;/details&gt; --&gt;
+&lt;/details&gt; 
+
+--&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;creating-images&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
@@ -20863,7 +20902,7 @@ modified or deleted, nor can files be added to a layer.&lt;/p&gt;
 will be composed of all the image read-only layers and, on top of
 them, a writable layer (termed the &lt;strong&gt;container layer&lt;/strong&gt;),
 where all the new files created in the container will be written.
-For example, the Web page that you downloaded in Exercise &lt;a href=&#34;#exr:wget-exo&#34;&gt;1.7&lt;/a&gt;
+For example, the Web page that you downloaded in Exercise &lt;a href=&#34;#exr:wget-exo&#34;&gt;&lt;strong&gt;??&lt;/strong&gt;&lt;/a&gt;
 were stored in the writable layer of that container.&lt;/p&gt;
 &lt;!--## Interactive image creation
 
@@ -23189,84 +23228,120 @@ De plus, nous n’avons pas spécifié de commande à exécuter dans le terminal
 &lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.6  &lt;/strong&gt;&lt;/span&gt;Qu’obtenez-vous ?
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;démarrer-et-arrêter-les-conteneurs.&#34; class=&#34;section level2&#34; number=&#34;1.2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.2&lt;/span&gt; Démarrer et arrêter les conteneurs.&lt;/h2&gt;
-&lt;p&gt;&lt;code&gt;docker run&lt;/code&gt; est un raccourci pour deux commandes Docker, à savoir
-&lt;code&gt;docker create&lt;/code&gt;, qui crée un conteneur à partir d’une image,
-et &lt;code&gt;docker start&lt;/code&gt;, qui démarre le conteneur après sa création.&lt;/p&gt;
-&lt;p&gt;Supposons maintenant que vous souhaitiez télécharger une page Web
-en utilisant Linux Alpine.
-Vous pouvez utiliser la commande Linux &lt;code&gt;wget&lt;/code&gt; suivie de l’URL de la page
-que vous voulez télécharger.&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+&lt;!-- ## Démarrer et arrêter les conteneurs.
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:wget-exo&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.7  &lt;/strong&gt;&lt;/span&gt;En utilisant le terminal invité
-dans le conteneur &lt;em&gt;my-alpine&lt;/em&gt;,
-téléchargez
-&lt;a href=&#34;https://www.centralesupelec.fr/fr/presentation&#34; target=&#34;_blank&#34;&gt;cette page Web&lt;/a&gt;.&lt;/p&gt;
-&lt;div class=&#34;last-child&#34;&gt;
-&lt;ul&gt;
-&lt;li&gt;Où la page Web sera-t-elle sauvegardée ? Sur l’ordinateur hôte ou dans le conteneur ?&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
+``docker run`` est un raccourci pour deux commandes Docker, à savoir
+``docker create``, qui crée un conteneur à partir d&#39;une image, 
+et ``docker start``, qui démarre le conteneur après sa création.
+
+Supposons maintenant que vous souhaitiez télécharger une page Web 
+en utilisant Linux Alpine.
+Vous pouvez utiliser la commande Linux ``wget`` suivie de l&#39;URL de la page 
+que vous voulez télécharger.
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercice**
+
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:wget-exo&#34;&gt;&lt;strong&gt;(\#exr:wget-exo) &lt;/strong&gt;&lt;/span&gt;En utilisant le terminal invité 
+dans le conteneur *my-alpine*,
+téléchargez 
+[cette page Web](https://www.centralesupelec.fr/fr/presentation){target=&#34;_blank&#34;}.
+
+::::: {.last-child}
+* Où la page Web sera-t-elle sauvegardée ? Sur l&#39;ordinateur hôte ou dans le conteneur ?
+:::::
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+ 
+
 &lt;details&gt;
-&lt;summary&gt;
-Voulez-vous copier le fichier téléchargé vers votre ordinateur ?
-&lt;/summary&gt;
-&lt;p&gt;Pour copier le fichier &lt;code&gt;presentation&lt;/code&gt; vers votre dossier de travail, tapez la commande suivante dans
-le terminal de l’hôte :&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;docker cp &amp;lt;containerId&amp;gt;:/presentation .&lt;/code&gt;&lt;/pre&gt;
-&lt;p&gt;Dans la commande précédente, remplacez &lt;code&gt;&amp;lt;containerId&amp;gt;&lt;/code&gt; par l’identifiant de votre conteneur. Vous pouvez obtenir
-l’identifiant du conteneur à partir de la sortie de la commande &lt;code&gt;docker container ls -a&lt;/code&gt;.&lt;/p&gt;
+ &lt;summary&gt;Voulez-vous copier  le fichier téléchargé vers votre ordinateur ?&lt;/summary&gt;
+
+ Pour copier le fichier ``presentation`` vers votre dossier de travail, tapez la commande suivante dans 
+ le terminal de l&#39;hôte :
+
+  ```
+ docker cp &lt;containerId&gt;:/presentation .
+  ```
+
+ Dans la commande précédente, remplacez ``&lt;containerId&gt;`` par l&#39;identifiant de votre conteneur. Vous pouvez obtenir 
+ l&#39;identifiant du conteneur à partir de la sortie de la commande ``docker container ls -a``.
+
 &lt;/details&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Où sont stockés les fichiers du conteneur ?&lt;/strong&gt;&lt;/p&gt;
+
+::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**Où sont stockés les fichiers du conteneur ?**
+
 &lt;details&gt;
-&lt;summary&gt;
-Si vous utilisez MacOS ou Windows
-&lt;/summary&gt;
-&lt;p&gt;Les fichiers gérés par Docker ne sont pas stockés directement sur votre ordinateur, mais
-dans la machine virtuelle Linux installée et exploitée par Docker Desktop (n’oubliez pas que Docker a toujours besoin de Linux pour être exécuté).&lt;/p&gt;
-&lt;p&gt;Par conséquent, vous devez ouvrir un terminal à l’intérieur de cette machine virtuelle Linux en tapant la commande suivante :&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker run -it --rm --privileged --pid=host justincormack/nsenter1&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;Une fois le terminal ouvert, vous pouvez suivre les instructions données ci-dessous pour les utilisateurs de Linux.&lt;/p&gt;
+&lt;summary&gt;Si vous utilisez MacOS ou Windows&lt;/summary&gt;
+
+Les fichiers gérés par Docker ne sont pas stockés directement sur votre ordinateur, mais 
+dans la machine virtuelle Linux installée et exploitée par Docker Desktop (n&#39;oubliez pas que Docker a toujours besoin de Linux pour être exécuté).
+
+Par conséquent, vous devez ouvrir un terminal à l&#39;intérieur de cette machine virtuelle Linux en tapant la commande suivante :
+
+``
+docker run -it --rm --privileged --pid=host justincormack/nsenter1
+``
+
+Une fois le terminal ouvert, vous pouvez suivre les instructions données ci-dessous pour les utilisateurs de Linux.
+
 &lt;/details&gt;
+
+
 &lt;details&gt;
-&lt;summary&gt;
-Si vous utilisez Docker sur Linux
-&lt;/summary&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Tous les fichiers gérés par Docker sont stockés dans le dossier &lt;code&gt;/var/lib/docker&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Pour accéder à ce dossier, vous devez être root (c’est-à-dire administrateur). Tapez la commande &lt;code&gt;sudo su&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Si vous tapez &lt;code&gt;ls /var/lib/docker&lt;/code&gt; vous pouvez voir les dossiers stockés dans ce dossier. Vous verrez qu’il y a des
-dossiers correspondant aux différents objets gérés par Docker (conteneurs, images, volumes et réseaux).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Pour localiser les fichiers d’un conteneur spécifique, vous devez d’abord obtenir l’&lt;strong&gt;identifiant du conteneur&lt;/strong&gt; en tapant &lt;code&gt;docker container ls -a&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Tapez la commande &lt;code&gt;docker inspect &amp;lt;container-id&amp;gt;&lt;/code&gt; (remplacez &lt;code&gt;&amp;lt;container-id&amp;gt;&lt;/code&gt; par l’identifiant du conteneur que vous avez l’intention d’inspecter).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Localisez le champ &lt;code&gt;UpperDir&lt;/code&gt;. La valeur de ce champ est le chemin vers le dossier (appelons-le &lt;code&gt;CONTAINER_DIR&lt;/code&gt;) qui contient la couche conteneur (celle qui peut être modifiée).
-Ce doit être un chemin qui se termine par &lt;code&gt;/diff&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Si vous tapez &lt;code&gt;cd CONTAINER_DIR&lt;/code&gt; (remplacez &lt;code&gt;CONTAINER_DIR&lt;/code&gt; par la valeur du champ &lt;code&gt;UpperDir&lt;/code&gt;) vous pouvez enfin voir les fichiers stockés dans
-votre conteneur.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
+&lt;summary&gt;Si vous utilisez Docker sur Linux&lt;/summary&gt;
+
+
+* Tous les fichiers gérés par Docker sont stockés dans le dossier ``/var/lib/docker``. 
+
+* Pour accéder à ce dossier, vous devez être root (c&#39;est-à-dire administrateur). Tapez la commande ``sudo su``.
+
+* Si vous tapez ``ls /var/lib/docker`` vous pouvez voir les dossiers stockés dans ce dossier. Vous verrez qu&#39;il y a des
+dossiers correspondant aux différents objets gérés par Docker (conteneurs, images, volumes et réseaux).
+
+* Pour localiser les fichiers d&#39;un conteneur spécifique, vous devez d&#39;abord obtenir l&#39;**identifiant du conteneur** en tapant ``docker container ls -a``.
+
+* Tapez la commande ``docker inspect &lt;container-id&gt;`` (remplacez ``&lt;container-id&gt;`` par l&#39;identifiant du conteneur que vous avez l&#39;intention d&#39;inspecter).
+
+* Localisez le champ ``UpperDir``. La valeur de ce champ est le chemin vers le dossier (appelons-le ``CONTAINER_DIR``) qui contient la couche conteneur (celle qui peut être modifiée).
+Ce doit être un chemin qui se termine par ``/diff``.
+
+* Si vous tapez ``cd CONTAINER_DIR`` (remplacez ``CONTAINER_DIR`` par la valeur du champ ``UpperDir``) vous pouvez enfin voir les fichiers stockés dans 
+votre conteneur. 
+
 &lt;/details&gt;
-&lt;/div&gt;
-&lt;p&gt;Dans le terminal invité &lt;em&gt;my-alpine&lt;/em&gt;, tapez &lt;code&gt;exit&lt;/code&gt;.
-Cela ferme le terminal invité et, par conséquent, arrête le conteneur.&lt;/p&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Remarque&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;L’arrêt du conteneur n’efface aucun des fichiers
-stockés dans le conteneur. La suppression du conteneur le fera.&lt;/p&gt;
-&lt;/div&gt;
-&lt;p&gt;Si vous souhaitez redémarrer le conteneur &lt;em&gt;my-alpine&lt;/em&gt;, vous pouvez
-utiliser la commande suivante :&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker container start -ai my-alpine&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;Cela ouvrira à nouveau le terminal invité du conteneur ;
-tapez &lt;code&gt;ls&lt;/code&gt; pour vérifier que
-la page Web que vous avez téléchargée auparavant est toujours là.&lt;/p&gt;
+
+
+
+:::
+
+Dans le terminal invité *my-alpine*, tapez ``exit``.
+Cela ferme le terminal invité et, par conséquent, arrête le conteneur.
+
+::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**Remarque**
+
+L&#39;arrêt du conteneur n&#39;efface aucun des fichiers
+stockés dans le conteneur. La suppression du conteneur le fera.
+
+:::
+
+Si vous souhaitez redémarrer le conteneur *my-alpine*, vous pouvez
+utiliser la commande suivante :
+
+``
+docker container start -ai my-alpine
+``
+
+Cela ouvrira à nouveau le terminal invité du conteneur ; 
+tapez ``ls`` pour vérifier que
+la page Web que vous avez téléchargée auparavant est toujours là.
+--&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;création-dimages&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
@@ -23279,7 +23354,7 @@ modifiés ou supprimés, et que des fichiers ne peuvent pas être ajoutés à un
 sera composé de toutes les couches en lecture seule de l’image et, par-dessus
 celles-ci, d’une couche en écriture (appelée &lt;strong&gt;couche conteneur&lt;/strong&gt;),
 où tous les nouveaux fichiers créés dans le conteneur seront écrits.
-Par exemple, la page Web que vous avez téléchargée dans l’exercice &lt;a href=&#34;#exr:wget-exo&#34;&gt;1.7&lt;/a&gt;
+Par exemple, la page Web que vous avez téléchargée dans l’exercice &lt;a href=&#34;#exr:wget-exo&#34;&gt;&lt;strong&gt;??&lt;/strong&gt;&lt;/a&gt;
 a été stockée dans la couche conteneur.&lt;/p&gt;
 &lt;div id=&#34;dockerfiles&#34; class=&#34;section level2&#34; number=&#34;2.1&#34;&gt;
 &lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.1&lt;/span&gt; Dockerfiles&lt;/h2&gt;
@@ -25156,48 +25231,62 @@ for the application?
 What about the volumes?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;scaling-a-service&#34; class=&#34;section level2&#34; number=&#34;1.5&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.5&lt;/span&gt; Scaling a service&lt;/h2&gt;
-&lt;p&gt;When we launch the application, we can specify the
-number of instances of each service.
-This is useful when we expect our application to be solicited by many users;
-the workload will be automatically balanced across all the instances of the service.&lt;/p&gt;
-&lt;p&gt;Let’s launch our application with 3 instances of the service &lt;code&gt;web&lt;/code&gt;:&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker compose up --scale web=3 -d&lt;/code&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;!-- ## Scaling a service
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.10  &lt;/strong&gt;&lt;/span&gt;
-Running the previous command results in an error.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Can you explain why?&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;What fix would you propose in file &lt;code&gt;docker-compose.yml&lt;/code&gt;?&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;You need to shut down the application before relaunching it again.
-In fact, even if we got an error, an instance of the &lt;code&gt;db&lt;/code&gt; service and
-an instance of the service &lt;code&gt;web&lt;/code&gt; are still running.&lt;/p&gt;
-&lt;/div&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Modify the file &lt;code&gt;docker-compose.yml&lt;/code&gt; and relaunch the application.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Run the following command and verify that you actually have three running instances of the
-service &lt;code&gt;web&lt;/code&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;code&gt;docker compose ps&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Try to connect to the application by using the three port numbers indicated in the output
-of the previous command.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Warning&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Don’t forget to shut down the application before you
-go on.&lt;/p&gt;
-&lt;/div&gt;
+When we launch the application, we can specify the 
+number of instances of each service. 
+This is useful when we expect our application to be solicited by many users; 
+the workload will be automatically balanced across all the instances of the service.
+
+Let&#39;s launch our application with 3 instances of the service ``web``:
+
+``
+docker compose up --scale web=3 -d
+``
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-10&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-10) &lt;/strong&gt;&lt;/span&gt;
+Running the previous command results in an error. 
+
+* Can you explain why? 
+
+* What fix would you propose in file ``docker-compose.yml``?
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+
+::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**Warning**
+
+You need to shut down the application before relaunching it again. 
+In fact, even if we got an error, an instance of the ``db`` service and 
+an instance of the service ``web`` are still running.
+
+:::
+
+* Modify the file ``docker-compose.yml`` and relaunch the application.
+
+* Run the following command and verify that you actually have three running instances of the 
+service ``web``.
+
+``
+docker compose ps
+``
+
+* Try to connect to the application by using the three port numbers indicated in the output
+of the previous command. 
+
+::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**Warning**
+
+Don&#39;t forget to shut down the application before you 
+go on.
+
+:::--&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;pushing-an-application&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
@@ -25205,13 +25294,14 @@ go on.&lt;/p&gt;
 &lt;p&gt;Once we have built an application, we might want to
 share it by pushing it to the DockerHub registry or any
 other container registry, be it private or public.&lt;/p&gt;
-&lt;div id=&#34;creating-an-account-on-dockerhub&#34; class=&#34;section level2&#34; number=&#34;2.1&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.1&lt;/span&gt; Creating an account on DockerHub&lt;/h2&gt;
-&lt;p&gt;You need to create an account on the &lt;a href=&#34;https://hub.docker.com/&#34; target=&#34;_blank&#34;&gt;DockerHub website&lt;/a&gt;
-in order to perform this activity.&lt;/p&gt;
+&lt;div class=&#34;infobox curiosity&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Good to know&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;When you installed Docker on your computer, you should have created an account on
+the &lt;a href=&#34;https://hub.docker.com/&#34; target=&#34;_blank&#34;&gt;DockerHub website&lt;/a&gt;.
+You’ll need this account for this activity.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;renaming-the-images&#34; class=&#34;section level2&#34; number=&#34;2.2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.2&lt;/span&gt; Renaming the images&lt;/h2&gt;
+&lt;div id=&#34;renaming-the-images&#34; class=&#34;section level2&#34; number=&#34;2.1&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.1&lt;/span&gt; Renaming the images&lt;/h2&gt;
 &lt;p&gt;In order to push your images to the registry, you need to rename them, so as the new name
 has the following structure:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;yourusername/image-name:image-tag&lt;/code&gt;&lt;/p&gt;
@@ -25222,8 +25312,8 @@ the two images &lt;code&gt;pet-store-web&lt;/code&gt; and &lt;code&gt;pet-store-
 &lt;p&gt;&lt;code&gt;docker tag pet-store-db quercinigia/pet-store-db:1.0&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;I chosen 1.0 as a tag, but feel free to pick another one.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;logging-in&#34; class=&#34;section level2&#34; number=&#34;2.3&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.3&lt;/span&gt; Logging in&lt;/h2&gt;
+&lt;div id=&#34;logging-in&#34; class=&#34;section level2&#34; number=&#34;2.2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.2&lt;/span&gt; Logging in&lt;/h2&gt;
 &lt;p&gt;You need to log in to your DockerHub account.&lt;/p&gt;
 &lt;details&gt;
 &lt;summary&gt;
@@ -25252,8 +25342,8 @@ look them up &lt;a href=&#34;https://www.techrepublic.com/article/how-to-setup-s
 &lt;/div&gt;
 &lt;/details&gt;
 &lt;/div&gt;
-&lt;div id=&#34;pushing-the-images&#34; class=&#34;section level2&#34; number=&#34;2.4&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.4&lt;/span&gt; Pushing the images&lt;/h2&gt;
+&lt;div id=&#34;pushing-the-images&#34; class=&#34;section level2&#34; number=&#34;2.3&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.3&lt;/span&gt; Pushing the images&lt;/h2&gt;
 &lt;p&gt;Once you’re successfully logged in, you can type the following
 commands in the terminal to push the two images of your application:&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;docker push YOUR-USERNAME/pet-store-web:1.0&lt;/code&gt;&lt;/p&gt;
@@ -27543,8 +27633,8 @@ Quel champ du fichier &lt;code&gt;docker-compose.yml&lt;/code&gt; vous donne cet
 &lt;li&gt;&lt;p&gt;Lorsque la création est terminée, vérifiez que les deux images correspondant aux deux services ont bien été créées (quelle commande docker vous faut-il ici ?).&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/div&gt;
-&lt;div id=&#34;exécutiuon-de-lapplication&#34; class=&#34;section level2&#34; number=&#34;1.3&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.3&lt;/span&gt; Exécutiuon de l’application&lt;/h2&gt;
+&lt;div id=&#34;exécution-de-lapplication&#34; class=&#34;section level2&#34; number=&#34;1.3&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.3&lt;/span&gt; Exécution de l’application&lt;/h2&gt;
 &lt;p&gt;Nous allons maintenant exécuter l’application via la commande suivante :&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;docker compose up&lt;/code&gt;&lt;/p&gt;
 &lt;details&gt;
@@ -27648,56 +27738,73 @@ L’arrêt de l’application supprime-t-il les réseaux créés pour l’applic
 Qu’en est-il des volumes ?&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;mise-à-léchelle-dun-service&#34; class=&#34;section level2&#34; number=&#34;1.5&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.5&lt;/span&gt; Mise à l’échelle d’un service&lt;/h2&gt;
-&lt;p&gt;Lorsque nous exécutons l’application, nous pouvons spécifier le nombre d’instances de chaque service.
-Ceci est utile lorsque nous nous attendons à ce que notre application soit sollicitée par de nombreux utilisateurs ;
-la charge de travail sera automatiquement équilibrée entre toutes les instances du service.&lt;/p&gt;
-&lt;p&gt;Nous pouvons exécuter 3 instances du service &lt;code&gt;web&lt;/code&gt; via la commande suivante :&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;docker compose up --scale web=3 -d&lt;/code&gt;&lt;/p&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+&lt;!-- ## Mise à l&#39;échelle d&#39;un service
 
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.10  &lt;/strong&gt;&lt;/span&gt;
-L’exécution de la commande précédente entraîne une erreur.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Pouvez-vous expliquer pourquoi ?&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Quelle correction au fichier &lt;code&gt;docker-compose.yml&lt;/code&gt; proposeriez-vous ?&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Attention&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;Vous devez arrêter l’application avant de la relancer.
-En fait, même si nous avons eu une erreur, une instance du service &lt;code&gt;db&lt;/code&gt; et une instance du service &lt;code&gt;web&lt;/code&gt; seront toujours en cours d’exécution.&lt;/p&gt;
-&lt;/div&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;p&gt;Modifiez le fichier &lt;code&gt;docker-compose.yml&lt;/code&gt; et relancez l’application.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Exécutez la commande suivante et vérifiez que vous avez bien trois instances du service &lt;code&gt;web&lt;/code&gt; en cours d’exécution.&lt;/p&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;code&gt;docker compose ps&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Essayez de vous connecter à l’application en utilisant les trois numéros de port indiqués dans la sortie de la commande précédente.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;div class=&#34;infobox warning&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Attention&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;N’oubliez pas d’arrêter l’application avant de continuer le TD.&lt;/p&gt;
-&lt;/div&gt;
+Lorsque nous exécutons l&#39;application, nous pouvons spécifier le nombre d&#39;instances de chaque service. 
+Ceci est utile lorsque nous nous attendons à ce que notre application soit sollicitée par de nombreux utilisateurs ; 
+la charge de travail sera automatiquement équilibrée entre toutes les instances du service.
+
+Nous pouvons exécuter 3 instances du service ``web`` via la commande suivante :
+
+``
+docker compose up --scale web=3 -d
+``
+
+::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
+**Exercise**
+
+\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-10&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-10) &lt;/strong&gt;&lt;/span&gt;
+L&#39;exécution de la commande précédente entraîne une erreur. 
+
+* Pouvez-vous expliquer pourquoi ? 
+
+* Quelle correction au fichier ``docker-compose.yml`` proposeriez-vous  ?
+&lt;/div&gt;\EndKnitrBlock{exercise}
+
+:::
+
+
+
+::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**Attention**
+
+Vous devez arrêter l&#39;application avant de la relancer. 
+En fait, même si nous avons eu une erreur, une instance du service ``db`` et une instance du service ``web`` seront toujours en cours d&#39;exécution. 
+
+:::
+
+* Modifiez le fichier ``docker-compose.yml`` et relancez l&#39;application.
+
+* Exécutez la commande suivante et vérifiez que vous avez bien trois instances du service ``web`` en cours d&#39;exécution. 
+
+
+``
+docker compose ps
+``
+
+* Essayez de vous connecter à l&#39;application en utilisant les trois numéros de port indiqués dans la sortie de la commande précédente.
+
+
+::: {.infobox .warning data-latex=&#34;{warning}&#34;}
+**Attention**
+
+N&#39;oubliez pas d&#39;arrêter l&#39;application avant de continuer le TD.
+
+:::--&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;pousser-une-application&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Pousser une application&lt;/h1&gt;
 &lt;p&gt;Une fois que nous avons créé une application, nous pourrions vouloir la
 partager en la poussant vers le registre DockerHub ou tout autre registre de conteneurs, qu’il soit privé ou public.&lt;/p&gt;
-&lt;div id=&#34;créer-un-compte-sur-dockerhub&#34; class=&#34;section level2&#34; number=&#34;2.1&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.1&lt;/span&gt; Créer un compte sur DockerHub&lt;/h2&gt;
-&lt;p&gt;Vous devez créer un compte sur le &lt;a href=&#34;https://hub.docker.com/&#34; target=&#34;_blank&#34;&gt;site web de DockerHub&lt;/a&gt;
-afin d’effectuer cette activité.&lt;/p&gt;
+&lt;div class=&#34;infobox curiosity&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Bon à savoir&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Lorsque vous avez installé Docker sur votre ordinateur, vous avez dû créer un compte sur
+le &lt;a href=&#34;https://hub.docker.com/&#34; target=&#34;_blank&#34;&gt;site DockerHub&lt;/a&gt;.
+Vous aurez besoin de ce compte pour cette activité.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;renommer-les-images&#34; class=&#34;section level2&#34; number=&#34;2.2&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.2&lt;/span&gt; Renommer les images&lt;/h2&gt;
+&lt;div id=&#34;renommer-les-images&#34; class=&#34;section level2&#34; number=&#34;2.1&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.1&lt;/span&gt; Renommer les images&lt;/h2&gt;
 &lt;p&gt;Afin de pousser vos images vers le registre, vous devez les renommer, de sorte que le nouveau nom
 ait la structure suivante :&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;votre-nom-d&#39;utilisateur/nom-de-l&#39;image:image-tag&lt;/code&gt;&lt;/p&gt;
@@ -27707,8 +27814,8 @@ les deux images &lt;code&gt;pet-store-web&lt;/code&gt; et &lt;code&gt;pet-store-
 &lt;p&gt;&lt;code&gt;docker tag pet-store-db quercinigia/pet-store-db:1.0&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;J’ai choisi 1.0 comme tag, mais n’hésitez pas à en choisir un autre.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;se-connecter&#34; class=&#34;section level2&#34; number=&#34;2.3&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.3&lt;/span&gt; Se connecter&lt;/h2&gt;
+&lt;div id=&#34;se-connecter&#34; class=&#34;section level2&#34; number=&#34;2.2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.2&lt;/span&gt; Se connecter&lt;/h2&gt;
 &lt;p&gt;Vous devez vous connecter à votre compte DockerHub.&lt;/p&gt;
 &lt;details&gt;
 &lt;summary&gt;
@@ -27735,8 +27842,8 @@ vous pouvez lire davantage &lt;a href=&#34;https://www.techrepublic.com/article/
 &lt;/div&gt;
 &lt;/details&gt;
 &lt;/div&gt;
-&lt;div id=&#34;pousser-les-images&#34; class=&#34;section level2&#34; number=&#34;2.4&#34;&gt;
-&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.4&lt;/span&gt; Pousser les images&lt;/h2&gt;
+&lt;div id=&#34;pousser-les-images&#34; class=&#34;section level2&#34; number=&#34;2.3&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;2.3&lt;/span&gt; Pousser les images&lt;/h2&gt;
 &lt;p&gt;Une fois que vous avez réussi à vous connecter, vous pouvez taper les commandes suivantes dans le terminal
 pour pousser les deux images de votre application :&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;docker push VOTRE-USERNAME/pet-store-web:1.0&lt;/code&gt;&lt;/p&gt;

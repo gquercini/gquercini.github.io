@@ -910,48 +910,62 @@ for the application?
 What about the volumes?</p>
 </div>
 </div>
-</div>
-<div id="scaling-a-service" class="section level2" number="1.5">
-<h2><span class="header-section-number">1.5</span> Scaling a service</h2>
-<p>When we launch the application, we can specify the
-number of instances of each service.
-This is useful when we expect our application to be solicited by many users;
-the workload will be automatically balanced across all the instances of the service.</p>
-<p>Let’s launch our application with 3 instances of the service <code>web</code>:</p>
-<p><code>docker compose up --scale web=3 -d</code></p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+<!-- ## Scaling a service
 
-<div class="exercise">
-<p><span id="exr:unnamed-chunk-10" class="exercise"><strong>Exercise 1.10  </strong></span>
-Running the previous command results in an error.</p>
-<ul>
-<li><p>Can you explain why?</p></li>
-<li><p>What fix would you propose in file <code>docker-compose.yml</code>?</p></li>
-</ul>
-</div>
-</div>
-<div class="infobox warning">
-<p><strong>Warning</strong></p>
-<p>You need to shut down the application before relaunching it again.
-In fact, even if we got an error, an instance of the <code>db</code> service and
-an instance of the service <code>web</code> are still running.</p>
-</div>
-<ul>
-<li><p>Modify the file <code>docker-compose.yml</code> and relaunch the application.</p></li>
-<li><p>Run the following command and verify that you actually have three running instances of the
-service <code>web</code>.</p></li>
-</ul>
-<p><code>docker compose ps</code></p>
-<ul>
-<li>Try to connect to the application by using the three port numbers indicated in the output
-of the previous command.</li>
-</ul>
-<div class="infobox warning">
-<p><strong>Warning</strong></p>
-<p>Don’t forget to shut down the application before you
-go on.</p>
-</div>
+When we launch the application, we can specify the 
+number of instances of each service. 
+This is useful when we expect our application to be solicited by many users; 
+the workload will be automatically balanced across all the instances of the service.
+
+Let's launch our application with 3 instances of the service ``web``:
+
+``
+docker compose up --scale web=3 -d
+``
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-10"><strong>(\#exr:unnamed-chunk-10) </strong></span>
+Running the previous command results in an error. 
+
+* Can you explain why? 
+
+* What fix would you propose in file ``docker-compose.yml``?
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+::: {.infobox .warning data-latex="{warning}"}
+**Warning**
+
+You need to shut down the application before relaunching it again. 
+In fact, even if we got an error, an instance of the ``db`` service and 
+an instance of the service ``web`` are still running.
+
+:::
+
+* Modify the file ``docker-compose.yml`` and relaunch the application.
+
+* Run the following command and verify that you actually have three running instances of the 
+service ``web``.
+
+``
+docker compose ps
+``
+
+* Try to connect to the application by using the three port numbers indicated in the output
+of the previous command. 
+
+::: {.infobox .warning data-latex="{warning}"}
+**Warning**
+
+Don't forget to shut down the application before you 
+go on.
+
+:::-->
 </div>
 </div>
 <div id="pushing-an-application" class="section level1" number="2">
@@ -959,13 +973,14 @@ go on.</p>
 <p>Once we have built an application, we might want to
 share it by pushing it to the DockerHub registry or any
 other container registry, be it private or public.</p>
-<div id="creating-an-account-on-dockerhub" class="section level2" number="2.1">
-<h2><span class="header-section-number">2.1</span> Creating an account on DockerHub</h2>
-<p>You need to create an account on the <a href="https://hub.docker.com/" target="_blank">DockerHub website</a>
-in order to perform this activity.</p>
+<div class="infobox curiosity">
+<p><strong>Good to know</strong></p>
+<p>When you installed Docker on your computer, you should have created an account on
+the <a href="https://hub.docker.com/" target="_blank">DockerHub website</a>.
+You’ll need this account for this activity.</p>
 </div>
-<div id="renaming-the-images" class="section level2" number="2.2">
-<h2><span class="header-section-number">2.2</span> Renaming the images</h2>
+<div id="renaming-the-images" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Renaming the images</h2>
 <p>In order to push your images to the registry, you need to rename them, so as the new name
 has the following structure:</p>
 <p><code>yourusername/image-name:image-tag</code></p>
@@ -976,8 +991,8 @@ the two images <code>pet-store-web</code> and <code>pet-store-db</code> with the
 <p><code>docker tag pet-store-db quercinigia/pet-store-db:1.0</code></p>
 <p>I chosen 1.0 as a tag, but feel free to pick another one.</p>
 </div>
-<div id="logging-in" class="section level2" number="2.3">
-<h2><span class="header-section-number">2.3</span> Logging in</h2>
+<div id="logging-in" class="section level2" number="2.2">
+<h2><span class="header-section-number">2.2</span> Logging in</h2>
 <p>You need to log in to your DockerHub account.</p>
 <details>
 <summary>
@@ -1006,8 +1021,8 @@ look them up <a href="https://www.techrepublic.com/article/how-to-setup-secure-c
 </div>
 </details>
 </div>
-<div id="pushing-the-images" class="section level2" number="2.4">
-<h2><span class="header-section-number">2.4</span> Pushing the images</h2>
+<div id="pushing-the-images" class="section level2" number="2.3">
+<h2><span class="header-section-number">2.3</span> Pushing the images</h2>
 <p>Once you’re successfully logged in, you can type the following
 commands in the terminal to push the two images of your application:</p>
 <p><code>docker push YOUR-USERNAME/pet-store-web:1.0</code></p>

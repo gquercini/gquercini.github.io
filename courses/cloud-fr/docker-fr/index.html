@@ -539,7 +539,7 @@
   
   <div class="docs-toc-item active">
 
-    <a onclick=open_menu_on_click(this) id="docker-tutorial-fr" class="docs-toc-link" href="/courses/cloud-fr/docker-fr/">Atelier pratique sur Docker</a>
+    <a onclick=open_menu_on_click(this) id="docker-tutorial-fr" class="docs-toc-link" href="/courses/cloud-fr/docker-fr/">Tutoriel sur Docker</a>
     
 
   </div>
@@ -783,84 +783,120 @@ De plus, nous n’avons pas spécifié de commande à exécuter dans le terminal
 <span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 1.6  </strong></span>Qu’obtenez-vous ?
 </div>
 </div>
-</div>
-<div id="démarrer-et-arrêter-les-conteneurs." class="section level2" number="1.2">
-<h2><span class="header-section-number">1.2</span> Démarrer et arrêter les conteneurs.</h2>
-<p><code>docker run</code> est un raccourci pour deux commandes Docker, à savoir
-<code>docker create</code>, qui crée un conteneur à partir d’une image,
-et <code>docker start</code>, qui démarre le conteneur après sa création.</p>
-<p>Supposons maintenant que vous souhaitiez télécharger une page Web
-en utilisant Linux Alpine.
-Vous pouvez utiliser la commande Linux <code>wget</code> suivie de l’URL de la page
-que vous voulez télécharger.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercice</strong></p>
+<!-- ## Démarrer et arrêter les conteneurs.
 
-<div class="exercise">
-<p><span id="exr:wget-exo" class="exercise"><strong>Exercise 1.7  </strong></span>En utilisant le terminal invité
-dans le conteneur <em>my-alpine</em>,
-téléchargez
-<a href="https://www.centralesupelec.fr/fr/presentation" target="_blank">cette page Web</a>.</p>
-<div class="last-child">
-<ul>
-<li>Où la page Web sera-t-elle sauvegardée ? Sur l’ordinateur hôte ou dans le conteneur ?</li>
-</ul>
-</div>
-</div>
-</div>
+``docker run`` est un raccourci pour deux commandes Docker, à savoir
+``docker create``, qui crée un conteneur à partir d'une image, 
+et ``docker start``, qui démarre le conteneur après sa création.
+
+Supposons maintenant que vous souhaitiez télécharger une page Web 
+en utilisant Linux Alpine.
+Vous pouvez utiliser la commande Linux ``wget`` suivie de l'URL de la page 
+que vous voulez télécharger.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercice**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:wget-exo"><strong>(\#exr:wget-exo) </strong></span>En utilisant le terminal invité 
+dans le conteneur *my-alpine*,
+téléchargez 
+[cette page Web](https://www.centralesupelec.fr/fr/presentation){target="_blank"}.
+
+::::: {.last-child}
+* Où la page Web sera-t-elle sauvegardée ? Sur l'ordinateur hôte ou dans le conteneur ?
+:::::
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+ 
+
 <details>
-<summary>
-Voulez-vous copier le fichier téléchargé vers votre ordinateur ?
-</summary>
-<p>Pour copier le fichier <code>presentation</code> vers votre dossier de travail, tapez la commande suivante dans
-le terminal de l’hôte :</p>
-<pre><code>docker cp &lt;containerId&gt;:/presentation .</code></pre>
-<p>Dans la commande précédente, remplacez <code>&lt;containerId&gt;</code> par l’identifiant de votre conteneur. Vous pouvez obtenir
-l’identifiant du conteneur à partir de la sortie de la commande <code>docker container ls -a</code>.</p>
+ <summary>Voulez-vous copier  le fichier téléchargé vers votre ordinateur ?</summary>
+
+ Pour copier le fichier ``presentation`` vers votre dossier de travail, tapez la commande suivante dans 
+ le terminal de l'hôte :
+
+  ```
+ docker cp <containerId>:/presentation .
+  ```
+
+ Dans la commande précédente, remplacez ``<containerId>`` par l'identifiant de votre conteneur. Vous pouvez obtenir 
+ l'identifiant du conteneur à partir de la sortie de la commande ``docker container ls -a``.
+
 </details>
-<div class="infobox warning">
-<p><strong>Où sont stockés les fichiers du conteneur ?</strong></p>
+
+::: {.infobox .warning data-latex="{warning}"}
+**Où sont stockés les fichiers du conteneur ?**
+
 <details>
-<summary>
-Si vous utilisez MacOS ou Windows
-</summary>
-<p>Les fichiers gérés par Docker ne sont pas stockés directement sur votre ordinateur, mais
-dans la machine virtuelle Linux installée et exploitée par Docker Desktop (n’oubliez pas que Docker a toujours besoin de Linux pour être exécuté).</p>
-<p>Par conséquent, vous devez ouvrir un terminal à l’intérieur de cette machine virtuelle Linux en tapant la commande suivante :</p>
-<p><code>docker run -it --rm --privileged --pid=host justincormack/nsenter1</code></p>
-<p>Une fois le terminal ouvert, vous pouvez suivre les instructions données ci-dessous pour les utilisateurs de Linux.</p>
+<summary>Si vous utilisez MacOS ou Windows</summary>
+
+Les fichiers gérés par Docker ne sont pas stockés directement sur votre ordinateur, mais 
+dans la machine virtuelle Linux installée et exploitée par Docker Desktop (n'oubliez pas que Docker a toujours besoin de Linux pour être exécuté).
+
+Par conséquent, vous devez ouvrir un terminal à l'intérieur de cette machine virtuelle Linux en tapant la commande suivante :
+
+``
+docker run -it --rm --privileged --pid=host justincormack/nsenter1
+``
+
+Une fois le terminal ouvert, vous pouvez suivre les instructions données ci-dessous pour les utilisateurs de Linux.
+
 </details>
+
+
 <details>
-<summary>
-Si vous utilisez Docker sur Linux
-</summary>
-<ul>
-<li><p>Tous les fichiers gérés par Docker sont stockés dans le dossier <code>/var/lib/docker</code>.</p></li>
-<li><p>Pour accéder à ce dossier, vous devez être root (c’est-à-dire administrateur). Tapez la commande <code>sudo su</code>.</p></li>
-<li><p>Si vous tapez <code>ls /var/lib/docker</code> vous pouvez voir les dossiers stockés dans ce dossier. Vous verrez qu’il y a des
-dossiers correspondant aux différents objets gérés par Docker (conteneurs, images, volumes et réseaux).</p></li>
-<li><p>Pour localiser les fichiers d’un conteneur spécifique, vous devez d’abord obtenir l’<strong>identifiant du conteneur</strong> en tapant <code>docker container ls -a</code>.</p></li>
-<li><p>Tapez la commande <code>docker inspect &lt;container-id&gt;</code> (remplacez <code>&lt;container-id&gt;</code> par l’identifiant du conteneur que vous avez l’intention d’inspecter).</p></li>
-<li><p>Localisez le champ <code>UpperDir</code>. La valeur de ce champ est le chemin vers le dossier (appelons-le <code>CONTAINER_DIR</code>) qui contient la couche conteneur (celle qui peut être modifiée).
-Ce doit être un chemin qui se termine par <code>/diff</code>.</p></li>
-<li><p>Si vous tapez <code>cd CONTAINER_DIR</code> (remplacez <code>CONTAINER_DIR</code> par la valeur du champ <code>UpperDir</code>) vous pouvez enfin voir les fichiers stockés dans
-votre conteneur.</p></li>
-</ul>
+<summary>Si vous utilisez Docker sur Linux</summary>
+
+
+* Tous les fichiers gérés par Docker sont stockés dans le dossier ``/var/lib/docker``. 
+
+* Pour accéder à ce dossier, vous devez être root (c'est-à-dire administrateur). Tapez la commande ``sudo su``.
+
+* Si vous tapez ``ls /var/lib/docker`` vous pouvez voir les dossiers stockés dans ce dossier. Vous verrez qu'il y a des
+dossiers correspondant aux différents objets gérés par Docker (conteneurs, images, volumes et réseaux).
+
+* Pour localiser les fichiers d'un conteneur spécifique, vous devez d'abord obtenir l'**identifiant du conteneur** en tapant ``docker container ls -a``.
+
+* Tapez la commande ``docker inspect <container-id>`` (remplacez ``<container-id>`` par l'identifiant du conteneur que vous avez l'intention d'inspecter).
+
+* Localisez le champ ``UpperDir``. La valeur de ce champ est le chemin vers le dossier (appelons-le ``CONTAINER_DIR``) qui contient la couche conteneur (celle qui peut être modifiée).
+Ce doit être un chemin qui se termine par ``/diff``.
+
+* Si vous tapez ``cd CONTAINER_DIR`` (remplacez ``CONTAINER_DIR`` par la valeur du champ ``UpperDir``) vous pouvez enfin voir les fichiers stockés dans 
+votre conteneur. 
+
 </details>
-</div>
-<p>Dans le terminal invité <em>my-alpine</em>, tapez <code>exit</code>.
-Cela ferme le terminal invité et, par conséquent, arrête le conteneur.</p>
-<div class="infobox warning">
-<p><strong>Remarque</strong></p>
-<p>L’arrêt du conteneur n’efface aucun des fichiers
-stockés dans le conteneur. La suppression du conteneur le fera.</p>
-</div>
-<p>Si vous souhaitez redémarrer le conteneur <em>my-alpine</em>, vous pouvez
-utiliser la commande suivante :</p>
-<p><code>docker container start -ai my-alpine</code></p>
-<p>Cela ouvrira à nouveau le terminal invité du conteneur ;
-tapez <code>ls</code> pour vérifier que
-la page Web que vous avez téléchargée auparavant est toujours là.</p>
+
+
+
+:::
+
+Dans le terminal invité *my-alpine*, tapez ``exit``.
+Cela ferme le terminal invité et, par conséquent, arrête le conteneur.
+
+::: {.infobox .warning data-latex="{warning}"}
+**Remarque**
+
+L'arrêt du conteneur n'efface aucun des fichiers
+stockés dans le conteneur. La suppression du conteneur le fera.
+
+:::
+
+Si vous souhaitez redémarrer le conteneur *my-alpine*, vous pouvez
+utiliser la commande suivante :
+
+``
+docker container start -ai my-alpine
+``
+
+Cela ouvrira à nouveau le terminal invité du conteneur ; 
+tapez ``ls`` pour vérifier que
+la page Web que vous avez téléchargée auparavant est toujours là.
+-->
 </div>
 </div>
 <div id="création-dimages" class="section level1" number="2">
@@ -873,7 +909,7 @@ modifiés ou supprimés, et que des fichiers ne peuvent pas être ajoutés à un
 sera composé de toutes les couches en lecture seule de l’image et, par-dessus
 celles-ci, d’une couche en écriture (appelée <strong>couche conteneur</strong>),
 où tous les nouveaux fichiers créés dans le conteneur seront écrits.
-Par exemple, la page Web que vous avez téléchargée dans l’exercice <a href="#exr:wget-exo">1.7</a>
+Par exemple, la page Web que vous avez téléchargée dans l’exercice <a href="#exr:wget-exo"><strong>??</strong></a>
 a été stockée dans la couche conteneur.</p>
 <div id="dockerfiles" class="section level2" number="2.1">
 <h2><span class="header-section-number">2.1</span> Dockerfiles</h2>

@@ -901,85 +901,122 @@ Moreover, we didn’t specify any command to run in the guest terminal.</p>
 <span id="exr:unnamed-chunk-10" class="exercise"><strong>Exercise 1.6  </strong></span>What do you obtain?
 </div>
 </div>
-</div>
-<div id="starting-and-stopping-containers." class="section level2" number="1.2">
-<h2><span class="header-section-number">1.2</span> Starting and stopping containers.</h2>
-<p><code>docker run</code> is a shorthand for two Docker commands, namely
-<code>docker create</code>, that creates a container from an image,
-and <code>docker start</code>, that starts the container after its creation.</p>
-<p>Suppose now that you want to download a Web page
-by using Linux Alpine.
-You can use the Linux command <code>wget</code> followed by the URL of the page
-that you want to download.</p>
-<div class="infobox exercisebox">
-<p><strong>Exercise</strong></p>
+<!-- ## Starting and stopping containers.
 
-<div class="exercise">
-<p><span id="exr:wget-exo" class="exercise"><strong>Exercise 1.7  </strong></span>By using the guest terminal
-in the container <em>my-alpine</em>,
-download
-<a href="https://www.centralesupelec.fr/fr/presentation" target="_blank">this Web page</a>.</p>
-<div class="last-child">
-<ul>
-<li>Where will the Web page be saved? The host computer or the container?</li>
-</ul>
-</div>
-</div>
-</div>
+``docker run`` is a shorthand for two Docker commands, namely
+``docker create``, that creates a container from an image, 
+and ``docker start``, that starts the container after its creation.
+
+Suppose now that you want to download a Web page 
+by using Linux Alpine.
+You can use the Linux command ``wget`` followed by the URL of the page 
+that you want to download.
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercise**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:wget-exo"><strong>(\#exr:wget-exo) </strong></span>By using the guest terminal 
+in the container *my-alpine*,
+download 
+[this Web page](https://www.centralesupelec.fr/fr/presentation){target="_blank"}.
+
+::::: {.last-child}
+* Where will the Web page be saved? The host computer or the container?
+:::::
+</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+
 <details>
-<summary>
-Want to copy the donwloaded file from the container to your computer?
-</summary>
-<p>To copy the file <code>presentation</code> to your working directory, type the following command in
-the host terminal:</p>
-<pre><code>  docker cp &lt;containerId&gt;:/presentation .</code></pre>
-<p>In the previous command, replace <code>&lt;containerId&gt;</code> with the identifier of your container. You can obtain
-the identifier of the container from the output of the command <code>docker container ls -a</code>.</p>
+  <summary>Want to copy the donwloaded file from the container to your computer?</summary>
+
+  To copy the file ``presentation`` to your working directory, type the following command in 
+  the host terminal:
+
+  ```
+  docker cp <containerId>:/presentation .
+  ```
+
+  In the previous command, replace ``<containerId>`` with the identifier of your container. You can obtain 
+  the identifier of the container from the output of the command ``docker container ls -a``.
+
 </details>
-<div class="infobox warning">
-<p><strong>Where are the containers files stored?</strong></p>
+
+
+::: {.infobox .warning data-latex="{warning}"}
+**Where are the containers files stored?**
+
 <details>
-<summary>
-If you use MacOS or Windows
-</summary>
-<p>The files managed by Docker are not stored directly in your computer, but
-in the Linux virtual machine installed and operated by Docker Desktop (remember, Docker always need Linux to be executed).</p>
-<p>Therefore, you need to open a terminal inside that Linux virtual machine by typing the following command:</p>
-<pre><code>docker run -it --rm --privileged --pid=host justincormack/nsenter1</code></pre>
-<p>Once the terminal is opened, you can follow the instructions given below for Linux users.</p>
+<summary>If you use MacOS or Windows</summary>
+
+The files managed by Docker are not stored directly in your computer, but 
+in the Linux virtual machine installed and operated by Docker Desktop (remember, Docker always need Linux to be executed).
+
+Therefore, you need to open a terminal inside that Linux virtual machine by typing the following command:
+
+```
+docker run -it --rm --privileged --pid=host justincormack/nsenter1
+```
+
+Once the terminal is opened, you can follow the instructions given below for Linux users.
+
 </details>
+
 <details>
-<summary>
-If you use Docker on Linux
-</summary>
-<ul>
-<li><p>All files managed by Docker are stored under folder <code>/var/lib/docker</code>.</p></li>
-<li><p>To access that folder, you need to be root (i.e., administrator). Type the command <code>sudo su</code>.</p></li>
-<li><p>If you type <code>ls /var/lib/docker</code> you can look at the folders stored under this directory. You’ll see that there are
-folders corresponding to the different objects managed by Docker (containers, images, volumes and networks).</p></li>
-<li><p>To locate the files of a specific container, you first need to get the <strong>container identifier</strong> by typing <code>docker container ls -a</code>.</p></li>
-<li><p>Type the command <code>docker inspect &lt;container-id&gt;</code> (replace <code>&lt;container-id&gt;</code> with the identifier of the container that you intend to inspect).</p></li>
-<li><p>Locate the field <code>UpperDir</code>. The value of this field is the path to the directory (let’s call it <code>CONTAINER_DIR</code>) that contains the upper layer of the container (the writable layer).
-It should be a path that ends by <code>/diff</code>.</p></li>
-<li><p>If you type <code>cd CONTAINER_DIR</code> (replace <code>CONTAINER_DIR</code> with the value of the field <code>UpperDir</code>) you can finally see the files stored in
-your container.</p></li>
-</ul>
+<summary>If you use Docker on Linux</summary>
+
+
+* All files managed by Docker are stored under folder ``/var/lib/docker``. 
+
+* To access that folder, you need to be root (i.e., administrator). Type the command ``sudo su``.
+
+* If you type ``ls /var/lib/docker`` you can look at the folders stored under this directory. You'll see that there are 
+folders corresponding to the different objects managed by Docker (containers, images, volumes and networks).
+
+* To locate the files of a specific container, you first need to get the **container identifier** by typing ``docker container ls -a``.
+
+* Type the command ``docker inspect <container-id>`` (replace ``<container-id>`` with the identifier of the container that you intend to inspect).
+
+* Locate the field ``UpperDir``. The value of this field is the path to the directory (let's call it ``CONTAINER_DIR``) that contains the upper layer of the container (the writable layer).
+It should be a path that ends by ``/diff``.
+
+* If you type ``cd CONTAINER_DIR`` (replace ``CONTAINER_DIR`` with the value of the field ``UpperDir``) you can finally see the files stored in 
+your container. 
+
 </details>
-</div>
-<p>In <em>my-alpine</em> guest terminal type <code>exit</code>.
+
+
+
+
+:::
+
+In *my-alpine* guest terminal type ``exit``.
 This closes the guest terminal and, as a result, stops the
-container.</p>
-<div class="infobox warning">
-<p><strong>NOTICE</strong></p>
-<p>Stopping the container will not erase any of the files
-stored in the container. Removing the container will.</p>
-</div>
-<p>If you want to start the container <em>my-alpine</em> again, you can
-use the following command:</p>
-<p><code>docker container start -ai my-alpine</code></p>
-<p>This will open the guest terminal of the container again;
-type <code>ls</code> to verify that
-the Web page that you downloaded before is still there.</p>
+container.
+
+::: {.infobox .warning data-latex="{warning}"}
+**NOTICE**
+
+Stopping the container will not erase any of the files
+stored in the container. Removing the container will.
+
+:::
+
+If you want to start the container *my-alpine* again, you can
+use the following command:
+
+``
+docker container start -ai my-alpine
+``
+
+This will open the guest terminal of the container again; 
+type ``ls`` to verify that
+the Web page that you downloaded before is still there. 
+
 <!-- <details>
 <summary>Homework (optional)</summary>
 
@@ -1072,7 +1109,9 @@ and then:
 When you're done, you can simply type the command `exit` to quit 
 the guest terminal and stop the container.
 
-</details> -->
+</details> 
+
+-->
 </div>
 </div>
 <div id="creating-images" class="section level1" number="2">
@@ -1085,7 +1124,7 @@ modified or deleted, nor can files be added to a layer.</p>
 will be composed of all the image read-only layers and, on top of
 them, a writable layer (termed the <strong>container layer</strong>),
 where all the new files created in the container will be written.
-For example, the Web page that you downloaded in Exercise <a href="#exr:wget-exo">1.7</a>
+For example, the Web page that you downloaded in Exercise <a href="#exr:wget-exo"><strong>??</strong></a>
 were stored in the writable layer of that container.</p>
 <!--## Interactive image creation
 
