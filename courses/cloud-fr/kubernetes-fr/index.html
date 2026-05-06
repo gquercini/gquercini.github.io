@@ -665,6 +665,23 @@ répondez aux deux questions suivantes :</p>
 </ol>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<ul>
+<li><p>Le dossier existe déjà dans l’image de base.</p></li>
+<li><p>En regardant la documentation, nous apprenons que
+nous pouvons placer n’importe quel script d’initialisation dans ce dossier.
+En d’autres termes, au démarrage, la base de données exécutera les requêtes SQL contenues dans le fichier <code>init-db.sql</code>.
+afin que la base soit alimentée en nouvelles données.</p></li>
+</ul>
+<p>La documentation nous apprend également que le script n’est pas exécuté
+si le dossier de données n’est pas vide. Cela signifie que les bases de données existantes
+ne seront pas touchées.</p>
+</div>
+</details>
 <p>Les trois dernières lignes du fichier Docker contiennent un mot-clé (<code>ENV</code>)
 que nous n’avons jamais rencontré auparavant.</p>
 <div class="infobox exercisebox">
@@ -676,6 +693,24 @@ Lisez à nouveau la documentation de l’image <code>postgres</code>
 et essayez d’expliquer la signification des trois dernières lignes du Dockerfile.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Ces lignes définissent la valeur de trois <strong>variables d’environnement</strong>, utiles
+pour passer certains paramètres au gestionnaire de base de données (SGBD).
+La documentation nous apprend que :</p>
+<ul>
+<li><p><code>POSTGRES_USER</code> est le nom d’utilisateur du SGBD. S’il n’est pas défini,
+l’utilisateur par défaut est <code>postgres</code>.</p></li>
+<li><p><code>POSTGRES_PASSWORD</code> est le mot de passe associé à l’utilisateur.
+C’est la seule variable obligatoire.</p></li>
+<li><p><code>POSTGRES_DB</code> est le nom donné à la base de données.
+S’il n’est pas spécifié, le nom de la base de données sera le même que le nom d’utilisateur.</p></li>
+</ul>
+</div>
+</details>
 <div class="infobox curiosity">
 <p><strong>Docker secrets</strong></p>
 <p>La spécification de données sensibles
@@ -774,6 +809,18 @@ Quel champ indique à Docker Compose où trouver le fichier
 Dockerfile des deux services ?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>La valeur du champ <code>build</code> est le nom du dossier qui contient le Dockefile.
+Pour le service <code>web</code>, il s’agit du dossier
+<code>web</code> ; pour le service <code>db</code>, il s’agit du dossier <code>database</code>.
+Tous les chemins sont relatifs à la position du fichier <code>docker-compose.yaml</code>
+lui-même.</p>
+</div>
+</details>
 <p>Quand on créera l’application en utilisant la configuration spécifiée dans le fichier <code>docker-compose.yaml</code>,
 on créera deux images, une pour chaque service.</p>
 <div class="infobox exercisebox">
@@ -785,6 +832,18 @@ Quel sera le nom des deux images ?
 Quel champ du fichier <code>docker-compose.yaml</code> vous donne cette information ?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Le nom de l’image correspondant au service <code>web</code>
+sera <code>pet-store-web</code>.</p>
+<p>Le nom de l’image correspondant au service <code>db</code>
+sera <code>pet-store-db</code>.</p>
+<p>Cette information est donnée par le champ <code>image</code>.</p>
+</div>
+</details>
 </div>
 <div id="création-de-lapplication" class="section level2" number="1.2">
 <h2><span class="header-section-number">1.2</span> Création de l’application</h2>
@@ -800,6 +859,14 @@ Quel champ du fichier <code>docker-compose.yaml</code> vous donne cette informat
 <li><p>Pendant la création, vous pourriez lire un avertissement de <code>npm</code>. Ignorez-le.</p></li>
 <li><p>Lorsque la création est terminée, vérifiez que les deux images correspondant aux deux services ont bien été créées (quelle commande docker vous faut-il ici ?).</p></li>
 </ul>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>docker images</p>
+</div>
+</details>
 </div>
 <div id="exécution-de-lapplication" class="section level2" number="1.3">
 <h2><span class="header-section-number">1.3</span> Exécution de l’application</h2>
@@ -843,6 +910,17 @@ ouvrez un nouveau terminal ou un nouvel onglet dans la fenêtre du terminal actu
 Vérifiez que le réseau et les volumes associés à l’application ont bien été créés.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Saisissez les commandes :</p>
+<p><code>docker volume ls</code></p>
+<p>et</p>
+<p><code>docker network ls</code></p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -851,6 +929,21 @@ Vérifiez que le réseau et les volumes associés à l’application ont bien é
 Combien de conteneurs seront associés à l’application ?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Chaque <strong>image</strong> correspond à un <strong>service</strong>.
+Ici, nous en avons deux.
+Chaque <strong>conteneur</strong> correspond à une <strong>instance de service</strong>.</p>
+<p>Nous n’avons spécifié aucun paramètre lors du lancement de l’application,
+donc par défaut une instance de chaque service est exécutée.</p>
+<p>Nous nous attendons donc à avoir <strong>deux conteneurs</strong> associés à l’application :
+un conteneur pour le service <code>web</code> et un pour le service
+<code>db</code>.</p>
+</div>
+</details>
 <p>Vous pouvez vérifier la réponse à la question précédente en saisissant la commande suivante :</p>
 <center>
 <p><code>docker compose ps</code></p>
@@ -866,6 +959,21 @@ Dans la sortie de la commande <code>docker compose ps</code>, pouvez-vous expliq
 <p><code>0.0.0.0:8080-&gt;3000/tcp</code></p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>La notation 8080-&gt;3000 signifie que le port
+8080 de l’ordinateur hôte est <strong>publiée et liée</strong>
+au port 3000 du conteneur.
+Plus précisément,
+lorsqu’une application se connecte au port 8080 de l’ordinateur hôte,
+la connexion est redirigée vers le port 3000 du conteneur,</p>
+<p>L’adresse IP 0.0.0.0 signifie que nous pouvons nous connecter au conteneur en
+utilisant n’importe quelle adresse IP associée à l’ordinateur hôte.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -893,6 +1001,19 @@ Si vous utilisez une machine virtuelle Linux avec Multipass
 </details>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p><code>http://localhost:8080</code> ou <code>http://127.0.0.1:8080/</code>.</p>
+<p>Dans les paramètres réseau de votre ordinateur, vous pouvez également
+obtenir l’adresse IP associée par le serveur DHCP de votre réseau local et utiliser cette
+adresse pour vous connecter à l’application
+à partir d’un autre appareil <strong>connecté au même réseau</strong>
+(par exemple, votre téléphone portable).</p>
+</div>
+</details>
 <div class="infobox warning">
 <p><strong>Attention</strong></p>
 <p>Si vous voulez voir les photos des chats, vous devez ajouter
@@ -915,6 +1036,23 @@ L’arrêt de l’application supprime-t-il les réseaux créés pour l’applic
 Qu’en est-il des volumes ?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Saisissez la commande :</p>
+<p><code>docker network ls</code></p>
+<p>et vous verrez que le réseau <code>backend</code> n’existe plus.</p>
+<p>Saisissez la commande :</p>
+<p><code>docker volume ls</code></p>
+<p>et vous verrez que le volume <code>pet-store_pets-data</code> est encore là.</p>
+<p>Par défaut, les volumes ne sont pas supprimés, afin d’éviter le risque d’effacer définitivement des données qui pourraient encore être utiles plus tard.
+Si vous souhaitez supprimer les volumes lors de l’arrêt de l’application,
+vous pouvez saisir la commande suivante :</p>
+<p><code>docker compose down -v</code></p>
+</div>
+</details>
 <!-- ## Mise à l'échelle d'un service
 
 Lorsque nous exécutons l'application, nous pouvons spécifier le nombre d'instances de chaque service. 
@@ -941,6 +1079,22 @@ L'exécution de la commande précédente entraîne une erreur.
 :::
 
 
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex="{exercisebox}"}
+
+* Nous essayons de lier trois instances au port 5000 de l'ordinateur hôte. Ce n'est pas 
+possible.
+
+* Dans la section ``ports`` du fichier 
+``docker-compose.yaml`` nous devons supprimer 5000 et nous ne laissons que 3000. De cette façon, à chaque fois que nous lançons un conteneur, un port aléatoire sera choisi sur l'ordinateur hôte pour le lier au port 3000 du conteneur. 
+
+
+
+:::
+
+</details>
 
 ::: {.infobox .warning data-latex="{warning}"}
 **Attention**
@@ -1213,6 +1367,19 @@ Saisissez l’URL <a href="http://localhost:80" target="_blank"><code>http://loc
 </ul>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<ul>
+<li><p>La connexion est refusée à la fois lorsque l’on utilise <code>localhost</code> et l’adresse IP du <code>Pod</code>.</p></li>
+<li><p>Afin de se connecter au <code>Pod</code>, nous devons
+définir un objet <strong>Service</strong> dans Kubernetes, auquel Kubernetes associe une adresse IP
+que les applications clientes peuvent utiliser.</p></li>
+</ul>
+</div>
+</details>
 <p>La configuration suivante définit un service de type <strong>LoadBalancer</strong>:</p>
 <pre><code>apiVersion: v1
 kind: Service
@@ -1242,6 +1409,19 @@ que les applications clientes (externes au cluster Kubernetes) peuvent utiliser 
 Qu’est-ce le champ <code>selector</code> dans la définition du Service ?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Le <code>selector</code> est utilisé en interne par Kubernetes pour identifier les <code>Pods</code> qui
+sont les instances du service.
+Si vous regardez la spécification du <code>Pod</code> ci-dessus, le champ <code>metadata</code>
+contient un champ <code>labels</code>.
+L’une des étiquettes est <code>app : web-pod</code> ;
+le <code>selector</code> correspond à cette étiquette.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -1250,6 +1430,17 @@ Qu’est-ce le champ <code>selector</code> dans la définition du Service ?</p>
 Quelle est la signification de <code>port</code> et <code>targetPort</code> ?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<ul>
+<li><p><code>port</code> spécifie le numéro de port où le Service sera disponible (celui utilisé par les clients externes).</p></li>
+<li><p><code>targetPort</code> spécifie le numéro de port ouvert sur l’interface réseau du <code>Pod</code>.</p></li>
+</ul>
+</div>
+</details>
 <div class="infobox activitybox">
 <p><strong>Activité</strong></p>
 <ul>
@@ -1285,6 +1476,22 @@ commande <code>kubectl get svc/nginx-service</code>.</p>
 Pourquoi le service est-il associé à deux adresses IP (CLUSTER-IP et EXTERNAL-IP)?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Lorsqu’on demande à Kubernetes de créer un service de type <code>LoadBalancer</code>,
+un service interne de type <code>ClusterIP</code> est également mis en place automatiquement.
+Les pods qui assurent le traitement des requêtes sont exposés derrière ce service <code>ClusterIP</code>.
+Ainsi, la valeur CLUSTER-IP correspond à l’adresse IP
+du service interne au cluster,
+tandis que la valeur EXTERNAL-IP désigne l’adresse IP du LoadBalancer,
+utilisée par les applications externes pour accéder aux fonctionnalités fournies par les pods.
+Par conséquent, en saisissant dans un navigateur cette adresse EXTERNAL-IP, suivie du port 8080,
+on doit pouvoir afficher la page d’accueil de Nginx.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -1295,6 +1502,22 @@ La colonne PORT(S) devrait indiquer une valeur du type <code>8080:31355</code>
 Pouvez-vous expliquer à quoi correspond ce port ?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Lorsque nous demandons la création d’un service de type <code>LoadBalancer</code>, Kubernetes
+crée aussi un service de type <code>NodePort</code>.
+Le port 31355 est ouvert sur chaque nœud du cluster Kubernetes (d’où le nom de <code>NodePort</code>).</p>
+<p>En pratique, lorsque nous saisissons <code>http://localhost:8080</code>,
+l’équilibreur de charge le remplace par l’adresse IP
+d’un nœud du cluster Kubernetes, suivie du numéro de port 31355.
+Lorsque le <code>kube-proxy</code> de ce nœud reçoit cette demande,
+il la transmet au service <code>ClusterIP</code> approprié.</p>
+<p>Ce mécanisme est illustré à la diapositive 80 du cours 3.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -1312,6 +1535,20 @@ Supprimez le <code>Pod</code> avec la commande suivante :</p>
 Sachant que l’un des rôles d’un orchestrateur est de maintenir l’état souhaité de l’application, ce que vous observez vous surprend-il ?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Même si l’orchestrateur a bien pour mission de maintenir
+l’état souhaité de l’application,
+le <code>Pod</code> demeure un objet relativement élémentaire,
+qui ne dispose pas nativement d’un mécanisme de redémarrage en cas d’arrêt.
+Pour bénéficier d’un véritable mécanisme d’auto-réparation
+(<em>self-healing</em>),
+il est nécessaire d’utiliser des objets de type ReplicaSet ou Deployment.</p>
+</div>
+</details>
 <div class="infobox warning">
 <p><strong>Attention</strong></p>
 <p>Avant de continuer, arrêtez le service via la commande suivante :</p>
@@ -1351,6 +1588,15 @@ lui-même : <strong>sans état</strong> ou <strong>avec état</strong>.</p>
 </ul>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Le service <code>web</code> est <strong>sans état</strong>.</p>
+<p>Le service <code>db</code> est <strong>avec état</strong>.</p>
+</div>
+</details>
 <div id="le-service-web-deployment" class="section level2" number="4.1">
 <h2><span class="header-section-number">4.1</span> Le service <code>web</code> : Deployment</h2>
 <p>Pour les <strong>services sans état</strong>, nous pouvons utiliser
@@ -1420,6 +1666,21 @@ Saisissez la commande suivante :</p>
 <p>Quels objets ont été créés par cette commande ?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Nous pouvons clairement voir trois types d’objets :</p>
+<ul>
+<li><p>Trois <code>Pods</code>, qui correspondent aux trois répliques que nous avons spécifiées dans la configuration.</p></li>
+<li><p>Un <code>Deployment</code>. Notez que le 3/3 indique que le <code>Deployment</code> a
+3 <code>Pods</code> identiques, dont 3 sont en cours d’exécution.</p></li>
+<li><p>Un <code>ReplicaSet</code>. Le <code>Deployment</code> crée un
+<code>ReplicaSet</code>, qui est l’objet réel qui contrôle les trois <code>Pods</code>.</p></li>
+</ul>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -1439,6 +1700,24 @@ reprendre le contrôle du terminal.</p>
 <p>Combien de <code>Pods</code> voyez-vous ? Êtes-vous surpris ?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Si vous exécutez la commande immédiatement après la suppression du <code>Pod</code>,
+il est possible d’observer temporairement quatre <code>Pods</code> :
+l’un en cours de terminaison et un nouveau en cours de démarrage.
+Relancez la commande jusqu’à obtenir trois <code>Pods</code> en état d’exécution.</p>
+<p>Ce comportement est attendu.
+Avec un objet Deployment,
+Kubernetes veille au respect de l’état souhaité.
+Ainsi, lorsqu’un <code>Pod</code> est supprimé,
+l’orchestrateur détecte l’écart par rapport
+à la configuration attendue (ici, trois répliques)
+et recrée aussitôt un <code>Pod</code> pour rétablir cet état.</p>
+</div>
+</details>
 </div>
 <div id="le-service-web-service" class="section level2" number="4.2">
 <h2><span class="header-section-number">4.2</span> Le service <code>web</code> : Service</h2>
@@ -1465,6 +1744,25 @@ spec:
 Décrivez la spécification de ce service.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<ul>
+<li><p>Nous créons un service nommé <code>web</code>, comme l’indique le champ
+<code>metadata.name</code>.</p></li>
+<li><p>Le service est de type <code>LoadBalancer</code>, conformément au champ
+<code>spec.type</code>.</p></li>
+<li><p>Le service écoute le port 8080 et utilise le protocole TCP.
+Chaque instance de service (c.-à-d. chaque <code>Pod</code>) écoute le port 3000.
+Ces informations sont précisées dans le champ <code>spec.ports</code>.</p></li>
+<li><p>Les instances du service (autrement dit, les <code>Pods</code>) sont celles qui portent des étiquettes
+<code>app: pets</code> et <code>service: web</code>.
+Cela est défini dans le champ <code>spec.selector</code>.</p></li>
+</ul>
+</div>
+</details>
 <div class="infobox activitybox">
 <p><strong>Activité</strong></p>
 <ul>
@@ -1562,6 +1860,19 @@ Saisissez la commande :
 <p>Quels objets ont été créés lorsque vous avez déployé le <code>StatefulSet</code> ?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<ul>
+<li><p>Un <code>Pod</code> (qui s’appellera <code>pod/db-0</code>)</p></li>
+<li><p>Un nouveau <code>StatefulSet</code> qui gère le <code>Pod</code>.</p></li>
+</ul>
+<p>Notez que le <code>StatefulSet</code> n’a qu’un seul <code>Pod</code>, ce qui est normal,
+puisque nous n’avons pas spécifié un nombre plus élevé de répliques.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -1586,6 +1897,20 @@ service <code>web</code>.</p>
 Qu’observez-vous ? Pouvez-vous en expliquer la raison ?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Nous ne pouvons pas accéder à l’application.
+Si vous exécutez rapidement la commande <code>kubectl get all</code>, vous verrez que les trois <code>Pods</code> correspondant aux instances du service <code>web</code> sont
+en état d’erreur.
+Si vous lancez la commande un peu plus tard, vous constaterez plutôt que le nombre de redémarrages de chaque <code>Pod</code> a augmenté.
+Cela indique que les <code>Pods</code> ont été redémarrés à la suite d’une erreur.</p>
+<p>Ce qui se passe ici, c’est que nous avons bien lancé la base de données,
+mais que nous n’avons pas encore créé le service permettant aux clients d’y accéder.</p>
+</div>
+</details>
 <p>Dans la sortie de la commande <code>kubectl get all</code>, repérez les noms des
 <code>Pods</code> associés au service <code>web</code>.
 Prenez le nom de l’un de ces <code>Pods</code>
@@ -1601,6 +1926,15 @@ et remplacez NAME-OF-POD dans la commande suivante :</p>
 La sortie de la commande précédente confirme-t-elle l’explication donnée dans la question précédente ?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Oui, nous pouvons clairement lire le message <code>ENOTFOUND db db:5432</code>.
+Cela signifie que Kubernetes n’arrive pas à traduire le nom <code>db</code> en adresse IP.</p>
+</div>
+</details>
 </div>
 </div>
 <div id="le-service-db-service" class="section level1" number="5">
@@ -1615,6 +1949,16 @@ un service pour permettre les connexions à la base de données.</p>
 Le service <code>db</code> doit-il être accessible aux applications clientes externes au cluster Kubernetes ?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Non, ce composant est le backend de l’application. Le seul client
+qui doit pouvoir accéder à la base de données est le frontend, c’est-à-dire le service
+<code>web</code>, qui s’exécute dans le cluster.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -1623,6 +1967,14 @@ Le service <code>db</code> doit-il être accessible aux applications clientes ex
 Compte tenu de la réponse à la question précédente, quel devrait être le type de ce service ?</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p><strong>ClusterIP</strong> ; c’est le type d’un service qui n’est pas accessible des applications externes.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -1632,6 +1984,25 @@ Ecrivez la spécification du service <code>db</code> dans un fichier nommé <cod
 <p><strong>Attention.</strong> Dans le fichier <code>db-stateful-set.yaml</code>, le champ <code>spec.serviceName</code> indique le nom que le service devra avoir.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre><code>apiVersion: v1
+kind: Service
+metadata:
+  name: db
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5432
+    protocol: TCP
+  selector:
+    app: pets
+    service: db</code></pre>
+</div>
+</details>
 <div class="infobox activitybox">
 <p><strong>Activité</strong></p>
 <ul>
