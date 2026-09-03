@@ -654,56 +654,7 @@ Derive a minimal set $\mathcal{G}$ of functional dependencies that is equivalent
 
 :::
 
-
-<details>
-<summary>Solution</summary>
-
-::: {.infobox .exosolution data-latex="{exercisebox}"}
-
-We first need to write the functional dependencies in canonical form 
-(the right-side of each FD must consist of only one column).
-
-The FD (2.) can be rewritten using the decomposition axiom.
-
-1. $AB \rightarrow C$
-
-2. $D \rightarrow B$
-
-3. $D \rightarrow C$
-
-4. $A \rightarrow B$
-
-Next, we need to make sure that all functional dependencies are left-irreducible.
-
-All functional dependencies except the first one are trivially left-irreducible (the determinant consists of 
-only one column).
-The first has two columns in the determinant, therefore we need to check whether we
-can eliminate one of the two columns and still preserve an equivalent set of functional dependencies.
-
-We apply Armstrong's axioms to compute the closure of this set of functional dependencies.
-
-From (1.) and (4.), we can apply the pseudotransitivity axiom and we obtain:
-
-$$A \rightarrow B \wedge AB \rightarrow C \implies AA \rightarrow C \implies A \rightarrow C$$
-
-Since $A \rightarrow C$ is in the closure, the column $B$ in FD (1.) is useless 
-and can therefore be omitted.
-
-The set $\mathcal{G}$ consists of the following FDs:
-
-* $A \rightarrow C$
-
-* $D \rightarrow B$
-
-* $D \rightarrow C$
-
-* $A \rightarrow B$
-
-None of these functional dependencies are redundant.
-
-:::
-
-</details> -->
+ -->
 <div id="question-1" class="section level1">
 <h1>Question 1</h1>
 <p>Let <span class="math inline">\(R\)</span> be a relational table with five columns <span class="math inline">\((A, B, C, D, E)\)</span>.
@@ -723,20 +674,6 @@ The following set of functional dependencies hold:</p>
 Find all the candidate keys of table <span class="math inline">\(R\)</span>.</p>
 </div>
 </div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<p>A candidate key is a set of columns on which all the other columns are functionally dependent.</p>
-<ul>
-<li><p>From the functional dependencies 2 to 5, we see that all columns are functionally dependent on C.</p></li>
-<li><p>From the functional dependency 1, we see that C is functionally dependent on {A, B}.</p></li>
-<li><p>By transitivity, all columns are also functionally dependent on {A, B}.</p></li>
-</ul>
-<p>In conclusion, we have two candidate keys: {A, B} and {C}.</p>
-</div>
-</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -749,23 +686,6 @@ We assume that <span class="math inline">\(R\)</span> is in 1NF.</p>
 </ul>
 </div>
 </div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<p>Based on the answer to the first exercise, we have that:</p>
-<ul>
-<li><p>A, B and C are prime columns.</p></li>
-<li><p>D, E are non-prime columns.</p></li>
-</ul>
-<p>We conclude that:</p>
-<ul>
-<li><p><b>R is in 2NF</b>. In fact, all non-prime columns depend entirely on both candidate keys.</p></li>
-<li><p><b>R is not in 3NF</b>. In fact, the functional dependency 5. is between two non-prime columns.</p></li>
-</ul>
-</div>
-</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -776,31 +696,6 @@ what changes would you make to turn <span class="math inline">\(R\)</span> into 
 <p><strong>Important.</strong> For each table that you create, specify the primary key and the foreign keys.</p>
 </div>
 </div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<p>The table is not in 3NF.
-The functional dependency that violates the 3NF condition is the 5.</p>
-<p>We need to create a new table R1, where:</p>
-<ul>
-<li>the primary key is the determinant in the functional dependency that violates 3NF (D).</li>
-</ul>
-<p>We then move all columns that are dependent on D (only E in our case) from R to R1.</p>
-<ul>
-<li>Note that D is kept in R so that we can use it to link R with R1.</li>
-</ul>
-<p>In summary:</p>
-<p><span class="math display">\[R = \{A, B, C, D\}\]</span></p>
-<p><span class="math display">\[R_1 = \{D, E\}\]</span></p>
-<ul>
-<li><p>The primary key of R is {C} (we can also choose A, B if we want).</p></li>
-<li><p>The primary key of R1 is {D}.</p></li>
-</ul>
-<p>The column D in R is a foreign key referencing the column D in R1.</p>
-</div>
-</details>
 </div>
 <div id="question-2" class="section level1">
 <h1>Question 2</h1>
@@ -826,20 +721,6 @@ Let <span class="math inline">\(R\)</span> be a relational table with four colum
 <p><strong>Justify your answer.</strong></p>
 </div>
 </div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<p>From the definition of candidate key, we derive two functional dependencies:</p>
-<p><span class="math display">\[AB \rightarrow C\]</span>
-<span class="math display">\[AB \rightarrow D\]</span></p>
-<p>Both functional dependencies are in canonical form (the right-side only consist of one column).
-Trivially, both functional dependencies are left-irreducible (we cannot remove any of the columns
-in the determinant without losing information).</p>
-<p>Trivially, there is no redundancy in this set.</p>
-</div>
-</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -850,29 +731,6 @@ the functional dependency <span class="math inline">\(B \rightarrow D\)</span>?<
 <p><strong>Justify your answer</strong> and, in case of a negative answer, specify the minimal set of functional dependencies.</p>
 </div>
 </div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<p>We consider the following functional dependencies:</p>
-<p><span class="math display">\[AB \rightarrow C\quad (1)\]</span>
-<span class="math display">\[AB \rightarrow D\quad (2)\]</span>
-<span class="math display">\[B \rightarrow D\quad (3)\]</span></p>
-<p>Intuitively, if D depends on B (and B alone), the fact that we add A, or any other column, to the left side, does not change this fact.
-Therefore, the functional dependency (2) is redundant.</p>
-<p>Let’s prove it with the Armstrong’s axioms.</p>
-<p>By using the augmentation axiom on (3) we obtain:</p>
-<p><span class="math display">\[AB \rightarrow AD\quad (4)\]</span></p>
-<p>By applying the decomposition axiom on (4) we obtain:</p>
-<p><span class="math display">\[AB \rightarrow A\]</span></p>
-<p><span class="math display">\[AB \rightarrow D\]</span></p>
-<p>Since we managed to derive (2) from (3), we formally proved that (2) is redundant.</p>
-<p>In summary, a minimal set of functional dependencies include the following functional dependencies:</p>
-<p><span class="math display">\[AB\rightarrow C \]</span>
-<span class="math display">\[B\rightarrow D \]</span></p>
-</div>
-</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -885,25 +743,6 @@ We assume that <span class="math inline">\(R\)</span> is in 1NF.</p>
 </ul>
 </div>
 </div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<p>From the statement of the exercise we know that {A, B} is the only candidate key.
-Therefore:</p>
-<ul>
-<li><p>A and B are prime columns.</p></li>
-<li><p>C and D are non-prime columns.</p></li>
-</ul>
-<p>Given the minimal set of functional dependencies obtained from the previous exercise, we conclude that:</p>
-<ul>
-<li><p><strong>R is not in 2NF</strong>. In fact, the non-prime column D is functionally dependent on
-only one part of the candidate key (the column B).</p></li>
-<li><p><strong>R is not in 3NF</strong>, because it is not in 2NF.</p></li>
-</ul>
-</div>
-</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -914,34 +753,6 @@ Normalize <span class="math inline">\(R\)</span> to the 3NF form.</p>
 <p><strong>Justify your choices.</strong></p>
 </div>
 </div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<p>The functional dependency that violates the 2NF is:</p>
-<p><span class="math display">\[B \rightarrow D\]</span>.</p>
-<ul>
-<li><p>We create a new table R1, where the determinant (B) of this
-functional dependency is the primary key.</p></li>
-<li><p>We move the columns that depend on B (here, only D) from table R to table R1.</p></li>
-</ul>
-<p>In summary, we have the following tables:</p>
-<p><span class="math display">\[R = (A, B, C)\]</span></p>
-<p><span class="math display">\[R_1 = (B, D)\]</span></p>
-<ul>
-<li>{A, B} is the primary key of R.</li>
-<li>{B} is the primary key of R1.</li>
-<li>Column B in R is a foreign key referencing column B in table R1.</li>
-</ul>
-<p>We can see that R is in 3NF because:</p>
-<ul>
-<li>The only non-prime column is now C, therefore there is no partial dependency on the candidate key and there cannot be any
-dependency between non-prime columns.</li>
-</ul>
-<p>Similar considerations apply to R1.</p>
-</div>
-</details>
 </div>
 <div id="question-3" class="section level1">
 <h1>Question 3</h1>
@@ -962,16 +773,6 @@ If not, which functional dependencies must be removed to obtain a minimal set?</
 <p><strong>Justify your answer.</strong></p>
 </div>
 </div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<p>The given set is not minimal, because the functional dependency 2. can be
-obtained by transitivity from 1. and 3.
-Therefore, we need to remove 2. to obtain a minimal set of functional dependencies.</p>
-</div>
-</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -982,43 +783,6 @@ determine the candidate keys of <span class="math inline">\(R\)</span>.</p>
 <p><strong>Justify your answer.</strong></p>
 </div>
 </div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<p>Let’s recall our minimal set of functional dependencies:</p>
-<p><span class="math display">\[A \rightarrow B\quad (1)\]</span>
-<span class="math display">\[B \rightarrow C\quad (2)\]</span>
-<span class="math display">\[D \rightarrow E\quad (3)\]</span></p>
-<ul>
-<li><p>There aren’t any columns that are functionally dependent on C and E.
-Therefore, these two columns cannot be part of any candidate key (they are non-prime columns).</p></li>
-<li><p>E functionally depends on only D; therefore, D must be part of the candidate key.</p></li>
-<li><p>However, D alone does not imply all the other columns. We need to add either A or B or both.</p></li>
-<li><p>It is easy to see that A cannot be functionally dependent on B. Therefore, {B, D} will never imply A and therefore this set cannot be a candidate key.</p></li>
-<li><p>The only options left are : {A, D} or {A, B, D}.</p></li>
-<li><p>Let’s consider {A, D}.</p></li>
-<li><p>By applying the Armstrong’s composition axiom on (1) and (3), we get:</p></li>
-</ul>
-<p><span class="math display">\[AD \rightarrow BE\quad (4)\]</span></p>
-<ul>
-<li>By applying the Armstrong’s decomposition axiom on (4) we obtain:</li>
-</ul>
-<p><span class="math display">\[AD \rightarrow B\quad (5)\]</span></p>
-<p><span class="math display">\[AD \rightarrow E\quad (6)\]</span></p>
-<ul>
-<li>By transitivity from (5) and (2) we obtain:</li>
-</ul>
-<p><span class="math display">\[AD \rightarrow C\quad (7)\]</span></p>
-<ul>
-<li>By applying Armostrong’s union axiom on (4) and (7), we obtain:</li>
-</ul>
-<p><span class="math display">\[AD \rightarrow BCE\quad (8)\]</span></p>
-<p>We can conclude that {A, D} is a candidate key.
-{A,B,D} is also a key, but since it contains {A, D} it is not a candidate key.</p>
-</div>
-</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -1028,17 +792,6 @@ Given the candidate keys that you found in the previous exercise, which columns 
 Which ones are non-prime?</p>
 </div>
 </div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<ul>
-<li>Prime columns: A, D.</li>
-<li>Non-prime columns: B, C, E</li>
-</ul>
-</div>
-</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -1048,21 +801,6 @@ We assume that R is in 1NF. Which normal form is R in?</p>
 <p><strong>Justify your answer.</strong></p>
 </div>
 </div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<p><strong>R is in only in 1NF.</strong></p>
-<p>It cannot be in 2NF because:</p>
-<ul>
-<li><p>The non-prime column B has a partial dependency on the candidate key (because of functional dependency 1.).</p></li>
-<li><p>The non-prime column E has a partial dependency on the candidate key (because of functional dependency 4.).</p></li>
-</ul>
-<p>Note that, even if we consider the minimal set of functional dependencies, C is still dependent on A (by transitivity).</p>
-<p>Therefore, we have three functional dependencies that violate the 2NF.</p>
-</div>
-</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -1073,40 +811,6 @@ How would you turn R into 3NF?</p>
 <p><strong>Specify primary and foreign keys</strong> of all tables that you create.</p>
 </div>
 </div>
-<details>
-<summary>
-Solution
-</summary>
-<div class="infobox exosolution">
-<p>Both prime columns A and D participate in at least one functional dependency that violates the 2NF.
-Therefore, we need to create two more tables R1 and R2.</p>
-<ul>
-<li>R1 will have A as its primary key.</li>
-<li>R2 will have D as its primary key.</li>
-<li>Columns B and C are moved from R to R1 (because they depend on A); columns E is moved from R to R2 (because it depends on D).</li>
-</ul>
-<p>In summary, we have the following tables:</p>
-<p><span class="math display">\[R(A, D)\]</span></p>
-<p><span class="math display">\[R1(A, B, C)\]</span></p>
-<p><span class="math display">\[R2(D, E)\]</span></p>
-<ul>
-<li><p>Note that the primary key of R is {A, D}.</p></li>
-<li><p>Column A in table R is a foreign key referencing column A in table R1.</p></li>
-<li><p>Column D in table R is a foreign key referencing column D in table R2.</p></li>
-</ul>
-<p>Let’s verify whether these three tables are in 3NF:</p>
-<ul>
-<li><p>Table R is trivially in 3NF: in fact, there are no non-prime columns.</p></li>
-<li><p>Table R1 is not 3NF: in fact, C depends on B and they are both non-prime columns.</p></li>
-<li><p>Table R2 is trivially in 3NF. In fact, the only candidate key is composed of just one column (therefore, partial dependencies are not possible) ; also, there is only one non-prime column, so dependencies between non-prime columns are not possible.</p></li>
-</ul>
-<p>We still have to turn R1 to 3NF. We repeat the same logic.</p>
-<ul>
-<li><p>We create a table R3, where B is the primary key. We move C from R1 to R3.</p></li>
-<li><p>Column B in R1 is a foreign key referencing column B in R3.</p></li>
-</ul>
-</div>
-</details>
 </div>
 
           </div>
