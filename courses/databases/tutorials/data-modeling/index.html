@@ -664,6 +664,14 @@ Finally, for each city, spatial information is stored in the form of polygon geo
 Give the <strong>conceptual schema</strong> of the database with an ER diagram.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p><img src="/courses/databases/tutorial-1/real-estate-conceptual-model.png" alt="Real estate conceptual model"></p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -673,6 +681,29 @@ Translate the conceptual schema into a logical schema.
 For each table, underline the primary key and specify the foreign keys.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>The <strong>collection of tables</strong> is the following:</p>
+<pre>
+<TT>transaction</TT> (<u>transaction_id</u>, transaction_date, transaction_type, property_id, property_value) 
+<TT>property</TT>    (<u>property_id</u>, property_type, built_area, land_area, num_main_rooms, number_of_units, street_id)
+<TT>street</TT>      (<u>street_id</u>, street_number, street_type, street_name, zip_code, cadastral_section, land_parcel, city_id)
+<TT>city</TT>        (<u>city_id</u>, insee_code, city_name, geometry, dept_code)
+<TT>department</TT>  (<u>dept_code</u>, dept_name, reg_code)
+<TT>region</TT>      (<u>reg_code</u>, reg_name)
+
+</pre>
+<p>The <strong>foreign keys</strong> are the following:</p>
+<p><TT>transaction(property_id)</TT> references <TT>property(property_id)</TT></p>
+<p><TT>property(street_id)</TT> references <TT>street(street_id)</TT></p>
+<p><TT>street(city_id)</TT> references <TT>city(city_id)</TT></p>
+<p><TT>city(dept_code)</TT> references <TT>department(dept_code)</TT></p>
+<p><TT>department(reg_code)</TT> references <TT>region(reg_code)</TT></p>
+</div>
+</details>
 </div>
 </div>
 <div id="database-of-a-social-network-platform" class="section level1" number="2">
@@ -701,6 +732,14 @@ the platform registers the date when the relationship is established.</p>
 Give the <strong>conceptual schema</strong> of the database with an ER diagram.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p><img src="/courses/databases/tutorial-1/social-network-solution.png" alt="Social network solution"></p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -710,6 +749,33 @@ Translate the conceptual schema into a logical schema.
 For each table, underline the primary key and specify the foreign keys.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>The <strong>collection of tables</strong> is the following:</p>
+<pre>
+<TT>user_account</TT>  (<u>nickname</u>, first_name, last_name, city, country)
+
+<TT>post</TT>         (<u>post_id</u>, content, date, time, lat, long, nickname)
+
+<TT>email_address</TT> (<u>email_address</u>, nickname)
+
+<TT>relationship</TT> (<u>nickname_src</u>, <u>nickname_dst</u>, type, date)
+
+<TT>tag</TT>          (<u>post_id</u>, <u>nickname</u>)
+
+</pre>
+<p>The <strong>foreign keys</strong> are the following:</p>
+<p><TT>post(nickname)</TT> → <TT>user_account(nickname)</TT>.</p>
+<p><TT>email_address(nickname)</TT> → <TT>email_address(nickname)</TT>.</p>
+<p><TT>relationship(nickname_src)</TT> → <TT>relationship(nickname)</TT>.</p>
+<p><TT>relationship(nickname_dst)</TT> → <TT>relationship(nickname)</TT>.</p>
+<p><TT>tag(post_id)</TT> → <TT>post(post_id)</TT>.</p>
+<p><TT>tag(nickname)</TT> → <TT>user_account(nickname)</TT>.</p>
+</div>
+</details>
 <!--
 # Database of a banking system
 
@@ -747,6 +813,20 @@ a customer can be granted several loans and open as many accounts as s/he wishes
 
 
 
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex="{exercisebox}"}
+
+Since no 
+two banks have the same *code_bank* or *name*, 
+either property can be chosen as the primary key 
+of the entity <TT>Bank</TT>. 
+Both can be considered as valid **candidate keys**.
+
+:::
+
+</details>
 
 
 ::: {.infobox .exercisebox data-latex="{exercisebox}"}
@@ -760,6 +840,19 @@ as a valid candidate key for the entity <TT>Bank</TT>? Justify your answer.</div
 :::
 
 
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex="{exercisebox}"}
+
+The answer is **no**. 
+While there aren't any banks that have 
+the same value for {*code_bank*, *name*}, 
+two subsets ({*code_bank*} and {*name*}) are candidate keys.
+
+:::
+
+</details>
 
 
 ::: {.infobox .exercisebox data-latex="{exercisebox}"}
@@ -774,6 +867,16 @@ Justify your choices when any ambiguity arises.</div>\EndKnitrBlock{exercise}
 :::
 
 
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex="{exercisebox}"}
+
+<img src="/courses/databases/tutorial-1/banking-system-er-complete.png" alt="Banking system solution">
+
+:::
+
+</details>
 
 ::: {.infobox .exercisebox data-latex="{exercisebox}"}
 **Exercise**
@@ -785,6 +888,41 @@ For each table, underline the primary keys and specify the foreign keys.</div>\E
 :::
 
 
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex="{exercisebox}"}
+
+The **collection of tables** is the following:
+
+<pre>
+<TT>Bank</TT>     (<u>code_bank</u>, name, address)
+
+<TT>Branch</TT>   (<u>branch_id</u>, address, code_bank)
+
+<TT>Account</TT>  (<u>acct_nbr</u>, acct_type, balance, branch_id, ssn)
+
+<TT>Loan</TT>     (<u>loan_nbr</u>, loan_type, amount, branch_id, ssn)
+
+<TT>Customer</TT> (<u>ssn</u>, first_name, last_name, telephone, address)
+
+</pre>
+
+The **foreign keys** are the following:
+
+<TT>Branch(code_bank)</TT> &rarr;  <TT>Bank(code_bank)</TT>.
+
+<TT>Account(branch_id)</TT> &rarr;  <TT>Branch(branch_id)</TT>.
+
+<TT>Account(ssn)</TT> &rarr;  <TT>Customer(ssn)</TT>.
+
+<TT>Loan(branch_id)</TT> &rarr;  <TT>Branch(branch_id)</TT>.
+
+<TT>Loan(ssn)</TT> &rarr;  <TT>Customer(ssn)</TT>.
+
+:::
+
+</details>
 
 -->
 </div>
@@ -822,6 +960,14 @@ and each mechanic may work on many cars.</p>
 <span id="exr:command-in-guest" class="exercise"><strong>Exercise 3.1  </strong></span>Give the <strong>conceptual schema</strong> of the database with an ER diagram.
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p><img src="/courses/databases/tutorial-1/car-dealership.png" alt="Car dealership solution"></p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercise</strong></p>
 
@@ -831,6 +977,30 @@ For each table, underline the primary keys and specify the foreign keys.
 </div>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>The <strong>collection of tables</strong> is the following:</p>
+<pre>
+  car          (<u>serial_number</u>, make, model, colour, is_new)
+  customer     (<u>cust_id</u>, cust_first_name, cust_last_name, cust_phone)
+  invoice      (<u>invoice_number</u>, date, price, car_serial_number, sp_id, cust_id)
+  salesperson  (<u>sp_id</u>, sp_first_name, sp_last_name)
+  mechanic     (<u>mec_id</u>, mec_first_name, mec_last_name)
+  ticket       (<u>ticket_number</u>, date_open, date_return, car_serial_number)
+  repair       (<u>ticket_number</u>, <u>mec_id</u>)</pre>
+</pre>
+<p>The <strong>foreign keys</strong> are the following:</p>
+<p><TT>invoice(cust_id)</TT> → <TT>customer(cust_id)</TT>.</p>
+<p><TT>invoice(car_serial_number)</TT> → <TT>car(serial_number)</TT>.</p>
+<p><TT>invoice(sp_id)</TT> → <TT>salesperson(sp_id)</TT>.</p>
+<p><TT>ticket(car_serial_number)</TT> → <TT>car(serial_number)</TT>.</p>
+<p><TT>repair(ticket_number)</TT> → <TT>ticket(ticket_number)</TT>.</p>
+<p><TT>repair(mec_id)</TT> → <TT>mechanic(mec_id)</TT>.</p>
+</div>
+</details>
 </div>
 </div>
 

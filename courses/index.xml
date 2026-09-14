@@ -17873,6 +17873,14 @@ Finally, for each city, spatial information is stored in the form of polygon geo
 Give the &lt;strong&gt;conceptual schema&lt;/strong&gt; of the database with an ER diagram.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-1/real-estate-conceptual-model.png&#34; alt=&#34;Real estate conceptual model&#34;&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -17882,6 +17890,29 @@ Translate the conceptual schema into a logical schema.
 For each table, underline the primary key and specify the foreign keys.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The &lt;strong&gt;collection of tables&lt;/strong&gt; is the following:&lt;/p&gt;
+&lt;pre&gt;
+&lt;TT&gt;transaction&lt;/TT&gt; (&lt;u&gt;transaction_id&lt;/u&gt;, transaction_date, transaction_type, property_id, property_value) 
+&lt;TT&gt;property&lt;/TT&gt;    (&lt;u&gt;property_id&lt;/u&gt;, property_type, built_area, land_area, num_main_rooms, number_of_units, street_id)
+&lt;TT&gt;street&lt;/TT&gt;      (&lt;u&gt;street_id&lt;/u&gt;, street_number, street_type, street_name, zip_code, cadastral_section, land_parcel, city_id)
+&lt;TT&gt;city&lt;/TT&gt;        (&lt;u&gt;city_id&lt;/u&gt;, insee_code, city_name, geometry, dept_code)
+&lt;TT&gt;department&lt;/TT&gt;  (&lt;u&gt;dept_code&lt;/u&gt;, dept_name, reg_code)
+&lt;TT&gt;region&lt;/TT&gt;      (&lt;u&gt;reg_code&lt;/u&gt;, reg_name)
+
+&lt;/pre&gt;
+&lt;p&gt;The &lt;strong&gt;foreign keys&lt;/strong&gt; are the following:&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;transaction(property_id)&lt;/TT&gt; references &lt;TT&gt;property(property_id)&lt;/TT&gt;&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;property(street_id)&lt;/TT&gt; references &lt;TT&gt;street(street_id)&lt;/TT&gt;&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;street(city_id)&lt;/TT&gt; references &lt;TT&gt;city(city_id)&lt;/TT&gt;&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;city(dept_code)&lt;/TT&gt; references &lt;TT&gt;department(dept_code)&lt;/TT&gt;&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;department(reg_code)&lt;/TT&gt; references &lt;TT&gt;region(reg_code)&lt;/TT&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;database-of-a-social-network-platform&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
@@ -17910,6 +17941,14 @@ the platform registers the date when the relationship is established.&lt;/p&gt;
 Give the &lt;strong&gt;conceptual schema&lt;/strong&gt; of the database with an ER diagram.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-1/social-network-solution.png&#34; alt=&#34;Social network solution&#34;&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -17919,6 +17958,33 @@ Translate the conceptual schema into a logical schema.
 For each table, underline the primary key and specify the foreign keys.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The &lt;strong&gt;collection of tables&lt;/strong&gt; is the following:&lt;/p&gt;
+&lt;pre&gt;
+&lt;TT&gt;user_account&lt;/TT&gt;  (&lt;u&gt;nickname&lt;/u&gt;, first_name, last_name, city, country)
+
+&lt;TT&gt;post&lt;/TT&gt;         (&lt;u&gt;post_id&lt;/u&gt;, content, date, time, lat, long, nickname)
+
+&lt;TT&gt;email_address&lt;/TT&gt; (&lt;u&gt;email_address&lt;/u&gt;, nickname)
+
+&lt;TT&gt;relationship&lt;/TT&gt; (&lt;u&gt;nickname_src&lt;/u&gt;, &lt;u&gt;nickname_dst&lt;/u&gt;, type, date)
+
+&lt;TT&gt;tag&lt;/TT&gt;          (&lt;u&gt;post_id&lt;/u&gt;, &lt;u&gt;nickname&lt;/u&gt;)
+
+&lt;/pre&gt;
+&lt;p&gt;The &lt;strong&gt;foreign keys&lt;/strong&gt; are the following:&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;post(nickname)&lt;/TT&gt; → &lt;TT&gt;user_account(nickname)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;email_address(nickname)&lt;/TT&gt; → &lt;TT&gt;email_address(nickname)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;relationship(nickname_src)&lt;/TT&gt; → &lt;TT&gt;relationship(nickname)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;relationship(nickname_dst)&lt;/TT&gt; → &lt;TT&gt;relationship(nickname)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;tag(post_id)&lt;/TT&gt; → &lt;TT&gt;post(post_id)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;tag(nickname)&lt;/TT&gt; → &lt;TT&gt;user_account(nickname)&lt;/TT&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;!--
 # Database of a banking system
 
@@ -17956,6 +18022,20 @@ a customer can be granted several loans and open as many accounts as s/he wishes
 
 
 
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+Since no 
+two banks have the same *code_bank* or *name*, 
+either property can be chosen as the primary key 
+of the entity &lt;TT&gt;Bank&lt;/TT&gt;. 
+Both can be considered as valid **candidate keys**.
+
+:::
+
+&lt;/details&gt;
 
 
 ::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
@@ -17969,6 +18049,19 @@ as a valid candidate key for the entity &lt;TT&gt;Bank&lt;/TT&gt;? Justify your 
 :::
 
 
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+The answer is **no**. 
+While there aren&#39;t any banks that have 
+the same value for {*code_bank*, *name*}, 
+two subsets ({*code_bank*} and {*name*}) are candidate keys.
+
+:::
+
+&lt;/details&gt;
 
 
 ::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
@@ -17983,6 +18076,16 @@ Justify your choices when any ambiguity arises.&lt;/div&gt;\EndKnitrBlock{exerci
 :::
 
 
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+&lt;img src=&#34;/courses/databases/tutorial-1/banking-system-er-complete.png&#34; alt=&#34;Banking system solution&#34;&gt;
+
+:::
+
+&lt;/details&gt;
 
 ::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
 **Exercise**
@@ -17994,6 +18097,41 @@ For each table, underline the primary keys and specify the foreign keys.&lt;/div
 :::
 
 
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+The **collection of tables** is the following:
+
+&lt;pre&gt;
+&lt;TT&gt;Bank&lt;/TT&gt;     (&lt;u&gt;code_bank&lt;/u&gt;, name, address)
+
+&lt;TT&gt;Branch&lt;/TT&gt;   (&lt;u&gt;branch_id&lt;/u&gt;, address, code_bank)
+
+&lt;TT&gt;Account&lt;/TT&gt;  (&lt;u&gt;acct_nbr&lt;/u&gt;, acct_type, balance, branch_id, ssn)
+
+&lt;TT&gt;Loan&lt;/TT&gt;     (&lt;u&gt;loan_nbr&lt;/u&gt;, loan_type, amount, branch_id, ssn)
+
+&lt;TT&gt;Customer&lt;/TT&gt; (&lt;u&gt;ssn&lt;/u&gt;, first_name, last_name, telephone, address)
+
+&lt;/pre&gt;
+
+The **foreign keys** are the following:
+
+&lt;TT&gt;Branch(code_bank)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Bank(code_bank)&lt;/TT&gt;.
+
+&lt;TT&gt;Account(branch_id)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Branch(branch_id)&lt;/TT&gt;.
+
+&lt;TT&gt;Account(ssn)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Customer(ssn)&lt;/TT&gt;.
+
+&lt;TT&gt;Loan(branch_id)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Branch(branch_id)&lt;/TT&gt;.
+
+&lt;TT&gt;Loan(ssn)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Customer(ssn)&lt;/TT&gt;.
+
+:::
+
+&lt;/details&gt;
 
 --&gt;
 &lt;/div&gt;
@@ -18031,6 +18169,14 @@ and each mechanic may work on many cars.&lt;/p&gt;
 &lt;span id=&#34;exr:command-in-guest&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;Give the &lt;strong&gt;conceptual schema&lt;/strong&gt; of the database with an ER diagram.
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-1/car-dealership.png&#34; alt=&#34;Car dealership solution&#34;&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -18040,6 +18186,30 @@ For each table, underline the primary keys and specify the foreign keys.
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The &lt;strong&gt;collection of tables&lt;/strong&gt; is the following:&lt;/p&gt;
+&lt;pre&gt;
+  car          (&lt;u&gt;serial_number&lt;/u&gt;, make, model, colour, is_new)
+  customer     (&lt;u&gt;cust_id&lt;/u&gt;, cust_first_name, cust_last_name, cust_phone)
+  invoice      (&lt;u&gt;invoice_number&lt;/u&gt;, date, price, car_serial_number, sp_id, cust_id)
+  salesperson  (&lt;u&gt;sp_id&lt;/u&gt;, sp_first_name, sp_last_name)
+  mechanic     (&lt;u&gt;mec_id&lt;/u&gt;, mec_first_name, mec_last_name)
+  ticket       (&lt;u&gt;ticket_number&lt;/u&gt;, date_open, date_return, car_serial_number)
+  repair       (&lt;u&gt;ticket_number&lt;/u&gt;, &lt;u&gt;mec_id&lt;/u&gt;)&lt;/pre&gt;
+&lt;/pre&gt;
+&lt;p&gt;The &lt;strong&gt;foreign keys&lt;/strong&gt; are the following:&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;invoice(cust_id)&lt;/TT&gt; → &lt;TT&gt;customer(cust_id)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;invoice(car_serial_number)&lt;/TT&gt; → &lt;TT&gt;car(serial_number)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;invoice(sp_id)&lt;/TT&gt; → &lt;TT&gt;salesperson(sp_id)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;ticket(car_serial_number)&lt;/TT&gt; → &lt;TT&gt;car(serial_number)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;repair(ticket_number)&lt;/TT&gt; → &lt;TT&gt;ticket(ticket_number)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;repair(mec_id)&lt;/TT&gt; → &lt;TT&gt;mechanic(mec_id)&lt;/TT&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 </description>
