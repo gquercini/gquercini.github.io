@@ -36499,202 +36499,302 @@ having count(*) between 5 and 10
 
 &lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
 &lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
-&lt;p&gt;In this tutorial you’ll learn:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;The key integrity constraints in a relational database.&lt;/li&gt;
-&lt;li&gt;Basic SQL queries.&lt;/li&gt;
-&lt;/ul&gt;
+&lt;p&gt;In this tutorial, you will learn how to write SQL queries and use common SQL functions.&lt;/p&gt;
 &lt;div id=&#34;description-of-the-data&#34; class=&#34;section level1&#34; number=&#34;1&#34;&gt;
 &lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Description of the data&lt;/h1&gt;
-&lt;p&gt;We consider the database of a DVD rental store chain containing data on films, actors,
-customers and the transactions of the store.&lt;/p&gt;
-&lt;p&gt;This database goes by the name &lt;strong&gt;Sakila&lt;/strong&gt; and was developed by Mike Hillyer, a former member of the MySQL team.&lt;/p&gt;
+&lt;p&gt;We consider a database containing property transactions in France in 2025.&lt;/p&gt;
+&lt;p&gt;We discussed the conceptual schema of this database in the first tutorial.&lt;/p&gt;
+&lt;p&gt;The physical schema of the database is shown in the figure below.&lt;/p&gt;
 &lt;div class=&#34;figure&#34; style=&#34;text-align: center&#34;&gt;&lt;span id=&#34;fig:cnm&#34;&gt;&lt;/span&gt;
-&lt;img src=&#34;/courses/databases/tutorial-4/sakila-3nf.png&#34; alt=&#34;The conceptual schema of the Sakila database&#34; width=&#34;100%&#34; /&gt;
+&lt;img src=&#34;/courses/databases/tutorial-4/french_housing_db.png&#34; alt=&#34;The physical schema of the database&#34; width=&#34;100%&#34; /&gt;
 &lt;p class=&#34;caption&#34;&gt;
-Figure 1.1: The conceptual schema of the Sakila database
+Figure 1.1: The physical schema of the database
 &lt;/p&gt;
 &lt;/div&gt;
-&lt;p&gt;The tables of the database are &lt;a href=&#34;https://dev.mysql.com/doc/sakila/en/sakila-structure-tables.html&#34; target=&#34;_blank&#34;&gt;&lt;strong&gt;documented on this page&lt;/strong&gt;&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Sakila has been ported from MySQL to PostgreSQL under the name &lt;strong&gt;pagila&lt;/strong&gt;.
-In pgAdmin, &lt;strong&gt;Open a new query tool&lt;/strong&gt; to do the exercises.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;integrity-constraints&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Integrity constraints&lt;/h1&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;
-Execute the following statement:&lt;/p&gt;
-&lt;pre&gt;
-insert into film_actor (actor_id, film_id) values(1, 25)
-&lt;/pre&gt;
-&lt;p&gt;What is this statement supposed to do?
-What is the reaction of the DBMS?&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.2  &lt;/strong&gt;&lt;/span&gt;
-Write the statement to delete the film with
-&lt;em&gt;film_id&lt;/em&gt;=1 from
-the table &lt;TT&gt;Film&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;Execute the command. What happens?&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;!--
-::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
-**Exercise**
-
-\BeginKnitrBlock{exercise}&lt;div class=&#34;exercise&#34;&gt;&lt;span class=&#34;exercise&#34; id=&#34;exr:unnamed-chunk-3&#34;&gt;&lt;strong&gt;(\#exr:unnamed-chunk-3) &lt;/strong&gt;&lt;/span&gt;
-Look at the definition of the foreign key constraints
-in table &lt;TT&gt;film_actor&lt;/TT&gt; (right-click on the table, 
-select *Constraints*, *foreign key*).
-
-Is the definition of the foreign key constraint 
-to table &lt;TT&gt;film&lt;/TT&gt; coherent with the behavior observed
-in the previous exercise?
-
-**NB** In order to see the options of a foreign key, click on the 
-edit button on the left of the constraint. Then look at the 
-tab *Action*.&#34;
-
-&lt;/div&gt;\EndKnitrBlock{exercise}
-
-:::
---&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.3  &lt;/strong&gt;&lt;/span&gt;
-Look at the definition of the foreign key constraints
-in table &lt;TT&gt;film_actor&lt;/TT&gt; (see in the Database structure tab).&lt;/p&gt;
-&lt;p&gt;Is the definition of the foreign key constraint
-to table &lt;TT&gt;film&lt;/TT&gt; coherent with the behavior observed
-in the previous exercise?&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.4  &lt;/strong&gt;&lt;/span&gt;
-Execute the following query:&lt;/p&gt;
-&lt;pre&gt;
-SELECT f.film_id as film_id_in_table_film, 
-       fa.film_id AS film_id_in_table_film_actor, 
-       fa.actor_id as actor_id, f.title as title
-FROM film f  JOIN film_actor fa  USING (film_id)
-WHERE  f.title=&#39;ACE GOLDFINGER&#39;
-&lt;/pre&gt;
-&lt;p&gt;What does the query? Note down the identifier of the film in both tables
-&lt;TT&gt;film&lt;/TT&gt; and &lt;TT&gt;film_actor&lt;/TT&gt;.
-(columns &lt;TT&gt;film_id_in_table_film&lt;/TT&gt; and &lt;TT&gt;film_id_in_table_film_actor&lt;/TT&gt;).&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.5  &lt;/strong&gt;&lt;/span&gt;
-Write and execute a statement to set the value 10000 to the identifier of the
-film ACE GOLDFINGER in table &lt;TT&gt;Film&lt;/TT&gt;.&lt;/p&gt;
-&lt;p&gt;After the modification, execute the query of the previous exercise.
-What changed? Explain in details what happened.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.6  &lt;/strong&gt;&lt;/span&gt;
-Execute the following statement:&lt;/p&gt;
-&lt;pre&gt;
-UPDATE film_actor
-SET film_id=2
-WHERE film_id=10000
-&lt;/pre&gt;
-&lt;p&gt;What does it? What happens? Explain.&lt;/p&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;/div&gt;
-&lt;div id=&#34;basic-queries&#34; class=&#34;section level1&#34; number=&#34;3&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Basic queries&lt;/h1&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3.1  &lt;/strong&gt;&lt;/span&gt;
-Write the following SQL queries:&lt;/p&gt;
+&lt;div id=&#34;import-the-data&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Import the data&lt;/h1&gt;
+&lt;p&gt;&lt;strong&gt;Download the database&lt;/strong&gt; &lt;a href=&#34;/courses/databases/tutorial-4/house_sales_fr&#34; target=&#34;_blank&#34;&gt;from here&lt;/a&gt;
+the follow the instructions below.&lt;/p&gt;
 &lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;Return all the information on all customers.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Return the first and last name of all customers.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Return the first and last name of all customers of the store with identifier 1.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Create the target database&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;In pgAdmin, right-click &lt;strong&gt;Databases&lt;/strong&gt; → &lt;strong&gt;Create → Database&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Enter the database name and click &lt;strong&gt;Save&lt;/strong&gt;.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Open Restore&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Right-click the newly created database.&lt;/li&gt;
+&lt;li&gt;Select &lt;strong&gt;Restore…&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Select the backup file&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Set &lt;strong&gt;Format&lt;/strong&gt; to &lt;code&gt;Custom or tar&lt;/code&gt;.&lt;/li&gt;
+&lt;li&gt;Select file downloaded previously&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Restore&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Click &lt;strong&gt;Restore&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Monitor the progress in the &lt;strong&gt;Processes&lt;/strong&gt; tab.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;&lt;strong&gt;Refresh the database&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Once the restore completes, right-click the database and select &lt;strong&gt;Refresh&lt;/strong&gt;.&lt;/li&gt;
+&lt;li&gt;Expand &lt;strong&gt;Schemas → public&lt;/strong&gt; to see the restored objects.&lt;/li&gt;
+&lt;/ul&gt;&lt;/li&gt;
 &lt;/ol&gt;
 &lt;/div&gt;
+&lt;div id=&#34;exploratory-queries&#34; class=&#34;section level1&#34; number=&#34;3&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;3&lt;/span&gt; Exploratory queries&lt;/h1&gt;
+&lt;p&gt;The first thing to do when you encounter a database for the first time is to explore its data.
+This is done using so-called &lt;strong&gt;exploratory queries&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;First, we may want to know the size of our database.&lt;/p&gt;
+&lt;p&gt;👉 &lt;strong&gt;Exercise.&lt;/strong&gt; Count the number of rows in all tables.&lt;/p&gt;
+&lt;p&gt;Next, we may want to learn more about sales transactions.
+Note that there is a column called &lt;code&gt;transaction_type&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;👉 &lt;strong&gt;Exercise.&lt;/strong&gt; What are the distinct transaction types in our database?&lt;/p&gt;
+&lt;p&gt;Continuing our exploration, we note that there is a column called &lt;code&gt;property_value&lt;/code&gt; in the &lt;code&gt;sales_transaction&lt;/code&gt; table.
+Let’s find out more. There may be a big surprise here!&lt;/p&gt;
+&lt;p&gt;👉 &lt;strong&gt;Exercise.&lt;/strong&gt; What is the maximum, minimum and average property value across all transactions?&lt;/p&gt;
+&lt;p&gt;Let’s find out more about the properties.&lt;/p&gt;
+&lt;p&gt;👉 &lt;strong&gt;Exercise.&lt;/strong&gt; What are the different property types?&lt;/p&gt;
+&lt;p&gt;We would like to learn more about the characteristics of apartments.&lt;/p&gt;
+&lt;p&gt;👉 &lt;strong&gt;Exercise.&lt;/strong&gt; What is the average built area, land area and number of main rooms in an apartment?&lt;/p&gt;
+&lt;p&gt;Now we would like to compare houses and apartments using the same characteristics.&lt;/p&gt;
+&lt;p&gt;👉 &lt;strong&gt;Exercise.&lt;/strong&gt; Can you write a single query that displays the same characteristics as in the previous exercise for both apartments and houses?
+&lt;strong&gt;Hint.&lt;/strong&gt; GROUP BY is your friend.&lt;/p&gt;
+&lt;div id=&#34;a-word-on-candidate-keys&#34; class=&#34;section level2&#34; number=&#34;3.1&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;3.1&lt;/span&gt; A word on candidate keys&lt;/h2&gt;
+&lt;p&gt;In the schema of this database, each table has a primary key.
+However, no other candidate key is specified in the tables.&lt;/p&gt;
+&lt;p&gt;Let’s verify this in a few cases.&lt;/p&gt;
+&lt;p&gt;👉 &lt;strong&gt;Exercise.&lt;/strong&gt; Is the city name a key? Write an SQL query to find out whether different cities can have the same name.
+&lt;strong&gt;HINT.&lt;/strong&gt; For now, we do not want to know which cities, if any, share the same name. We only want to know whether any do.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;HINT.&lt;/strong&gt; SQL allows you to use mathematical operators.&lt;/p&gt;
+&lt;p&gt;👉 &lt;strong&gt;Exercise.&lt;/strong&gt; If the answer to the previous exercise is negative, write an SQL query to find out
+exactly which names are shared by more than one city.&lt;/p&gt;
+&lt;p&gt;Based on our knowledge, departments and regions do not share names.
+Their names are therefore candidate keys.
+You can adapt the previous queries to verify this.&lt;/p&gt;
+&lt;p&gt;👉 &lt;strong&gt;Exercise.&lt;/strong&gt; Using the ALTER TABLE statement (&lt;a href=&#34;https://www.postgresql.org/docs/current/sql-altertable.html&#34; target=&#34;_blank&#34;&gt;documented here&lt;/a&gt;), add a UNIQUE constraint
+to the &lt;code&gt;dept_name&lt;/code&gt; column in the &lt;code&gt;department&lt;/code&gt; table and to the &lt;code&gt;reg_name&lt;/code&gt; column in the &lt;code&gt;region&lt;/code&gt; table.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
-&lt;div id=&#34;sorting-and-paginating&#34; class=&#34;section level1&#34; number=&#34;4&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Sorting and paginating&lt;/h1&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4.1  &lt;/strong&gt;&lt;/span&gt;
-Write the following SQL queries:&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;Return the last and first name of all customers. Sort by last name in ascending order.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Same as in 1., but only return the first 100 customers.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Return the last and first name of all customers of the store with identifier 1.
-Sort by last name in ascending order and by first name in descending order.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
+&lt;div id=&#34;set-operations&#34; class=&#34;section level1&#34; number=&#34;4&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;4&lt;/span&gt; Set operations&lt;/h1&gt;
+&lt;p&gt;SQL provides operators to work with sets.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;UNION: returns the union of two tables. The result does not include duplicates.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;UNION ALL: returns the union of two tables while preserving duplicates.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;INTERSECT: returns the rows that are common between two tables.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;EXCEPT: returns the rows from the first table that do not occur in the second table.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Important: the tables involved in these operations must have compatible schemas.&lt;/p&gt;
+&lt;p&gt;👉 &lt;strong&gt;Exercise.&lt;/strong&gt; Find the identifiers of the properties involved in at least one sale transaction (“Vente”) and at least one
+exchange transaction (“Echange”).&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Hint.&lt;/strong&gt; An SQL query always returns a table, so you can use a set operator between the results of two SQL queries.&lt;/p&gt;
+&lt;p&gt;👉 &lt;strong&gt;Exercise.&lt;/strong&gt; Find the identifiers of the properties involved in a sale transaction (“Vente”) or an exchange transaction (“Echange”),
+but not in both.&lt;/p&gt;
 &lt;/div&gt;
+&lt;div id=&#34;working-with-dates&#34; class=&#34;section level1&#34; number=&#34;5&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;5&lt;/span&gt; Working with dates&lt;/h1&gt;
+&lt;p&gt;Do you want to know how many days remain until the database exam?&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT DATE(&amp;#39;2026-12-07&amp;#39;) - CURRENT_DATE&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Or do you want to know which day of the week the exam falls on?&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT TO_CHAR(DATE &amp;#39;2026-12-07&amp;#39;, &amp;#39;Day&amp;#39;);&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The previous queries show that:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;You can create a date from a string using the function DATE.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;You can get today’s date using CURRENT_DATE.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;You can apply mathematical operators to dates.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;You can extract the name of the day and month from a date.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;You can refer to the &lt;a href=&#34;https://www.postgresql.org/docs/current/functions-datetime.html&#34; target=&#34;_blank&#34;&gt;PostgreSQL documentation&lt;/a&gt; to learn about other
+functions and operators.&lt;/p&gt;
+&lt;p&gt;Let’s apply some of these operators to the &lt;code&gt;transaction_date&lt;/code&gt; column in the
+&lt;code&gt;sales_transaction&lt;/code&gt; table.&lt;/p&gt;
+&lt;p&gt;👉 &lt;strong&gt;Exercise.&lt;/strong&gt; Find the number of sales (transaction_type = “Vente”) and the average property value per month for the year 2025.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;HINT.&lt;/strong&gt; The EXTRACT function is your friend.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;Good to know.&lt;/strong&gt; You can also plot the result using the graph visualizer integrated into pgAdmin.&lt;/p&gt;
+&lt;p&gt;Does the number of transactions depend on the day of the week? Is Saturday the day with the most transactions?
+Let’s find out.&lt;/p&gt;
+&lt;p&gt;👉 &lt;strong&gt;Exercise.&lt;/strong&gt; Find the number of sales (transaction_type = “Vente”) per day of the week for the year 2025.&lt;/p&gt;
+&lt;p&gt;In the previous section, we found that some properties are involved in both a sale transaction and an exchange transaction.
+Let’s analyze whether different transactions involving the same property occur on the same day or, if not, how many days separate them.&lt;/p&gt;
 &lt;/div&gt;
+&lt;div id=&#34;querying-multiple-tables&#34; class=&#34;section level1&#34; number=&#34;6&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;6&lt;/span&gt; Querying multiple tables&lt;/h1&gt;
+&lt;p&gt;You already know that a relational database is a collection of tables, with each table containing data about a specific entity.
+Most queries need data from multiple tables to produce a result.
+This is where join operations come into play.&lt;/p&gt;
+&lt;p&gt;👉 &lt;strong&gt;Exercise.&lt;/strong&gt; Write a query to retrieve the name of each department together with the name of its corresponding region.&lt;/p&gt;
+&lt;p&gt;Let’s find out more.&lt;/p&gt;
+&lt;p&gt;👉 &lt;strong&gt;Exercise.&lt;/strong&gt; How many departments does each region have? Sort the result so that the regions with the most departments appear first.&lt;/p&gt;
+&lt;p&gt;👉 &lt;strong&gt;Exercise.&lt;/strong&gt; How many cities does each region have? Sort the result so that the regions with the most cities appear first.&lt;/p&gt;
+&lt;p&gt;Are there any cities with no property registered in a transaction?&lt;/p&gt;
+&lt;p&gt;Let’s find out.&lt;/p&gt;
+&lt;p&gt;👉 &lt;strong&gt;Exercise.&lt;/strong&gt; Write a query that returns the cities that have no properties registered in a transaction.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;HINT.&lt;/strong&gt; This is a useful case for testing an OUTER JOIN.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;aggregating-queries&#34; class=&#34;section level1&#34; number=&#34;5&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;5&lt;/span&gt; Aggregating queries&lt;/h1&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 5.1  &lt;/strong&gt;&lt;/span&gt;
-Write the following SQL queries:&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;Count the number of films in the database (expected result: 1000).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;How many distinct actor last names are there?&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Compute the total amount of payments across all rentals (expected result: 67416.51).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Compute the average, minimum and maximum duration of rental across all films
-(expected result: 4 days 24:36:28.541706, 18:00:00, 9 days 05:59:00).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Return the number of actors for each film.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Return the number of copies of each film in each store (table &lt;TT&gt;inventory&lt;/TT&gt;).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Same as 6., but only returns the pairs (film, store) if the number of copies is
-greater than or equal to 3.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
+&lt;div id=&#34;conditional-logic&#34; class=&#34;section level1&#34; number=&#34;7&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;7&lt;/span&gt; Conditional logic&lt;/h1&gt;
+&lt;p&gt;Every major DBMS provides functions that reproduce the behavior of an if-then-else conditional statement.
+These functions are generally not part of the SQL standard, with the exception of the CASE expression.
+A CASE expression can be used in SELECT, INSERT, UPDATE, and DELETE statements.&lt;/p&gt;
+&lt;p&gt;A CASE expression has the following syntax:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;CASE
+  WHEN C1 THEN E1
+  WHEN C2 THEN E2
+  ...
+  WHEN CN THEN EN
+  [ELSE ED]
+END&lt;/code&gt;&lt;/pre&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;C1, C2, …, CN represent Boolean predicates (conditions).&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;E1, E2, …, EN represent expressions returned by CASE if the corresponding WHEN clause evaluates to TRUE.
+An expression can return any type (string, integer), including a whole subquery.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The ELSE clause is optional (hence, it is shown in brackets). The expression ED associated with ELSE is returned if none of the
+previous conditions evaluates to TRUE.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Example.&lt;/strong&gt;
+Run the following example to understand how a CASE expression works.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT property_id,
+      CASE
+        WHEN land_area IS NOT NULL THEN &amp;#39;yes&amp;#39;
+        ELSE &amp;#39;no&amp;#39;
+      END AS property_with_garden
+FROM property;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Let’s use CASE expressions now.&lt;/p&gt;
+&lt;p&gt;👉 &lt;strong&gt;Exercise.&lt;/strong&gt; Write a query that returns the category of each property based on its property value.
+The categories are given in the following table.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr class=&#34;header&#34;&gt;
+&lt;th align=&#34;right&#34;&gt;Transaction value&lt;/th&gt;
+&lt;th&gt;Category&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;&amp;lt; €100,000&lt;/td&gt;
+&lt;td&gt;Very cheap&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;€100,000 – €250,000&lt;/td&gt;
+&lt;td&gt;Affordable&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;€250,000 – €500,000&lt;/td&gt;
+&lt;td&gt;Mid-range&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;€500,000 – €1,000,000&lt;/td&gt;
+&lt;td&gt;High-end&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;odd&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;€1,000,000 – €2,000,000&lt;/td&gt;
+&lt;td&gt;Luxury&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr class=&#34;even&#34;&gt;
+&lt;td align=&#34;right&#34;&gt;&amp;gt; €2,000,000&lt;/td&gt;
+&lt;td&gt;Ultra-luxury&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;p&gt;👉 &lt;strong&gt;Exercise.&lt;/strong&gt; Write a query that returns the price per square meter for each property that is a house.
+Order the result by price in descending order.
+Use the ROUND function to round the price to the nearest whole number.
+&lt;strong&gt;HINT.&lt;/strong&gt; Remember that, for some properties, the built area may be 0 or NULL. We need to handle these cases
+to avoid an error.&lt;/p&gt;
+&lt;p&gt;In the result of the previous query, you may have noticed some very high prices per square meter.
+These correspond to particular cases.
+For an analysis of the housing market, we may want to ignore them.
+For example, we may want to consider only houses with a price per square meter less than or equal to 15,000.&lt;/p&gt;
+&lt;p&gt;👉 &lt;strong&gt;Exercise.&lt;/strong&gt; Try to apply this filter. Can you do it? If not, that is normal: we need a subquery.&lt;/p&gt;
 &lt;/div&gt;
+&lt;div id=&#34;subqueries&#34; class=&#34;section level1&#34; number=&#34;8&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;8&lt;/span&gt; Subqueries&lt;/h1&gt;
+&lt;p&gt;A subquery is a query contained within another SQL statement; the latter is referred to as
+the containing statement.
+The containing statement can be another query or an INSERT, DELETE, or UPDATE statement.&lt;/p&gt;
+&lt;p&gt;A subquery is always enclosed in parentheses, and it is usually executed before the containing
+statement.
+Like any other query, a subquery always returns a table. The number of rows and columns in the returned
+table affects how the result of the subquery can be used.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT dept_code, dept_name
+FROM department
+WHERE reg_code &amp;lt;&amp;gt; 
+    (SELECT reg_code
+     FROM region
+     WHERE reg_name = &amp;#39;Île-de-France&amp;#39; )&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;In the previous example, the subquery returns only one row and one column.
+This is known as a &lt;strong&gt;scalar subquery&lt;/strong&gt; and can appear on either side of a condition using the operators
+&lt;code&gt;=&lt;/code&gt;, &lt;code&gt;&amp;lt;&amp;gt;&lt;/code&gt;, &lt;code&gt;&amp;lt;&lt;/code&gt;, &lt;code&gt;&amp;gt;&lt;/code&gt;, &lt;code&gt;&amp;lt;=&lt;/code&gt;, &lt;code&gt;&amp;gt;=&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;👉 &lt;strong&gt;Exercise.&lt;/strong&gt; Write a query that returns the city name, department name, and region name for &lt;strong&gt;all&lt;/strong&gt; properties
+that have the maximum built area.&lt;/p&gt;
+&lt;p&gt;If you use these operators with subqueries that return more than one row or column, you get an error,
+as in the following example:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT dept_code, dept_name
+FROM department
+WHERE reg_code =
+    (SELECT reg_code
+     FROM region
+     WHERE reg_name &amp;lt;&amp;gt; &amp;#39;Île-de-France&amp;#39; )&lt;/code&gt;&lt;/pre&gt;
+&lt;div id=&#34;multiple-row-single-column-subqueries&#34; class=&#34;section level2&#34; number=&#34;8.1&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;8.1&lt;/span&gt; Multiple-row, single-column subqueries&lt;/h2&gt;
+&lt;p&gt;If the subquery returns more than one row and a single column, four operations are useful:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;IN: check whether a value is within a set of values;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;NOT IN: check whether a value is not within a set of values;&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;ALL: allows you to compare a single value with all values in a set.
+A condition using ALL evaluates to TRUE if all comparisons are TRUE.
+It is used in conjunction with comparison operators (e.g., = ALL, &amp;gt; ALL, …)&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;ANY: allows you to compare a single value with the values in a set.
+Unlike ALL, a condition using ANY evaluates to TRUE if any of the comparisons is TRUE.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;👉 &lt;strong&gt;Exercise.&lt;/strong&gt; Try using IN instead of &lt;code&gt;=&lt;/code&gt; to rewrite the last query that produced an error.&lt;/p&gt;
+&lt;p&gt;👉 &lt;strong&gt;Exercise.&lt;/strong&gt; Write a query that returns the names of &lt;strong&gt;all&lt;/strong&gt; regions with the fewest departments.&lt;/p&gt;
 &lt;/div&gt;
+&lt;div id=&#34;multicolumn-subqueries&#34; class=&#34;section level2&#34; number=&#34;8.2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;8.2&lt;/span&gt; Multicolumn subqueries&lt;/h2&gt;
+&lt;p&gt;Multicolumn subqueries return tables with multiple columns.
+The following example returns the distinct property types and numbers of main rooms
+for properties with a built area of less than 1,000 square meters that have the same values
+of (property_type, num_main_rooms) as properties with a built area of at least 1,000
+square meters.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT DISTINCT property_type, num_main_rooms 
+FROM property
+WHERE built_area &amp;lt; 1000 
+    AND (property_type, num_main_rooms) IN (
+        SELECT property_type, num_main_rooms
+        FROM property
+        WHERE built_area &amp;gt;= 1000
+);&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;👉 &lt;strong&gt;Exercise.&lt;/strong&gt; Write a query that returns cities outside department 75 (Paris)
+that have at least one transaction with exactly the same property value and transaction date as a transaction in Paris.&lt;/p&gt;
 &lt;/div&gt;
-&lt;div id=&#34;join-queries&#34; class=&#34;section level1&#34; number=&#34;6&#34;&gt;
-&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;6&lt;/span&gt; Join queries&lt;/h1&gt;
-&lt;div class=&#34;infobox exercisebox&#34;&gt;
-&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&#34;exercise&#34;&gt;
-&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-11&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 6.1  &lt;/strong&gt;&lt;/span&gt;
-Write the following SQL queries:&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;Return the first and last name of the manager of the store with identifier 1 (expected result: Mike Hillyer).&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Return the first and last name of the actors in the film ACE GOLDFINGER.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Return first and last name of each actor and the number of films in which they played a role.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Same as in 3., but order by number of films in descending order.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Same as in 4., but only return actors who played a role in at least 10 films.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Return the identifier, the first and family name of the customers who have rented between 5 and 10
-movies in the category &lt;em&gt;Family&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;/div&gt;
+&lt;div id=&#34;subqueries-as-data-sources&#34; class=&#34;section level2&#34; number=&#34;8.3&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;8.3&lt;/span&gt; Subqueries as data sources&lt;/h2&gt;
+&lt;p&gt;So far, we have seen examples of subqueries used in the WHERE clause.
+Since a subquery returns a table, it can also be used in the FROM clause.
+In this case, the subquery must be given a name (or alias).&lt;/p&gt;
+&lt;p&gt;Here is an example.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;SELECT city_name, avg_built_area
+FROM (
+    SELECT c.city_name,
+           AVG(p.built_area) AS avg_built_area
+    FROM property p
+    JOIN street s USING (street_id)
+    JOIN city c USING (city_id)
+    GROUP BY c.city_name
+) AS city_averages
+WHERE avg_built_area &amp;gt; 100;&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;We are now ready to write the query that filters out houses with a very high price per square meter.&lt;/p&gt;
+&lt;p&gt;👉 &lt;strong&gt;Exercise.&lt;/strong&gt; Write a query that returns the price per square meter for each property that is a house.
+Order the result by price in descending order.
+Use the ROUND function to round the price to the nearest whole number.
+Keep only houses with a price per square meter of 15,000 or less.&lt;/p&gt;
+&lt;p&gt;👉 &lt;strong&gt;Exercise.&lt;/strong&gt; Write a query to find sales whose property value is greater than the average sales value for that property type.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 </description>
