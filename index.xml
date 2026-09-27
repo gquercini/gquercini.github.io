@@ -2681,7 +2681,7 @@ explicitly by typing the following command:&lt;/p&gt;
     </item>
     
     <item>
-      <title>Project</title>
+      <title>Project - Modeling</title>
       <link>/courses/databases/exam/project/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>/courses/databases/exam/project/</guid>
@@ -2691,6 +2691,107 @@ explicitly by typing the following command:&lt;/p&gt;
 
 &lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
 &lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;div id=&#34;application-context&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Application context&lt;/h1&gt;
+&lt;p&gt;We intend to manage the data of a travel reservation system
+with clients all over the world.
+Upon registration, customers are automatically given a numeric identifier
+and they are asked to indicate their first and family names, their gender,
+date of birth, a phone number, an email address and their country of residence.&lt;/p&gt;
+&lt;p&gt;Any customer can book a trip that includes
+the reservation of &lt;strong&gt;one or more flights&lt;/strong&gt; and, possibly, &lt;strong&gt;one or more hotels&lt;/strong&gt;.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Example&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Alice wants to fly from Paris,
+France to New York City (NYC), USA
+and she intends to stay in NYC for 10 days.
+Her trip includes two flights: an outbound flight
+from Paris to NYC and an inbound flight from NYC to Paris; and an hotel in NYC.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;A flight is operated by an airline company,
+of which the system keeps its name (e.g., British Airways),
+the country where the airline is incorporated and, when available,
+its IATA code (e.g., BA, a two-letter code identifying the airline),
+its ICAO code (e.g., BAW, a three-letter code identifying the airline)
+and alternate name or alias (e.g., British).&lt;/p&gt;
+&lt;p&gt;A flight connects two airports,
+each having a name (e.g., London Heathrow Airport), and,
+possibly, a IATA (e.g., LHR) and ICAO code (e.g., EGLL);
+an airport serves a specific location (e.g., London, UK) and its precise position
+is given by its geographic coordinates (latitude and longitude).&lt;/p&gt;
+&lt;p&gt;A flight connecting two airports at specific departure and arrival times
+is identified by a flight number.
+Two flights operated by two different airline companies cannot have the same flight number,
+but the same flight number can denote two flights operated
+by the same airline company on different days.&lt;/p&gt;
+&lt;div class=&#34;infobox warning&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Example&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;Emirates flight EK074 leaves Paris,
+France at 10 AM and arrives at Dubai, UAE at 7:40 PM (regardless of the departure day).&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;For each flight booked by a customer,
+the system keeps the seat number,
+the travel class (e.g., economy or business),
+the price and the date of the flight.
+Usually, airlines include details on the type of aircraft
+they plan to use on their flight schedules;
+these details include the name of the aircraft (e.g., Boeing 787-8) and,
+when available, the IATA code (e.g., 788, a unique three-letter identifier for the aircraft)
+and the ICAO code (e.g., B788, a unique four-letter identifier for the aircraft).&lt;/p&gt;
+&lt;p&gt;The system maintains a list of hotels,
+with their names, addresses and an average review score,
+which is a real number denoting the average grade assigned to
+the hotel by its customers.
+Customers can write a review for an hotel;
+in which case the system stores the text of the review,
+the date and its author.
+When a customer books an hotel, the system keeps the price paid,
+the check-in and check-out dates and whether the breakfast is included.&lt;/p&gt;
+&lt;/div&gt;
+&lt;div id=&#34;design-of-a-relational-database&#34; class=&#34;section level1&#34;&gt;
+&lt;h1&gt;Design of a relational database&lt;/h1&gt;
+&lt;p&gt;You’ll now proceed to the definition of a relational database for our travel reservation system.
+First, you need to define the &lt;strong&gt;conceptual schema&lt;/strong&gt;
+and then you’ll define the tables that compose the database.&lt;/p&gt;
+&lt;div id=&#34;the-conceptual-schema&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;The conceptual schema&lt;/h2&gt;
+&lt;p&gt;Before defining the logical schema of the database, &lt;strong&gt;answer the following questions&lt;/strong&gt;:&lt;/p&gt;
+&lt;ol style=&#34;list-style-type: lower-alpha&#34;&gt;
+&lt;li&gt;&lt;p&gt;Can you use the name of the hotel as a primary key? Justify your answer.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Can you use the flight number as a primary key to identify a flight?
+Justify your answer and, in case of a negative answer, propose a solution.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Knowing that it is unlikely that two reviews have the same textual content,
+would you use it as a primary key? Justify your answer.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Knowing that the IATA code uniquely identifies an airport,
+would you choose it as a primary key for the entity Airport? Justify your answer.&lt;/p&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1  &lt;/strong&gt;&lt;/span&gt;
+Propose an Entity-Relationship diagram describing the conceptual
+model of a relational database for the given application context.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Specify all the attributes for each entity and relation.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;For each entity, underline the attributes composing the primary key.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;For each relation, clearly indicate the minimum and maximum cardinality.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;the-logical-schema&#34; class=&#34;section level2&#34;&gt;
+&lt;h2&gt;The logical schema&lt;/h2&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2  &lt;/strong&gt;&lt;/span&gt;
+Derive the logical model that corresponds to the conceptual model that you gave in Exercise 1.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
 </description>
     </item>
     
