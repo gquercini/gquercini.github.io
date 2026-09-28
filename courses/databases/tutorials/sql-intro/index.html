@@ -684,19 +684,96 @@ the follow the instructions below.</p>
 This is done using so-called <strong>exploratory queries</strong>.</p>
 <p>First, we may want to know the size of our database.</p>
 <p>👉 <strong>Exercise.</strong> Count the number of rows in all tables.</p>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>You need to use the COUNT(*) function, for example</p>
+<pre>
+SELECT COUNT(*) 
+FROM sales_transaction
+</pre>
+</div>
+</details>
 <p>Next, we may want to learn more about sales transactions.
 Note that there is a column called <code>transaction_type</code>.</p>
 <p>👉 <strong>Exercise.</strong> What are the distinct transaction types in our database?</p>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT DISTINCT(transaction_type)
+FROM sales_transaction
+</pre>
+</div>
+</details>
 <p>Continuing our exploration, we note that there is a column called <code>property_value</code> in the <code>sales_transaction</code> table.
 Let’s find out more. There may be a big surprise here!</p>
 <p>👉 <strong>Exercise.</strong> What is the maximum, minimum and average property value across all transactions?</p>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT MAX(property_value) AS max_property_value, 
+      MIN(property_value) AS min_property_value,
+      AVG(property_value) AS avg_property_value
+FROM sales_transaction
+</pre>
+</div>
+</details>
 <p>Let’s find out more about the properties.</p>
 <p>👉 <strong>Exercise.</strong> What are the different property types?</p>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT DISTINCT(property_type)
+FROM property
+</pre>
+</div>
+</details>
 <p>We would like to learn more about the characteristics of apartments.</p>
 <p>👉 <strong>Exercise.</strong> What is the average built area, land area and number of main rooms in an apartment?</p>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT AVG(built_area) AS avg_built_area, 
+       AVG(land_area) AS avg_land_area,
+         AVG(num_main_rooms) AS avg_main_rooms
+FROM property
+WHERE property_type='Appartement'
+</pre>
+</div>
+</details>
 <p>Now we would like to compare houses and apartments using the same characteristics.</p>
 <p>👉 <strong>Exercise.</strong> Can you write a single query that displays the same characteristics as in the previous exercise for both apartments and houses?
 <strong>Hint.</strong> GROUP BY is your friend.</p>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT property_type, 
+       AVG(built_area) AS avg_built_area, 
+       AVG(land_area) AS avg_land_area,
+         AVG(num_main_rooms) AS avg_main_rooms
+FROM property
+WHERE property_type IN ('Appartement', 'Maison')
+GROUP BY property_type
+</pre>
+</div>
+</details>
 <div id="a-word-on-candidate-keys" class="section level2" number="3.1">
 <h2><span class="header-section-number">3.1</span> A word on candidate keys</h2>
 <p>In the schema of this database, each table has a primary key.
@@ -705,13 +782,58 @@ However, no other candidate key is specified in the tables.</p>
 <p>👉 <strong>Exercise.</strong> Is the city name a key? Write an SQL query to find out whether different cities can have the same name.
 <strong>HINT.</strong> For now, we do not want to know which cities, if any, share the same name. We only want to know whether any do.</p>
 <p><strong>HINT.</strong> SQL allows you to use mathematical operators.</p>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>We count the total number of rows in city table and subtract the number of distinct city names.</p>
+<pre>
+SELECT COUNT(*) - COUNT(DISTINCT city_name)
+FROM city
+</pre>
+<p>We can even return a boolean:</p>
+<pre>
+SELECT (COUNT(*) - COUNT(DISTINCT city_name) >0 ) as "duplicate_city_names?"
+FROM city
+</pre>
+</div>
+</details>
 <p>👉 <strong>Exercise.</strong> If the answer to the previous exercise is negative, write an SQL query to find out
 exactly which names are shared by more than one city.</p>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT city_name
+FROM city
+GROUP BY city_name
+HAVING COUNT(*) > 1
+</pre>
+</div>
+</details>
 <p>Based on our knowledge, departments and regions do not share names.
 Their names are therefore candidate keys.
 You can adapt the previous queries to verify this.</p>
 <p>👉 <strong>Exercise.</strong> Using the ALTER TABLE statement (<a href="https://www.postgresql.org/docs/current/sql-altertable.html" target="_blank">documented here</a>), add a UNIQUE constraint
 to the <code>dept_name</code> column in the <code>department</code> table and to the <code>reg_name</code> column in the <code>region</code> table.</p>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+ALTER TABLE department
+ADD CONSTRAINT dept_name_unique UNIQUE(dept_name)
+</pre>
+<pre>
+ALTER TABLE region
+ADD CONSTRAINT reg_name_unique UNIQUE(reg_name)
+</pre>
+</div>
+</details>
 </div>
 </div>
 <div id="set-operations" class="section level1" number="4">
@@ -727,8 +849,45 @@ to the <code>dept_name</code> column in the <code>department</code> table and to
 <p>👉 <strong>Exercise.</strong> Find the identifiers of the properties involved in at least one sale transaction (“Vente”) and at least one
 exchange transaction (“Echange”).</p>
 <p><strong>Hint.</strong> An SQL query always returns a table, so you can use a set operator between the results of two SQL queries.</p>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT DISTINCT(property_id)
+FROM sales_transaction
+WHERE transaction_type='Vente' 
+INTERSECT
+SELECT DISTINCT(property_id)
+FROM sales_transaction
+WHERE transaction_type='Echange'
+</pre>
+</div>
+</details>
 <p>👉 <strong>Exercise.</strong> Find the identifiers of the properties involved in a sale transaction (“Vente”) or an exchange transaction (“Echange”),
 but not in both.</p>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT DISTINCT(property_id)
+FROM sales_transaction
+WHERE transaction_type IN ('Vente', 'Echange')
+EXCEPT (
+SELECT property_id
+FROM sales_transaction
+WHERE transaction_type='Vente' 
+INTERSECT
+SELECT property_id
+FROM sales_transaction
+WHERE transaction_type='Echange'
+)
+</pre>
+</div>
+</details>
 </div>
 <div id="working-with-dates" class="section level1" number="5">
 <h1><span class="header-section-number">5</span> Working with dates</h1>
@@ -750,9 +909,39 @@ functions and operators.</p>
 <p>👉 <strong>Exercise.</strong> Find the number of sales (transaction_type = “Vente”) and the average property value per month for the year 2025.</p>
 <p><strong>HINT.</strong> The EXTRACT function is your friend.</p>
 <p><strong>Good to know.</strong> You can also plot the result using the graph visualizer integrated into pgAdmin.</p>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT EXTRACT(MONTH FROM transaction_date) as transaction_month, 
+       AVG(property_value) AS avg_property_value,
+       COUNT(*) AS nb_sales
+FROM sales_transaction
+WHERE transaction_type='Vente' AND EXTRACT(YEAR FROM transaction_date) = '2025'
+GROUP BY transaction_month
+</pre>
+</div>
+</details>
 <p>Does the number of transactions depend on the day of the week? Is Saturday the day with the most transactions?
 Let’s find out.</p>
 <p>👉 <strong>Exercise.</strong> Find the number of sales (transaction_type = “Vente”) per day of the week for the year 2025.</p>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT TO_CHAR(transaction_date, 'Day') as transaction_day, 
+       COUNT(*) AS nb_sales
+FROM sales_transaction
+WHERE transaction_type='Vente' AND EXTRACT(YEAR FROM transaction_date) = '2025'
+GROUP BY transaction_day
+ORDER BY nb_sales DESC
+</pre>
+</div>
+</details>
 <p>In the previous section, we found that some properties are involved in both a sale transaction and an exchange transaction.
 Let’s analyze whether different transactions involving the same property occur on the same day or, if not, how many days separate them.</p>
 </div>
@@ -762,13 +951,77 @@ Let’s analyze whether different transactions involving the same property occur
 Most queries need data from multiple tables to produce a result.
 This is where join operations come into play.</p>
 <p>👉 <strong>Exercise.</strong> Write a query to retrieve the name of each department together with the name of its corresponding region.</p>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT dept_name, reg_name
+FROM department JOIN region USING (reg_code)
+</pre>
+</div>
+</details>
 <p>Let’s find out more.</p>
 <p>👉 <strong>Exercise.</strong> How many departments does each region have? Sort the result so that the regions with the most departments appear first.</p>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Here, we can group by region name because no two regions
+in France have the same name.</p>
+<pre>
+SELECT reg_name, COUNT(*) as nb_depts
+FROM department JOIN region USING (reg_code)
+GROUP BY reg_name
+ORDER BY nb_depts DESC
+</pre>
+</div>
+</details>
 <p>👉 <strong>Exercise.</strong> How many cities does each region have? Sort the result so that the regions with the most cities appear first.</p>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Here, we can group by region name because no two regions
+in France have the same name.</p>
+<pre>
+SELECT reg_name, COUNT(*) as nb_cities
+FROM city JOIN department USING(dept_code)
+          JOIN region USING (reg_code)
+GROUP BY reg_name
+ORDER BY nb_cities DESC
+</pre>
+</div>
+</details>
 <p>Are there any cities with no property registered in a transaction?</p>
 <p>Let’s find out.</p>
 <p>👉 <strong>Exercise.</strong> Write a query that returns the cities that have no properties registered in a transaction.</p>
 <p><strong>HINT.</strong> This is a useful case for testing an OUTER JOIN.</p>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Note that we use COUNT(property_id). When performing a
+RIGHT OUTER JOIN, if a city does not match any property,
+there is a row for that city in which property_id is NULL.
+COUNT(property_id) would not count that row.</p>
+<pre>
+SELECT city_id, COUNT(property_id) AS nb_properties
+FROM property RIGHT OUTER JOIN street USING (street_id) 
+              RIGHT OUTER JOIN city USING (city_id)
+GROUP BY city_id
+HAVING COUNT(property_id) = 0
+</pre>
+<p>In our dataset, there is no such city.
+We can add one to verify that the query is indeed correct.</p>
+<p>INSERT INTO city values (-1, ‘9999’, ‘Fake city’, ‘V43’, ‘91’);</p>
+<p>Of course, you should remove this row afterward.</p>
+</div>
+</details>
 </div>
 <div id="conditional-logic" class="section level1" number="7">
 <h1><span class="header-section-number">7</span> Conditional logic</h1>
@@ -835,11 +1088,47 @@ The categories are given in the following table.</p>
 </tr>
 </tbody>
 </table>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT property_id,
+    CASE
+        WHEN property_value < 100000 THEN 'Very cheap'
+        WHEN property_value >= 100000 AND property_value < 250000   THEN 'Affordable'
+        WHEN property_value >= 250000 AND property_value < 500000 THEN 'Mid-range'
+        WHEN property_value >= 500000 AND property_value < 1000000 THEN 'High-end'
+        WHEN property_value >= 1000000 AND property_value < 2000000 THEN 'Luxury'
+        ELSE 'Luxury'
+    END AS category
+FROM property JOIN sales_transaction USING(property_id)
+</pre>
+</div>
+</details>
 <p>👉 <strong>Exercise.</strong> Write a query that returns the price per square meter for each property that is a house.
 Order the result by price in descending order.
 Use the ROUND function to round the price to the nearest whole number.
 <strong>HINT.</strong> Remember that, for some properties, the built area may be 0 or NULL. We need to handle these cases
 to avoid an error.</p>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT property_id,
+    CASE 
+        WHEN built_area IS NULL OR built_area = 0 THEN 0
+        ELSE ROUND(property_value/built_area)
+    END AS price_per_sqm
+FROM property JOIN sales_transaction USING (property_id)
+WHERE property_type='Maison'
+ORDER BY price_per_sqm DESC
+</pre>
+</div>
+</details>
 <p>In the result of the previous query, you may have noticed some very high prices per square meter.
 These correspond to particular cases.
 For an analysis of the housing market, we may want to ignore them.
@@ -866,6 +1155,21 @@ This is known as a <strong>scalar subquery</strong> and can appear on either sid
 <code>=</code>, <code>&lt;&gt;</code>, <code>&lt;</code>, <code>&gt;</code>, <code>&lt;=</code>, <code>&gt;=</code>.</p>
 <p>👉 <strong>Exercise.</strong> Write a query that returns the city name, department name, and region name for <strong>all</strong> properties
 that have the maximum built area.</p>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT property_id, built_area
+FROM property
+WHERE built_area = (
+    SELECT MAX(built_area) AS min_built_area
+    FROM property
+)
+</pre>
+</div>
+</details>
 <p>If you use these operators with subqueries that return more than one row or column, you get an error,
 as in the following example:</p>
 <pre><code>SELECT dept_code, dept_name
@@ -887,7 +1191,39 @@ It is used in conjunction with comparison operators (e.g., = ALL, &gt; ALL, …)
 Unlike ALL, a condition using ANY evaluates to TRUE if any of the comparisons is TRUE.</p></li>
 </ul>
 <p>👉 <strong>Exercise.</strong> Try using IN instead of <code>=</code> to rewrite the last query that produced an error.</p>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT dept_code, dept_name
+FROM department
+WHERE reg_code IN
+    (SELECT reg_code
+     FROM region
+     WHERE reg_name <> 'Île-de-France' )
+</pre>
+</div>
+</details>
 <p>👉 <strong>Exercise.</strong> Write a query that returns the names of <strong>all</strong> regions with the fewest departments.</p>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT reg_name, COUNT(dept_code) AS nb_depts
+FROM region JOIN department USING (reg_code)
+GROUP BY reg_name
+HAVING COUNT(dept_code) <= ALL (
+    SELECT COUNT(dept_code)
+    FROM region JOIN department USING (reg_code)
+    GROUP BY reg_name
+)
+</pre>
+</div>
+</details>
 </div>
 <div id="multicolumn-subqueries" class="section level2" number="8.2">
 <h2><span class="header-section-number">8.2</span> Multicolumn subqueries</h2>
@@ -906,6 +1242,31 @@ WHERE built_area &lt; 1000
 );</code></pre>
 <p>👉 <strong>Exercise.</strong> Write a query that returns cities outside department 75 (Paris)
 that have at least one transaction with exactly the same property value and transaction date as a transaction in Paris.</p>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT DISTINCT city_name, dept_name
+FROM sales_transaction 
+    JOIN property USING(property_id)
+    JOIN street USING (street_id)
+    JOIN city USING (city_id)
+    JOIN department USING (dept_code)
+WHERE dept_code <> '75' 
+    AND (property_value, transaction_date) IN (
+        SELECT property_value, transaction_date
+        FROM sales_transaction 
+        JOIN property USING(property_id)
+        JOIN street USING (street_id)
+        JOIN city USING (city_id)
+        JOIN department USING (dept_code)
+        WHERE dept_code = '75'
+    )
+</pre>
+</div>
+</details>
 </div>
 <div id="subqueries-as-data-sources" class="section level2" number="8.3">
 <h2><span class="header-section-number">8.3</span> Subqueries as data sources</h2>
@@ -928,7 +1289,49 @@ WHERE avg_built_area &gt; 100;</code></pre>
 Order the result by price in descending order.
 Use the ROUND function to round the price to the nearest whole number.
 Keep only houses with a price per square meter of 15,000 or less.</p>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT property_id, price_per_sqm
+FROM (
+    SELECT property_id,
+        CASE 
+            WHEN built_area IS NULL OR built_area = 0 THEN 0
+            ELSE ROUND(property_value/built_area)
+        END AS price_per_sqm
+    FROM property JOIN sales_transaction USING (property_id)
+    WHERE property_type='Maison'
+) prices_per_sqm
+WHERE price_per_sqm <= 15000    
+ORDER BY price_per_sqm DESC
+</pre>
+</div>
+</details>
 <p>👉 <strong>Exercise.</strong> Write a query to find sales whose property value is greater than the average sales value for that property type.</p>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT property_id, property_type, property_value
+FROM property p
+    JOIN sales_transaction USING (property_id)
+    JOIN (
+            SELECT p2.property_type, AVG(st2.property_value) AS avg_value
+            FROM property p2
+                JOIN sales_transaction st2 USING (property_id)
+            GROUP BY p2.property_type
+        ) avg_by_type
+    USING(property_type)
+WHERE property_value > avg_value;
+
+</pre>
+</div>
+</details>
 </div>
 </div>
 
