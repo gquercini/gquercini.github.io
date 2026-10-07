@@ -37883,7 +37883,7 @@ WHERE property_value &gt; avg_value;
     </item>
     
     <item>
-      <title>Learning SQL queries</title>
+      <title>Advanced SQL</title>
       <link>/courses/databases/tutorials/sql-advanced/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
       <guid>/courses/databases/tutorials/sql-advanced/</guid>
@@ -37893,50 +37893,265 @@ WHERE property_value &gt; avg_value;
 
 &lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
 &lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;p&gt;In this tutorial we’ll learn two important advanced SQL features: common table expressions (CTE) and window functions.
+For this part, we’ll use the sales transaction database that we used in the previous SQL tutorial.&lt;/p&gt;
+&lt;p&gt;A &lt;strong&gt;Common Table Expression (CTE)&lt;/strong&gt; allow you to define a temporary table from the result of a subquery that can be used
+inside anothe query.
+This tool has been defined in the SQL:1999 standard.
+A CTE is very useful when you want to break a complex query into smaller building blocks that can then be composed together.&lt;/p&gt;
+&lt;p&gt;The following query returns all the sale transactions that are involved in at least one sale (&lt;code&gt;Vente&lt;/code&gt;) transaction or
+in at least one exchange (&lt;code&gt;Echange&lt;/code&gt;) transaction but not in both.&lt;/p&gt;
+&lt;p&gt;The query first uses the keyword WITH to define &lt;code&gt;sale_and_exchange&lt;/code&gt;
+as a table obtained from a SQL query defined after the keyword AS;
+then, &lt;code&gt;sale_and_exchange&lt;/code&gt; is used in the subsequent query.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;WITH sale_and_exchange  AS (
+    SELECT DISTINCT property_id
+    FROM sales_transaction
+    WHERE transaction_type = &amp;#39;Vente&amp;#39;
+    INTERSECT 
+    SELECT DISTINCT property_id
+    FROM sales_transaction
+    WHERE transaction_type = &amp;#39;Echange&amp;#39;
+)
+SELECT DISTINCT property_id
+FROM sales_transaction
+WHERE transaction_type IN (&amp;#39;Vente&amp;#39;, &amp;#39;Echange&amp;#39;)
+EXCEPT
+SELECT DISTINCT property_id
+FROM sale_and_exchange&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;It is also possible to define two temporary tables.
+The following example defines&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;a temporary table &lt;code&gt;sale&lt;/code&gt; that contains all properties involved in at least one sale transaction.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;a temporary table &lt;code&gt;exchange&lt;/code&gt; that contains all properties involed in at least one exchange transaction.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;In this case, the keyword WITH is only written once, as shown in the following example&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;WITH sale  AS (
+    SELECT DISTINCT property_id
+    FROM sales_transaction
+    WHERE transaction_type = &amp;#39;Vente&amp;#39;
+),
+exchange AS (
+    SELECT DISTINCT property_id
+    FROM sales_transaction
+    WHERE transaction_type = &amp;#39;Echange&amp;#39;
+)
+SELECT DISTINCT property_id
+FROM sales_transaction
+WHERE transaction_type IN (&amp;#39;Vente&amp;#39;, &amp;#39;Echange&amp;#39;)
+EXCEPT (
+SELECT DISTINCT property_id
+FROM sale
+INTERSECT
+SELECT DISTINCT property_id
+FROM exchange
+)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Let’s try some exercises using a CTE.&lt;/p&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
 &lt;div class=&#34;exercise&#34;&gt;
 &lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1  &lt;/strong&gt;&lt;/span&gt;
-Write the following SQL queries:&lt;/p&gt;
-&lt;ol style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;Which last names are &lt;strong&gt;not&lt;/strong&gt; repeated in table &lt;em&gt;actor&lt;/em&gt;?&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Is a copy of the movie ACADEMY DINOSAUR available for rent from store 1?&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Return the title and the release year of all films in one of the following categories:
-&lt;em&gt;Family&lt;/em&gt;, &lt;em&gt;Animation&lt;/em&gt;, &lt;em&gt;Documentary&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Tip
-&lt;/summary&gt;
-You can use the &lt;a href=&#34;https://www.w3schools.com/sql/sql_in.asp&#34; target=&#34;_blank&#34;&gt;operator IN&lt;/a&gt;
-&lt;/details&gt;
-&lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;Find all customers (id, last name, first name) whose last name starts with the letter L.
-&lt;details&gt;
-&lt;summary&gt;
-Tip
-&lt;/summary&gt;
-You can use the &lt;a href=&#34;https://www.w3schools.com/sql/sql_like.asp&#34; target=&#34;_blank&#34;&gt;operator LIKE&lt;/a&gt;
-&lt;/details&gt;&lt;/li&gt;
-&lt;li&gt;Return the total paid by each customer. For each customer, display a single
-column containing first and last name and another column with the total amount paid.
-Order the result alphabetically by last name&lt;/li&gt;
-&lt;/ol&gt;
-&lt;details&gt;
-&lt;summary&gt;
-Tip
-&lt;/summary&gt;
-You can use the &lt;a href=&#34;https://www.w3schools.com/sql/func_sqlserver_concat.asp&#34; target=&#34;_blank&#34;&gt;operator CONCAT&lt;/a&gt;
-&lt;/details&gt;
-&lt;ol start=&#34;6&#34; style=&#34;list-style-type: decimal&#34;&gt;
-&lt;li&gt;&lt;p&gt;Return the total revenue from the rentals across the stores in each country.
-Order by descending revenue.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;The first and last name of the actor that played in the most films.
-If two or more actors are tied, the query must return the names of all of them.&lt;/p&gt;&lt;/li&gt;
-&lt;/ol&gt;
+Find the 10 cities that have the most of the transactions in December 2025.
+To write this query write a CTE:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;one CTE to obtain a table that contains the sales transactions in December 2025.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Count the number of transactions per city on that table.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;pre&gt;
+WITH last_two_months AS (
+    SELECT transaction_id, property_id
+    FROM sales_transaction
+    WHERE transaction_date &gt;= date(&#39;2026-01-01&#39;) - 31
+)
+SELECT city_id, city_name, COUNT(*) AS nb_transactions
+FROM city JOIN street USING (city_id)
+          JOIN property USING (street_id)
+          JOIN last_two_months USING(property_id)
+GROUP BY city_id, city_name
+ORDER BY nb_transactions DESC 
+LIMIT 10
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2  &lt;/strong&gt;&lt;/span&gt;
+Write a SQL query that counts per each region the number of transactions whose property value is above the regional
+average property value.
+To write this query use two CTEs.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;One CTE to obtain a table that includes per each transaction, the identifier of the transaction, the property value,
+the region code and the region name.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;One CTE to obtain a table that includes the average property value per region.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Use the two CTEs to count in each region the number of transactions whose value is above the regional property value.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;pre&gt;
+WITH transaction_value_in_region AS (
+    SELECT reg_code, reg_name, transaction_id, property_value
+    FROM sales_transaction 
+        JOIN property USING (property_id)
+        JOIN street USING (street_id)
+        JOIN city USING (city_id)
+        JOIN department USING (dept_code)
+        JOIN region USING (reg_code)
+),
+avg_value_by_region AS (
+    SELECT reg_code, AVG(property_value) AS avg_prop_value
+    FROM transaction_value_in_region
+    GROUP BY reg_code
+)
+SELECT reg_code, reg_name, COUNT(transaction_id) AS nb_transactions
+FROM transaction_value_in_region JOIN avg_value_by_region USING(reg_code) 
+WHERE property_value &gt; avg_prop_value
+GROUP BY reg_code, reg_name
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 3  &lt;/strong&gt;&lt;/span&gt;
+Write a SQL query that returns or each department,
+the number of main rooms that occurs most frequently among its properties,
+along with the number of properties having that number of rooms.&lt;/p&gt;
+&lt;p&gt;Use two CTEs.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;The first CTE counts the number of properties for each combination of department code, department name, and number of main rooms.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;The second CTE finds the maximum number of properties for each department.&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;pre&gt;
+WITH room_counts AS (
+    SELECT
+        dept_code,
+        dept_name,
+        num_main_rooms,
+        COUNT(DISTINCT property_id) AS nb_properties
+    FROM property
+    JOIN street USING (street_id)
+    JOIN city USING (city_id)
+    JOIN department USING (dept_code)
+    GROUP BY dept_code, dept_name, num_main_rooms
+),
+max_counts AS (
+    SELECT
+        dept_code,
+        MAX(nb_properties) AS max_properties
+    FROM room_counts
+    GROUP BY dept_code
+)
+SELECT
+    dept_code,
+    dept_name,
+    num_main_rooms,
+    nb_properties
+FROM room_counts
+JOIN max_counts USING (dept_code)
+WHERE nb_properties = max_properties;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 4  &lt;/strong&gt;&lt;/span&gt;
+Modify the previous query so that the number of main rooms is displayed as categories:
+“2 rooms”, “3 rooms”, “4 rooms”, and “5 rooms or more”,
+while preserving the corresponding property count for each category.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;pre&gt;
+WITH room_counts AS (
+    SELECT
+        dept_code,
+        dept_name,
+        num_main_rooms,
+        COUNT(DISTINCT property_id) AS nb_properties
+    FROM property
+    JOIN street USING (street_id)
+    JOIN city USING (city_id)
+    JOIN department USING (dept_code)
+    GROUP BY dept_code, dept_name, num_main_rooms
+),
+max_counts AS (
+    SELECT
+        dept_code,
+        MAX(nb_properties) AS max_properties
+    FROM room_counts
+    GROUP BY dept_code
+)
+SELECT
+    dept_code,
+    dept_name,
+    CASE 
+        WHEN num_main_rooms = 2 THEN &#39;2 rooms&#39;
+        WHEN num_main_rooms = 3 THEN &#39;3 rooms&#39;
+        WHEN num_main_rooms = 4 THEN &#39;4 rooms&#39;
+        ELSE &#39;5 rooms or more&#39;
+    END AS nb_main_rooms,
+    nb_properties
+FROM room_counts
+JOIN max_counts USING (dept_code)
+WHERE nb_properties = max_properties;
+&lt;/pre&gt;
+&lt;/div&gt;
+&lt;/details&gt;
+&lt;!-- WITH room_counts AS (
+    SELECT
+        dept_code,
+        dept_name,
+        num_main_rooms,
+        COUNT(DISTINCT property_id) AS nb_properties
+    FROM property
+    JOIN street USING (street_id)
+    JOIN city USING (city_id)
+    JOIN department USING (dept_code)
+    GROUP BY dept_code, dept_name, num_main_rooms
+)
+SELECT
+    dept_code,
+    dept_name,
+    num_main_rooms,
+    nb_properties
+FROM (
+    SELECT
+        *,
+        MAX(nb_properties) OVER (
+            PARTITION BY dept_code
+        ) AS max_properties
+    FROM room_counts
+) r
+WHERE nb_properties = max_properties; --&gt;
 </description>
     </item>
     
