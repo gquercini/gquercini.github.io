@@ -1161,10 +1161,14 @@ Solution
 </summary>
 <div class="infobox exosolution">
 <pre>
-SELECT property_id, built_area
-FROM property
+SELECT DISTINCT city_name, dept_name, reg_name
+FROM property 
+JOIN street USING(street_id)
+JOIN city USING (city_id)
+JOIN department USING (dept_code)
+JOIN region USING (reg_code)
 WHERE built_area = (
-    SELECT MAX(built_area) AS min_built_area
+    SELECT MAX(built_area) AS max_built_area
     FROM property
 )
 </pre>
