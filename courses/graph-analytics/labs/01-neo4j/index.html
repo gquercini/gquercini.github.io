@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Gianluca Quercini">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Neo4j queries">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/courses/graph-analytics/labs/01-neo4j/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="rgb(0, 136, 204)">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_3.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_3.png">
+
+  <link rel="canonical" href="/courses/graph-analytics/labs/01-neo4j/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="Gianluca Quercini">
+  <meta property="og:url" content="/courses/graph-analytics/labs/01-neo4j/">
+  <meta property="og:title" content="Neo4j : querying graph data | Gianluca Quercini">
+  <meta property="og:description" content="Neo4j queries"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
+  
+    
+    
+  
+
+  
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Neo4j : querying graph data | Gianluca Quercini</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#experience"><span>Experience</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#publications"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  
+
+  
+
+<div class="container-fluid docs">
+  <div class="row flex-xl-nowrap">
+    <div class="col-12 col-md-3 col-xl-2 docs-sidebar">
+      
+
+
+<script src="/js/toggle-menu.js"></script>
+
+
+
+
+
+
+
+  
+    
+  
+
+
+
+
+<form class="docs-search d-flex align-items-center">
+  <button class="btn docs-toggle d-md-none p-0 mr-3" type="button" data-toggle="collapse" data-target="#docs-nav" aria-controls="docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    <span><i class="fas fa-bars"></i></span>
+  </button>
+
+  
+</form>
+
+<nav class="collapse docs-links" id="docs-nav">
+  
+
+  
+  
+  
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="labs" class="docs-toc-link" href="/courses/graph-analytics/labs/01-neo4j/">Labs</a>
+    
+    <div id="labs-ddowncontent" class="labs-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      <script>open_menu_on_load("labs".concat("-ddowncontent"))</script>
+      <li class="active labs">
+        <a href="/courses/graph-analytics/labs/01-neo4j/">1. Neo4j</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  
+</nav>
+
+    </div>
+
+    
+
+    <main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 docs-content" role="main">
+
+      <article class="article">
+
+        <div class="docs-article-container">
+          <div class="heading">Graph analytics - Albert School — Lab 1</div>
+          <h1>Neo4j : querying graph data</h1>
+          <hr>
+          <div class="logo">
+            
+            </div>
+
+          <div class="article-style">
+            
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p><link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/cloud-computing.css"></p>
+<div id="setting-up-the-work-environment." class="section level1">
+<h1>Setting up the work environment.</h1>
+<!-- Here you can have a visual tour of Neo4j : https://neo4j.com/docs/desktop/current/visual-tour/ -->
+<ul>
+<li><p>Download <a href="https://neo4j.com/download/" target="_blank">Neo4j Desktop</a> and install it on your computer.</p></li>
+<li><p>On the left menu, select <em>Instances</em> and then <em>Get started</em> to create your first instance.</p></li>
+<li><p>Specify an instance name (for instance, <em>Graph analytics</em>), select the latest version and enter a new password.</p></li>
+<li><p>Click on <em>Create</em> and wait.</p></li>
+<li><p>When the instance is ready, click on <em>Connect</em> and then select <em>Query</em>.
+This will open an interface to write queries against your graph.</p></li>
+</ul>
+<div id="import-the-data." class="section level2">
+<h2>Import the data.</h2>
+<ol style="list-style-type: decimal">
+<li>Import the <strong>nodes</strong> corresponding to the
+<strong>movies</strong> (label <strong>Movie</strong>) by
+using the following command (it took 18 seconds on my computer):</li>
+</ol>
+<pre>
+LOAD CSV WITH HEADERS FROM 'https://gquercini.github.io/courses/plp/tutorials/neo4j/movies.csv' as row
+MERGE (m:Movie {movie_id: toInteger(row.movie_id), title_en:row.movie_title_en, title_fr:row.movie_title_fr, year: toInteger(row.movie_year)})
+RETURN count(m)
+</pre>
+<ol start="2" style="list-style-type: decimal">
+<li>Create an <strong>index</strong> on the property <em>movie_id</em> of
+the nodes with label <strong>Movie</strong> with the following command:</li>
+</ol>
+<pre>
+create index movie_idx for (m:Movie) on (m.movie_id)
+</pre>
+<ol start="3" style="list-style-type: decimal">
+<li>Import the <strong>nodes</strong> corresponding to the
+<strong>actors</strong> (label <strong>Actor</strong>) by
+using the following command (it took 59 seconds on my computer):</li>
+</ol>
+<pre>
+LOAD CSV WITH HEADERS FROM 'https://gquercini.github.io/courses/plp/tutorials/neo4j/actors.csv' as row
+MERGE (a:Actor {actor_id: toInteger(row.actor_id), name:row.actor_name})
+RETURN count(a)
+</pre>
+<ol start="4" style="list-style-type: decimal">
+<li>Create an <strong>index</strong> on the property <em>actor_id</em> of
+the nodes with label <strong>Actor</strong> with the following command:</li>
+</ol>
+<pre>
+create index actor_idx for (a:Actor) on (a.actor_id)
+</pre>
+<ol start="5" style="list-style-type: decimal">
+<li>Import the <strong>nodes</strong> corresponding to the
+<strong>directors</strong> (label <strong>Director</strong>) by
+using the following command (it took 4 seconds on my computer):</li>
+</ol>
+<pre>
+LOAD CSV WITH HEADERS FROM 'https://gquercini.github.io/courses/plp/tutorials/neo4j/directors.csv' as row
+MERGE (d:Director {director_id: toInteger(row.director_id), name:row.director_name})
+RETURN count(d)
+</pre>
+<ol start="6" style="list-style-type: decimal">
+<li>Create an <strong>index</strong> on the property <em>director_id</em> of
+the nodes with label <strong>Director</strong> with the following command:</li>
+</ol>
+<pre>
+create index director_idx for (d:Director) on (d.director_id)
+</pre>
+<ol start="7" style="list-style-type: decimal">
+<li>Import the <strong>nodes</strong> corresponding to the
+<strong>genres</strong> (label <strong>Genre</strong>) by
+using the following command (it took 409 ms on my computer):</li>
+</ol>
+<pre>
+LOAD CSV WITH HEADERS FROM 'https://gquercini.github.io/courses/plp/tutorials/neo4j/genres.csv' as row
+MERGE (g:Genre {genre_id: toInteger(row.genre_id), name:row.genre_name})
+RETURN count(g)
+</pre>
+<ol start="8" style="list-style-type: decimal">
+<li>Create an <strong>index</strong> on the property <em>genre_id</em> of
+the nodes with label <strong>Genre</strong> with the following command:</li>
+</ol>
+<pre>
+create index genre_idx for (g:Genre) on (g.genre_id)
+</pre>
+<ol start="9" style="list-style-type: decimal">
+<li>Import the <strong>nodes</strong> corresponding to the
+<strong>users</strong> (label <strong>User</strong>) by
+using the following command (it took 425 ms on my computer):</li>
+</ol>
+<pre>
+LOAD CSV WITH HEADERS FROM 'https://gquercini.github.io/courses/plp/tutorials/neo4j/users.csv' as row
+MERGE (u:User {user_id: toInteger(row.user_id), name:row.user_nickname})
+RETURN count(u)
+</pre>
+<ol start="10" style="list-style-type: decimal">
+<li>Create an <strong>index</strong> on the property <em>user_id</em> of
+the nodes with label <strong>User</strong> with the following command:</li>
+</ol>
+<pre>
+create index user_idx for (u:User) on (u.user_id)
+</pre>
+<ol start="11" style="list-style-type: decimal">
+<li>Import the links of type <strong>ACTED_IN</strong>
+between actors and movies with the following
+command (it took 1.5 seconds on my computer):</li>
+</ol>
+<pre>
+LOAD CSV WITH HEADERS FROM 'https://gquercini.github.io/courses/plp/tutorials/neo4j/movies_actors.csv' as row
+MATCH (m:Movie {movie_id: toInteger(row.movie_id)})
+MATCH (a:Actor {actor_id: toInteger(row.actor_id)})
+MERGE (a)-[r:ACTED_IN]->(m)
+RETURN count(r)
+</pre>
+<ol start="12" style="list-style-type: decimal">
+<li>Import the links of type <strong>DIRECTED</strong>
+between directors and movies with the following
+command (it took 688 ms on my computer):</li>
+</ol>
+<pre>
+LOAD CSV WITH HEADERS FROM 'https://gquercini.github.io/courses/plp/tutorials/neo4j/movies_directors.csv' as row
+MATCH (m:Movie {movie_id: toInteger(row.movie_id)})
+MATCH (d:Director {director_id: toInteger(row.director_id)})
+MERGE (d)-[r:DIRECTED]->(m)
+RETURN count(r)
+</pre>
+<ol start="13" style="list-style-type: decimal">
+<li>Import the links of type <strong>HAS_GENRE</strong>
+between movies and genres with the following
+command (it took 675 ms on my computer):</li>
+</ol>
+<pre>
+LOAD CSV WITH HEADERS FROM 'https://gquercini.github.io/courses/plp/tutorials/neo4j/movies_genres.csv' as row
+MATCH (m:Movie {movie_id: toInteger(row.movie_id)})
+MATCH (g:Genre {genre_id: toInteger(row.genre_id)})
+MERGE (m)-[r:HAS_GENRE]->(g)
+RETURN count(r)
+</pre>
+<ol start="14" style="list-style-type: decimal">
+<li>Import the links of type <strong>RATED</strong>
+between users and movies with the following
+command (it took 2.75 seconds on my computer):</li>
+</ol>
+<pre>
+LOAD CSV WITH HEADERS FROM 'https://gquercini.github.io/courses/plp/tutorials/neo4j/user_rates.csv' as row
+MATCH (m:Movie {movie_id: toInteger(row.movie_id)})
+MATCH (u:User {user_id: toInteger(row.user_id)})
+MERGE (u)-[r:RATED {rate:toFloat(row.rate)}]->(m)
+RETURN count(r)
+</pre>
+</div>
+</div>
+<div id="the-database" class="section level1">
+<h1>The database</h1>
+<p>The database consists of
+data obtained from MovieLens,
+a recommendation system
+whose users rate movies
+on a scale from 1 to 5,
+depending on how much they like them.</p>
+<p>MovieLens uses these ratings to recommend
+movies that its users are likely to enjoy.
+The dataset is modeled as a <strong>directed graph</strong> and
+contains 100,004 ratings for 9,125 movies,
+given by 671 users between January 9, 1995 and October 16, 2016.
+The dataset also contains the names
+of each movie’s directors and actors.</p>
+</div>
+<div id="exploratory-queries" class="section level1">
+<h1>Exploratory queries</h1>
+<p>In the Neo4j browser, you can already see an overview of the data model: the types of nodes and relationships that make up the database.
+In the text field at the top center, you can write Cypher queries to query the database.
+We will now write a few simple queries to explore the database.</p>
+<div class="infobox exercisebox">
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1  </strong></span>
+Write and run the following query:</p>
+<pre>
+MATCH (m:Movie {title_en:"Toy Story"}) 
+RETURN m;
+</pre>
+<p>What do you get? What properties are associated
+with a node labeled <em>Movie</em>?
+Click the node once to display its properties.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 2  </strong></span></p>
+<p>Double-click the node displayed as the result of the previous query.
+Analyze its neighboring nodes (their labels and properties)
+and incident relationships (their types and properties).</p>
+</div>
+</div>
+</div>
+<div id="basic-queries" class="section level1">
+<h1>Basic queries</h1>
+<div class="infobox exercisebox">
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 3  </strong></span>
+Write and run the following Cypher queries:</p>
+<p>Q1. Return the genres of the movies in the database.</p>
+<p>Q2. Return the number of movies in the database.</p>
+<p>Q3. Return the titles of movies released in 2015.</p>
+<p>Q4. Return each movie’s title and the number of directors per movie. Sort in descending order.</p>
+<p>Q5. Return the names of directors and the titles of movies they directed and also acted in.</p>
+<p>Q6. Return the genres of the movies Tom Hanks acted in.</p>
+<p>Q7. Return the title and rating of every movie rated by user 3.
+Sort by rating in descending order.</p>
+</div>
+</div>
+<div id="chaining-queries-with-with" class="section level2">
+<h2>Chaining queries with WITH</h2>
+<p>Cypher allows you to specify
+complex queries composed of
+multiple queries chained together
+with the <strong>WITH</strong> clause.
+We will now look at an example that returns
+the titles of movies
+rated by at least 100 users.</p>
+<p>A first attempt might look like this:</p>
+<pre>
+MATCH (n:Movie)<-[:RATED]-(u:User) WHERE count(u) >= 100
+RETURN n.title_en
+LIMIT 5;
+</pre>
+<p>However, this query produces an error:</p>
+<pre>
+Invalid use of aggregating function count(...) in this context (line 1, column 42 (offset: 41))
+"MATCH (n:Movie)<-[:RATED]-(u:User) WHERE count(u) >= 100"
+</pre>
+<p>As in SQL, we cannot use aggregate functions in the WHERE clause.</p>
+<p>A correct formulation requires the WITH clause
+to chain two queries. The first counts the number of ratings
+for each movie:</p>
+<pre>
+MATCH (n:Movie)<-[:RATED]-(u:User) 
+RETURN n, count(u) as nb_rates
+</pre>
+<p>The second takes the first query’s results as input and filters out movies for which nb_rates &lt; 100.
+To chain the two queries, we replace the first query’s RETURN clause with a WITH clause, as follows:</p>
+<pre>
+MATCH (n:Movie)<-[:RATED]-(u:User) 
+WITH n, count(u) as nb_rates
+WHERE nb_rates >= 100
+RETURN n.title_en
+</pre>
+<div class="infobox exercisebox">
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 4  </strong></span>
+Write and run a query to return
+the titles of the five movies
+with the highest average ratings among movies
+rated by at least 100 users.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="movie-recommendation-system" class="section level1">
+<h1>Movie recommendation system</h1>
+<p>We will now see how Neo4j
+can be used effectively in a real application
+by implementing queries that form the basis of a
+simple <strong>movie recommendation system</strong>.
+This system is based on the idea of <strong>collaborative filtering</strong>.</p>
+<p>This approach recommends movies to a user <span class="math inline">\(u\)</span>
+that they have not rated yet
+and that other users with similar preferences have loved.
+In this context, we say a user loves
+a movie if they rated it at least 3.</p>
+<p>The diagram below illustrates the principle of collaborative filtering.</p>
+<p><img src="/courses/plp/tutorials/neo4j/collaborative-filtering.png" width="100%" style="display: block; margin: auto;" /></p>
+<p>User <span class="math inline">\(u\)</span> loves 6 movies,
+3 of which are also loved by user <span class="math inline">\(v\)</span> (the black nodes);
+it is reasonable to think that <span class="math inline">\(u\)</span>
+might also love the two movies that <span class="math inline">\(v\)</span> loves and that <span class="math inline">\(u\)</span> has not rated yet.</p>
+<p>Collaborative filtering relies on calculating
+a <strong>similarity score</strong> between two users.
+Several similarity scores are possible in this context;
+here, we will use the <strong>Jaccard coefficient</strong>.
+Let <span class="math inline">\(L(u)\)</span> and <span class="math inline">\(L(v)\)</span> be the
+sets of movies loved by <span class="math inline">\(u\)</span> and <span class="math inline">\(v\)</span>,
+respectively;
+the similarity score <span class="math inline">\(J(u,v)\)</span> between <span class="math inline">\(u\)</span> and <span class="math inline">\(v\)</span> is defined as:</p>
+<p><span class="math display">\[
+J(u, v) = \frac{|L(u) \cap L(v)|}{|L(u) \cup L(v)|}
+\]</span></p>
+<p>To recommend movies to a target user <span class="math inline">\(v\)</span>,
+the recommendation system calculates the
+similarity score between <span class="math inline">\(v\)</span> and all
+other users in the system, then
+suggests movies to <span class="math inline">\(v\)</span>
+that they have not rated yet and that the <span class="math inline">\(k\)</span> most similar users have loved.</p>
+<p>We will now write a Cypher query
+to recommend movies to the target user <span class="math inline">\(v\)</span>,
+whose ID is 3.</p>
+<p>The first step is to determine the value of <span class="math inline">\(|L(v)|\)</span>.</p>
+<div class="infobox exercisebox">
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 5  </strong></span>
+Write and run a query to return
+the number of movies loved by user 3.
+This query should return the target user
+and the number of movies they love.</p>
+</div>
+</div>
+<p>Next, we will determine the value of <span class="math inline">\(|L(u)|\)</span>
+for every user <span class="math inline">\(u\)</span> except <span class="math inline">\(v\)</span>.</p>
+<div class="infobox exercisebox">
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 6  </strong></span>
+Write and run a query
+to return the number of movies loved by each user <span class="math inline">\(u\)</span>,
+except the target user 3.
+This query should return each user <span class="math inline">\(u\)</span> and the number
+of movies they love.</p>
+</div>
+</div>
+<p>We then combine the two queries using the WITH clause.</p>
+<div class="infobox exercisebox">
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 7  </strong></span>
+Combine the two previous queries using the WITH clause.
+This query should return
+the target user 3,
+the number of movies they love,
+the other users <span class="math inline">\(u\)</span> and the number of movies
+they love.</p>
+</div>
+</div>
+<p>We must now
+determine the value of <span class="math inline">\(|L(u)\cup L(v)|\)</span>
+for each user <span class="math inline">\(u\)</span>, and calculate the similarity score using the
+Jaccard coefficient.</p>
+<div class="infobox exercisebox">
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 8  </strong></span>
+Append a query (using WITH)
+to the query written in the previous exercise
+that obtains
+the number of movies
+loved by each user <span class="math inline">\(u\)</span>
+that are also loved by target user 3,
+and calculates the similarity score
+between target user 3 and <span class="math inline">\(u\)</span>.
+This query should return the five users most similar
+to the target user and their similarity scores.</p>
+<details>
+<summary>
+Hint
+</summary>
+Multiply the numerator of the equation
+by 1.0; otherwise, Cypher will perform integer division.
+</details>
+</div>
+</div>
+<p>The final step is to recommend
+movies to the target user.
+Using the previous query,
+take the ID of user <span class="math inline">\(w\)</span>, who has
+the highest similarity to the target user.
+You will use this ID directly in the new query.</p>
+<div class="infobox exercisebox">
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-9" class="exercise"><strong>Exercise 9  </strong></span>
+Run the following query to get
+the list of movies loved by user <span class="math inline">\(w\)</span>
+that the target user has not rated yet.
+Sort this list by rating in descending order.</p>
+<details>
+<summary>
+Hint
+</summary>
+<ul>
+<li>First, write a query
+to get the list of movies
+rated by the target user.
+In the MATCH clause,
+use the variable <span class="math inline">\(m\)</span> to represent a movie
+rated by the target user.
+End the query with:</li>
+</ul>
+<pre>
+RETURN collect(m.title_en) AS movies
+</pre>
+<p>The <em>collect</em> function creates a list called <em>movies</em>.</p>
+<ul>
+<li>Replace RETURN with WITH in the previous query and add a
+second query to select the titles of movies
+<span class="math inline">\(m\)</span> that user <span class="math inline">\(w\)</span> loves and that the target user
+has not rated.
+To exclude movies the target user has already rated,
+use the following predicate:</li>
+</ul>
+<pre>
+none(x in movies where x=m.title_en)
+</pre>
+<p>in the WHERE clause.</p>
+</details>
+</div>
+</div>
+</div>
+
+          </div>
+
+          
+
+
+
+          
+        </div>
+
+        
+      </article>
+
+      
+
+    </main>
+  </div>
+</div>
+
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.1/anchor.min.js" integrity="sha256-pB/deHc9CGfFpJRjC43imB29Rse8tak+5eXqntO94ck=" crossorigin="anonymous"></script>
+    <script>
+      anchors.add();
+    </script>
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.3da86581634ab22d5bb3fc4505df30a5.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
