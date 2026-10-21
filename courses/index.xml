@@ -9923,9 +9923,9 @@ Don&#39;t change the values of the other options.
 &lt;li&gt;&lt;p&gt;Download &lt;a href=&#34;https://neo4j.com/download/&#34; target=&#34;_blank&#34;&gt;Neo4j Desktop&lt;/a&gt; and install it on your computer.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;On the left menu, select &lt;em&gt;Instances&lt;/em&gt; and then &lt;em&gt;Get started&lt;/em&gt; to create your first instance.&lt;/p&gt;&lt;/li&gt;
 &lt;li&gt;&lt;p&gt;Specify an instance name (for instance, &lt;em&gt;Graph analytics&lt;/em&gt;), select the latest version and enter a new password.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;Click on &lt;em&gt;Create&lt;/em&gt; and wait.&lt;/p&gt;&lt;/li&gt;
-&lt;li&gt;&lt;p&gt;When the instance is ready, click on &lt;em&gt;Connect&lt;/em&gt; and then select &lt;em&gt;Query&lt;/em&gt;.
-This will open an interface to write queries against your graph.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Click on &lt;em&gt;Create&lt;/em&gt; and wait until the instance is running.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Click on &lt;em&gt;Create database&lt;/em&gt;, specify a database name (e.g., &lt;em&gt;MovieLens&lt;/em&gt;) and click on &lt;em&gt;Create&lt;/em&gt;.&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Cick on &lt;em&gt;Connect&lt;/em&gt; and then select &lt;em&gt;Query&lt;/em&gt;. This will open an interface to write queries against your graph.&lt;/p&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;div id=&#34;import-the-data.&#34; class=&#34;section level2&#34;&gt;
 &lt;h2&gt;Import the data.&lt;/h2&gt;
@@ -9934,134 +9934,106 @@ This will open an interface to write queries against your graph.&lt;/p&gt;&lt;/l
 &lt;strong&gt;movies&lt;/strong&gt; (label &lt;strong&gt;Movie&lt;/strong&gt;) by
 using the following command (it took 18 seconds on my computer):&lt;/li&gt;
 &lt;/ol&gt;
-&lt;pre&gt;
-LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/movies.csv&#39; as row
+&lt;pre&gt;&lt;code&gt;LOAD CSV WITH HEADERS FROM &amp;#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/movies.csv&amp;#39; as row
 MERGE (m:Movie {movie_id: toInteger(row.movie_id), title_en:row.movie_title_en, title_fr:row.movie_title_fr, year: toInteger(row.movie_year)})
-RETURN count(m)
-&lt;/pre&gt;
+RETURN count(m)&lt;/code&gt;&lt;/pre&gt;
 &lt;ol start=&#34;2&#34; style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;Create an &lt;strong&gt;index&lt;/strong&gt; on the property &lt;em&gt;movie_id&lt;/em&gt; of
 the nodes with label &lt;strong&gt;Movie&lt;/strong&gt; with the following command:&lt;/li&gt;
 &lt;/ol&gt;
-&lt;pre&gt;
-create index movie_idx for (m:Movie) on (m.movie_id)
-&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;CREATE INDEX movie_idx for (m:Movie) on (m.movie_id)&lt;/code&gt;&lt;/pre&gt;
 &lt;ol start=&#34;3&#34; style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;Import the &lt;strong&gt;nodes&lt;/strong&gt; corresponding to the
 &lt;strong&gt;actors&lt;/strong&gt; (label &lt;strong&gt;Actor&lt;/strong&gt;) by
 using the following command (it took 59 seconds on my computer):&lt;/li&gt;
 &lt;/ol&gt;
-&lt;pre&gt;
-LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/actors.csv&#39; as row
+&lt;pre&gt;&lt;code&gt;LOAD CSV WITH HEADERS FROM &amp;#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/actors.csv&amp;#39; as row
 MERGE (a:Actor {actor_id: toInteger(row.actor_id), name:row.actor_name})
-RETURN count(a)
-&lt;/pre&gt;
+RETURN count(a)&lt;/code&gt;&lt;/pre&gt;
 &lt;ol start=&#34;4&#34; style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;Create an &lt;strong&gt;index&lt;/strong&gt; on the property &lt;em&gt;actor_id&lt;/em&gt; of
 the nodes with label &lt;strong&gt;Actor&lt;/strong&gt; with the following command:&lt;/li&gt;
 &lt;/ol&gt;
-&lt;pre&gt;
-create index actor_idx for (a:Actor) on (a.actor_id)
-&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;CREATE INDEX actor_idx for (a:Actor) on (a.actor_id)&lt;/code&gt;&lt;/pre&gt;
 &lt;ol start=&#34;5&#34; style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;Import the &lt;strong&gt;nodes&lt;/strong&gt; corresponding to the
 &lt;strong&gt;directors&lt;/strong&gt; (label &lt;strong&gt;Director&lt;/strong&gt;) by
 using the following command (it took 4 seconds on my computer):&lt;/li&gt;
 &lt;/ol&gt;
-&lt;pre&gt;
-LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/directors.csv&#39; as row
+&lt;pre&gt;&lt;code&gt;LOAD CSV WITH HEADERS FROM &amp;#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/directors.csv&amp;#39; as row
 MERGE (d:Director {director_id: toInteger(row.director_id), name:row.director_name})
-RETURN count(d)
-&lt;/pre&gt;
+RETURN count(d)&lt;/code&gt;&lt;/pre&gt;
 &lt;ol start=&#34;6&#34; style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;Create an &lt;strong&gt;index&lt;/strong&gt; on the property &lt;em&gt;director_id&lt;/em&gt; of
 the nodes with label &lt;strong&gt;Director&lt;/strong&gt; with the following command:&lt;/li&gt;
 &lt;/ol&gt;
-&lt;pre&gt;
-create index director_idx for (d:Director) on (d.director_id)
-&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;CREATE INDEX director_idx for (d:Director) on (d.director_id)&lt;/code&gt;&lt;/pre&gt;
 &lt;ol start=&#34;7&#34; style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;Import the &lt;strong&gt;nodes&lt;/strong&gt; corresponding to the
 &lt;strong&gt;genres&lt;/strong&gt; (label &lt;strong&gt;Genre&lt;/strong&gt;) by
 using the following command (it took 409 ms on my computer):&lt;/li&gt;
 &lt;/ol&gt;
-&lt;pre&gt;
-LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/genres.csv&#39; as row
+&lt;pre&gt;&lt;code&gt;LOAD CSV WITH HEADERS FROM &amp;#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/genres.csv&amp;#39; as row
 MERGE (g:Genre {genre_id: toInteger(row.genre_id), name:row.genre_name})
-RETURN count(g)
-&lt;/pre&gt;
+RETURN count(g)&lt;/code&gt;&lt;/pre&gt;
 &lt;ol start=&#34;8&#34; style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;Create an &lt;strong&gt;index&lt;/strong&gt; on the property &lt;em&gt;genre_id&lt;/em&gt; of
 the nodes with label &lt;strong&gt;Genre&lt;/strong&gt; with the following command:&lt;/li&gt;
 &lt;/ol&gt;
-&lt;pre&gt;
-create index genre_idx for (g:Genre) on (g.genre_id)
-&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;CREATE INDEX genre_idx for (g:Genre) on (g.genre_id)&lt;/code&gt;&lt;/pre&gt;
 &lt;ol start=&#34;9&#34; style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;Import the &lt;strong&gt;nodes&lt;/strong&gt; corresponding to the
 &lt;strong&gt;users&lt;/strong&gt; (label &lt;strong&gt;User&lt;/strong&gt;) by
 using the following command (it took 425 ms on my computer):&lt;/li&gt;
 &lt;/ol&gt;
-&lt;pre&gt;
-LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/users.csv&#39; as row
+&lt;pre&gt;&lt;code&gt;LOAD CSV WITH HEADERS FROM &amp;#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/users.csv&amp;#39; as row
 MERGE (u:User {user_id: toInteger(row.user_id), name:row.user_nickname})
-RETURN count(u)
-&lt;/pre&gt;
+RETURN count(u)&lt;/code&gt;&lt;/pre&gt;
 &lt;ol start=&#34;10&#34; style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;Create an &lt;strong&gt;index&lt;/strong&gt; on the property &lt;em&gt;user_id&lt;/em&gt; of
 the nodes with label &lt;strong&gt;User&lt;/strong&gt; with the following command:&lt;/li&gt;
 &lt;/ol&gt;
-&lt;pre&gt;
-create index user_idx for (u:User) on (u.user_id)
-&lt;/pre&gt;
+&lt;pre&gt;&lt;code&gt;CREATE INDEX user_idx for (u:User) on (u.user_id)&lt;/code&gt;&lt;/pre&gt;
 &lt;ol start=&#34;11&#34; style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;Import the links of type &lt;strong&gt;ACTED_IN&lt;/strong&gt;
 between actors and movies with the following
 command (it took 1.5 seconds on my computer):&lt;/li&gt;
 &lt;/ol&gt;
-&lt;pre&gt;
-LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/movies_actors.csv&#39; as row
+&lt;pre&gt;&lt;code&gt;LOAD CSV WITH HEADERS FROM &amp;#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/movies_actors.csv&amp;#39; as row
 MATCH (m:Movie {movie_id: toInteger(row.movie_id)})
 MATCH (a:Actor {actor_id: toInteger(row.actor_id)})
-MERGE (a)-[r:ACTED_IN]-&gt;(m)
-RETURN count(r)
-&lt;/pre&gt;
+MERGE (a)-[r:ACTED_IN]-&amp;gt;(m)
+RETURN count(r)&lt;/code&gt;&lt;/pre&gt;
 &lt;ol start=&#34;12&#34; style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;Import the links of type &lt;strong&gt;DIRECTED&lt;/strong&gt;
 between directors and movies with the following
 command (it took 688 ms on my computer):&lt;/li&gt;
 &lt;/ol&gt;
-&lt;pre&gt;
-LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/movies_directors.csv&#39; as row
+&lt;pre&gt;&lt;code&gt;LOAD CSV WITH HEADERS FROM &amp;#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/movies_directors.csv&amp;#39; as row
 MATCH (m:Movie {movie_id: toInteger(row.movie_id)})
 MATCH (d:Director {director_id: toInteger(row.director_id)})
-MERGE (d)-[r:DIRECTED]-&gt;(m)
-RETURN count(r)
-&lt;/pre&gt;
+MERGE (d)-[r:DIRECTED]-&amp;gt;(m)
+RETURN count(r)&lt;/code&gt;&lt;/pre&gt;
 &lt;ol start=&#34;13&#34; style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;Import the links of type &lt;strong&gt;HAS_GENRE&lt;/strong&gt;
 between movies and genres with the following
 command (it took 675 ms on my computer):&lt;/li&gt;
 &lt;/ol&gt;
-&lt;pre&gt;
-LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/movies_genres.csv&#39; as row
+&lt;pre&gt;&lt;code&gt;LOAD CSV WITH HEADERS FROM &amp;#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/movies_genres.csv&amp;#39; as row
 MATCH (m:Movie {movie_id: toInteger(row.movie_id)})
 MATCH (g:Genre {genre_id: toInteger(row.genre_id)})
-MERGE (m)-[r:HAS_GENRE]-&gt;(g)
-RETURN count(r)
-&lt;/pre&gt;
+MERGE (m)-[r:HAS_GENRE]-&amp;gt;(g)
+RETURN count(r)&lt;/code&gt;&lt;/pre&gt;
 &lt;ol start=&#34;14&#34; style=&#34;list-style-type: decimal&#34;&gt;
 &lt;li&gt;Import the links of type &lt;strong&gt;RATED&lt;/strong&gt;
 between users and movies with the following
 command (it took 2.75 seconds on my computer):&lt;/li&gt;
 &lt;/ol&gt;
-&lt;pre&gt;
-LOAD CSV WITH HEADERS FROM &#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/user_rates.csv&#39; as row
+&lt;pre&gt;&lt;code&gt;LOAD CSV WITH HEADERS FROM &amp;#39;https://gquercini.github.io/courses/plp/tutorials/neo4j/user_rates.csv&amp;#39; as row
 MATCH (m:Movie {movie_id: toInteger(row.movie_id)})
 MATCH (u:User {user_id: toInteger(row.user_id)})
-MERGE (u)-[r:RATED {rate:toFloat(row.rate)}]-&gt;(m)
-RETURN count(r)
-&lt;/pre&gt;
+MERGE (u)-[r:RATED {rate:toFloat(row.rate)}]-&amp;gt;(m)
+RETURN count(r)&lt;/code&gt;&lt;/pre&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;the-database&#34; class=&#34;section level1&#34;&gt;
@@ -10143,7 +10115,7 @@ LIMIT 5;
 &lt;/pre&gt;
 &lt;p&gt;However, this query produces an error:&lt;/p&gt;
 &lt;pre&gt;
-Invalid use of aggregating function count(...) in this context (line 1, column 42 (offset: 41))
+Aggregate expression &#39;count(u)&#39; is not allowed in this context. (line 1, column 42 (offset: 41))
 &#34;MATCH (n:Movie)&lt;-[:RATED]-(u:User) WHERE count(u) &gt;= 100&#34;
 &lt;/pre&gt;
 &lt;p&gt;As in SQL, we cannot use aggregate functions in the WHERE clause.&lt;/p&gt;
@@ -10183,9 +10155,9 @@ simple &lt;strong&gt;movie recommendation system&lt;/strong&gt;.
 This system is based on the idea of &lt;strong&gt;collaborative filtering&lt;/strong&gt;.&lt;/p&gt;
 &lt;p&gt;This approach recommends movies to a user &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt;
 that they have not rated yet
-and that other users with similar preferences have loved.
-In this context, we say a user loves
-a movie if they rated it at least 3.&lt;/p&gt;
+and that other users with similar preferences have loved.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;In this context, we say a user loves
+a movie if they rated it at least 3.&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;The diagram below illustrates the principle of collaborative filtering.&lt;/p&gt;
 &lt;p&gt;&lt;img src=&#34;/courses/plp/tutorials/neo4j/collaborative-filtering.png&#34; width=&#34;100%&#34; style=&#34;display: block; margin: auto;&#34; /&gt;&lt;/p&gt;
 &lt;p&gt;User &lt;span class=&#34;math inline&#34;&gt;\(u\)&lt;/span&gt; loves 6 movies,
