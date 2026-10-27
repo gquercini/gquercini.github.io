@@ -737,6 +737,16 @@ with a node labeled <em>Movie</em>?
 Click the node once to display its properties.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>The requested node is displayed in the Neo4j Browser.
+Clicking the node shows that its properties are:
+<em>movie_id</em>, <em>title_en</em>, <em>title_fr</em>, <em>year</em>.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 
 <div class="exercise">
@@ -746,6 +756,14 @@ Analyze its neighboring nodes (their labels and properties)
 and incident relationships (their types and properties).</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>Click the result window to display information about the nodes and relationships on the right.</p>
+</div>
+</details>
 </div>
 <div id="basic-queries" class="section level1">
 <h1>Basic queries</h1>
@@ -764,6 +782,51 @@ Write and run the following Cypher queries:</p>
 Sort by rating in descending order.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+Q1.
+<pre>
+MATCH (g:Genre) 
+RETURN g.name
+</pre>
+Q2.
+<pre>
+MATCH (n:Movie) 
+RETURN count(n)
+</pre>
+Q3.
+<pre>
+MATCH (n:Movie {year:2015}) 
+RETURN n.title_en;
+</pre>
+Q4.
+<pre>
+MATCH (n:Movie)<-[:DIRECTED]-(d:Director) 
+RETURN n.title_en, count(*) AS nb_directors 
+ORDER BY nb_directors DESC
+</pre>
+Q5.
+<pre>
+MATCH (a:Actor)-[:ACTED_IN]->(m:Movie)<-[:DIRECTED]-(d:Director) 
+WHERE a.name=d.name 
+RETURN a.name, m.title_en;
+</pre>
+Q6.
+<pre>
+MATCH (:Actor {name:"Tom Hanks"})-[:ACTED_IN]->(:Movie)-[:HAS_GENRE]->(g:Genre) 
+RETURN DISTINCT (g.name);
+</pre>
+Q7.
+<pre>
+MATCH (n:User {user_id:3})-[r:RATED]->(m:Movie) 
+RETURN m.title_en, r.rate 
+ORDER BY r.rate desc;
+</pre>
+</div>
+</details>
 <div id="chaining-queries-with-with" class="section level2">
 <h2>Chaining queries with WITH</h2>
 <p>Cypher allows you to specify
@@ -810,6 +873,20 @@ with the highest average ratings among movies
 rated by at least 100 users.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+MATCH (n:Movie)<-[r:RATED]-(u:User) 
+WITH n, avg(r.rate) as avg,  count(u) AS nb_rates 
+WHERE nb_rates >= 100 
+RETURN n.title_en,  avg 
+ORDER BY avg DESC;
+</pre>
+</div>
+</details>
 </div>
 </div>
 <div id="movie-recommendation-system" class="section level1">
@@ -861,6 +938,18 @@ This query should return the target user
 and the number of movies they love.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+MATCH (target:User {user_id:3})-[r:RATED]->(m:Movie) 
+WHERE r.rate >= 3 
+RETURN target, count(m) AS lovedByTarget;
+</pre>
+</div>
+</details>
 <p>Next, we will determine the value of <span class="math inline">\(|L(u)|\)</span>
 for every user <span class="math inline">\(u\)</span> except <span class="math inline">\(v\)</span>.</p>
 <div class="infobox exercisebox">
@@ -874,6 +963,18 @@ This query should return each user <span class="math inline">\(u\)</span> and th
 of movies they love.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+MATCH (other:User)-[r:RATED]->(m:Movie) 
+WHERE other.user_id <> 3 and r.rate >= 3 
+RETURN other, count(m) as lovedByOther
+</pre>
+</div>
+</details>
 <p>We then combine the two queries using the WITH clause.</p>
 <div class="infobox exercisebox">
 
@@ -887,6 +988,21 @@ the other users <span class="math inline">\(u\)</span> and the number of movies
 they love.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+MATCH (target:User {user_id:3})-[r:RATED]->(m:Movie) 
+WHERE r.rate >= 3 
+WITH target, count(m) AS lovedByTarget
+MATCH (other:User)-[r:RATED]->(m:Movie) 
+WHERE other <> target and r.rate >= 3 
+RETURN target, lovedByTarget, other, count(m) as lovedByOther
+</pre>
+</div>
+</details>
 <p>We must now
 determine the value of <span class="math inline">\(|L(u)\cup L(v)|\)</span>
 for each user <span class="math inline">\(u\)</span>, and calculate the similarity score using the
@@ -914,6 +1030,32 @@ by 1.0; otherwise, Cypher will perform integer division.
 </details>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p>The following query is the one written in the previous exercise,
+with the RETURN clause replaced by WITH.</p>
+<pre>
+MATCH (target:User {user_id:3})-[r:RATED]->(m:Movie) 
+WHERE r.rate >= 3 
+WITH target, count(m) AS lovedByTarget
+MATCH (other:User)-[r:RATED]->(m:Movie) 
+WHERE other <> target and r.rate >= 3 
+WITH target, lovedByTarget, other, count(m) as lovedByOther
+</pre>
+<p>Now append a new query:</p>
+<pre>
+MATCH (target)-[rTarget:RATED]->(m:Movie)<-[rOther:RATED]-(other) 
+WHERE rTarget.rate >= 3 AND rOther.rate >= 3
+WITH target, other, lovedByTarget, lovedByOther, count(m) AS commonLoved
+RETURN other, commonLoved * 1.0 / (lovedByTarget + lovedByOther - commonLoved) AS sim
+ORDER BY sim DESC
+LIMIT 5
+</pre>
+</div>
+</details>
 <p>The final step is to recommend
 movies to the target user.
 Using the previous query,
@@ -960,6 +1102,21 @@ none(x in movies where x=m.title_en)
 </details>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<pre>
+MATCH (target:User {user_id:3})-[r:RATED]->(m:Movie)  
+WITH collect(m.title_en) as movies  
+MATCH (u:User {user_id:129})-[r:RATED]->(m:Movie)  
+WHERE r.rate >=3 AND none(x IN movies WHERE x=m.title_en) 
+RETURN m.title_en 
+ORDER BY r.rate DESC;
+</pre>
+</div>
+</details>
 </div>
 
           </div>
