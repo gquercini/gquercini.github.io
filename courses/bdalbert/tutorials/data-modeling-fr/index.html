@@ -1,0 +1,923 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Gianluca Quercini">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Modélisation de données.">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/courses/bdalbert/tutorials/data-modeling-fr/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="rgb(0, 136, 204)">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_3.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_3.png">
+
+  <link rel="canonical" href="/courses/bdalbert/tutorials/data-modeling-fr/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="Gianluca Quercini">
+  <meta property="og:url" content="/courses/bdalbert/tutorials/data-modeling-fr/">
+  <meta property="og:title" content="Modélisation de données | Gianluca Quercini">
+  <meta property="og:description" content="Modélisation de données."><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
+  
+    
+    
+  
+
+  
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Modélisation de données | Gianluca Quercini</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#experience"><span>Experience</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#publications"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  
+
+  
+
+<div class="container-fluid docs">
+  <div class="row flex-xl-nowrap">
+    <div class="col-12 col-md-3 col-xl-2 docs-sidebar">
+      
+
+
+<script src="/js/toggle-menu.js"></script>
+
+
+
+
+
+
+
+  
+    
+  
+
+
+
+
+<form class="docs-search d-flex align-items-center">
+  <button class="btn docs-toggle d-md-none p-0 mr-3" type="button" data-toggle="collapse" data-target="#docs-nav" aria-controls="docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    <span><i class="fas fa-bars"></i></span>
+  </button>
+
+  
+</form>
+
+<nav class="collapse docs-links" id="docs-nav">
+  
+
+  
+  
+  
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="" class="docs-toc-link" href="/courses/bdalbert/tutorials/data-modeling/">Tutorials</a>
+    
+    <div id="-ddowncontent" class="-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="Tutorials">
+        <a href="/courses/bdalbert/tutorials/data-modeling/">1. Data modeling</a>
+      </li>
+      
+      <script>open_menu_on_load("".concat("-ddowncontent"))</script>
+      <li class="active Tutorials">
+        <a href="/courses/bdalbert/tutorials/data-modeling-fr/">1. Modélisation de données</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  
+</nav>
+
+    </div>
+
+    
+
+    <main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 docs-content" role="main">
+
+      <article class="article">
+
+        <div class="docs-article-container">
+          <div class="heading">SQL &amp; Data Quering — TD 1</div>
+          <h1>Modélisation de données</h1>
+          <hr>
+          <div class="logo">
+            
+            </div>
+
+          <div class="article-style">
+            
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p><link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/cloud-computing.css"></p>
+<p>Dans ce tutoriel, vous apprendrez à :</p>
+<ul>
+<li><strong>Créer le schéma conceptuel</strong> d’une base de données.</li>
+<li><strong>Dessiner un diagramme entité-association</strong> (EA).</li>
+<li><strong>Traduire un modèle conceptuel</strong> en <strong>modèle logique</strong>.</li>
+</ul>
+<div id="école-de-conduite" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> École de conduite</h1>
+<p>Une auto-école située dans une région possède plusieurs agences et propose ses services à des personnes souhaitant obtenir le permis de conduire.
+Chaque personne doit s’inscrire dans une agence et peut passer des examens pour obtenir différentes catégories de permis, selon ses besoins.</p>
+<p>Les contraintes suivantes doivent être respectées :</p>
+<ul>
+<li><p>L’école possède plusieurs agences dans la région. Chaque agence a un nom unique et une adresse.</p></li>
+<li><p>L’école compte plusieurs clients. Elle doit conserver des informations personnelles sur chacun d’eux, telles que leur nom, leur adresse et leur date de naissance. Chaque client est inscrit dans une agence précise et ne peut pas être inscrit dans plusieurs agences.</p></li>
+<li><p>Les clients peuvent passer un examen dans n’importe quelle agence pour obtenir un permis de conduire. Pour chaque examen, l’école doit conserver la date et le résultat (réussite ou échec). Un client peut passer plusieurs examens, mais jamais plus d’un examen dans la même agence.</p></li>
+<li><p>Les permis de conduire sont délivrés par une agence précise, et chacun possède un numéro unique. Un client peut obtenir plusieurs permis. Chaque permis comporte une catégorie, qui détermine les types de véhicules que son titulaire peut conduire, ainsi qu’une date d’expiration.</p></li>
+</ul>
+<div id="exercises" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> Exercises</h2>
+<div class="infobox exercisebox">
+<p><strong>Exercise</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1.1  </strong></span>
+Donnez le <strong>schéma conceptuel</strong> de la base de données à l’aide d’un diagramme entité-association.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 1.2  </strong></span>
+Traduisez le schéma conceptuel en schéma logique.
+Pour chaque table, soulignez la clé primaire et indiquez les clés étrangères.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="house-sales" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> House sales</h1>
+<p>Nous disposons d’un jeu de données portant sur les transactions immobilières réalisées en France au cours d’une année et souhaitons le stocker dans une base de données relationnelle.</p>
+<p>Pour chaque transaction, nous enregistrons la date, le type (par exemple, <em>vente</em> ou <em>expropriation</em>) et la valeur du bien concerné.</p>
+<p>Chaque transaction porte sur un bien immobilier dont nous enregistrons le type (par exemple, <em>maison</em> ou <em>appartement</em>), la surface bâtie et, le cas échéant, la surface du terrain attenant, comme un jardin. Nous enregistrons également le nombre de pièces principales et le nombre de lots composant le bien.</p>
+<p>Chaque bien est associé à une adresse composée du numéro, du type et du nom de la voie, ainsi que du code postal, du nom de la commune et de son code INSEE. À l’échelle du numéro de voie, chaque adresse est identifiée dans le cadastre par deux valeurs : la section cadastrale et la parcelle. Chaque commune appartient à un département, identifié par un code et caractérisé par un nom ; chaque département appartient à son tour à une région, elle aussi identifiée par un code et caractérisée par un nom. Enfin, les informations spatiales de chaque commune sont stockées sous forme de géométries polygonales.</p>
+<div id="exercices" class="section level2" number="2.1">
+<h2><span class="header-section-number">2.1</span> Exercices</h2>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 2.1  </strong></span>
+Donnez le <strong>schéma conceptuel</strong> de la base de données à l’aide d’un diagramme entité-association.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 2.2  </strong></span>
+Traduisez le schéma conceptuel en schéma logique.
+Pour chaque table, soulignez la clé primaire et indiquez les clés étrangères.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="réseau-social-devoir" class="section level1" number="3">
+<h1><span class="header-section-number">3</span> Réseau social (devoir)</h1>
+<p>Une plateforme de réseau social souhaite concevoir une base de données relationnelle pour stocker les informations relatives à ses utilisateurs.
+Pour chaque utilisateur, la plateforme conserve son pseudonyme, qui l’identifie de manière unique, ses prénom et nom, sa localisation géographique (ville et pays) ainsi que son adresse e-mail. Chaque utilisateur peut enregistrer autant d’adresses e-mail qu’il le souhaite.
+Chaque utilisateur peut publier du contenu sur la plateforme. Chaque publication est caractérisée par son contenu, sa date, son heure et, le cas échéant, sa géolocalisation (latitude et longitude). Les utilisateurs peuvent également identifier un ou plusieurs amis dans leurs publications.</p>
+<p>Deux utilisateurs sont liés par une relation d’amitié s’ils consentent tous les deux à devenir amis. Un utilisateur peut également suivre un autre utilisateur sans nécessairement en être ami.
+Pour chaque type de relation (amitié ou suivi), la plateforme enregistre la date à laquelle la relation a été établie.</p>
+<div id="exercices-1" class="section level2" number="3.1">
+<h2><span class="header-section-number">3.1</span> Exercices</h2>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 3.1  </strong></span>
+Donnez le <strong>schéma conceptuel</strong> de la base de données à l’aide d’un diagramme entité-association.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 3.2  </strong></span>
+Traduisez le schéma conceptuel en schéma logique.
+Pour chaque table, soulignez la clé primaire et indiquez les clés étrangères.</p>
+</div>
+</div>
+<!-- # Base de données bancaire
+
+La figure suivante présente le diagramme entité-association correspondant au schéma conceptuel d'une base de données bancaire.
+
+<div class="figure" style="text-align: center">
+<img src="/courses/databases/tutorial-1/banking-system-er.png" alt="Schéma conceptuel de la base de données bancaire" width="100%" />
+<p class="caption">(\#fig:banking-system-db)Schéma conceptuel de la base de données bancaire</p>
+</div>
+
+Chaque banque est identifiée par un code et un nom uniques et possède une ou plusieurs agences. Une agence est chargée d'ouvrir des comptes et d'accorder des prêts aux clients. Chaque compte est identifié par un numéro (*acct_nbr*) et est soit un compte courant, soit un compte d'épargne (attribut *acct_type*). Chaque client est identifié par son numéro de sécurité sociale (*ssn*) ; il peut obtenir plusieurs prêts et ouvrir autant de comptes qu'il le souhaite.
+
+## Exercices
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercice**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-7"><strong>(\#exr:unnamed-chunk-7) </strong></span>Quelle clé primaire choisiriez-vous pour l'entité Bank ? Justifiez votre réponse.</div>\EndKnitrBlock{exercise}
+
+
+:::
+
+
+
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercice**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-8"><strong>(\#exr:unnamed-chunk-8) </strong></span>Le couple {*code_bank*, *name*} est-il une clé candidate valide pour l'entité <TT>Bank</TT> ? Justifiez votre réponse.</div>\EndKnitrBlock{exercise}
+
+
+:::
+
+
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercice**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-9"><strong>(\#exr:unnamed-chunk-9) </strong></span>Complétez le diagramme de la figure en ajoutant les cardinalités des relations. Justifiez vos choix lorsque cela est nécessaire en cas d'ambiguïté.</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercice**
+
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-10"><strong>(\#exr:unnamed-chunk-10) </strong></span>Traduisez le schéma conceptuel en schéma logique. Pour chaque table, soulignez les clés primaires et indiquez les clés étrangères.</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+# Car dealership database
+
+We want to design the database of a car dealership. 
+The dealership sells both new and used cars, 
+and it operates a service facility. 
+The database should keep data about the cars 
+(serial number, make, model, colour, whether it is new or used), 
+the salespeople (first and family name) 
+and the customers (first and family name, phone number, address). 
+Also, the following business rules hold:
+
+* A salesperson may sell many cars, but each car is sold by only one salesperson.
+* A customer may buy many cars, but each car is bought by only one customer.
+* A salesperson writes a single invoice for each car s/he sells. 
+The invoice is identified by a number and indicates the sale date and the price.
+* A customer gets an invoice for each car s/he buys.
+
+When a customer takes one or more cars in for repair, 
+one service ticket is written for each car. 
+The ticket is identified by a number and 
+indicates the date on which the car is received from the customer, 
+as well as the date on which the car should be returned to the customer. 
+A car brought in for service can be worked on by many mechanics, 
+and each mechanic may work on many cars.
+
+## Exercices
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+**Exercice**
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:command-in-guest"><strong>(\#exr:command-in-guest) </strong></span>Give the **conceptual schema** of the database with an ER diagram.</div>\EndKnitrBlock{exercise}
+
+:::
+
+
+
+
+::: {.infobox .exercisebox data-latex="{exercisebox}"}
+
+**Exercise**
+
+\BeginKnitrBlock{exercise}<div class="exercise"><span class="exercise" id="exr:unnamed-chunk-11"><strong>(\#exr:unnamed-chunk-11) </strong></span>Translate the conceptual schema into a logical schema. 
+For each table, underline the primary keys and specify the foreign keys.</div>\EndKnitrBlock{exercise}
+
+:::
+
+</div>
+
+
+
+ -->
+</div>
+</div>
+
+          </div>
+
+          
+
+
+
+          
+        </div>
+
+        
+      </article>
+
+      
+
+    </main>
+  </div>
+</div>
+
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.1/anchor.min.js" integrity="sha256-pB/deHc9CGfFpJRjC43imB29Rse8tak+5eXqntO94ck=" crossorigin="anonymous"></script>
+    <script>
+      anchors.add();
+    </script>
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.3da86581634ab22d5bb3fc4505df30a5.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
