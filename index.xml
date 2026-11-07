@@ -19467,6 +19467,14 @@ Each client must register at a branch and may take exams to obtain different typ
 Give the &lt;strong&gt;conceptual schema&lt;/strong&gt; of the database with an entity-relationship diagram.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-1/driving-school-solution.png&#34; alt=&#34;Driving school conceptual model&#34;&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -19476,6 +19484,32 @@ Translate the conceptual schema into a logical schema.
 For each table, underline the primary key and specify the foreign keys.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The &lt;strong&gt;collection of tables&lt;/strong&gt; is the following:&lt;/p&gt;
+&lt;pre&gt;
+
+&lt;TT&gt;Customer&lt;/TT&gt; (&lt;u&gt;cust_code&lt;/u&gt;, first_name, last_name, cust_address, phone_number, 
+                   birth_date, branch_name)
+
+&lt;TT&gt;Branch&lt;/TT&gt;  (&lt;u&gt;branch_name&lt;/u&gt;, branch_address)
+
+&lt;TT&gt;License&lt;/TT&gt; (license_number, category, expiry_date, cust_code, branch_name)
+
+&lt;TT&gt;Exam&lt;/TT&gt;    (&lt;u&gt;cust_code&lt;/u&gt;, &lt;u&gt;branch_name&lt;/u&gt;, exam_date, outcome)
+
+&lt;/pre&gt;
+&lt;p&gt;Foreign keys :&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Customer(branch_name)&lt;/TT&gt; → &lt;TT&gt;Branch(branch_name)&lt;/TT&gt;&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Exam(cust_code)&lt;/TT&gt; → &lt;TT&gt;Customer(cust_code)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Exam(branch_name)&lt;/TT&gt; → &lt;TT&gt;Branch(branch_name)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;License(cust_code)&lt;/TT&gt; → &lt;TT&gt;Customer(cust_code)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;License(branch_name)&lt;/TT&gt; → &lt;TT&gt;Branch(branch_name)&lt;/TT&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;house-sales&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
@@ -19503,6 +19537,14 @@ Finally, for each city, spatial information is stored in the form of polygon geo
 Give the &lt;strong&gt;conceptual schema&lt;/strong&gt; of the database with an ER diagram.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-1/real-estate-conceptual-model.png&#34; alt=&#34;Real estate conceptual model&#34;&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -19512,6 +19554,29 @@ Translate the conceptual schema into a logical schema.
 For each table, underline the primary key and specify the foreign keys.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The &lt;strong&gt;collection of tables&lt;/strong&gt; is the following:&lt;/p&gt;
+&lt;pre&gt;
+&lt;TT&gt;transaction&lt;/TT&gt; (&lt;u&gt;transaction_id&lt;/u&gt;, transaction_date, transaction_type, property_id, property_value) 
+&lt;TT&gt;property&lt;/TT&gt;    (&lt;u&gt;property_id&lt;/u&gt;, property_type, built_area, land_area, num_main_rooms, number_of_units, street_id)
+&lt;TT&gt;street&lt;/TT&gt;      (&lt;u&gt;street_id&lt;/u&gt;, street_number, street_type, street_name, zip_code, cadastral_section, land_parcel, city_id)
+&lt;TT&gt;city&lt;/TT&gt;        (&lt;u&gt;city_id&lt;/u&gt;, insee_code, city_name, geometry, dept_code)
+&lt;TT&gt;department&lt;/TT&gt;  (&lt;u&gt;dept_code&lt;/u&gt;, dept_name, reg_code)
+&lt;TT&gt;region&lt;/TT&gt;      (&lt;u&gt;reg_code&lt;/u&gt;, reg_name)
+
+&lt;/pre&gt;
+&lt;p&gt;The &lt;strong&gt;foreign keys&lt;/strong&gt; are the following:&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;transaction(property_id)&lt;/TT&gt; references &lt;TT&gt;property(property_id)&lt;/TT&gt;&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;property(street_id)&lt;/TT&gt; references &lt;TT&gt;street(street_id)&lt;/TT&gt;&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;street(city_id)&lt;/TT&gt; references &lt;TT&gt;city(city_id)&lt;/TT&gt;&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;city(dept_code)&lt;/TT&gt; references &lt;TT&gt;department(dept_code)&lt;/TT&gt;&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;department(reg_code)&lt;/TT&gt; references &lt;TT&gt;region(reg_code)&lt;/TT&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;social-network-platform-homework&#34; class=&#34;section level1&#34; number=&#34;3&#34;&gt;
@@ -19540,6 +19605,14 @@ the platform registers the date when the relationship is established.&lt;/p&gt;
 Give the &lt;strong&gt;conceptual schema&lt;/strong&gt; of the database with an ER diagram.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-1/social-network-solution.png&#34; alt=&#34;Social network solution&#34;&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
 
@@ -19549,6 +19622,33 @@ Translate the conceptual schema into a logical schema.
 For each table, underline the primary key and specify the foreign keys.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The &lt;strong&gt;collection of tables&lt;/strong&gt; is the following:&lt;/p&gt;
+&lt;pre&gt;
+&lt;TT&gt;UserAccount&lt;/TT&gt;  (&lt;u&gt;nickname&lt;/u&gt;, first_name, last_name, city, country)
+
+&lt;TT&gt;Post&lt;/TT&gt;         (&lt;u&gt;post_id&lt;/u&gt;, content, date, time, lat, long, nickname)
+
+&lt;TT&gt;EmailAddress&lt;/TT&gt; (&lt;u&gt;email_address&lt;/u&gt;, nickname)
+
+&lt;TT&gt;Relationship&lt;/TT&gt; (&lt;u&gt;nickname_src&lt;/u&gt;, &lt;u&gt;nickname_dst&lt;/u&gt;, type, date)
+
+&lt;TT&gt;Tag&lt;/TT&gt;          (&lt;u&gt;post_id&lt;/u&gt;, &lt;u&gt;nickname&lt;/u&gt;)
+
+&lt;/pre&gt;
+&lt;p&gt;The &lt;strong&gt;foreign keys&lt;/strong&gt; are the following:&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Post(nickname)&lt;/TT&gt; → &lt;TT&gt;UserAccount(nickname)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;EmailAddress(nickname)&lt;/TT&gt; → &lt;TT&gt;EmailAddress(nickname)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Relationship(nickname_src)&lt;/TT&gt; → &lt;TT&gt;UserAccount(nickname)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Relationship(nickname_dst)&lt;/TT&gt; → &lt;TT&gt;UserAccount(nickname)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Tag(post_id)&lt;/TT&gt; → &lt;TT&gt;Post(post_id)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Tag(nickname)&lt;/TT&gt; → &lt;TT&gt;UserAccount(nickname)&lt;/TT&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;!-- # Database of a banking system
 
 The following figure shows the ER diagram with the 
@@ -19585,6 +19685,20 @@ a customer can be granted several loans and open as many accounts as s/he wishes
 
 
 
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+Since no 
+two banks have the same *code_bank* or *name*, 
+either property can be chosen as the primary key 
+of the entity &lt;TT&gt;Bank&lt;/TT&gt;. 
+Both can be considered as valid **candidate keys**.
+
+:::
+
+&lt;/details&gt;
 
 
 ::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
@@ -19598,6 +19712,19 @@ as a valid candidate key for the entity &lt;TT&gt;Bank&lt;/TT&gt;? Justify your 
 :::
 
 
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+The answer is **no**. 
+While there aren&#39;t any banks that have 
+the same value for {*code_bank*, *name*}, 
+two subsets ({*code_bank*} and {*name*}) are candidate keys.
+
+:::
+
+&lt;/details&gt;
 
 
 ::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
@@ -19612,6 +19739,16 @@ Justify your choices when any ambiguity arises.&lt;/div&gt;\EndKnitrBlock{exerci
 :::
 
 
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+&lt;img src=&#34;/courses/databases/tutorial-1/banking-system-er-complete.png&#34; alt=&#34;Banking system solution&#34;&gt;
+
+:::
+
+&lt;/details&gt;
 
 ::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
 **Exercise**
@@ -19623,6 +19760,41 @@ For each table, underline the primary keys and specify the foreign keys.&lt;/div
 :::
 
 
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+The **collection of tables** is the following:
+
+&lt;pre&gt;
+&lt;TT&gt;Bank&lt;/TT&gt;     (&lt;u&gt;code_bank&lt;/u&gt;, name, address)
+
+&lt;TT&gt;Branch&lt;/TT&gt;   (&lt;u&gt;branch_id&lt;/u&gt;, address, code_bank)
+
+&lt;TT&gt;Account&lt;/TT&gt;  (&lt;u&gt;acct_nbr&lt;/u&gt;, acct_type, balance, branch_id, ssn)
+
+&lt;TT&gt;Loan&lt;/TT&gt;     (&lt;u&gt;loan_nbr&lt;/u&gt;, loan_type, amount, branch_id, ssn)
+
+&lt;TT&gt;Customer&lt;/TT&gt; (&lt;u&gt;ssn&lt;/u&gt;, first_name, last_name, telephone, address)
+
+&lt;/pre&gt;
+
+The **foreign keys** are the following:
+
+&lt;TT&gt;Branch(code_bank)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Bank(code_bank)&lt;/TT&gt;.
+
+&lt;TT&gt;Account(branch_id)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Branch(branch_id)&lt;/TT&gt;.
+
+&lt;TT&gt;Account(ssn)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Customer(ssn)&lt;/TT&gt;.
+
+&lt;TT&gt;Loan(branch_id)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Branch(branch_id)&lt;/TT&gt;.
+
+&lt;TT&gt;Loan(ssn)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Customer(ssn)&lt;/TT&gt;.
+
+:::
+
+&lt;/details&gt;
 
 # Car dealership database
 
@@ -19660,6 +19832,16 @@ and each mechanic may work on many cars.
 :::
 
 
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+&lt;img src=&#34;/courses/databases/tutorial-1/car-dealership.png&#34; alt=&#34;Car dealership solution&#34;&gt;
+
+:::
+
+&lt;/details&gt;
 
 
 ::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
@@ -19672,6 +19854,42 @@ For each table, underline the primary keys and specify the foreign keys.&lt;/div
 :::
 
 &lt;/div&gt;
+
+
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+The **collection of tables** is the following:
+
+&lt;pre&gt;
+  Car          (&lt;u&gt;serial_number&lt;/u&gt;, make, model, colour, is_new)
+  Customer     (&lt;u&gt;cust_id&lt;/u&gt;, cust_first_name, cust_last_name, cust_phone)
+  Invoice      (&lt;u&gt;invoice_number&lt;/u&gt;, date, price, car_serial_number, sp_id, cust_id)
+  Salesperson  (&lt;u&gt;sp_id&lt;/u&gt;, sp_first_name, sp_last_name)
+  Mechanic     (&lt;u&gt;mec_id&lt;/u&gt;, mec_first_name, mec_last_name)
+  Ticket       (&lt;u&gt;ticket_number&lt;/u&gt;, date_open, date_return, car_serial_number)
+  Repair       (&lt;u&gt;ticket_number&lt;/u&gt;, &lt;u&gt;mec_id&lt;/u&gt;)&lt;/pre&gt;
+&lt;/pre&gt;
+
+The **foreign keys** are the following:
+
+&lt;TT&gt;Invoice(cust_id)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Customer(cust_id)&lt;/TT&gt;.
+
+&lt;TT&gt;Invoice(car_serial_number)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Car(serial_number)&lt;/TT&gt;.
+
+&lt;TT&gt;Invoice(sp_id)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Salesperson(sp_id)&lt;/TT&gt;.
+
+&lt;TT&gt;Ticket(car_serial_number)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Car(serial_number)&lt;/TT&gt;.
+
+&lt;TT&gt;Repair(ticket_number)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Ticket(ticket_number)&lt;/TT&gt;.
+
+&lt;TT&gt;Repair(mec_id)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Mechanic(mec_id)&lt;/TT&gt;.
+
+:::
+
+&lt;/details&gt;
 
 
 
@@ -20103,6 +20321,14 @@ Chaque personne doit s’inscrire dans une agence et peut passer des examens pou
 Donnez le &lt;strong&gt;schéma conceptuel&lt;/strong&gt; de la base de données à l’aide d’un diagramme entité-association.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Solution
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-1/driving-school-solution.png&#34; alt=&#34;Modèle conceptuel de l&#39;auto-école&#34;&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
 
@@ -20112,6 +20338,32 @@ Traduisez le schéma conceptuel en schéma logique.
 Pour chaque table, soulignez la clé primaire et indiquez les clés étrangères.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Corrigé
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;The &lt;strong&gt;collection of tables&lt;/strong&gt; is the following:&lt;/p&gt;
+&lt;pre&gt;
+
+&lt;TT&gt;Customer&lt;/TT&gt; (&lt;u&gt;cust_code&lt;/u&gt;, first_name, last_name, cust_address, phone_number, 
+                   birth_date, branch_name)
+
+&lt;TT&gt;Branch&lt;/TT&gt;  (&lt;u&gt;branch_name&lt;/u&gt;, branch_address)
+
+&lt;TT&gt;License&lt;/TT&gt; (license_number, category, expiry_date, cust_code, branch_name)
+
+&lt;TT&gt;Exam&lt;/TT&gt;    (&lt;u&gt;cust_code&lt;/u&gt;, &lt;u&gt;branch_name&lt;/u&gt;, exam_date, outcome)
+
+&lt;/pre&gt;
+&lt;p&gt;Foreign keys :&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Customer(branch_name)&lt;/TT&gt; → &lt;TT&gt;Branch(branch_name)&lt;/TT&gt;&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Exam(cust_code)&lt;/TT&gt; → &lt;TT&gt;Customer(cust_code)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Exam(branch_name)&lt;/TT&gt; → &lt;TT&gt;Branch(branch_name)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;License(cust_code)&lt;/TT&gt; → &lt;TT&gt;Customer(cust_code)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;License(branch_name)&lt;/TT&gt; → &lt;TT&gt;Branch(branch_name)&lt;/TT&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;house-sales&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
@@ -20130,6 +20382,14 @@ Pour chaque table, soulignez la clé primaire et indiquez les clés étrangères
 Donnez le &lt;strong&gt;schéma conceptuel&lt;/strong&gt; de la base de données à l’aide d’un diagramme entité-association.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Corrigé
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-1/real-estate-conceptual-model.png&#34; alt=&#34;Modèle conceptuel immobilier&#34;&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
 
@@ -20139,6 +20399,29 @@ Traduisez le schéma conceptuel en schéma logique.
 Pour chaque table, soulignez la clé primaire et indiquez les clés étrangères.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Corrigé
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Les tables sont les suivantes :&lt;/p&gt;
+&lt;pre&gt;
+&lt;TT&gt;transaction&lt;/TT&gt; (&lt;u&gt;transaction_id&lt;/u&gt;, transaction_date, transaction_type, property_id, property_value) 
+&lt;TT&gt;property&lt;/TT&gt;    (&lt;u&gt;property_id&lt;/u&gt;, property_type, built_area, land_area, num_main_rooms, number_of_units, street_id)
+&lt;TT&gt;street&lt;/TT&gt;      (&lt;u&gt;street_id&lt;/u&gt;, street_number, street_type, street_name, zip_code, cadastral_section, land_parcel, city_id)
+&lt;TT&gt;city&lt;/TT&gt;        (&lt;u&gt;city_id&lt;/u&gt;, insee_code, city_name, geometry, dept_code)
+&lt;TT&gt;department&lt;/TT&gt;  (&lt;u&gt;dept_code&lt;/u&gt;, dept_name, reg_code)
+&lt;TT&gt;region&lt;/TT&gt;      (&lt;u&gt;reg_code&lt;/u&gt;, reg_name)
+
+&lt;/pre&gt;
+&lt;p&gt;Les &lt;strong&gt;clés étrangères&lt;/strong&gt; sont les suivantes :&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;transaction(property_id)&lt;/TT&gt; fait référence à &lt;TT&gt;property(property_id)&lt;/TT&gt;&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;property(street_id)&lt;/TT&gt; fait référence à &lt;TT&gt;street(street_id)&lt;/TT&gt;&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;street(city_id)&lt;/TT&gt; fait référence à &lt;TT&gt;city(city_id)&lt;/TT&gt;&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;city(dept_code)&lt;/TT&gt; fait référence à &lt;TT&gt;department(dept_code)&lt;/TT&gt;&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;department(reg_code)&lt;/TT&gt; fait référence à &lt;TT&gt;region(reg_code)&lt;/TT&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;div id=&#34;réseau-social-devoir&#34; class=&#34;section level1&#34; number=&#34;3&#34;&gt;
@@ -20158,6 +20441,14 @@ Pour chaque type de relation (amitié ou suivi), la plateforme enregistre la dat
 Donnez le &lt;strong&gt;schéma conceptuel&lt;/strong&gt; de la base de données à l’aide d’un diagramme entité-association.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Corrigé
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;&lt;img src=&#34;/courses/databases/tutorial-1/social-network-solution.png&#34; alt=&#34;Corrigé du réseau social&#34;&gt;&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;div class=&#34;infobox exercisebox&#34;&gt;
 &lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
 
@@ -20167,6 +20458,33 @@ Traduisez le schéma conceptuel en schéma logique.
 Pour chaque table, soulignez la clé primaire et indiquez les clés étrangères.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
+&lt;details&gt;
+&lt;summary&gt;
+Corrigé
+&lt;/summary&gt;
+&lt;div class=&#34;infobox exosolution&#34;&gt;
+&lt;p&gt;Les tables sont les suivantes :&lt;/p&gt;
+&lt;pre&gt;
+&lt;TT&gt;UserAccount&lt;/TT&gt;  (&lt;u&gt;nickname&lt;/u&gt;, first_name, last_name, city, country)
+
+&lt;TT&gt;Post&lt;/TT&gt;         (&lt;u&gt;post_id&lt;/u&gt;, content, date, time, lat, long, nickname)
+
+&lt;TT&gt;EmailAddress&lt;/TT&gt; (&lt;u&gt;email_address&lt;/u&gt;, nickname)
+
+&lt;TT&gt;Relationship&lt;/TT&gt; (&lt;u&gt;nickname_src&lt;/u&gt;, &lt;u&gt;nickname_dst&lt;/u&gt;, type, date)
+
+&lt;TT&gt;Tag&lt;/TT&gt;          (&lt;u&gt;post_id&lt;/u&gt;, &lt;u&gt;nickname&lt;/u&gt;)
+
+&lt;/pre&gt;
+&lt;p&gt;Les &lt;strong&gt;clés étrangères&lt;/strong&gt; sont les suivantes :&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Post(nickname)&lt;/TT&gt; → &lt;TT&gt;UserAccount(nickname)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;EmailAddress(nickname)&lt;/TT&gt; → &lt;TT&gt;EmailAddress(nickname)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Relationship(nickname_src)&lt;/TT&gt; → &lt;TT&gt;UserAccount(nickname)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Relationship(nickname_dst)&lt;/TT&gt; → &lt;TT&gt;UserAccount(nickname)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Tag(post_id)&lt;/TT&gt; → &lt;TT&gt;Post(post_id)&lt;/TT&gt;.&lt;/p&gt;
+&lt;p&gt;&lt;TT&gt;Tag(nickname)&lt;/TT&gt; → &lt;TT&gt;UserAccount(nickname)&lt;/TT&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/details&gt;
 &lt;!-- # Base de données bancaire
 
 La figure suivante présente le diagramme entité-association correspondant au schéma conceptuel d&#39;une base de données bancaire.
@@ -20192,6 +20510,16 @@ Chaque banque est identifiée par un code et un nom uniques et possède une ou p
 
 
 
+&lt;details&gt;
+&lt;summary&gt;Corrigé&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+Puisque deux banques n&#39;ont ni le même *code_bank* ni le même *name*, l&#39;une ou l&#39;autre de ces propriétés peut être choisie comme clé primaire de l&#39;entité &lt;TT&gt;Bank&lt;/TT&gt;. Ce sont deux **clés candidates** valides.
+
+:::
+
+&lt;/details&gt;
 
 
 ::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
@@ -20204,6 +20532,16 @@ Chaque banque est identifiée par un code et un nom uniques et possède une ou p
 :::
 
 
+&lt;details&gt;
+&lt;summary&gt;Corrigé&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+La réponse est **non**. Même si aucune banque ne possède les mêmes valeurs pour {*code_bank*, *name*}, chacun de ces attributs pris séparément ({*code_bank*} et {*name*}) est déjà une clé candidate.
+
+:::
+
+&lt;/details&gt;
 
 
 ::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
@@ -20215,6 +20553,16 @@ Chaque banque est identifiée par un code et un nom uniques et possède une ou p
 :::
 
 
+&lt;details&gt;
+&lt;summary&gt;Corrigé&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+&lt;img src=&#34;/courses/databases/tutorial-1/banking-system-er-complete.png&#34; alt=&#34;Corrigé du schéma bancaire&#34;&gt;
+
+:::
+
+&lt;/details&gt;
 
 ::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
 **Exercice**
@@ -20225,6 +20573,41 @@ Chaque banque est identifiée par un code et un nom uniques et possède une ou p
 :::
 
 
+&lt;details&gt;
+&lt;summary&gt;Corrigé&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+Les tables sont les suivantes :
+
+&lt;pre&gt;
+&lt;TT&gt;Bank&lt;/TT&gt;     (&lt;u&gt;code_bank&lt;/u&gt;, name, address)
+
+&lt;TT&gt;Branch&lt;/TT&gt;   (&lt;u&gt;branch_id&lt;/u&gt;, address, code_bank)
+
+&lt;TT&gt;Account&lt;/TT&gt;  (&lt;u&gt;acct_nbr&lt;/u&gt;, acct_type, balance, branch_id, ssn)
+
+&lt;TT&gt;Loan&lt;/TT&gt;     (&lt;u&gt;loan_nbr&lt;/u&gt;, loan_type, amount, branch_id, ssn)
+
+&lt;TT&gt;Customer&lt;/TT&gt; (&lt;u&gt;ssn&lt;/u&gt;, first_name, last_name, telephone, address)
+
+&lt;/pre&gt;
+
+Les **clés étrangères** sont les suivantes :
+
+&lt;TT&gt;Branch(code_bank)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Bank(code_bank)&lt;/TT&gt;.
+
+&lt;TT&gt;Account(branch_id)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Branch(branch_id)&lt;/TT&gt;.
+
+&lt;TT&gt;Account(ssn)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Customer(ssn)&lt;/TT&gt;.
+
+&lt;TT&gt;Loan(branch_id)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Branch(branch_id)&lt;/TT&gt;.
+
+&lt;TT&gt;Loan(ssn)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Customer(ssn)&lt;/TT&gt;.
+
+:::
+
+&lt;/details&gt;
 
 # Car dealership database
 
@@ -20262,6 +20645,16 @@ and each mechanic may work on many cars.
 :::
 
 
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+&lt;img src=&#34;/courses/databases/tutorial-1/car-dealership.png&#34; alt=&#34;Car dealership solution&#34;&gt;
+
+:::
+
+&lt;/details&gt;
 
 
 ::: {.infobox .exercisebox data-latex=&#34;{exercisebox}&#34;}
@@ -20274,6 +20667,42 @@ For each table, underline the primary keys and specify the foreign keys.&lt;/div
 :::
 
 &lt;/div&gt;
+
+
+&lt;details&gt;
+&lt;summary&gt;Solution&lt;/summary&gt;
+
+::: {.infobox .exosolution data-latex=&#34;{exercisebox}&#34;}
+
+Les tables sont les suivantes :
+
+&lt;pre&gt;
+  Car          (&lt;u&gt;serial_number&lt;/u&gt;, make, model, colour, is_new)
+  Customer     (&lt;u&gt;cust_id&lt;/u&gt;, cust_first_name, cust_last_name, cust_phone)
+  Invoice      (&lt;u&gt;invoice_number&lt;/u&gt;, date, price, car_serial_number, sp_id, cust_id)
+  Salesperson  (&lt;u&gt;sp_id&lt;/u&gt;, sp_first_name, sp_last_name)
+  Mechanic     (&lt;u&gt;mec_id&lt;/u&gt;, mec_first_name, mec_last_name)
+  Ticket       (&lt;u&gt;ticket_number&lt;/u&gt;, date_open, date_return, car_serial_number)
+  Repair       (&lt;u&gt;ticket_number&lt;/u&gt;, &lt;u&gt;mec_id&lt;/u&gt;)&lt;/pre&gt;
+&lt;/pre&gt;
+
+The **foreign keys** are the following:
+
+&lt;TT&gt;Invoice(cust_id)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Customer(cust_id)&lt;/TT&gt;.
+
+&lt;TT&gt;Invoice(car_serial_number)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Car(serial_number)&lt;/TT&gt;.
+
+&lt;TT&gt;Invoice(sp_id)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Salesperson(sp_id)&lt;/TT&gt;.
+
+&lt;TT&gt;Ticket(car_serial_number)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Car(serial_number)&lt;/TT&gt;.
+
+&lt;TT&gt;Repair(ticket_number)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Ticket(ticket_number)&lt;/TT&gt;.
+
+&lt;TT&gt;Repair(mec_id)&lt;/TT&gt; &amp;rarr;  &lt;TT&gt;Mechanic(mec_id)&lt;/TT&gt;.
+
+:::
+
+&lt;/details&gt;
 
 
 
@@ -26917,6 +27346,376 @@ FROM customer&lt;/code&gt;&lt;/pre&gt;
 Create an index on the table &lt;code&gt;customer_high_card&lt;/code&gt; on columns &lt;code&gt;customer_first_name&lt;/code&gt; and &lt;code&gt;customer_last_name&lt;/code&gt;, in this order.
 Search for all customers whose last name is Smith.
 Is the index used?&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>SQL fundamentals</title>
+      <link>/courses/bdalbert/tutorials/sql-intro/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/bdalbert/tutorials/sql-intro/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;div id=&#34;introduction-to-sql&#34; class=&#34;section level1&#34; number=&#34;1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Introduction to SQL&lt;/h1&gt;
+&lt;p&gt;All exercises use one table at a time; no joins are required. The &lt;code&gt;property&lt;/code&gt; table contains one row per property and has the following columns:&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;property(property_id, property_type, built_area, land_area,
+num_main_rooms, number_of_units, street_id)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;The &lt;code&gt;property_type&lt;/code&gt; values include &lt;code&gt;&#39;Appartement&#39;&lt;/code&gt; and &lt;code&gt;&#39;Maison&#39;&lt;/code&gt;.
+Assume that some &lt;code&gt;land_area&lt;/code&gt; and &lt;code&gt;built_area&lt;/code&gt; values are &lt;code&gt;NULL&lt;/code&gt;.&lt;/p&gt;
+&lt;div id=&#34;selecting-columns-and-query-order&#34; class=&#34;section level2&#34; number=&#34;1.1&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.1&lt;/span&gt; Selecting columns and query order&lt;/h2&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.1  &lt;/strong&gt;&lt;/span&gt;
+Write a query that displays the property identifier, type, built area, and number of main rooms for every property. Then state the order in which the clauses are written in SQL and the logical order in which the database evaluates them. Include &lt;code&gt;WHERE&lt;/code&gt;, &lt;code&gt;GROUP BY&lt;/code&gt;, &lt;code&gt;HAVING&lt;/code&gt;, &lt;code&gt;ORDER BY&lt;/code&gt;, and &lt;code&gt;LIMIT&lt;/code&gt; in both orders, even though this query does not use them all.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;filtering-rows-with-where&#34; class=&#34;section level2&#34; number=&#34;1.2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.2&lt;/span&gt; Filtering rows with WHERE&lt;/h2&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.2  &lt;/strong&gt;&lt;/span&gt;
+Write a query that lists the identifiers, built areas, and number of main rooms for apartments whose built area is at least 60 and at most 100 square metres, and that have at least three main rooms. Use comparison operators and &lt;code&gt;AND&lt;/code&gt;. Make sure the text value is written as a string literal.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.3  &lt;/strong&gt;&lt;/span&gt;
+Write two queries:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Find houses with a built area greater than 150 square metres, or apartments with at least five main rooms. Use &lt;code&gt;AND&lt;/code&gt;, &lt;code&gt;OR&lt;/code&gt;, and parentheses to make the intended grouping explicit.&lt;/li&gt;
+&lt;li&gt;Find properties that are not apartments and have at least three main rooms. Use &lt;code&gt;NOT&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;sorting-and-limiting-results&#34; class=&#34;section level2&#34; number=&#34;1.3&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.3&lt;/span&gt; Sorting and limiting results&lt;/h2&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.4  &lt;/strong&gt;&lt;/span&gt;
+Write a query that lists every property, sorted first by type in ascending order, then by built area in descending order, and finally by property identifier in ascending order.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.5  &lt;/strong&gt;&lt;/span&gt;
+Write a query to find the ten largest houses by built area. Return the property identifier and built area. If several properties have the same area, sort those by identifier in ascending order.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;aggregates-and-groups&#34; class=&#34;section level2&#34; number=&#34;1.4&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.4&lt;/span&gt; Aggregates and groups&lt;/h2&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.6  &lt;/strong&gt;&lt;/span&gt;
+For houses, write one query that returns the number of properties, total built area, average built area, and the smallest and largest built areas. Choose the aggregate function that answers each question, then explain what each result represents.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.7  &lt;/strong&gt;&lt;/span&gt;
+Write a query that returns the number of properties and average built area for each property type. How many rows does the result contain? Which columns can appear in the &lt;code&gt;SELECT&lt;/code&gt; list of a grouped query? Could you add &lt;code&gt;property_id&lt;/code&gt; without aggregating it? Explain.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;filtering-groups-with-having&#34; class=&#34;section level2&#34; number=&#34;1.5&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.5&lt;/span&gt; Filtering groups with HAVING&lt;/h2&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.8  &lt;/strong&gt;&lt;/span&gt;
+For each property type, count properties with at least three main rooms and calculate their average built area. Return only groups containing at least 100 properties. Explain why the row filter belongs in &lt;code&gt;WHERE&lt;/code&gt; and the group filter belongs in &lt;code&gt;HAVING&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;counting-and-missing-values&#34; class=&#34;section level2&#34; number=&#34;1.6&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.6&lt;/span&gt; Counting and missing values&lt;/h2&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.9  &lt;/strong&gt;&lt;/span&gt;
+Write a query that returns (1) the total number of properties, (2) the number of properties with a recorded land area, and (3) the number of distinct property types. Explain the difference between COUNT(*), COUNT(column), and COUNT(DISTINCT column).&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.10  &lt;/strong&gt;&lt;/span&gt;
+Write a query that returns the average recorded land area and the average land area when missing values are treated as zero.
+Also return the total number of properties and the number of properties with a recorded land area. Explain how NULL affects COUNT and AVG, and what COALESCE changes.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;review-with-a-second-table&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Review with a second table&lt;/h1&gt;
+&lt;p&gt;These recap exercises use only the &lt;code&gt;sales_transaction&lt;/code&gt; table. Each row represents one transaction.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;sales_transaction(transaction_id, transaction_date, transaction_type, property_id, property_value)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Assume some &lt;code&gt;property_value&lt;/code&gt; values are NULL.&lt;/p&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-11&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;
+Write a query that displays the transaction identifier, date, type, and property value for every transaction.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-12&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.2  &lt;/strong&gt;&lt;/span&gt;
+Write three queries:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Find sales with a property value of at least 200,000.&lt;/li&gt;
+&lt;li&gt;Find transactions that are expropriations or have a property value below 50,000.&lt;/li&gt;
+&lt;li&gt;Find transactions that are not sales.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Return the transaction identifier and relevant columns. Use the transaction type values ‘Vente’ and ‘Expropriation’, comparison operators, and correctly quoted text values.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-13&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.3  &lt;/strong&gt;&lt;/span&gt;
+Write a query for the ten highest-valued sales. Show the transaction identifier, date, and property value. Sort by property value descending, then transaction date ascending, then transaction identifier ascending.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-14&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.4  &lt;/strong&gt;&lt;/span&gt;
+For sales, write a query returning the number of transactions, total value, average value, minimum value, and maximum value.
+Then write a query returning the transaction count and average value for each transaction type.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-15&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.5  &lt;/strong&gt;&lt;/span&gt;
+For each transaction type, calculate the number and average value of transactions worth at least 100,000. Return only groups with at least 100 transactions,
+sort from highest to lowest transaction count, and return the first five groups.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercise&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-16&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.6  &lt;/strong&gt;&lt;/span&gt;
+Write one query that returns the total number of transactions, the number of transactions with a recorded property value, the number of distinct transaction types, the average recorded value, and the average when missing values are treated as zero.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+</description>
+    </item>
+    
+    <item>
+      <title>Fondamentaux de SQL</title>
+      <link>/courses/bdalbert/tutorials/sql-intro-fr/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>/courses/bdalbert/tutorials/sql-intro-fr/</guid>
+      <description>
+&lt;script src=&#34;/rmarkdown-libs/header-attrs/header-attrs.js&#34;&gt;&lt;/script&gt;
+
+
+&lt;p&gt;&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/course.css&#34;&gt;
+&lt;link rel=&#34;stylesheet&#34; href=&#34;/styles/cloud-computing.css&#34;&gt;&lt;/p&gt;
+&lt;div id=&#34;introduction-au-sql&#34; class=&#34;section level1&#34; number=&#34;1&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;1&lt;/span&gt; Introduction au SQL&lt;/h1&gt;
+&lt;p&gt;Tous les exercices utilisent une seule table à la fois ; aucune jointure n’est nécessaire. La table &lt;code&gt;property&lt;/code&gt; contient une ligne par bien immobilier et comporte les colonnes suivantes :&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;property(property_id, property_type, built_area, land_area,
+         num_main_rooms, number_of_units, street_id)&lt;/code&gt;&lt;/pre&gt;
+&lt;p&gt;Les valeurs de &lt;code&gt;property_type&lt;/code&gt; comprennent &lt;code&gt;&#39;Appartement&#39;&lt;/code&gt; et &lt;code&gt;&#39;Maison&#39;&lt;/code&gt;. Certaines valeurs de &lt;code&gt;land_area&lt;/code&gt; et de &lt;code&gt;built_area&lt;/code&gt; sont &lt;code&gt;NULL&lt;/code&gt;.&lt;/p&gt;
+&lt;div id=&#34;sélection-des-colonnes-et-ordre-dune-requête&#34; class=&#34;section level2&#34; number=&#34;1.1&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.1&lt;/span&gt; Sélection des colonnes et ordre d’une requête&lt;/h2&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-1&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.1  &lt;/strong&gt;&lt;/span&gt;
+Écrivez une requête qui affiche, pour chaque bien, son identifiant, son type, sa surface bâtie et son nombre de pièces principales. Indiquez l’ordre dans lequel les clauses sont écrites en SQL, puis l’ordre logique dans lequel la base de données les évalue. Présentez les deux ordres en incluant &lt;code&gt;WHERE&lt;/code&gt;, &lt;code&gt;GROUP BY&lt;/code&gt;, &lt;code&gt;HAVING&lt;/code&gt;, &lt;code&gt;ORDER BY&lt;/code&gt; et &lt;code&gt;LIMIT&lt;/code&gt;, même si cette requête ne les utilise pas toutes.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;filtrage-des-lignes-avec-where&#34; class=&#34;section level2&#34; number=&#34;1.2&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.2&lt;/span&gt; Filtrage des lignes avec WHERE&lt;/h2&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-2&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.2  &lt;/strong&gt;&lt;/span&gt;
+Écrivez une requête qui affiche les identifiants, les surfaces bâties et le nombre de pièces principales des appartements dont la surface bâtie est comprise entre 60 et 100 mètres carrés et qui ont au moins trois pièces principales. Utilisez des opérateurs de comparaison et &lt;code&gt;AND&lt;/code&gt;. Veillez à écrire la valeur textuelle sous forme de littéral de chaîne.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-3&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.3  &lt;/strong&gt;&lt;/span&gt;
+Écrivez deux requêtes :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Trouvez les maisons dont la surface bâtie dépasse 150 mètres carrés ou les appartements qui comptent au moins cinq pièces principales. Utilisez &lt;code&gt;AND&lt;/code&gt;, &lt;code&gt;OR&lt;/code&gt; et des parenthèses pour expliciter le regroupement voulu.&lt;/li&gt;
+&lt;li&gt;Trouvez les biens qui ne sont pas des appartements et qui comptent au moins trois pièces principales. Utilisez &lt;code&gt;NOT&lt;/code&gt;.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;tri-et-limitation-des-résultats&#34; class=&#34;section level2&#34; number=&#34;1.3&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.3&lt;/span&gt; Tri et limitation des résultats&lt;/h2&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-4&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.4  &lt;/strong&gt;&lt;/span&gt;
+Écrivez une requête qui affiche tous les biens, triés d’abord par type dans l’ordre croissant, puis par surface bâtie dans l’ordre décroissant, et enfin par identifiant de bien dans l’ordre croissant.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-5&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.5  &lt;/strong&gt;&lt;/span&gt;
+Écrivez une requête pour trouver les dix maisons ayant la plus grande surface bâtie. Affichez l’identifiant du bien et sa surface bâtie. En cas d’égalité, triez les biens concernés par identifiant croissant.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;agrégats-et-regroupements&#34; class=&#34;section level2&#34; number=&#34;1.4&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.4&lt;/span&gt; Agrégats et regroupements&lt;/h2&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-6&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.6  &lt;/strong&gt;&lt;/span&gt;
+Pour les maisons, écrivez une requête qui renvoie le nombre de biens, la surface bâtie totale, la surface bâtie moyenne, ainsi que les surfaces bâties minimale et maximale. Choisissez la fonction d’agrégation adaptée à chaque question, puis expliquez ce que représente chaque résultat.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-7&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.7  &lt;/strong&gt;&lt;/span&gt;
+Écrivez une requête qui renvoie le nombre de biens et la surface bâtie moyenne pour chaque type de bien. Combien de lignes le résultat contient-il ? Quelles colonnes peuvent apparaître dans la liste SELECT d’une requête avec regroupement ? Pourriez-vous ajouter property_id sans l’agréger ? Expliquez.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;filtrage-des-groupes-avec-having&#34; class=&#34;section level2&#34; number=&#34;1.5&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.5&lt;/span&gt; Filtrage des groupes avec HAVING&lt;/h2&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-8&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.8  &lt;/strong&gt;&lt;/span&gt;
+Pour chaque type de bien, comptez les biens ayant au moins trois pièces principales et calculez leur surface bâtie moyenne. Ne conservez que les groupes contenant au moins 100 biens. Expliquez pourquoi le filtre sur les lignes doit être placé dans WHERE et celui sur les groupes dans HAVING.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;comptage-et-valeurs-manquantes&#34; class=&#34;section level2&#34; number=&#34;1.6&#34;&gt;
+&lt;h2&gt;&lt;span class=&#34;header-section-number&#34;&gt;1.6&lt;/span&gt; Comptage et valeurs manquantes&lt;/h2&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-9&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.9  &lt;/strong&gt;&lt;/span&gt;
+Écrivez une requête qui renvoie (1) le nombre total de biens, (2) le nombre de biens dont la surface de terrain est renseignée et (3) le nombre de types de biens distincts. Expliquez la différence entre COUNT(*), COUNT(column) et COUNT(DISTINCT column).&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-10&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 1.10  &lt;/strong&gt;&lt;/span&gt;
+Écrivez une requête qui renvoie la surface de terrain moyenne renseignée et la surface de terrain moyenne si les valeurs manquantes sont considérées comme des zéros. Renvoyez également le nombre total de biens et le nombre de biens dont la surface de terrain est renseignée. Expliquez comment NULL est traité par COUNT et AVG, et ce que change COALESCE.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div id=&#34;révision-avec-une-deuxième-table&#34; class=&#34;section level1&#34; number=&#34;2&#34;&gt;
+&lt;h1&gt;&lt;span class=&#34;header-section-number&#34;&gt;2&lt;/span&gt; Révision avec une deuxième table&lt;/h1&gt;
+&lt;p&gt;Ces exercices de révision utilisent uniquement la table sales_transaction. Chaque ligne représente une transaction et contient les colonnes transaction_id, transaction_date, transaction_type, property_id et property_value. Aucune jointure n’est nécessaire. Supposez que certaines valeurs de property_value soient NULL.&lt;/p&gt;
+&lt;pre&gt;&lt;code&gt;sales_transaction(transaction_id, transaction_date, transaction_type, property_id, property_value)&lt;/code&gt;&lt;/pre&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-11&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.1  &lt;/strong&gt;&lt;/span&gt;
+Écrivez une requête qui affiche l’identifiant, la date, le type et la valeur du bien pour chaque transaction.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-12&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.2  &lt;/strong&gt;&lt;/span&gt;
+Écrivez trois requêtes :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Trouvez les ventes dont la valeur du bien est supérieure ou égale à 200 000.&lt;/li&gt;
+&lt;li&gt;Trouvez les transactions qui sont des expropriations ou dont la valeur du bien est inférieure à 50 000.&lt;/li&gt;
+&lt;li&gt;Trouvez les transactions qui ne sont pas des ventes.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Renvoyez l’identifiant de la transaction et les colonnes pertinentes. Utilisez les types de transaction ‘Vente’ et ‘Expropriation’, des opérateurs de comparaison et des valeurs textuelles correctement encadrées.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-13&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.3  &lt;/strong&gt;&lt;/span&gt;
+Écrivez une requête qui renvoie les dix ventes ayant les valeurs les plus élevées. Affichez l’identifiant de la transaction, la date et la valeur du bien. Triez par valeur décroissante, puis par date de transaction croissante, et enfin par identifiant de transaction croissant.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-14&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.4  &lt;/strong&gt;&lt;/span&gt;
+Pour les ventes, écrivez une requête qui renvoie le nombre de transactions, la valeur totale, la valeur moyenne, la valeur minimale et la valeur maximale. Écrivez ensuite une requête qui renvoie le nombre de transactions et la valeur moyenne pour chaque type de transaction.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-15&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.5  &lt;/strong&gt;&lt;/span&gt;
+Pour chaque type de transaction, calculez le nombre et la valeur moyenne des transactions dont la valeur est supérieure ou égale à 100 000. Ne conservez que les groupes comptant au moins 100 transactions, triez-les par nombre de transactions décroissant et renvoyez les cinq premiers groupes.&lt;/p&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;div class=&#34;infobox exercisebox&#34;&gt;
+&lt;p&gt;&lt;strong&gt;Exercice&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&#34;exercise&#34;&gt;
+&lt;p&gt;&lt;span id=&#34;exr:unnamed-chunk-16&#34; class=&#34;exercise&#34;&gt;&lt;strong&gt;Exercise 2.6  &lt;/strong&gt;&lt;/span&gt;
+Écrivez une requête qui renvoie le nombre total de transactions, le nombre de transactions dont la valeur du bien est renseignée, le nombre de types de transaction distincts, la valeur moyenne renseignée et la valeur moyenne lorsque les valeurs manquantes sont considérées comme des zéros.&lt;/p&gt;
 &lt;/div&gt;
 &lt;/div&gt;
 &lt;/div&gt;

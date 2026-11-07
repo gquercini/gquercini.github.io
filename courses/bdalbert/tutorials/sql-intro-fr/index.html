@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en-us">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="generator" content="Source Themes Academic 4.8.0">
+
+  
+
+  
+  
+  
+  
+  
+    
+    
+    
+  
+  
+
+  <meta name="author" content="Gianluca Quercini">
+
+  
+  
+  
+    
+  
+  <meta name="description" content="Exercices introductifs de SQL">
+
+  
+  <link rel="alternate" hreflang="en-us" href="/courses/bdalbert/tutorials/sql-intro-fr/">
+
+  
+
+
+  
+  
+  
+  <meta name="theme-color" content="rgb(0, 136, 204)">
+  
+
+  
+  
+  
+  <script src="/js/mathjax-config.js"></script>
+  
+
+
+  
+  
+  
+  
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/academicons/1.8.6/css/academicons.min.css" integrity="sha256-uFVgMKfistnJAfoCUQigIl+JfUaP47GrRKjf6CTPVmw=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.0-1/css/all.min.css" integrity="sha256-4w9DunooKSr3MFXHXWyFER38WmPdm361bQS/2KUWZbU=" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+    
+    
+    
+      
+    
+    
+      
+      
+        
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/github.min.css" crossorigin="anonymous" title="hl-light">
+          <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/styles/dracula.min.css" crossorigin="anonymous" title="hl-dark" disabled>
+        
+      
+    
+
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.css" integrity="sha256-SHMGCYmST46SoyGgo4YR/9AlK1vf3ff84Aq9yK4hdqM=" crossorigin="anonymous">
+    
+
+    
+
+    
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/lazysizes/5.1.2/lazysizes.min.js" integrity="sha256-Md1qLToewPeKjfAHU1zyPwOutccPAm5tahnaw7Osw0A=" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+    
+      
+
+      
+      
+
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js" integrity="" crossorigin="anonymous" async></script>
+      
+    
+      
+
+      
+      
+
+      
+    
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat:400,700%7CRoboto:400,400italic,700%7CRoboto+Mono&display=swap">
+  
+
+  
+  
+  
+  
+  <link rel="stylesheet" href="/css/academic.css">
+
+  
+
+
+
+
+  
+
+
+  
+
+  <link rel="manifest" href="/index.webmanifest">
+  <link rel="icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_32x32_fill_lanczos_center_3.png">
+  <link rel="apple-touch-icon" type="image/png" href="/images/icon_hu68b06f59cdf252d86e7129a31e131766_426695_192x192_fill_lanczos_center_3.png">
+
+  <link rel="canonical" href="/courses/bdalbert/tutorials/sql-intro-fr/">
+
+  
+  
+  
+  
+  
+    
+    
+  
+  
+  <meta property="twitter:card" content="summary">
+  
+  <meta property="og:site_name" content="Gianluca Quercini">
+  <meta property="og:url" content="/courses/bdalbert/tutorials/sql-intro-fr/">
+  <meta property="og:title" content="Fondamentaux de SQL | Gianluca Quercini">
+  <meta property="og:description" content="Exercices introductifs de SQL"><meta property="og:image" content="img/map[gravatar:%!s(bool=true) shape:circle]">
+  <meta property="twitter:image" content="img/map[gravatar:%!s(bool=true) shape:circle]"><meta property="og:locale" content="en-us">
+  
+    
+    
+  
+
+  
+
+
+
+  
+
+
+  
+
+
+  
+
+
+
+
+
+  <title>Fondamentaux de SQL | Gianluca Quercini</title>
+
+</head>
+
+<body id="top" data-spy="scroll" data-offset="70" data-target="#TableOfContents" >
+
+  <aside class="search-results" id="search">
+  <div class="container">
+    <section class="search-header">
+
+      <div class="row no-gutters justify-content-between mb-3">
+        <div class="col-6">
+          <h1>Search</h1>
+        </div>
+        <div class="col-6 col-search-close">
+          <a class="js-search" href="#"><i class="fas fa-times-circle text-muted" aria-hidden="true"></i></a>
+        </div>
+      </div>
+
+      <div id="search-box">
+        
+        
+        
+      </div>
+
+    </section>
+    <section class="section-search-results">
+
+      <div id="search-hits">
+        
+      </div>
+
+    </section>
+  </div>
+</aside>
+
+
+  
+
+
+
+
+
+
+
+<nav class="navbar navbar-expand-lg navbar-light compensate-for-scrollbar" id="navbar-main">
+  <div class="container">
+
+    
+    <div class="d-none d-lg-inline-flex">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    <button type="button" class="navbar-toggler" data-toggle="collapse"
+            data-target="#navbar-content" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+    <span><i class="fas fa-bars"></i></span>
+    </button>
+    
+
+    
+    <div class="navbar-brand-mobile-wrapper d-inline-flex d-lg-none">
+      <a class="navbar-brand" href="/">Gianluca Quercini</a>
+    </div>
+    
+
+    
+    
+    <div class="navbar-collapse main-menu-item collapse justify-content-start" id="navbar-content">
+
+      
+      <ul class="navbar-nav d-md-inline-flex">
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#about"><span>Home</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#experience"><span>Experience</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#teaching"><span>Teaching</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#publications"><span>Publications</span></a>
+        </li>
+
+        
+        
+
+        
+
+        
+        
+        
+          
+        
+
+        
+        
+        
+        
+        
+        
+          
+          
+          
+            
+          
+          
+        
+
+        <li class="nav-item">
+          <a class="nav-link " href="/#contact"><span>Contact</span></a>
+        </li>
+
+        
+        
+
+      
+
+        
+      </ul>
+    </div>
+
+    <ul class="nav-icons navbar-nav flex-row ml-auto d-flex pl-md-2">
+      
+
+      
+
+      
+
+    </ul>
+
+  </div>
+</nav>
+
+
+  
+
+  
+
+<div class="container-fluid docs">
+  <div class="row flex-xl-nowrap">
+    <div class="col-12 col-md-3 col-xl-2 docs-sidebar">
+      
+
+
+<script src="/js/toggle-menu.js"></script>
+
+
+
+
+
+
+
+  
+    
+  
+
+
+
+
+<form class="docs-search d-flex align-items-center">
+  <button class="btn docs-toggle d-md-none p-0 mr-3" type="button" data-toggle="collapse" data-target="#docs-nav" aria-controls="docs-nav" aria-expanded="false" aria-label="Toggle section navigation">
+    <span><i class="fas fa-bars"></i></span>
+  </button>
+
+  
+</form>
+
+<nav class="collapse docs-links" id="docs-nav">
+  
+
+  
+  
+  
+  
+  <div class="docs-toc-item">
+
+    <a onclick=open_menu_on_click(this) id="" class="docs-toc-link" href="/courses/bdalbert/tutorials/data-modeling/">Tutorials</a>
+    
+    <div id="-ddowncontent" class="-ddowncontent ddowncontent">
+    <ul class="nav docs-sidenav">
+      
+      
+      <li class="Tutorials">
+        <a href="/courses/bdalbert/tutorials/data-modeling/">1. Data modeling</a>
+      </li>
+      
+      
+      <li class="Tutorials">
+        <a href="/courses/bdalbert/tutorials/data-modeling-fr/">1. Modélisation de données</a>
+      </li>
+      
+      
+      <li class="Tutorials">
+        <a href="/courses/bdalbert/tutorials/sql-intro/">2. SQL fundamentals</a>
+      </li>
+      
+      <script>open_menu_on_load("".concat("-ddowncontent"))</script>
+      <li class="active Tutorials">
+        <a href="/courses/bdalbert/tutorials/sql-intro-fr/">2. Fondamentaux de SQL</a>
+      </li>
+      
+    </ul>
+    </div>
+    
+    
+
+  </div>
+  
+  
+</nav>
+
+    </div>
+
+    
+
+    <main class="col-12 col-md-9 col-xl-8 py-md-3 pl-md-5 docs-content" role="main">
+
+      <article class="article">
+
+        <div class="docs-article-container">
+          <div class="heading">SQL et interrogation de données — TD 2</div>
+          <h1>Fondamentaux de SQL</h1>
+          <hr>
+          <div class="logo">
+            
+            </div>
+
+          <div class="article-style">
+            
+<script src="/rmarkdown-libs/header-attrs/header-attrs.js"></script>
+
+
+<p><link rel="stylesheet" href="/styles/course.css">
+<link rel="stylesheet" href="/styles/cloud-computing.css"></p>
+<div id="introduction-au-sql" class="section level1" number="1">
+<h1><span class="header-section-number">1</span> Introduction au SQL</h1>
+<p>Tous les exercices utilisent une seule table à la fois ; aucune jointure n’est nécessaire. La table <code>property</code> contient une ligne par bien immobilier et comporte les colonnes suivantes :</p>
+<pre><code>property(property_id, property_type, built_area, land_area,
+         num_main_rooms, number_of_units, street_id)</code></pre>
+<p>Les valeurs de <code>property_type</code> comprennent <code>'Appartement'</code> et <code>'Maison'</code>. Certaines valeurs de <code>land_area</code> et de <code>built_area</code> sont <code>NULL</code>.</p>
+<div id="sélection-des-colonnes-et-ordre-dune-requête" class="section level2" number="1.1">
+<h2><span class="header-section-number">1.1</span> Sélection des colonnes et ordre d’une requête</h2>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-1" class="exercise"><strong>Exercise 1.1  </strong></span>
+Écrivez une requête qui affiche, pour chaque bien, son identifiant, son type, sa surface bâtie et son nombre de pièces principales. Indiquez l’ordre dans lequel les clauses sont écrites en SQL, puis l’ordre logique dans lequel la base de données les évalue. Présentez les deux ordres en incluant <code>WHERE</code>, <code>GROUP BY</code>, <code>HAVING</code>, <code>ORDER BY</code> et <code>LIMIT</code>, même si cette requête ne les utilise pas toutes.</p>
+</div>
+</div>
+</div>
+<div id="filtrage-des-lignes-avec-where" class="section level2" number="1.2">
+<h2><span class="header-section-number">1.2</span> Filtrage des lignes avec WHERE</h2>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-2" class="exercise"><strong>Exercise 1.2  </strong></span>
+Écrivez une requête qui affiche les identifiants, les surfaces bâties et le nombre de pièces principales des appartements dont la surface bâtie est comprise entre 60 et 100 mètres carrés et qui ont au moins trois pièces principales. Utilisez des opérateurs de comparaison et <code>AND</code>. Veillez à écrire la valeur textuelle sous forme de littéral de chaîne.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-3" class="exercise"><strong>Exercise 1.3  </strong></span>
+Écrivez deux requêtes :</p>
+<ul>
+<li>Trouvez les maisons dont la surface bâtie dépasse 150 mètres carrés ou les appartements qui comptent au moins cinq pièces principales. Utilisez <code>AND</code>, <code>OR</code> et des parenthèses pour expliciter le regroupement voulu.</li>
+<li>Trouvez les biens qui ne sont pas des appartements et qui comptent au moins trois pièces principales. Utilisez <code>NOT</code>.</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="tri-et-limitation-des-résultats" class="section level2" number="1.3">
+<h2><span class="header-section-number">1.3</span> Tri et limitation des résultats</h2>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-4" class="exercise"><strong>Exercise 1.4  </strong></span>
+Écrivez une requête qui affiche tous les biens, triés d’abord par type dans l’ordre croissant, puis par surface bâtie dans l’ordre décroissant, et enfin par identifiant de bien dans l’ordre croissant.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-5" class="exercise"><strong>Exercise 1.5  </strong></span>
+Écrivez une requête pour trouver les dix maisons ayant la plus grande surface bâtie. Affichez l’identifiant du bien et sa surface bâtie. En cas d’égalité, triez les biens concernés par identifiant croissant.</p>
+</div>
+</div>
+</div>
+<div id="agrégats-et-regroupements" class="section level2" number="1.4">
+<h2><span class="header-section-number">1.4</span> Agrégats et regroupements</h2>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-6" class="exercise"><strong>Exercise 1.6  </strong></span>
+Pour les maisons, écrivez une requête qui renvoie le nombre de biens, la surface bâtie totale, la surface bâtie moyenne, ainsi que les surfaces bâties minimale et maximale. Choisissez la fonction d’agrégation adaptée à chaque question, puis expliquez ce que représente chaque résultat.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-7" class="exercise"><strong>Exercise 1.7  </strong></span>
+Écrivez une requête qui renvoie le nombre de biens et la surface bâtie moyenne pour chaque type de bien. Combien de lignes le résultat contient-il ? Quelles colonnes peuvent apparaître dans la liste SELECT d’une requête avec regroupement ? Pourriez-vous ajouter property_id sans l’agréger ? Expliquez.</p>
+</div>
+</div>
+</div>
+<div id="filtrage-des-groupes-avec-having" class="section level2" number="1.5">
+<h2><span class="header-section-number">1.5</span> Filtrage des groupes avec HAVING</h2>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-8" class="exercise"><strong>Exercise 1.8  </strong></span>
+Pour chaque type de bien, comptez les biens ayant au moins trois pièces principales et calculez leur surface bâtie moyenne. Ne conservez que les groupes contenant au moins 100 biens. Expliquez pourquoi le filtre sur les lignes doit être placé dans WHERE et celui sur les groupes dans HAVING.</p>
+</div>
+</div>
+</div>
+<div id="comptage-et-valeurs-manquantes" class="section level2" number="1.6">
+<h2><span class="header-section-number">1.6</span> Comptage et valeurs manquantes</h2>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-9" class="exercise"><strong>Exercise 1.9  </strong></span>
+Écrivez une requête qui renvoie (1) le nombre total de biens, (2) le nombre de biens dont la surface de terrain est renseignée et (3) le nombre de types de biens distincts. Expliquez la différence entre COUNT(*), COUNT(column) et COUNT(DISTINCT column).</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-10" class="exercise"><strong>Exercise 1.10  </strong></span>
+Écrivez une requête qui renvoie la surface de terrain moyenne renseignée et la surface de terrain moyenne si les valeurs manquantes sont considérées comme des zéros. Renvoyez également le nombre total de biens et le nombre de biens dont la surface de terrain est renseignée. Expliquez comment NULL est traité par COUNT et AVG, et ce que change COALESCE.</p>
+</div>
+</div>
+</div>
+</div>
+<div id="révision-avec-une-deuxième-table" class="section level1" number="2">
+<h1><span class="header-section-number">2</span> Révision avec une deuxième table</h1>
+<p>Ces exercices de révision utilisent uniquement la table sales_transaction. Chaque ligne représente une transaction et contient les colonnes transaction_id, transaction_date, transaction_type, property_id et property_value. Aucune jointure n’est nécessaire. Supposez que certaines valeurs de property_value soient NULL.</p>
+<pre><code>sales_transaction(transaction_id, transaction_date, transaction_type, property_id, property_value)</code></pre>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-11" class="exercise"><strong>Exercise 2.1  </strong></span>
+Écrivez une requête qui affiche l’identifiant, la date, le type et la valeur du bien pour chaque transaction.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-12" class="exercise"><strong>Exercise 2.2  </strong></span>
+Écrivez trois requêtes :</p>
+<ul>
+<li>Trouvez les ventes dont la valeur du bien est supérieure ou égale à 200 000.</li>
+<li>Trouvez les transactions qui sont des expropriations ou dont la valeur du bien est inférieure à 50 000.</li>
+<li>Trouvez les transactions qui ne sont pas des ventes.</li>
+</ul>
+<p>Renvoyez l’identifiant de la transaction et les colonnes pertinentes. Utilisez les types de transaction ‘Vente’ et ‘Expropriation’, des opérateurs de comparaison et des valeurs textuelles correctement encadrées.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-13" class="exercise"><strong>Exercise 2.3  </strong></span>
+Écrivez une requête qui renvoie les dix ventes ayant les valeurs les plus élevées. Affichez l’identifiant de la transaction, la date et la valeur du bien. Triez par valeur décroissante, puis par date de transaction croissante, et enfin par identifiant de transaction croissant.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-14" class="exercise"><strong>Exercise 2.4  </strong></span>
+Pour les ventes, écrivez une requête qui renvoie le nombre de transactions, la valeur totale, la valeur moyenne, la valeur minimale et la valeur maximale. Écrivez ensuite une requête qui renvoie le nombre de transactions et la valeur moyenne pour chaque type de transaction.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-15" class="exercise"><strong>Exercise 2.5  </strong></span>
+Pour chaque type de transaction, calculez le nombre et la valeur moyenne des transactions dont la valeur est supérieure ou égale à 100 000. Ne conservez que les groupes comptant au moins 100 transactions, triez-les par nombre de transactions décroissant et renvoyez les cinq premiers groupes.</p>
+</div>
+</div>
+<div class="infobox exercisebox">
+<p><strong>Exercice</strong></p>
+
+<div class="exercise">
+<p><span id="exr:unnamed-chunk-16" class="exercise"><strong>Exercise 2.6  </strong></span>
+Écrivez une requête qui renvoie le nombre total de transactions, le nombre de transactions dont la valeur du bien est renseignée, le nombre de types de transaction distincts, la valeur moyenne renseignée et la valeur moyenne lorsque les valeurs manquantes sont considérées comme des zéros.</p>
+</div>
+</div>
+</div>
+
+          </div>
+
+          
+
+
+
+          
+        </div>
+
+        
+      </article>
+
+      
+
+    </main>
+  </div>
+</div>
+
+
+      
+
+    
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.imagesloaded/4.1.4/imagesloaded.pkgd.min.js" integrity="sha256-lqvxZrPLtfffUl2G/e7szqSvPBILGbwmsGE1MKlOi0Q=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.isotope/3.0.6/isotope.pkgd.min.js" integrity="sha256-CBrpuqrMhXwcLLUd5tvQ4euBHCdh7wGlDfNz8vbu/iI=" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+
+      
+
+      
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/highlight.min.js" integrity="sha256-eOgo0OtLL4cdq7RdwRUiGKLX9XsIJ7nGhWEKbohmVAQ=" crossorigin="anonymous"></script>
+        
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.18.1/languages/r.min.js"></script>
+        
+      
+
+    
+
+    
+    
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.5.1/leaflet.js" integrity="sha256-EErZamuLefUnbMBQbsEqu1USa+btR2oIlCpBJbyD4/g=" crossorigin="anonymous"></script>
+    
+
+    
+    
+    <script>const code_highlighting = true;</script>
+    
+
+    
+    
+    <script>const isSiteThemeDark = false;</script>
+    
+
+    
+
+    
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/anchor-js/4.1.1/anchor.min.js" integrity="sha256-pB/deHc9CGfFpJRjC43imB29Rse8tak+5eXqntO94ck=" crossorigin="anonymous"></script>
+    <script>
+      anchors.add();
+    </script>
+    
+
+    
+
+    
+    
+
+    
+    
+
+    
+    
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <script src="/js/academic.min.3da86581634ab22d5bb3fc4505df30a5.js"></script>
+
+    
+
+
+
+
+
+
+  
+  
+
+  
+<div id="modal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Cite</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <pre><code class="tex hljs"></code></pre>
+      </div>
+      <div class="modal-footer">
+        <a class="btn btn-outline-primary my-1 js-copy-cite" href="#" target="_blank">
+          <i class="fas fa-copy"></i> Copy
+        </a>
+        <a class="btn btn-outline-primary my-1 js-download-cite" href="#" target="_blank">
+          <i class="fas fa-download"></i> Download
+        </a>
+        <div id="modal-error"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

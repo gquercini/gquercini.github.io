@@ -554,6 +554,16 @@
         <a href="/courses/bdalbert/tutorials/data-modeling-fr/">1. Modélisation de données</a>
       </li>
       
+      
+      <li class="Tutorials">
+        <a href="/courses/bdalbert/tutorials/sql-intro/">2. SQL fundamentals</a>
+      </li>
+      
+      
+      <li class="Tutorials">
+        <a href="/courses/bdalbert/tutorials/sql-intro-fr/">2. Fondamentaux de SQL</a>
+      </li>
+      
     </ul>
     </div>
     
@@ -614,6 +624,14 @@ Chaque personne doit s’inscrire dans une agence et peut passer des examens pou
 Donnez le <strong>schéma conceptuel</strong> de la base de données à l’aide d’un diagramme entité-association.</p>
 </div>
 </div>
+<details>
+<summary>
+Solution
+</summary>
+<div class="infobox exosolution">
+<p><img src="/courses/databases/tutorial-1/driving-school-solution.png" alt="Modèle conceptuel de l'auto-école"></p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -623,6 +641,32 @@ Traduisez le schéma conceptuel en schéma logique.
 Pour chaque table, soulignez la clé primaire et indiquez les clés étrangères.</p>
 </div>
 </div>
+<details>
+<summary>
+Corrigé
+</summary>
+<div class="infobox exosolution">
+<p>The <strong>collection of tables</strong> is the following:</p>
+<pre>
+
+<TT>Customer</TT> (<u>cust_code</u>, first_name, last_name, cust_address, phone_number, 
+                   birth_date, branch_name)
+
+<TT>Branch</TT>  (<u>branch_name</u>, branch_address)
+
+<TT>License</TT> (license_number, category, expiry_date, cust_code, branch_name)
+
+<TT>Exam</TT>    (<u>cust_code</u>, <u>branch_name</u>, exam_date, outcome)
+
+</pre>
+<p>Foreign keys :</p>
+<p><TT>Customer(branch_name)</TT> → <TT>Branch(branch_name)</TT></p>
+<p><TT>Exam(cust_code)</TT> → <TT>Customer(cust_code)</TT>.</p>
+<p><TT>Exam(branch_name)</TT> → <TT>Branch(branch_name)</TT>.</p>
+<p><TT>License(cust_code)</TT> → <TT>Customer(cust_code)</TT>.</p>
+<p><TT>License(branch_name)</TT> → <TT>Branch(branch_name)</TT>.</p>
+</div>
+</details>
 </div>
 </div>
 <div id="house-sales" class="section level1" number="2">
@@ -641,6 +685,14 @@ Pour chaque table, soulignez la clé primaire et indiquez les clés étrangères
 Donnez le <strong>schéma conceptuel</strong> de la base de données à l’aide d’un diagramme entité-association.</p>
 </div>
 </div>
+<details>
+<summary>
+Corrigé
+</summary>
+<div class="infobox exosolution">
+<p><img src="/courses/databases/tutorial-1/real-estate-conceptual-model.png" alt="Modèle conceptuel immobilier"></p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -650,6 +702,29 @@ Traduisez le schéma conceptuel en schéma logique.
 Pour chaque table, soulignez la clé primaire et indiquez les clés étrangères.</p>
 </div>
 </div>
+<details>
+<summary>
+Corrigé
+</summary>
+<div class="infobox exosolution">
+<p>Les tables sont les suivantes :</p>
+<pre>
+<TT>transaction</TT> (<u>transaction_id</u>, transaction_date, transaction_type, property_id, property_value) 
+<TT>property</TT>    (<u>property_id</u>, property_type, built_area, land_area, num_main_rooms, number_of_units, street_id)
+<TT>street</TT>      (<u>street_id</u>, street_number, street_type, street_name, zip_code, cadastral_section, land_parcel, city_id)
+<TT>city</TT>        (<u>city_id</u>, insee_code, city_name, geometry, dept_code)
+<TT>department</TT>  (<u>dept_code</u>, dept_name, reg_code)
+<TT>region</TT>      (<u>reg_code</u>, reg_name)
+
+</pre>
+<p>Les <strong>clés étrangères</strong> sont les suivantes :</p>
+<p><TT>transaction(property_id)</TT> fait référence à <TT>property(property_id)</TT></p>
+<p><TT>property(street_id)</TT> fait référence à <TT>street(street_id)</TT></p>
+<p><TT>street(city_id)</TT> fait référence à <TT>city(city_id)</TT></p>
+<p><TT>city(dept_code)</TT> fait référence à <TT>department(dept_code)</TT></p>
+<p><TT>department(reg_code)</TT> fait référence à <TT>region(reg_code)</TT></p>
+</div>
+</details>
 </div>
 </div>
 <div id="réseau-social-devoir" class="section level1" number="3">
@@ -669,6 +744,14 @@ Pour chaque type de relation (amitié ou suivi), la plateforme enregistre la dat
 Donnez le <strong>schéma conceptuel</strong> de la base de données à l’aide d’un diagramme entité-association.</p>
 </div>
 </div>
+<details>
+<summary>
+Corrigé
+</summary>
+<div class="infobox exosolution">
+<p><img src="/courses/databases/tutorial-1/social-network-solution.png" alt="Corrigé du réseau social"></p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -678,6 +761,33 @@ Traduisez le schéma conceptuel en schéma logique.
 Pour chaque table, soulignez la clé primaire et indiquez les clés étrangères.</p>
 </div>
 </div>
+<details>
+<summary>
+Corrigé
+</summary>
+<div class="infobox exosolution">
+<p>Les tables sont les suivantes :</p>
+<pre>
+<TT>UserAccount</TT>  (<u>nickname</u>, first_name, last_name, city, country)
+
+<TT>Post</TT>         (<u>post_id</u>, content, date, time, lat, long, nickname)
+
+<TT>EmailAddress</TT> (<u>email_address</u>, nickname)
+
+<TT>Relationship</TT> (<u>nickname_src</u>, <u>nickname_dst</u>, type, date)
+
+<TT>Tag</TT>          (<u>post_id</u>, <u>nickname</u>)
+
+</pre>
+<p>Les <strong>clés étrangères</strong> sont les suivantes :</p>
+<p><TT>Post(nickname)</TT> → <TT>UserAccount(nickname)</TT>.</p>
+<p><TT>EmailAddress(nickname)</TT> → <TT>EmailAddress(nickname)</TT>.</p>
+<p><TT>Relationship(nickname_src)</TT> → <TT>UserAccount(nickname)</TT>.</p>
+<p><TT>Relationship(nickname_dst)</TT> → <TT>UserAccount(nickname)</TT>.</p>
+<p><TT>Tag(post_id)</TT> → <TT>Post(post_id)</TT>.</p>
+<p><TT>Tag(nickname)</TT> → <TT>UserAccount(nickname)</TT>.</p>
+</div>
+</details>
 <!-- # Base de données bancaire
 
 La figure suivante présente le diagramme entité-association correspondant au schéma conceptuel d'une base de données bancaire.
@@ -703,6 +813,16 @@ Chaque banque est identifiée par un code et un nom uniques et possède une ou p
 
 
 
+<details>
+<summary>Corrigé</summary>
+
+::: {.infobox .exosolution data-latex="{exercisebox}"}
+
+Puisque deux banques n'ont ni le même *code_bank* ni le même *name*, l'une ou l'autre de ces propriétés peut être choisie comme clé primaire de l'entité <TT>Bank</TT>. Ce sont deux **clés candidates** valides.
+
+:::
+
+</details>
 
 
 ::: {.infobox .exercisebox data-latex="{exercisebox}"}
@@ -715,6 +835,16 @@ Chaque banque est identifiée par un code et un nom uniques et possède une ou p
 :::
 
 
+<details>
+<summary>Corrigé</summary>
+
+::: {.infobox .exosolution data-latex="{exercisebox}"}
+
+La réponse est **non**. Même si aucune banque ne possède les mêmes valeurs pour {*code_bank*, *name*}, chacun de ces attributs pris séparément ({*code_bank*} et {*name*}) est déjà une clé candidate.
+
+:::
+
+</details>
 
 
 ::: {.infobox .exercisebox data-latex="{exercisebox}"}
@@ -726,6 +856,16 @@ Chaque banque est identifiée par un code et un nom uniques et possède une ou p
 :::
 
 
+<details>
+<summary>Corrigé</summary>
+
+::: {.infobox .exosolution data-latex="{exercisebox}"}
+
+<img src="/courses/databases/tutorial-1/banking-system-er-complete.png" alt="Corrigé du schéma bancaire">
+
+:::
+
+</details>
 
 ::: {.infobox .exercisebox data-latex="{exercisebox}"}
 **Exercice**
@@ -736,6 +876,41 @@ Chaque banque est identifiée par un code et un nom uniques et possède une ou p
 :::
 
 
+<details>
+<summary>Corrigé</summary>
+
+::: {.infobox .exosolution data-latex="{exercisebox}"}
+
+Les tables sont les suivantes :
+
+<pre>
+<TT>Bank</TT>     (<u>code_bank</u>, name, address)
+
+<TT>Branch</TT>   (<u>branch_id</u>, address, code_bank)
+
+<TT>Account</TT>  (<u>acct_nbr</u>, acct_type, balance, branch_id, ssn)
+
+<TT>Loan</TT>     (<u>loan_nbr</u>, loan_type, amount, branch_id, ssn)
+
+<TT>Customer</TT> (<u>ssn</u>, first_name, last_name, telephone, address)
+
+</pre>
+
+Les **clés étrangères** sont les suivantes :
+
+<TT>Branch(code_bank)</TT> &rarr;  <TT>Bank(code_bank)</TT>.
+
+<TT>Account(branch_id)</TT> &rarr;  <TT>Branch(branch_id)</TT>.
+
+<TT>Account(ssn)</TT> &rarr;  <TT>Customer(ssn)</TT>.
+
+<TT>Loan(branch_id)</TT> &rarr;  <TT>Branch(branch_id)</TT>.
+
+<TT>Loan(ssn)</TT> &rarr;  <TT>Customer(ssn)</TT>.
+
+:::
+
+</details>
 
 # Car dealership database
 
@@ -773,6 +948,16 @@ and each mechanic may work on many cars.
 :::
 
 
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex="{exercisebox}"}
+
+<img src="/courses/databases/tutorial-1/car-dealership.png" alt="Car dealership solution">
+
+:::
+
+</details>
 
 
 ::: {.infobox .exercisebox data-latex="{exercisebox}"}
@@ -785,6 +970,42 @@ For each table, underline the primary keys and specify the foreign keys.</div>\E
 :::
 
 </div>
+
+
+<details>
+<summary>Solution</summary>
+
+::: {.infobox .exosolution data-latex="{exercisebox}"}
+
+Les tables sont les suivantes :
+
+<pre>
+  Car          (<u>serial_number</u>, make, model, colour, is_new)
+  Customer     (<u>cust_id</u>, cust_first_name, cust_last_name, cust_phone)
+  Invoice      (<u>invoice_number</u>, date, price, car_serial_number, sp_id, cust_id)
+  Salesperson  (<u>sp_id</u>, sp_first_name, sp_last_name)
+  Mechanic     (<u>mec_id</u>, mec_first_name, mec_last_name)
+  Ticket       (<u>ticket_number</u>, date_open, date_return, car_serial_number)
+  Repair       (<u>ticket_number</u>, <u>mec_id</u>)</pre>
+</pre>
+
+The **foreign keys** are the following:
+
+<TT>Invoice(cust_id)</TT> &rarr;  <TT>Customer(cust_id)</TT>.
+
+<TT>Invoice(car_serial_number)</TT> &rarr;  <TT>Car(serial_number)</TT>.
+
+<TT>Invoice(sp_id)</TT> &rarr;  <TT>Salesperson(sp_id)</TT>.
+
+<TT>Ticket(car_serial_number)</TT> &rarr;  <TT>Car(serial_number)</TT>.
+
+<TT>Repair(ticket_number)</TT> &rarr;  <TT>Ticket(ticket_number)</TT>.
+
+<TT>Repair(mec_id)</TT> &rarr;  <TT>Mechanic(mec_id)</TT>.
+
+:::
+
+</details>
 
 
 
