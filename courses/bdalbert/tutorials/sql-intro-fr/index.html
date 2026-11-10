@@ -613,6 +613,19 @@
 Écrivez une requête qui affiche, pour chaque bien, son identifiant, son type, sa surface bâtie et son nombre de pièces principales. Indiquez l’ordre dans lequel les clauses sont écrites en SQL, puis l’ordre logique dans lequel la base de données les évalue. Présentez les deux ordres en incluant <code>WHERE</code>, <code>GROUP BY</code>, <code>HAVING</code>, <code>ORDER BY</code> et <code>LIMIT</code>, même si cette requête ne les utilise pas toutes.</p>
 </div>
 </div>
+<details>
+<summary>
+Corrigé
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT property_id, property_type, built_area, num_main_rooms
+FROM property
+</pre>
+<p>Ordre d’écriture : SELECT, FROM, WHERE, GROUP BY, HAVING, ORDER BY, LIMIT.</p>
+<p>Ordre logique d’évaluation : FROM, WHERE, GROUP BY, HAVING, SELECT, ORDER BY, LIMIT.</p>
+</div>
+</details>
 </div>
 <div id="filtrage-des-lignes-avec-where" class="section level2" number="1.2">
 <h2><span class="header-section-number">1.2</span> Filtrage des lignes avec WHERE</h2>
@@ -624,6 +637,22 @@
 Écrivez une requête qui affiche les identifiants, les surfaces bâties et le nombre de pièces principales des appartements dont la surface bâtie est comprise entre 60 et 100 mètres carrés et qui ont au moins trois pièces principales. Utilisez des opérateurs de comparaison et <code>AND</code>. Veillez à écrire la valeur textuelle sous forme de littéral de chaîne.</p>
 </div>
 </div>
+<details>
+<summary>
+Corrigé
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT property_id, built_area, num_main_rooms
+FROM property
+WHERE property_type = 'Appartement'
+  AND built_area >= 60
+  AND built_area <= 100
+  AND num_main_rooms >= 3
+</pre>
+<p>Les valeurs textuelles sont encadrées par des apostrophes simples. Les conditions de comparaison filtrent les lignes individuellement.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -636,6 +665,25 @@
 </ul>
 </div>
 </div>
+<details>
+<summary>
+Corrigé
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT property_id, property_type, built_area, num_main_rooms
+FROM property
+WHERE (property_type = 'Maison' AND built_area > 150)
+   OR (property_type = 'Appartement' AND num_main_rooms >= 5)
+</pre>
+<pre>
+SELECT property_id, property_type, num_main_rooms
+FROM property
+WHERE NOT (property_type = 'Appartement')
+  AND num_main_rooms >= 3
+</pre>
+</div>
+</details>
 </div>
 <div id="tri-et-limitation-des-résultats" class="section level2" number="1.3">
 <h2><span class="header-section-number">1.3</span> Tri et limitation des résultats</h2>
@@ -647,6 +695,18 @@
 Écrivez une requête qui affiche tous les biens, triés d’abord par type dans l’ordre croissant, puis par surface bâtie dans l’ordre décroissant, et enfin par identifiant de bien dans l’ordre croissant.</p>
 </div>
 </div>
+<details>
+<summary>
+Corrigé
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT property_id, property_type, built_area
+FROM property
+ORDER BY property_type ASC, built_area DESC, property_id ASC
+</pre>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -655,6 +715,20 @@
 Écrivez une requête pour trouver les dix maisons ayant la plus grande surface bâtie. Affichez l’identifiant du bien et sa surface bâtie. En cas d’égalité, triez les biens concernés par identifiant croissant.</p>
 </div>
 </div>
+<details>
+<summary>
+Corrigé
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT property_id, built_area
+FROM property
+WHERE property_type = 'Maison'
+ORDER BY built_area DESC, property_id ASC
+LIMIT 10
+</pre>
+</div>
+</details>
 </div>
 <div id="agrégats-et-regroupements" class="section level2" number="1.4">
 <h2><span class="header-section-number">1.4</span> Agrégats et regroupements</h2>
@@ -666,6 +740,23 @@
 Pour les maisons, écrivez une requête qui renvoie le nombre de biens, la surface bâtie totale, la surface bâtie moyenne, ainsi que les surfaces bâties minimale et maximale. Choisissez la fonction d’agrégation adaptée à chaque question, puis expliquez ce que représente chaque résultat.</p>
 </div>
 </div>
+<details>
+<summary>
+Corrigé
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT COUNT(*) AS property_count,
+       SUM(built_area) AS total_built_area,
+       AVG(built_area) AS average_built_area,
+       MIN(built_area) AS smallest_built_area,
+       MAX(built_area) AS largest_built_area
+FROM property
+WHERE property_type = 'Maison'
+</pre>
+<p>COUNT compte les lignes, SUM additionne les valeurs, AVG calcule leur moyenne, et MIN et MAX renvoient respectivement la plus petite et la plus grande valeur.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -674,6 +765,21 @@ Pour les maisons, écrivez une requête qui renvoie le nombre de biens, la surfa
 Écrivez une requête qui renvoie le nombre de biens et la surface bâtie moyenne pour chaque type de bien. Combien de lignes le résultat contient-il ? Quelles colonnes peuvent apparaître dans la liste SELECT d’une requête avec regroupement ? Pourriez-vous ajouter property_id sans l’agréger ? Expliquez.</p>
 </div>
 </div>
+<details>
+<summary>
+Corrigé
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT property_type,
+       COUNT(*) AS property_count,
+       AVG(built_area) AS average_built_area
+FROM property
+GROUP BY property_type
+</pre>
+<p>Le résultat contient une ligne par type de bien distinct. Dans une requête avec regroupement, chaque expression sélectionnée doit être une colonne de regroupement ou une expression d’agrégation. Il n’est donc pas possible d’ajouter property_id tel quel.</p>
+</div>
+</details>
 </div>
 <div id="filtrage-des-groupes-avec-having" class="section level2" number="1.5">
 <h2><span class="header-section-number">1.5</span> Filtrage des groupes avec HAVING</h2>
@@ -685,6 +791,23 @@ Pour les maisons, écrivez une requête qui renvoie le nombre de biens, la surfa
 Pour chaque type de bien, comptez les biens ayant au moins trois pièces principales et calculez leur surface bâtie moyenne. Ne conservez que les groupes contenant au moins 100 biens. Expliquez pourquoi le filtre sur les lignes doit être placé dans WHERE et celui sur les groupes dans HAVING.</p>
 </div>
 </div>
+<details>
+<summary>
+Corrigé
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT property_type,
+       COUNT(*) AS property_count,
+       AVG(built_area) AS average_built_area
+FROM property
+WHERE num_main_rooms >= 3
+GROUP BY property_type
+HAVING COUNT(*) >= 100
+</pre>
+<p>WHERE filtre les lignes individuellement avant leur regroupement. HAVING filtre les groupes après l’agrégation et peut utiliser des agrégats tels que COUNT(*).</p>
+</div>
+</details>
 </div>
 <div id="comptage-et-valeurs-manquantes" class="section level2" number="1.6">
 <h2><span class="header-section-number">1.6</span> Comptage et valeurs manquantes</h2>
@@ -696,6 +819,20 @@ Pour chaque type de bien, comptez les biens ayant au moins trois pièces princip
 Écrivez une requête qui renvoie (1) le nombre total de biens, (2) le nombre de biens dont la surface de terrain est renseignée et (3) le nombre de types de biens distincts. Expliquez la différence entre COUNT(*), COUNT(column) et COUNT(DISTINCT column).</p>
 </div>
 </div>
+<details>
+<summary>
+Corrigé
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT COUNT(*) AS total_properties,
+       COUNT(land_area) AS properties_with_land_area,
+       COUNT(DISTINCT property_type) AS distinct_property_types
+FROM property
+</pre>
+<p>COUNT(*) compte les lignes. COUNT(land_area) compte les lignes où land_area n’est pas NULL. COUNT(DISTINCT property_type) compte les types de biens distincts et non NULL.</p>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -704,6 +841,21 @@ Pour chaque type de bien, comptez les biens ayant au moins trois pièces princip
 Écrivez une requête qui renvoie la surface de terrain moyenne renseignée et la surface de terrain moyenne si les valeurs manquantes sont considérées comme des zéros. Renvoyez également le nombre total de biens et le nombre de biens dont la surface de terrain est renseignée. Expliquez comment NULL est traité par COUNT et AVG, et ce que change COALESCE.</p>
 </div>
 </div>
+<details>
+<summary>
+Corrigé
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT COUNT(*) AS total_properties,
+       COUNT(land_area) AS properties_with_land_area,
+       AVG(land_area) AS average_recorded_land_area,
+       AVG(COALESCE(land_area, 0)) AS average_with_missing_as_zero
+FROM property
+</pre>
+<p>COUNT(land_area) et AVG(land_area) ignorent les valeurs NULL. COALESCE(land_area, 0) remplace chaque valeur NULL par zéro avant le calcul de AVG ; la seconde moyenne inclut donc toutes les lignes et répond à une autre question.</p>
+</div>
+</details>
 </div>
 </div>
 <div id="révision-avec-une-deuxième-table" class="section level1" number="2">
@@ -718,6 +870,17 @@ Pour chaque type de bien, comptez les biens ayant au moins trois pièces princip
 Écrivez une requête qui affiche l’identifiant, la date, le type et la valeur du bien pour chaque transaction.</p>
 </div>
 </div>
+<details>
+<summary>
+Corrigé
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT transaction_id, transaction_date, transaction_type, property_value
+FROM sales_transaction
+</pre>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -732,6 +895,30 @@ Pour chaque type de bien, comptez les biens ayant au moins trois pièces princip
 <p>Renvoyez l’identifiant de la transaction et les colonnes pertinentes. Utilisez les types de transaction ‘Vente’ et ‘Expropriation’, des opérateurs de comparaison et des valeurs textuelles correctement encadrées.</p>
 </div>
 </div>
+<details>
+<summary>
+Corrigé
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT transaction_id, transaction_date, property_value
+FROM sales_transaction
+WHERE transaction_type = 'Vente'
+  AND property_value >= 200000
+</pre>
+<pre>
+SELECT transaction_id, transaction_type, property_value
+FROM sales_transaction
+WHERE transaction_type = 'Expropriation'
+   OR property_value < 50000
+</pre>
+<pre>
+SELECT transaction_id, transaction_type
+FROM sales_transaction
+WHERE transaction_type <> 'Vente'
+</pre>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -740,6 +927,20 @@ Pour chaque type de bien, comptez les biens ayant au moins trois pièces princip
 Écrivez une requête qui renvoie les dix ventes ayant les valeurs les plus élevées. Affichez l’identifiant de la transaction, la date et la valeur du bien. Triez par valeur décroissante, puis par date de transaction croissante, et enfin par identifiant de transaction croissant.</p>
 </div>
 </div>
+<details>
+<summary>
+Corrigé
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT transaction_id, transaction_date, property_value
+FROM sales_transaction
+WHERE transaction_type = 'Vente'
+ORDER BY property_value DESC, transaction_date ASC, transaction_id ASC
+LIMIT 10
+</pre>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -748,6 +949,29 @@ Pour chaque type de bien, comptez les biens ayant au moins trois pièces princip
 Pour les ventes, écrivez une requête qui renvoie le nombre de transactions, la valeur totale, la valeur moyenne, la valeur minimale et la valeur maximale. Écrivez ensuite une requête qui renvoie le nombre de transactions et la valeur moyenne pour chaque type de transaction.</p>
 </div>
 </div>
+<details>
+<summary>
+Corrigé
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT COUNT(*) AS transaction_count,
+       SUM(property_value) AS total_value,
+       AVG(property_value) AS average_value,
+       MIN(property_value) AS minimum_value,
+       MAX(property_value) AS maximum_value
+FROM sales_transaction
+WHERE transaction_type = 'Vente'
+</pre>
+<pre>
+SELECT transaction_type,
+       COUNT(*) AS transaction_count,
+       AVG(property_value) AS average_value
+FROM sales_transaction
+GROUP BY transaction_type
+</pre>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -756,6 +980,24 @@ Pour les ventes, écrivez une requête qui renvoie le nombre de transactions, la
 Pour chaque type de transaction, calculez le nombre et la valeur moyenne des transactions dont la valeur est supérieure ou égale à 100 000. Ne conservez que les groupes comptant au moins 100 transactions, triez-les par nombre de transactions décroissant et renvoyez les cinq premiers groupes.</p>
 </div>
 </div>
+<details>
+<summary>
+Corrigé
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT transaction_type,
+       COUNT(*) AS transaction_count,
+       AVG(property_value) AS average_value
+FROM sales_transaction
+WHERE property_value >= 100000
+GROUP BY transaction_type
+HAVING COUNT(*) >= 100
+ORDER BY transaction_count DESC
+LIMIT 5
+</pre>
+</div>
+</details>
 <div class="infobox exercisebox">
 <p><strong>Exercice</strong></p>
 
@@ -764,6 +1006,22 @@ Pour chaque type de transaction, calculez le nombre et la valeur moyenne des tra
 Écrivez une requête qui renvoie le nombre total de transactions, le nombre de transactions dont la valeur du bien est renseignée, le nombre de types de transaction distincts, la valeur moyenne renseignée et la valeur moyenne lorsque les valeurs manquantes sont considérées comme des zéros.</p>
 </div>
 </div>
+<details>
+<summary>
+Corrigé
+</summary>
+<div class="infobox exosolution">
+<pre>
+SELECT COUNT(*) AS total_transactions,
+       COUNT(property_value) AS transactions_with_value,
+       COUNT(DISTINCT transaction_type) AS distinct_transaction_types,
+       AVG(property_value) AS average_recorded_value,
+       AVG(COALESCE(property_value, 0)) AS average_with_missing_as_zero
+FROM sales_transaction
+</pre>
+<p>COUNT(*) compte toutes les lignes. COUNT(property_value) compte les valeurs non NULL. COUNT(DISTINCT transaction_type) compte les types non NULL distincts. AVG(property_value) ignore les valeurs NULL ; COALESCE remplace chaque valeur NULL par zéro avant le calcul de la seconde moyenne.</p>
+</div>
+</details>
 </div>
 
           </div>
